@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interface Jury — marsAI 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --solar:      #F5E642;
+      --aurora:     #4EFFCE;
+      --deep-sky:   #0A0F2E;
+      --horizon:    #1A1F4E;
+      --surface:    #0F1535;
+      --surface-2:  #141B3E;
+      --coral:      #FF6B6B;
+      --lavande:    #C084FC;
+      --white-soft: #F0F4FF;
+      --mist:       #8892B0;
+      --font-display: 'Syne', sans-serif;
+      --font-body:    'Inter', sans-serif;
+      --font-mono:    'JetBrains Mono', monospace;
+      --ease: cubic-bezier(0.4, 0, 0.2, 1);
+      --sidebar-w: 260px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body {
+      background: var(--deep-sky);
+      color: var(--white-soft);
+      font-family: var(--font-body);
+      font-size: 14px;
+      display: flex;
+    }
+
+    /* ─── SCROLLBAR ─── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+
+    /* ══════════════════════════════════════════
+       SIDEBAR
+    ══════════════════════════════════════════ */
+    .sidebar {
+      width: var(--sidebar-w);
+      min-width: var(--sidebar-w);
+      background: var(--surface);
+      border-right: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    /* Logo */
+    .sidebar-header {
+      padding: 22px 20px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .logo {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .logo .ai { color: var(--aurora); }
+    .logo-sub {
+      font-size: 0.68rem;
+      color: var(--mist);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    /* Juré connecté */
+    .jury-identity {
+      padding: 14px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .avatar {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--aurora), var(--lavande));
+      color: var(--deep-sky);
+      font-weight: 800;
+      font-size: 0.8rem;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .identity-info .name { font-size: 0.85rem; font-weight: 600; }
+    .identity-info .role { font-size: 0.7rem; color: var(--mist); margin-top: 1px; }
+    .online {
+      margin-left: auto;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--aurora);
+      flex-shrink: 0;
+    }
+
+    /* Nav */
+    .sidebar-nav {
+      padding: 14px 12px;
+      flex: 1;
+    }
+    .nav-label {
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--mist);
+      padding: 8px 8px 6px;
+      opacity: 0.55;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: 8px;
+      font-size: 0.84rem;
+      color: var(--mist);
+      cursor: pointer;
+      transition: all 0.15s;
+      margin-bottom: 2px;
+      user-select: none;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.04); color: var(--white-soft); }
+    .nav-item.active { background: rgba(78,255,206,0.1); color: var(--aurora); }
+    .nav-item .icon { width: 18px; text-align: center; flex-shrink: 0; }
+    .nav-count {
+      margin-left: auto;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 9999px;
+    }
+    .count-pending  { background: rgba(255,107,107,0.15); color: var(--coral); }
+    .count-selected { background: rgba(78,255,206,0.12); color: var(--aurora); }
+    .count-neutral  { background: rgba(255,255,255,0.06); color: var(--mist); }
+
+    /* Progression sidebar */
+    .sidebar-progress {
+      padding: 14px 20px 18px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    .prog-label { font-size: 0.68rem; color: var(--mist); margin-bottom: 7px; letter-spacing: 0.05em; }
+    .prog-track {
+      height: 5px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 5px;
+    }
+    .prog-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--aurora), var(--lavande)); }
+    .prog-val { font-family: var(--font-mono); font-size: 0.7rem; color: var(--white-soft); }
+
+    /* ══════════════════════════════════════════
+       MAIN
+    ══════════════════════════════════════════ */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Topbar */
+    .topbar {
+      height: 52px;
+      min-height: 52px;
+      background: var(--surface);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 14px;
+    }
+    .topbar-title {
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+    .topbar-sep { width: 1px; height: 20px; background: rgba(255,255,255,0.08); }
+    .topbar-info { font-size: 0.78rem; color: var(--mist); }
+    .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+    .phase-badge {
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    .phase-1 { background: rgba(78,255,206,0.1); border: 1px solid rgba(78,255,206,0.25); color: var(--aurora); }
+    .phase-2 { background: rgba(192,132,252,0.1); border: 1px solid rgba(192,132,252,0.25); color: var(--lavande); }
+
+    /* ══════════════════════════════════════════
+       CONTENT — VUE ÉVALUATION
+    ══════════════════════════════════════════ */
+    .view { display: flex; flex: 1; overflow: hidden; }
+    .view.hidden { display: none; }
+
+    /* Liste films */
+    .film-list {
+      width: 300px;
+      min-width: 300px;
+      background: var(--surface-2);
+      border-right: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .list-header {
+      padding: 12px 14px 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .list-tabs {
+      display: flex;
+      gap: 3px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 7px;
+      padding: 3px;
+    }
+    .ltab {
+      flex: 1;
+      text-align: center;
+      padding: 6px 6px;
+      border-radius: 5px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--mist);
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .ltab.active { background: var(--aurora); color: var(--deep-sky); }
+    .list-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 6px;
+    }
+
+    /* Item film */
+    .film-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      margin-bottom: 3px;
+      transition: all 0.15s;
+    }
+    .film-item:hover { background: rgba(255,255,255,0.04); }
+    .film-item.selected {
+      background: rgba(78,255,206,0.07);
+      border-color: rgba(78,255,206,0.2);
+    }
+    .fi-thumb {
+      width: 60px; height: 34px;
+      border-radius: 5px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .fi-status-dot {
+      position: absolute;
+      top: 3px; right: 3px;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+    }
+    .s-pending  { background: var(--solar); }
+    .s-select   { background: var(--aurora); }
+    .s-reject   { background: var(--coral); }
+    .fi-info { flex: 1; min-width: 0; }
+    .fi-title { font-size: 0.82rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .fi-sub   { font-size: 0.7rem; color: var(--mist); margin-top: 2px; }
+    .fi-score { font-family: var(--font-mono); font-size: 0.85rem; font-weight: 500; flex-shrink: 0; }
+    .fs-high { color: var(--aurora); }
+    .fs-mid  { color: var(--solar); }
+    .fs-low  { color: var(--coral); }
+    .fs-none { color: rgba(136,146,176,0.4); font-size: 0.7rem; }
+
+    /* ══════════════════════════════════════════
+       PANNEAU DÉTAIL
+    ══════════════════════════════════════════ */
+    .detail {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .detail-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    /* Player YouTube embed */
+    .player-wrap {
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 18px;
+      position: relative;
+    }
+    .player-screen {
+      aspect-ratio: 16/9;
+      background: linear-gradient(135deg, #0d1b3e 0%, #1a0a3e 60%, #0a2e2e 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .yt-badge {
+      position: absolute;
+      top: 12px; right: 12px;
+      background: rgba(255,0,0,0.85);
+      border-radius: 5px;
+      padding: 3px 8px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .yt-badge::before {
+      content: "▶";
+      font-size: 0.5rem;
+    }
+    .play-center {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      border: 2px solid rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+      cursor: pointer;
+      padding-left: 4px;
+      transition: all 0.2s;
+      backdrop-filter: blur(4px);
+    }
+    .play-center:hover { background: rgba(78,255,206,0.2); border-color: var(--aurora); transform: scale(1.05); }
+    .player-sub-bar {
+      position: absolute;
+      bottom: 42px; left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.75);
+      border-radius: 4px;
+      padding: 5px 14px;
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+    /* Barre de contrôle */
+    .player-ctrl {
+      padding: 10px 16px 12px;
+      background: rgba(255,255,255,0.02);
+    }
+    .ctrl-progress {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .ctrl-bar {
+      flex: 1;
+      height: 3px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 2px;
+      cursor: pointer;
+      position: relative;
+    }
+    .ctrl-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--aurora), var(--lavande));
+      border-radius: 2px;
+      position: relative;
+    }
+    .ctrl-bar-fill::after {
+      content: "";
+      position: absolute;
+      right: -5px; top: 50%;
+      transform: translateY(-50%);
+      width: 10px; height: 10px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 0 0 6px rgba(78,255,206,0.5);
+    }
+    .ctrl-time { font-family: var(--font-mono); font-size: 0.7rem; color: var(--mist); white-space: nowrap; }
+    .ctrl-buttons {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .ctrl-left { display: flex; align-items: center; gap: 10px; }
+    .cbtn {
+      background: none; border: none;
+      color: var(--mist); cursor: pointer;
+      font-size: 0.85rem; padding: 4px;
+      transition: color 0.15s;
+    }
+    .cbtn:hover { color: var(--white-soft); }
+    .cbtn.play-btn {
+      width: 30px; height: 30px;
+      background: var(--aurora); border-radius: 50%;
+      color: var(--deep-sky); font-size: 0.7rem;
+      display: flex; align-items: center; justify-content: center;
+      padding-left: 2px;
+    }
+    .yt-info { font-size: 0.72rem; color: var(--mist); display: flex; align-items: center; gap: 6px; }
+    .yt-check { color: var(--aurora); font-size: 0.8rem; }
+    .cc-btn {
+      background: rgba(78,255,206,0.08);
+      border: 1px solid rgba(78,255,206,0.2);
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--aurora);
+      cursor: pointer;
+    }
+
+    /* Film info header */
+    .film-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .film-title-main {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+    }
+    .film-author-main { font-size: 0.82rem; color: var(--mist); margin-bottom: 8px; }
+    .film-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .ftag {
+      font-size: 0.68rem; font-weight: 700;
+      padding: 3px 9px; border-radius: 5px;
+      letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .ftag-img { background: rgba(78,255,206,0.1); color: var(--aurora); }
+    .ftag-son { background: rgba(192,132,252,0.1); color: var(--lavande); }
+    .ftag-hyb { background: rgba(245,230,66,0.08); color: var(--solar); }
+    .ftag-tool { background: rgba(255,255,255,0.06); color: var(--mist); font-weight: 500; text-transform: none; }
+
+    /* Score moyen */
+    .avg-block { text-align: right; flex-shrink: 0; }
+    .avg-num { font-family: var(--font-mono); font-size: 2rem; line-height: 1; }
+    .avg-label { font-size: 0.65rem; color: var(--mist); margin-top: 2px; }
+
+    /* Meta grid */
+    .meta-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .meta-cell {
+      background: var(--surface-2);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+    .meta-cell .ml { font-size: 0.62rem; color: var(--mist); letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 3px; }
+    .meta-cell .mv { font-size: 0.85rem; font-weight: 600; }
+    .meta-cell .mv.ok { color: var(--aurora); }
+    .meta-cell .mv.mono { font-family: var(--font-mono); }
+
+    /* Note de démarche (CDC : fiche IA obligatoire) */
+    .section-card {
+      background: var(--surface-2);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+    }
+    .section-card h4 {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--mist);
+      margin-bottom: 10px;
+    }
+    .section-card p {
+      font-size: 0.82rem;
+      color: rgba(240,244,255,0.75);
+      line-height: 1.65;
+    }
+    .tools-row { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tool-chip {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 5px;
+      padding: 4px 10px;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--white-soft);
+    }
+    /* Fiche IA (CDC) */
+    .ia-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+    .ia-cell {
+      background: rgba(255,255,255,0.03);
+      border-radius: 6px;
+      padding: 10px 12px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .ia-cell .ia-type {
+      font-size: 0.65rem;
+      color: var(--aurora);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .ia-cell .ia-tools { font-size: 0.75rem; color: var(--mist); }
+
+    /* Votes jury */
+    .votes-list { display: flex; flex-direction: column; gap: 8px; }
+    .vote-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: var(--surface);
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+    .vote-avatar {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.68rem; font-weight: 800;
+      flex-shrink: 0;
+    }
+    .va-1 { background: linear-gradient(135deg, var(--aurora), var(--lavande)); color: var(--deep-sky); }
+    .va-2 { background: linear-gradient(135deg, var(--coral), var(--lavande)); color: white; }
+    .va-3 { background: linear-gradient(135deg, var(--solar), var(--aurora)); color: var(--deep-sky); }
+    .va-4 { background: rgba(255,255,255,0.08); color: var(--mist); }
+    .vote-name { font-size: 0.8rem; font-weight: 600; flex: 1; }
+    .vote-role { font-size: 0.68rem; color: var(--mist); }
+    .vote-score { font-family: var(--font-mono); font-size: 1rem; font-weight: 500; min-width: 28px; text-align: right; }
+    .vote-score.high { color: var(--aurora); }
+    .vote-score.mid  { color: var(--solar); }
+    .vote-score.none { color: var(--mist); font-size: 0.75rem; }
+    .vote-comment { font-size: 0.72rem; color: var(--mist); font-style: italic; margin-left: 38px; margin-top: -2px; }
+
+    /* ══════════════════════════════════════════
+       PANNEAU NOTATION (bottom sticky)
+       CDC : noter 1 à 10 + commentaires
+    ══════════════════════════════════════════ */
+    .notation-panel {
+      background: var(--surface);
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding: 14px 20px;
+    }
+    .notation-top {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+    .notation-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--mist);
+      white-space: nowrap;
+    }
+    /* Score 1-10 */
+    .score-btns {
+      display: flex;
+      gap: 4px;
+    }
+    .sbtn {
+      width: 34px; height: 34px;
+      border-radius: 7px;
+      border: 1px solid rgba(255,255,255,0.09);
+      background: rgba(255,255,255,0.04);
+      color: var(--mist);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-mono);
+    }
+    .sbtn:hover { background: rgba(78,255,206,0.1); color: var(--aurora); border-color: rgba(78,255,206,0.3); }
+    .sbtn.active { background: var(--aurora); color: var(--deep-sky); border-color: var(--aurora); box-shadow: 0 0 12px rgba(78,255,206,0.3); }
+
+    .notation-bottom {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+    }
+    .comment-wrap { flex: 1; }
+    .comment-label { font-size: 0.65rem; color: var(--mist); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 5px; }
+    .comment-input {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      color: var(--white-soft);
+      outline: none;
+      resize: none;
+      height: 52px;
+      transition: border-color 0.2s;
+      line-height: 1.5;
+    }
+    .comment-input:focus { border-color: rgba(78,255,206,0.35); }
+    .comment-input::placeholder { color: var(--mist); opacity: 0.5; }
+    /* Boutons décision */
+    .decision-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .dbtn {
+      padding: 0 18px;
+      height: 34px;
+      border-radius: 7px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      white-space: nowrap;
+      transition: all 0.2s;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .dbtn-select {
+      background: var(--aurora);
+      color: var(--deep-sky);
+    }
+    .dbtn-select:hover { box-shadow: 0 4px 20px rgba(78,255,206,0.35); transform: translateY(-1px); }
+    .dbtn-row { display: flex; gap: 6px; }
+    .dbtn-pending {
+      flex: 1;
+      background: rgba(245,230,66,0.1);
+      border: 1px solid rgba(245,230,66,0.25);
+      color: var(--solar);
+    }
+    .dbtn-reject {
+      flex: 1;
+      background: rgba(255,107,107,0.1);
+      border: 1px solid rgba(255,107,107,0.2);
+      color: var(--coral);
+    }
+
+    /* ══════════════════════════════════════════
+       VUE DÉLIBÉRATION
+       CDC : 2 phases de présélection, 50 films
+    ══════════════════════════════════════════ */
+    .delib-view {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      display: none;
+    }
+    .delib-view.active { display: block; }
+    .delib-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .delib-header h2 {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 800;
+    }
+    .delib-sub { font-size: 0.78rem; color: var(--mist); margin-bottom: 20px; }
+    /* Phase tabs */
+    .phase-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .ptab {
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      color: var(--mist);
+      transition: all 0.15s;
+    }
+    .ptab.active {
+      background: rgba(78,255,206,0.1);
+      border-color: rgba(78,255,206,0.3);
+      color: var(--aurora);
+    }
+    .ptab-2.active {
+      background: rgba(192,132,252,0.1);
+      border-color: rgba(192,132,252,0.3);
+      color: var(--lavande);
+    }
+    /* Table */
+    .delib-table { width: 100%; border-collapse: collapse; }
+    .delib-table th {
+      text-align: left;
+      padding: 8px 12px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--mist);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .delib-table td {
+      padding: 10px 12px;
+      font-size: 0.8rem;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      vertical-align: middle;
+    }
+    .delib-table tr:hover td { background: rgba(255,255,255,0.02); cursor: pointer; }
+    .rank { font-family: var(--font-mono); font-size: 0.85rem; color: var(--mist); min-width: 28px; }
+    .rank.gold { color: var(--solar); }
+    .avg { font-family: var(--font-mono); font-size: 0.95rem; font-weight: 500; }
+    .avg.high { color: var(--aurora); }
+    .avg.mid  { color: var(--solar); }
+    .avg.low  { color: var(--coral); }
+    .status-pill {
+      padding: 3px 10px; border-radius: 9999px;
+      font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.05em; text-transform: uppercase;
+    }
+    .sp-sel { background: rgba(78,255,206,0.1); color: var(--aurora); }
+    .sp-pen { background: rgba(245,230,66,0.08); color: var(--solar); }
+    .sp-rej { background: rgba(255,107,107,0.08); color: var(--coral); }
+    /* Export */
+    .export-btn {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--mist);
+      cursor: pointer;
+      display: flex; align-items: center; gap: 6px;
+      transition: all 0.15s;
+    }
+    .export-btn:hover { color: var(--white-soft); border-color: rgba(255,255,255,0.2); }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 90px; right: 20px;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      border: 1px solid;
+      backdrop-filter: blur(12px);
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all 0.25s var(--ease);
+      pointer-events: none;
+      z-index: 100;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.ok  { background: rgba(78,255,206,0.1); border-color: rgba(78,255,206,0.3); color: var(--aurora); }
+    .toast.warn{ background: rgba(245,230,66,0.08); border-color: rgba(245,230,66,0.25); color: var(--solar); }
+    .toast.err { background: rgba(255,107,107,0.1); border-color: rgba(255,107,107,0.25); color: var(--coral); }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════ SIDEBAR ══════════ -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">mars<span class="ai">AI</span></div>
+      <div class="logo-sub">Interface Jury · marsAI 2026</div>
+    </div>
+
+    <div class="jury-identity">
+      <div class="avatar">ML</div>
+      <div class="identity-info">
+        <div class="name">Marie Lefebvre</div>
+        <div class="role">Présidente du Jury</div>
+      </div>
+      <div class="online"></div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-label">Évaluation</div>
+
+      <div class="nav-item active" onclick="switchView('eval', this)">
+        <span class="icon">🎬</span>
+        Films à évaluer
+        <span class="nav-count count-pending" id="nav-pending">23</span>
+      </div>
+
+      <div class="nav-item" onclick="switchView('eval', this)">
+        <span class="icon">✅</span>
+        Sélectionnés
+        <span class="nav-count count-selected" id="nav-selected">18</span>
+      </div>
+
+      <div class="nav-label" style="margin-top:8px;">Sélection</div>
+
+      <div class="nav-item" onclick="switchView('delib', this)">
+        <span class="icon">⚖️</span>
+        Délibération finale
+        <span class="nav-count count-neutral">50</span>
+      </div>
+
+      <div class="nav-label" style="margin-top:8px;">Compte</div>
+
+      <div class="nav-item" onclick="showToast('Déconnexion...','warn')">
+        <span class="icon">🔒</span>
+        Se déconnecter
+      </div>
+    </nav>
+
+    <div class="sidebar-progress">
+      <div class="prog-label">Ma progression</div>
+      <div class="prog-track">
+        <div class="prog-fill" style="width:54%;"></div>
+      </div>
+      <div class="prog-val">27 / 50 films notés</div>
+    </div>
+  </aside>
+
+  <!-- ══════════ MAIN ══════════ -->
+  <div class="main">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <span class="topbar-title" id="topbar-title">Films à évaluer</span>
+      <div class="topbar-sep"></div>
+      <span class="topbar-info" id="topbar-info">Présélection Phase 1 — tous thèmes</span>
+      <div class="topbar-right">
+        <span class="phase-badge phase-1" id="phase-badge">Phase 1 — Présélection générale</span>
+      </div>
+    </div>
+
+    <!-- ══════ VUE ÉVALUATION ══════ -->
+    <div class="view" id="view-eval">
+
+      <!-- Liste films -->
+      <div class="film-list">
+        <div class="list-header">
+          <div class="list-tabs">
+            <div class="ltab active" onclick="setTab(this,'À noter')">À noter (23)</div>
+            <div class="ltab" onclick="setTab(this,'Notés')">Notés (27)</div>
+            <div class="ltab" onclick="setTab(this,'Tous')">Tous (50)</div>
+          </div>
+        </div>
+        <div class="list-scroll" id="film-list-scroll"></div>
+      </div>
+
+      <!-- Panneau détail -->
+      <div class="detail">
+        <div class="detail-scroll">
+
+          <!-- Player (YouTube embed simulé) -->
+          <div class="player-wrap">
+            <div class="player-screen">
+              <div class="play-center" onclick="togglePlay(this)">▶</div>
+              <div class="player-sub-bar">"Les machines apprennent à rêver."</div>
+              <div class="yt-badge">YouTube</div>
+            </div>
+            <div class="player-ctrl">
+              <div class="ctrl-progress">
+                <div class="ctrl-bar">
+                  <div class="ctrl-bar-fill" id="pbar" style="width:42%;"></div>
+                </div>
+                <span class="ctrl-time" id="ptime">0:25 / 1:00</span>
+              </div>
+              <div class="ctrl-buttons">
+                <div class="ctrl-left">
+                  <button class="cbtn">⏮</button>
+                  <button class="cbtn play-btn" onclick="togglePlay2(this)">▶</button>
+                  <button class="cbtn">⏭</button>
+                  <button class="cbtn">🔊</button>
+                  <span style="font-size:0.75rem;color:var(--mist);" id="player-film-name">Rêves de Silicium</span>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;">
+                  <span class="yt-info"><span class="yt-check">✓</span> Copyright OK · YouTube API</span>
+                  <span class="cc-btn">CC FR</span>
+                  <button class="cbtn">⛶</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Infos film -->
+          <div class="film-header">
+            <div>
+              <div class="film-title-main" id="d-title">Rêves de Silicium</div>
+              <div class="film-author-main" id="d-author">Léa Fontaine · France · 2026</div>
+              <div class="film-tags">
+                <span class="ftag ftag-img">Image IA</span>
+                <span class="ftag ftag-tool" id="d-tools">Runway ML · Sora · MusicGen</span>
+              </div>
+            </div>
+            <div class="avg-block">
+              <div class="avg-num" id="d-avg" style="color:var(--aurora);">8.2</div>
+              <div class="avg-label">moy. jury /10</div>
+            </div>
+          </div>
+
+          <!-- Métadonnées -->
+          <div class="meta-row">
+            <div class="meta-cell">
+              <div class="ml">Durée</div>
+              <div class="mv mono" id="d-dur">00:59.8</div>
+            </div>
+            <div class="meta-cell">
+              <div class="ml">Format</div>
+              <div class="mv">MP4 · 1080p</div>
+            </div>
+            <div class="meta-cell">
+              <div class="ml">Sous-titres</div>
+              <div class="mv ok">✓ FR</div>
+            </div>
+            <div class="meta-cell">
+              <div class="ml">Copyright</div>
+              <div class="mv ok">✓ Vérifié</div>
+            </div>
+          </div>
+
+          <!-- Fiche IA — CDC : champs obligatoires scénario/image/post-prod -->
+          <div class="section-card">
+            <h4>Fiche IA — Détails obligatoires</h4>
+            <div class="ia-grid">
+              <div class="ia-cell">
+                <div class="ia-type">Scénario</div>
+                <div class="ia-tools" id="d-ia-sc">ChatGPT-4o · Claude</div>
+              </div>
+              <div class="ia-cell">
+                <div class="ia-type">Image / Vidéo</div>
+                <div class="ia-tools" id="d-ia-img">Runway ML Gen-3 · Sora</div>
+              </div>
+              <div class="ia-cell">
+                <div class="ia-type">Post-production</div>
+                <div class="ia-tools" id="d-ia-post">MusicGen · ElevenLabs · Firefly</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Note de démarche -->
+          <div class="section-card">
+            <h4>Note de démarche créative</h4>
+            <p id="d-note">"J'ai travaillé avec Runway ML pour générer des séquences oniriques, puis dirigé les mouvements de caméra image par image. Le son est composé via MusicGen. Ce film explore la porosité entre mémoire humaine et apprentissage machine."</p>
+          </div>
+
+          <!-- Votes des autres jurés -->
+          <div class="section-card">
+            <h4>Notes du jury</h4>
+            <div class="votes-list">
+              <div>
+                <div class="vote-row">
+                  <div class="vote-avatar va-1">ML</div>
+                  <div style="flex:1;">
+                    <div class="vote-name">Marie Lefebvre</div>
+                    <div class="vote-role">Présidente · Réalisatrice</div>
+                  </div>
+                  <div class="vote-score high">9</div>
+                </div>
+                <div class="vote-comment">"Maîtrise de la durée exceptionnelle, narration très forte pour 60 secondes."</div>
+              </div>
+              <div>
+                <div class="vote-row">
+                  <div class="vote-avatar va-2">PD</div>
+                  <div style="flex:1;">
+                    <div class="vote-name">Pierre Dubois</div>
+                    <div class="vote-role">Directeur artistique</div>
+                  </div>
+                  <div class="vote-score mid">7.5</div>
+                </div>
+                <div class="vote-comment">"Esthétique cohérente. Fin un peu abrupte."</div>
+              </div>
+              <div>
+                <div class="vote-row">
+                  <div class="vote-avatar va-3">KI</div>
+                  <div style="flex:1;">
+                    <div class="vote-name">Kenji Ito</div>
+                    <div class="vote-role">Artiste numérique</div>
+                  </div>
+                  <div class="vote-score high">8</div>
+                </div>
+                <div class="vote-comment">"Beau travail sonore, transitions à améliorer."</div>
+              </div>
+              <div>
+                <div class="vote-row" style="opacity:0.4;border-style:dashed;">
+                  <div class="vote-avatar va-4">SE</div>
+                  <div style="flex:1;">
+                    <div class="vote-name">Sofia Eriksson</div>
+                    <div class="vote-role">En attente de notation</div>
+                  </div>
+                  <div class="vote-score none">—</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /detail-scroll -->
+
+        <!-- ══ PANNEAU NOTATION — CDC : 1 à 10 + commentaires ══ -->
+        <div class="notation-panel">
+          <div class="notation-top">
+            <span class="notation-label">Votre note</span>
+            <div class="score-btns" id="score-btns">
+              <button class="sbtn" onclick="pickScore(this,1)">1</button>
+              <button class="sbtn" onclick="pickScore(this,2)">2</button>
+              <button class="sbtn" onclick="pickScore(this,3)">3</button>
+              <button class="sbtn" onclick="pickScore(this,4)">4</button>
+              <button class="sbtn" onclick="pickScore(this,5)">5</button>
+              <button class="sbtn" onclick="pickScore(this,6)">6</button>
+              <button class="sbtn" onclick="pickScore(this,7)">7</button>
+              <button class="sbtn active" onclick="pickScore(this,8)">8</button>
+              <button class="sbtn" onclick="pickScore(this,9)">9</button>
+              <button class="sbtn" onclick="pickScore(this,10)">10</button>
+            </div>
+          </div>
+          <div class="notation-bottom">
+            <div class="comment-wrap">
+              <div class="comment-label">Commentaire (visible par le jury)</div>
+              <textarea class="comment-input" placeholder="Ajoutez un commentaire pour les délibérations...">Maîtrise de la durée exceptionnelle, narration très forte.</textarea>
+            </div>
+            <div class="decision-btns">
+              <button class="dbtn dbtn-select" onclick="decide('select')">✓ Sélectionner</button>
+              <div class="dbtn-row">
+                <button class="dbtn dbtn-pending" onclick="decide('pending')">⏸ Attente</button>
+                <button class="dbtn dbtn-reject"  onclick="decide('reject')">✕ Rejeter</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /detail -->
+    </div><!-- /view-eval -->
+
+    <!-- ══════ VUE DÉLIBÉRATION ══════ -->
+    <div class="delib-view" id="view-delib">
+      <div class="delib-header">
+        <div>
+          <h2>Délibération finale</h2>
+        </div>
+        <button class="export-btn" onclick="showToast('Export CSV en cours...','warn')">
+          📤 Exporter palmarès CSV
+        </button>
+      </div>
+      <div class="delib-sub">Classement par score moyen · 4 membres du jury · 50 films en compétition officielle</div>
+
+      <!-- Phases de présélection (CDC : 2 phases) -->
+      <div class="phase-tabs">
+        <div class="ptab active" onclick="setPhaseTab(this,1)">Phase 1 — Présélection générale (20 000 → 50)</div>
+        <div class="ptab ptab-2" onclick="setPhaseTab(this,2)">Phase 2 — Par thématique (50 → Palmarès)</div>
+      </div>
+
+      <table class="delib-table" id="delib-table"></table>
+    </div>
+
+  </div><!-- /main -->
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    /* ── DONNÉES ── */
+    const films = [
+      { id:1,  title:"Rêves de Silicium",    author:"Léa Fontaine",    country:"France",    type:"img", scores:[9,7.5,8,null], status:"selected",
+        tools:"Runway ML · Sora · MusicGen", iasc:"ChatGPT-4o · Claude", iaimg:"Runway ML Gen-3 · Sora", iapost:"MusicGen · ElevenLabs",
+        note:"J'ai travaillé avec Runway ML pour générer des séquences oniriques, puis dirigé les mouvements de caméra image par image.", dur:"00:59.8", bg:"#0d1b3e" },
+      { id:2,  title:"L'Enfant-Pixel",       author:"Amira Ben Said",  country:"Tunisie",   type:"hyb", scores:[8.5,9,8,null],  status:"selected",
+        tools:"Pika Labs · Udio", iasc:"GPT-4o", iaimg:"Pika Labs 1.5", iapost:"Udio · Premiere Pro",
+        note:"Un film sur la frontière entre l'enfance et l'IA générative.", dur:"01:02.1", bg:"#0a2e1a" },
+      { id:3,  title:"Archipel 2048",        author:"Kenji Ito",       country:"Japon",     type:"img", scores:[7,8,null,7],    status:"pending",
+        tools:"Stable Diffusion · Kling", iasc:"Claude 3.5", iaimg:"Stable Diffusion XL · Kling", iapost:"Adobe Firefly",
+        note:"Réflexion sur les îles artificielles et la montée des eaux.", dur:"01:00.0", bg:"#2e0a0a" },
+      { id:4,  title:"Mémoire Vive",         author:"Carlos Ruiz",     country:"Espagne",   type:"hyb", scores:[6,7,6.5,null],  status:"pending",
+        tools:"Midjourney · ElevenLabs", iasc:"Gemini", iaimg:"Midjourney V6", iapost:"ElevenLabs · Runway",
+        note:"La mémoire d'un être humain transposée dans une machine.", dur:"01:28.0", bg:"#2e1a0a" },
+      { id:5,  title:"Nouveaux Soleils",     author:"Priya Mehta",     country:"Inde",      type:"img", scores:[9,8.5,9,8],     status:"selected",
+        tools:"Sora · MusicGen", iasc:"Claude", iaimg:"Sora Turbo", iapost:"MusicGen · DaVinci",
+        note:"Une aube nouvelle pour l'humanité guidée par l'IA.", dur:"01:00.0", bg:"#1a2e0a" },
+      { id:6,  title:"Frontières Douces",    author:"Omar Diallo",     country:"Sénégal",   type:"son", scores:[5,6,null,5.5],  status:"rejected",
+        tools:"ElevenLabs · Suno", iasc:"Mistral", iaimg:"Aucun", iapost:"Suno AI · ElevenLabs",
+        note:"Un voyage sonore entre deux cultures.", dur:"01:30.0", bg:"#2e0a2e" },
+      { id:7,  title:"Vague Numérique",      author:"Sofia Ek",        country:"Suède",     type:"hyb", scores:[7.5,7,8,7],     status:"selected",
+        tools:"Runway · Suno", iasc:"GPT-4", iaimg:"Runway ML", iapost:"Suno AI",
+        note:"Le numérique comme vague déferlante sur nos sociétés.", dur:"00:58.5", bg:"#0a2e2e" },
+      { id:8,  title:"Jardin des Codes",     author:"Lin Wei",         country:"Chine",     type:"img", scores:[8,null,7.5,8],  status:"pending",
+        tools:"Kling · Firefly", iasc:"Qwen", iaimg:"Kling AI", iapost:"Adobe Firefly",
+        note:"Un jardin zen généré entièrement par IA.", dur:"01:00.0", bg:"#1a2e2e" },
+      { id:9,  title:"Signal Perdu",         author:"Aya Tanaka",      country:"Japon",     type:"hyb", scores:[null,null,null,null], status:"pending",
+        tools:"Pika · Udio", iasc:"GPT-4o", iaimg:"Pika Labs", iapost:"Udio",
+        note:"Un signal dans le bruit numérique.", dur:"01:00.0", bg:"#1a0a3e" },
+      { id:10, title:"Horizon Zéro",         author:"Mia Schultz",     country:"Allemagne", type:"img", scores:[8,8.5,8,7.5],   status:"selected",
+        tools:"Sora · Adobe Firefly", iasc:"Claude", iaimg:"Sora", iapost:"Adobe Firefly",
+        note:"L'horizon comme métaphore du futur possible.", dur:"01:00.0", bg:"#0a1a0a" },
+    ];
+
+    function avg(scores) {
+      const v = scores.filter(s => s !== null);
+      if (!v.length) return null;
+      return (v.reduce((a,b)=>a+b,0)/v.length).toFixed(1);
+    }
+
+    /* ── FILM LIST ── */
+    let activeFilm = 1;
+    let playInterval = null;
+    let isPlaying = false;
+    let progress = 42;
+
+    function renderList() {
+      const el = document.getElementById('film-list-scroll');
+      el.innerHTML = films.map(f => {
+        const a = avg(f.scores);
+        const sc = a === null ? 'fs-none' : a >= 8 ? 'fs-high' : a >= 6 ? 'fs-mid' : 'fs-low';
+        const ds = f.status === 'selected' ? 's-select' : f.status === 'rejected' ? 's-reject' : 's-pending';
+        return `<div class="film-item ${f.id===activeFilm?'selected':''}" onclick="loadFilm(${f.id})">
+          <div class="fi-thumb" style="background:${f.bg};">
+            🎬
+            <div class="fi-status-dot ${ds}"></div>
+          </div>
+          <div class="fi-info">
+            <div class="fi-title">${f.title}</div>
+            <div class="fi-sub">${f.author} · ${f.country}</div>
+          </div>
+          <div class="fi-score ${sc}">${a||'—'}</div>
+        </div>`;
+      }).join('');
+    }
+
+    function loadFilm(id) {
+      activeFilm = id;
+      const f = films.find(x=>x.id===id);
+      document.getElementById('d-title').textContent = f.title;
+      document.getElementById('d-author').textContent = `${f.author} · ${f.country} · 2026`;
+      document.getElementById('d-tools').textContent = f.tools;
+      document.getElementById('d-dur').textContent = f.dur;
+      document.getElementById('d-ia-sc').textContent = f.iasc;
+      document.getElementById('d-ia-img').textContent = f.iaimg;
+      document.getElementById('d-ia-post').textContent = f.iapost;
+      document.getElementById('d-note').textContent = `"${f.note}"`;
+      document.getElementById('player-film-name').textContent = f.title;
+      const a = avg(f.scores);
+      const avgEl = document.getElementById('d-avg');
+      avgEl.textContent = a || '—';
+      avgEl.style.color = a === null ? 'var(--mist)' : a >= 8 ? 'var(--aurora)' : a >= 6 ? 'var(--solar)' : 'var(--coral)';
+      // Reset player
+      stopPlayer();
+      progress = 0;
+      document.getElementById('pbar').style.width = '0%';
+      document.getElementById('ptime').textContent = '0:00 / 1:00';
+      renderList();
+    }
+
+    /* ── PLAYER ── */
+    function togglePlay(el) {
+      isPlaying = !isPlaying;
+      el.textContent = isPlaying ? '⏸' : '▶';
+      el.style.paddingLeft = isPlaying ? '0' : '4px';
+      const btn2 = document.querySelector('.cbtn.play-btn');
+      if (btn2) { btn2.textContent = isPlaying ? '⏸' : '▶'; btn2.style.paddingLeft = isPlaying ? '0' : '2px'; }
+      if (isPlaying) startProgress(); else stopPlayer();
+    }
+    function togglePlay2(el) {
+      isPlaying = !isPlaying;
+      el.textContent = isPlaying ? '⏸' : '▶';
+      el.style.paddingLeft = isPlaying ? '0' : '2px';
+      const bigBtn = document.querySelector('.play-center');
+      if (bigBtn) { bigBtn.textContent = isPlaying ? '⏸' : '▶'; bigBtn.style.paddingLeft = isPlaying ? '0' : '4px'; }
+      if (isPlaying) startProgress(); else stopPlayer();
+    }
+    function startProgress() {
+      if (playInterval) clearInterval(playInterval);
+      playInterval = setInterval(() => {
+        progress = Math.min(100, progress + 0.4);
+        document.getElementById('pbar').style.width = progress + '%';
+        const s = Math.round(progress * 0.6);
+        document.getElementById('ptime').textContent = `0:${String(s).padStart(2,'0')} / 1:00`;
+        if (progress >= 100) { isPlaying = false; clearInterval(playInterval); }
+      }, 150);
+    }
+    function stopPlayer() { if (playInterval) clearInterval(playInterval); isPlaying = false; }
+
+    /* ── SCORE 1-10 ── */
+    let currentScore = 8;
+    function pickScore(btn, val) {
+      document.querySelectorAll('.sbtn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentScore = val;
+    }
+
+    /* ── DÉCISION ── */
+    function decide(type) {
+      const f = films.find(x=>x.id===activeFilm);
+      if (!f) return;
+      f.status = type === 'select' ? 'selected' : type === 'reject' ? 'rejected' : 'pending';
+      const msgs = {
+        select: ['✓ Sélectionné : ' + f.title, 'ok'],
+        reject: ['✕ Rejeté : ' + f.title, 'err'],
+        pending: ['⏸ En attente : ' + f.title, 'warn'],
+      };
+      showToast(...msgs[type]);
+      renderList();
+      updateCounts();
+      // Passer au film suivant après 600ms
+      setTimeout(() => {
+        const idx = films.findIndex(x=>x.id===activeFilm);
+        if (films[idx+1]) loadFilm(films[idx+1].id);
+      }, 700);
+    }
+
+    function updateCounts() {
+      document.getElementById('nav-pending').textContent = films.filter(f=>f.status==='pending').length;
+      document.getElementById('nav-selected').textContent = films.filter(f=>f.status==='selected').length;
+    }
+
+    /* ── TABS ── */
+    function setTab(el, label) {
+      document.querySelectorAll('.ltab').forEach(t=>t.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    /* ── VUES ── */
+    function switchView(view, navEl) {
+      document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+      if (navEl) navEl.classList.add('active');
+
+      if (view === 'eval') {
+        document.getElementById('view-eval').style.display = 'flex';
+        document.getElementById('view-delib').classList.remove('active');
+        document.getElementById('topbar-title').textContent = 'Films à évaluer';
+        document.getElementById('topbar-info').textContent = 'Présélection Phase 1 — tous thèmes';
+        document.getElementById('phase-badge').textContent = 'Phase 1 — Présélection générale';
+        document.getElementById('phase-badge').className = 'phase-badge phase-1';
+      } else {
+        document.getElementById('view-eval').style.display = 'none';
+        document.getElementById('view-delib').classList.add('active');
+        document.getElementById('topbar-title').textContent = 'Délibération finale';
+        document.getElementById('topbar-info').textContent = '50 films sélectionnés · classement par score moyen';
+        document.getElementById('phase-badge').textContent = 'Phase 2 — Par thématique';
+        document.getElementById('phase-badge').className = 'phase-badge phase-2';
+        renderDelib();
+      }
+    }
+
+    /* ── DÉLIBÉRATION ── */
+    function renderDelib() {
+      const sorted = [...films].sort((a,b) => (avg(b.scores)||0) - (avg(a.scores)||0));
+      const tbody = sorted.map((f,i) => {
+        const a = avg(f.scores);
+        const ac = a===null?'':a>=8?'high':a>=6?'mid':'low';
+        const rk = i<3?'gold':'';
+        const sp = f.status==='selected'?'sp-sel':f.status==='rejected'?'sp-rej':'sp-pen';
+        const spTxt = f.status==='selected'?'Sélectionné':f.status==='rejected'?'Rejeté':'En attente';
+        const sc = (s) => s!==null ? `<span style="font-family:var(--font-mono);font-size:0.78rem;">${s}</span>` : `<span style="color:rgba(136,146,176,0.3)">—</span>`;
+        return `<tr onclick="switchView('eval');loadFilm(${f.id})">
+          <td><span class="rank ${rk}">${i+1}</span></td>
+          <td><strong>${f.title}</strong></td>
+          <td style="color:var(--mist);font-size:0.78rem;">${f.author}</td>
+          <td>${sc(f.scores[0])}</td>
+          <td>${sc(f.scores[1])}</td>
+          <td>${sc(f.scores[2])}</td>
+          <td>${sc(f.scores[3])}</td>
+          <td><span class="avg ${ac}">${a||'—'}</span></td>
+          <td><span class="status-pill ${sp}">${spTxt}</span></td>
+        </tr>`;
+      }).join('');
+
+      document.getElementById('delib-table').innerHTML = `
+        <thead>
+          <tr>
+            <th>#</th><th>Film</th><th>Réalisateur</th>
+            <th>ML</th><th>PD</th><th>KI</th><th>SE</th>
+            <th>Moy.</th><th>Statut</th>
+          </tr>
+        </thead>
+        <tbody>${tbody}</tbody>`;
+    }
+
+    function setPhaseTab(el, phase) {
+      document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));
+      el.classList.add('active');
+      const badge = document.getElementById('phase-badge');
+      badge.textContent = phase===1 ? 'Phase 1 — Présélection générale' : 'Phase 2 — Par thématique';
+      badge.className = 'phase-badge ' + (phase===1 ? 'phase-1' : 'phase-2');
+    }
+
+    /* ── TOAST ── */
+    function showToast(msg, type='ok') {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = `toast ${type} show`;
+      setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    /* ── INIT ── */
+    renderList();
+    updateCounts();
+  </script>
+
+  <style>
+    .dev-nav{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.85);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.1);border-radius:50px;padding:8px 16px;display:flex;align-items:center;gap:12px;z-index:9999;font-family:Inter,sans-serif;font-size:12px;}
+    .dev-label{color:rgba(255,255,255,.4);letter-spacing:.05em;text-transform:uppercase;}
+    .dev-links{display:flex;gap:6px;}
+    .dev-btn{color:rgba(255,255,255,.6);text-decoration:none;padding:4px 10px;border-radius:20px;transition:all .2s;}
+    .dev-btn:hover,.dev-btn.curr{background:rgba(255,255,255,.12);color:#fff;}
+  </style>
+  <div class="dev-nav">
+    <div class="dev-label">Prototype</div>
+    <div class="dev-links">
+      <a href="prototype.html" class="dev-btn">🏠</a>
+      <a href="verification-email.html" class="dev-btn">✉️</a>
+      <a href="formulaire-depot.html" class="dev-btn">📝</a>
+      <a href="admin-jury.html" class="dev-btn curr">⚖️</a>
+    </div>
+  </div>
+</body>
+</html>

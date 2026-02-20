@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Déposer mon film — marsAI 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --solar:      #F5E642;
+      --aurora:     #4EFFCE;
+      --deep-sky:   #0A0F2E;
+      --horizon:    #1A1F4E;
+      --surface:    #111830;
+      --coral:      #FF6B6B;
+      --lavande:    #C084FC;
+      --white-soft: #F0F4FF;
+      --mist:       #8892B0;
+      --font-display: 'Syne', sans-serif;
+      --font-body:    'Inter', sans-serif;
+      --font-mono:    'JetBrains Mono', monospace;
+      --ease: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--deep-sky);
+      color: var(--white-soft);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+
+    /* ─── GRAIN ─── */
+    body::before {
+      content: "";
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: 0.025; pointer-events: none; z-index: 9999;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      background: rgba(10,15,46,0.95);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      backdrop-filter: blur(12px);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 48px;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .logo { font-family: var(--font-display); font-size: 1rem; font-weight: 800; }
+    .logo .ai { color: var(--aurora); }
+    .header-right { display: flex; align-items: center; gap: 16px; }
+    .save-indicator {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.72rem; color: var(--mist);
+    }
+    .save-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--aurora); animation: pulse-save 3s ease-in-out infinite; }
+    @keyframes pulse-save { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    .back-link { font-size: 0.82rem; color: var(--mist); text-decoration: none; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+    .back-link:hover { color: var(--white-soft); }
+
+    /* ─── LAYOUT 2 colonnes ─── */
+    .page-wrap {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      flex: 1;
+      max-width: 1140px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 40px 24px;
+      gap: 40px;
+      align-items: start;
+    }
+
+    /* ─── SIDEBAR GAUCHE ─── */
+    .form-sidebar {
+      position: sticky;
+      top: 88px;
+    }
+    .form-title-block { margin-bottom: 32px; }
+    .form-eyebrow {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--aurora); margin-bottom: 8px;
+    }
+    .form-main-title {
+      font-family: var(--font-display);
+      font-size: 1.5rem; font-weight: 800;
+      letter-spacing: -0.02em; line-height: 1.15;
+      margin-bottom: 10px;
+    }
+    .form-main-sub { font-size: 0.82rem; color: var(--mist); line-height: 1.6; }
+
+    /* Steps nav */
+    .steps-nav { display: flex; flex-direction: column; gap: 4px; margin-bottom: 28px; }
+    .step-nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border-radius: 10px;
+      cursor: pointer; transition: background 0.15s;
+      border: 1px solid transparent;
+    }
+    .step-nav-item.active {
+      background: rgba(78,255,206,0.08);
+      border-color: rgba(78,255,206,0.2);
+    }
+    .step-nav-item.done { opacity: 0.7; }
+    .step-nav-item.locked { opacity: 0.35; cursor: not-allowed; }
+    .sni-circle {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.72rem; font-weight: 700;
+      flex-shrink: 0; transition: all 0.3s;
+    }
+    .sni-circle.pending { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: var(--mist); }
+    .sni-circle.active  { background: var(--aurora); color: var(--deep-sky); box-shadow: 0 0 14px rgba(78,255,206,0.4); }
+    .sni-circle.done    { background: rgba(78,255,206,0.15); border: 1px solid rgba(78,255,206,0.3); color: var(--aurora); font-size: 0.8rem; }
+    .sni-text .sni-title { font-size: 0.84rem; font-weight: 600; color: var(--white-soft); }
+    .sni-text .sni-sub   { font-size: 0.7rem; color: var(--mist); margin-top: 1px; }
+    .step-nav-item.active .sni-text .sni-title { color: var(--aurora); }
+
+    /* Règles rapides */
+    .rules-block {
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 16px 18px;
+    }
+    .rules-block h4 { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mist); margin-bottom: 12px; }
+    .rule-item { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 9px; font-size: 0.78rem; color: var(--mist); line-height: 1.5; }
+    .rule-item:last-child { margin-bottom: 0; }
+    .rule-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--aurora); flex-shrink: 0; margin-top: 6px; }
+    .rule-item strong { color: var(--white-soft); }
+
+    /* ─── CONTENU FORMULAIRE ─── */
+    .form-content { min-width: 0; }
+
+    /* Step panel */
+    .step-panel { display: none; animation: fadeUp 0.35s var(--ease); }
+    .step-panel.active { display: block; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+
+    .step-panel-header {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 28px; padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .step-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; flex-shrink: 0;
+    }
+    .si-1 { background: rgba(78,255,206,0.1); }
+    .si-2 { background: rgba(192,132,252,0.1); }
+    .si-3 { background: rgba(245,230,66,0.08); }
+    .si-4 { background: rgba(255,107,107,0.08); }
+    .step-panel-header h2 {
+      font-family: var(--font-display);
+      font-size: 1.25rem; font-weight: 800;
+    }
+    .step-panel-header p { font-size: 0.8rem; color: var(--mist); margin-top: 2px; }
+
+    /* ─── CHAMPS ─── */
+    .fields-grid { display: grid; gap: 18px; }
+    .fields-grid.col2 { grid-template-columns: 1fr 1fr; }
+    .fields-grid.col3 { grid-template-columns: 1fr 1fr 1fr; }
+
+    .field { display: flex; flex-direction: column; gap: 7px; }
+    .field.span2 { grid-column: span 2; }
+    .field-label {
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--mist);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .req { color: var(--coral); font-size: 0.65rem; }
+    .opt { color: var(--mist); font-size: 0.65rem; font-weight: 400; text-transform: none; opacity: 0.7; }
+
+    .field input, .field select, .field textarea {
+      background: rgba(255,255,255,0.04);
+      border: 1.5px solid rgba(255,255,255,0.09);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      color: var(--white-soft);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+      width: 100%;
+    }
+    .field input::placeholder,
+    .field textarea::placeholder { color: var(--mist); opacity: 0.45; }
+    .field input:focus, .field select:focus, .field textarea:focus {
+      border-color: rgba(78,255,206,0.45);
+      box-shadow: 0 0 0 3px rgba(78,255,206,0.08);
+      background: rgba(78,255,206,0.02);
+    }
+    .field input.valid { border-color: rgba(78,255,206,0.35); }
+    .field input.err, .field textarea.err { border-color: rgba(255,107,107,0.5); }
+    .field select { cursor: pointer; }
+    .field select option { background: var(--horizon); }
+    .field textarea { resize: vertical; line-height: 1.6; }
+
+    .char-counter {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--mist);
+      text-align: right;
+      margin-top: -4px;
+    }
+    .char-counter.warn { color: var(--solar); }
+    .char-counter.over { color: var(--coral); }
+
+    .field-hint {
+      font-size: 0.72rem; color: var(--mist); opacity: 0.7; margin-top: -2px; line-height: 1.5;
+    }
+    .field-error {
+      font-size: 0.72rem; color: var(--coral);
+      display: none; align-items: center; gap: 5px;
+    }
+    .field-error.show { display: flex; }
+
+    /* ─── SECTION SÉPARATEUR ─── */
+    .section-sep {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      margin: 24px 0;
+    }
+    .section-title-inline {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--mist);
+      margin-bottom: 16px; margin-top: 4px;
+    }
+
+    /* ─── UPLOAD ZONE ─── */
+    .upload-zone {
+      border: 2px dashed rgba(78,255,206,0.25);
+      border-radius: 14px;
+      padding: 36px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: rgba(78,255,206,0.02);
+      position: relative;
+    }
+    .upload-zone:hover, .upload-zone.dragover {
+      border-color: rgba(78,255,206,0.55);
+      background: rgba(78,255,206,0.05);
+    }
+    .upload-zone input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .uz-icon { font-size: 2rem; margin-bottom: 10px; display: block; }
+    .uz-title { font-size: 0.92rem; font-weight: 600; margin-bottom: 5px; }
+    .uz-sub { font-size: 0.75rem; color: var(--mist); line-height: 1.5; }
+    .uz-specs {
+      display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 12px;
+    }
+    .uz-spec {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 5px; padding: 3px 10px;
+      font-family: var(--font-mono); font-size: 0.68rem; color: var(--mist);
+    }
+
+    /* Upload progress */
+    .upload-progress {
+      display: none;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 16px 20px;
+    }
+    .upload-progress.show { display: block; }
+    .up-file { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .up-file-icon {
+      width: 36px; height: 36px; border-radius: 8px;
+      background: rgba(78,255,206,0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }
+    .up-file-name { font-size: 0.85rem; font-weight: 600; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .up-file-size { font-family: var(--font-mono); font-size: 0.72rem; color: var(--mist); }
+    .up-bar-track { height: 5px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
+    .up-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--aurora), var(--lavande)); transition: width 0.3s; }
+    .up-status { display: flex; align-items: center; justify-content: space-between; }
+    .up-pct { font-family: var(--font-mono); font-size: 0.72rem; color: var(--aurora); }
+    .up-msg { font-size: 0.72rem; color: var(--mist); }
+
+    /* Durée check */
+    .duration-result {
+      display: none;
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-top: 10px;
+      display: none;
+      align-items: center;
+      gap: 14px;
+    }
+    .duration-result.show { display: flex; }
+    .duration-result.ok  { background: rgba(78,255,206,0.07); border: 1px solid rgba(78,255,206,0.2); }
+    .duration-result.warn { background: rgba(245,230,66,0.06); border: 1px solid rgba(245,230,66,0.2); }
+    .duration-result.err { background: rgba(255,107,107,0.07); border: 1px solid rgba(255,107,107,0.2); }
+    .dur-icon { font-size: 1.2rem; flex-shrink: 0; }
+    .dur-text { flex: 1; }
+    .dur-value { font-family: var(--font-mono); font-size: 1rem; font-weight: 500; }
+    .dur-value.ok   { color: var(--aurora); }
+    .dur-value.warn { color: var(--solar); }
+    .dur-value.err  { color: var(--coral); }
+    .dur-label { font-size: 0.72rem; color: var(--mist); margin-top: 2px; }
+
+    /* Upload sous-titres */
+    .subtitle-upload {
+      border: 1.5px dashed rgba(255,255,255,0.12);
+      border-radius: 10px;
+      padding: 18px 20px;
+      display: flex; align-items: center; gap: 16px;
+      cursor: pointer; transition: all 0.2s;
+      position: relative;
+    }
+    .subtitle-upload:hover { border-color: rgba(192,132,252,0.4); background: rgba(192,132,252,0.03); }
+    .subtitle-upload input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .sub-icon { font-size: 1.4rem; flex-shrink: 0; }
+    .sub-text .sub-title { font-size: 0.85rem; font-weight: 600; }
+    .sub-text .sub-sub { font-size: 0.72rem; color: var(--mist); margin-top: 2px; }
+    .sub-status { margin-left: auto; font-size: 0.72rem; }
+    .sub-status.added { color: var(--aurora); }
+
+    /* ─── OUTILS IA ─── */
+    .ia-category {
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+    .ia-cat-header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      cursor: pointer; user-select: none;
+    }
+    .ia-cat-icon { font-size: 1.1rem; }
+    .ia-cat-title { font-size: 0.88rem; font-weight: 700; flex: 1; }
+    .ia-cat-badge {
+      font-size: 0.62rem; font-weight: 700; padding: 2px 8px;
+      border-radius: 9999px; letter-spacing: 0.05em; text-transform: uppercase;
+    }
+    .badge-req { background: rgba(255,107,107,0.12); color: var(--coral); }
+    .badge-opt { background: rgba(255,255,255,0.06); color: var(--mist); }
+    .ia-cat-toggle { color: var(--mist); font-size: 0.75rem; transition: transform 0.2s; }
+    .ia-cat-toggle.open { transform: rotate(180deg); }
+    .ia-cat-body { padding: 16px 18px; }
+
+    /* Checkboxes outils */
+    .tools-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+    .tool-check {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 8px;
+      cursor: pointer; transition: all 0.15s;
+      user-select: none;
+    }
+    .tool-check:hover { background: rgba(255,255,255,0.06); }
+    .tool-check.checked {
+      background: rgba(78,255,206,0.08);
+      border-color: rgba(78,255,206,0.3);
+    }
+    .tool-check.checked .tc-box { background: var(--aurora); border-color: var(--aurora); }
+    .tool-check.checked .tc-box::after { opacity: 1; }
+    .tool-check input { display: none; }
+    .tc-box {
+      width: 16px; height: 16px;
+      border-radius: 4px;
+      border: 1.5px solid rgba(255,255,255,0.2);
+      background: transparent;
+      flex-shrink: 0;
+      position: relative;
+      transition: all 0.15s;
+    }
+    .tc-box::after {
+      content: "✓";
+      position: absolute;
+      inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.55rem;
+      font-weight: 900;
+      color: var(--deep-sky);
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .tc-label { font-size: 0.78rem; font-weight: 500; }
+    .tool-other {
+      display: flex; gap: 8px; align-items: center;
+    }
+    .tool-other input {
+      flex: 1; padding: 9px 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1.5px solid rgba(255,255,255,0.09);
+      border-radius: 8px; font-size: 0.82rem;
+      color: var(--white-soft); outline: none;
+      font-family: var(--font-body);
+      transition: border-color 0.2s;
+    }
+    .tool-other input:focus { border-color: rgba(78,255,206,0.4); }
+    .tool-other input::placeholder { color: var(--mist); opacity: 0.5; }
+
+    /* ─── CHECKBOXES RGPD ─── */
+    .rgpd-checks { display: flex; flex-direction: column; gap: 12px; }
+    .rgpd-item {
+      display: flex; gap: 14px; align-items: flex-start;
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1.5px solid rgba(255,255,255,0.07);
+      border-radius: 10px;
+      cursor: pointer; transition: all 0.15s;
+      user-select: none;
+    }
+    .rgpd-item:hover { background: rgba(255,255,255,0.05); }
+    .rgpd-item.checked {
+      background: rgba(78,255,206,0.06);
+      border-color: rgba(78,255,206,0.25);
+    }
+    .rgpd-item input { display: none; }
+    .rgpd-box {
+      width: 20px; height: 20px; border-radius: 5px; flex-shrink: 0;
+      border: 1.5px solid rgba(255,255,255,0.2);
+      background: transparent; margin-top: 1px;
+      position: relative; transition: all 0.15s;
+    }
+    .rgpd-item.checked .rgpd-box {
+      background: var(--aurora); border-color: var(--aurora);
+    }
+    .rgpd-item.checked .rgpd-box::after {
+      content: "✓"; position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; font-weight: 900; color: var(--deep-sky);
+    }
+    .rgpd-text .rgpd-title { font-size: 0.85rem; font-weight: 600; margin-bottom: 3px; }
+    .rgpd-text .rgpd-sub { font-size: 0.75rem; color: var(--mist); line-height: 1.55; }
+    .rgpd-req-note { font-size: 0.72rem; color: var(--coral); margin-top: 6px; display: none; }
+    .rgpd-req-note.show { display: block; }
+
+    /* ─── RÉCAP ─── */
+    .recap-block {
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .recap-header {
+      padding: 12px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--mist);
+    }
+    .recap-body { padding: 14px 18px; display: flex; flex-direction: column; gap: 10px; }
+    .recap-row { display: flex; align-items: flex-start; gap: 12px; }
+    .recap-key { font-size: 0.75rem; color: var(--mist); min-width: 140px; flex-shrink: 0; }
+    .recap-val { font-size: 0.82rem; color: var(--white-soft); font-weight: 500; flex: 1; }
+    .recap-val.mono { font-family: var(--font-mono); }
+    .recap-val.ok { color: var(--aurora); }
+
+    /* ─── NAVIGATION BOUTONS ─── */
+    .step-nav-btns {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 32px; padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .btn-prev {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px; padding: 12px 24px;
+      font-size: 0.88rem; font-weight: 600;
+      color: var(--mist); cursor: pointer;
+      transition: all 0.2s; font-family: var(--font-body);
+    }
+    .btn-prev:hover { color: var(--white-soft); border-color: rgba(255,255,255,0.2); }
+    .btn-next {
+      background: var(--aurora);
+      border: none; border-radius: 10px; padding: 12px 32px;
+      font-family: var(--font-display); font-size: 0.9rem; font-weight: 800;
+      color: var(--deep-sky); cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .btn-next:hover { transform: translateY(-2px); box-shadow: 0 6px 30px rgba(78,255,206,0.35); }
+    .btn-next:disabled { opacity: 0.35; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn-submit {
+      background: linear-gradient(135deg, var(--solar), #e8d500);
+      border: none; border-radius: 10px; padding: 14px 36px;
+      font-family: var(--font-display); font-size: 0.95rem; font-weight: 800;
+      color: var(--deep-sky); cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 30px rgba(245,230,66,0.4); }
+    .btn-submit:disabled { opacity: 0.35; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    /* ─── SUCCÈS ─── */
+    .success-screen {
+      display: none;
+      text-align: center;
+      padding: 48px 24px;
+      animation: fadeUp 0.5s var(--ease);
+    }
+    .success-screen.show { display: block; }
+    .success-ring {
+      width: 96px; height: 96px; border-radius: 50%;
+      background: rgba(78,255,206,0.08);
+      border: 2px solid rgba(78,255,206,0.25);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.5rem; margin: 0 auto 28px;
+      animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes popIn { from{transform:scale(0.4);opacity:0} to{transform:scale(1);opacity:1} }
+    .success-dossier {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(78,255,206,0.08);
+      border: 1px solid rgba(78,255,206,0.25);
+      border-radius: 10px; padding: 10px 20px;
+      font-family: var(--font-mono); font-size: 1rem; color: var(--aurora);
+      margin: 16px auto 28px;
+    }
+    .success-steps {
+      display: flex; flex-direction: column; gap: 8px;
+      max-width: 400px; margin: 0 auto 32px; text-align: left;
+    }
+    .ss-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 16px; background: rgba(255,255,255,0.03);
+      border-radius: 8px; font-size: 0.83rem; color: var(--mist);
+      animation: slideIn 0.4s var(--ease) both;
+    }
+    .ss-item:nth-child(1) { animation-delay: 0.1s; }
+    .ss-item:nth-child(2) { animation-delay: 0.2s; }
+    .ss-item:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes slideIn { from{opacity:0;transform:translateX(-10px)} to{opacity:1;transform:translateX(0)} }
+    .ss-icon { font-size: 1rem; flex-shrink: 0; }
+
+    /* ─── DEV NAV ─── */
+    .dev-nav {
+      position: fixed; bottom: 20px; right: 20px; z-index: 500;
+      display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
+    }
+    .dev-label { font-size: 0.6rem; color: var(--mist); letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.5; }
+    .dev-links { display: flex; gap: 6px; }
+    .dev-btn {
+      background: var(--horizon); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 7px; padding: 7px 12px;
+      font-size: 0.72rem; font-weight: 600;
+      color: var(--white-soft); text-decoration: none;
+      transition: all 0.15s;
+    }
+    .dev-btn:hover, .dev-btn.curr { border-color: rgba(78,255,206,0.4); color: var(--aurora); background: rgba(78,255,206,0.06); }
+
+    @media (max-width: 860px) {
+      .page-wrap { grid-template-columns: 1fr; padding: 24px 16px; }
+      .form-sidebar { position: static; }
+      .fields-grid.col2, .fields-grid.col3 { grid-template-columns: 1fr; }
+      .field.span2 { grid-column: span 1; }
+      .tools-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">mars<span class="ai">AI</span></div>
+    <div class="header-right">
+      <div class="save-indicator">
+        <span class="save-dot"></span>
+        Brouillon sauvegardé automatiquement
+      </div>
+      <a href="prototype.html" class="back-link">← Retour</a>
+    </div>
+  </header>
+
+  <!-- PAGE -->
+  <div class="page-wrap">
+
+    <!-- ══ SIDEBAR ══ -->
+    <aside class="form-sidebar">
+      <div class="form-title-block">
+        <div class="form-eyebrow">Dépôt de film</div>
+        <h1 class="form-main-title">Candidature marsAI 2026</h1>
+        <p class="form-main-sub">Thème : "Imaginez des futurs souhaitables"</p>
+      </div>
+
+      <div class="steps-nav" id="steps-nav">
+        <div class="step-nav-item active" data-step="1" onclick="goStep(1)">
+          <div class="sni-circle active" id="snc-1">1</div>
+          <div class="sni-text">
+            <div class="sni-title">Profil réalisateur</div>
+            <div class="sni-sub">Identité & contact</div>
+          </div>
+        </div>
+        <div class="step-nav-item locked" data-step="2" onclick="goStep(2)">
+          <div class="sni-circle pending" id="snc-2">2</div>
+          <div class="sni-text">
+            <div class="sni-title">Le Film</div>
+            <div class="sni-sub">Titre, synopsis, vidéo</div>
+          </div>
+        </div>
+        <div class="step-nav-item locked" data-step="3" onclick="goStep(3)">
+          <div class="sni-circle pending" id="snc-3">3</div>
+          <div class="sni-text">
+            <div class="sni-title">Fiche IA</div>
+            <div class="sni-sub">Outils & sous-titres</div>
+          </div>
+        </div>
+        <div class="step-nav-item locked" data-step="4" onclick="goStep(4)">
+          <div class="sni-circle pending" id="snc-4">4</div>
+          <div class="sni-text">
+            <div class="sni-title">Confirmation</div>
+            <div class="sni-sub">Récap & RGPD</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rules-block">
+        <h4>Règles essentielles</h4>
+        <div class="rule-item"><div class="rule-dot"></div><span>Durée : <strong>60 secondes</strong> pile</span></div>
+        <div class="rule-item"><div class="rule-dot"></div><span>Formats : <strong>MP4, MOV, WebM</strong></span></div>
+        <div class="rule-item"><div class="rule-dot"></div><span>Résolution min. : <strong>1920×1080</strong></span></div>
+        <div class="rule-item"><div class="rule-dot"></div><span>Taille max. : <strong>2 Go</strong></span></div>
+        <div class="rule-item"><div class="rule-dot"></div><span>Plusieurs films par réalisateur <strong>autorisés</strong></span></div>
+        <div class="rule-item"><div class="rule-dot"></div><span>Ouverture : <strong>2 mois</strong>, fermeture auto</span></div>
+      </div>
+    </aside>
+
+    <!-- ══ CONTENU ══ -->
+    <div class="form-content">
+
+      <!-- ════ ÉTAPE 1 — Profil réalisateur ════ -->
+      <div class="step-panel active" id="step-1">
+        <div class="step-panel-header">
+          <div class="step-icon si-1">👤</div>
+          <div>
+            <h2>Profil réalisateur</h2>
+            <p>Informations d'identité et de contact — conservées 3 ans (RGPD)</p>
+          </div>
+        </div>
+
+        <div class="fields-grid col2">
+
+          <div class="field">
+            <label class="field-label">Prénom <span class="req">● requis</span></label>
+            <input type="text" id="f-prenom" placeholder="Marie" autocomplete="given-name">
+            <div class="field-error" id="err-prenom">Champ requis</div>
+          </div>
+
+          <div class="field">
+            <label class="field-label">Nom <span class="req">● requis</span></label>
+            <input type="text" id="f-nom" placeholder="Fontaine" autocomplete="family-name">
+            <div class="field-error" id="err-nom">Champ requis</div>
+          </div>
+
+          <div class="field span2">
+            <label class="field-label">Nom du groupe / équipe <span class="opt">(si plusieurs réalisateurs)</span></label>
+            <input type="text" id="f-groupe" placeholder="ex: Collectif Aurora, Studio XYZ…" maxlength="200">
+            <div class="field-hint">Un seul réalisateur référent doit être inscrit pour les droits d'auteur. Les autres membres sont détaillés ici.</div>
+          </div>
+
+          <div class="field span2">
+            <label class="field-label">Email de contact <span class="req">● requis</span></label>
+            <input type="email" id="f-email" placeholder="vous@exemple.com" autocomplete="email">
+            <div class="field-hint">Utilisé pour les notifications de sélection et la gestion de votre dossier</div>
+            <div class="field-error" id="err-email">Adresse email invalide</div>
+          </div>
+
+          <div class="field">
+            <label class="field-label">Pays de résidence <span class="req">● requis</span></label>
+            <select id="f-pays">
+              <option value="">— Sélectionnez votre pays —</option>
+              <option value="FR">🇫🇷 France</option>
+              <option value="BE">🇧🇪 Belgique</option>
+              <option value="CH">🇨🇭 Suisse</option>
+              <option value="CA">🇨🇦 Canada</option>
+              <option value="MA">🇲🇦 Maroc</option>
+              <option value="TN">🇹🇳 Tunisie</option>
+              <option value="DZ">🇩🇿 Algérie</option>
+              <option value="SN">🇸🇳 Sénégal</option>
+              <option value="JP">🇯🇵 Japon</option>
+              <option value="US">🇺🇸 États-Unis</option>
+              <option value="GB">🇬🇧 Royaume-Uni</option>
+              <option value="DE">🇩🇪 Allemagne</option>
+              <option value="ES">🇪🇸 Espagne</option>
+              <option value="IT">🇮🇹 Italie</option>
+              <option value="BR">🇧🇷 Brésil</option>
+              <option value="IN">🇮🇳 Inde</option>
+              <option value="CN">🇨🇳 Chine</option>
+              <option value="AU">🇦🇺 Australie</option>
+              <option value="other">🌍 Autre pays (120+ pays acceptés)</option>
+            </select>
+            <div class="field-error" id="err-pays">Sélectionnez votre pays</div>
+          </div>
+
+          <div class="field">
+            <label class="field-label">École / Institution <span class="opt">(facultatif)</span></label>
+            <input type="text" id="f-ecole" placeholder="ex: La Fémis, ESRA, Gobelins…">
+          </div>
+
+          <div class="field span2">
+            <label class="field-label">Lien portfolio / réseaux <span class="opt">(facultatif)</span></label>
+            <input type="url" id="f-portfolio" placeholder="https://votresite.com ou lien Vimeo/Instagram">
+          </div>
+
+        </div>
+
+        <div class="step-nav-btns">
+          <div></div>
+          <button class="btn-next" onclick="nextStep(1)">Étape suivante — Le Film →</button>
+        </div>
+      </div>
+
+      <!-- ════ ÉTAPE 2 — Le Film ════ -->
+      <div class="step-panel" id="step-2">
+        <div class="step-panel-header">
+          <div class="step-icon si-2">🎬</div>
+          <div>
+            <h2>Le Film</h2>
+            <p>Titre, synopsis, fichier vidéo et note d'intention</p>
+          </div>
+        </div>
+
+        <div class="fields-grid">
+
+          <div class="field">
+            <label class="field-label">Titre du film <span class="req">● requis</span></label>
+            <input type="text" id="f-titre" placeholder="Titre de votre court-métrage" maxlength="100" oninput="countChars(this, 'cc-titre', 100)">
+            <div class="char-counter" id="cc-titre">0 / 100</div>
+            <div class="field-error" id="err-titre">Champ requis</div>
+          </div>
+
+          <div class="field">
+            <label class="field-label">Synopsis <span class="req">● requis</span></label>
+            <textarea id="f-synopsis" rows="4" placeholder="Décrivez brièvement votre film en 2-3 phrases…" maxlength="500" oninput="countChars(this,'cc-synopsis',500)"></textarea>
+            <div class="char-counter" id="cc-synopsis">0 / 500</div>
+            <div class="field-error" id="err-synopsis">Champ requis</div>
+          </div>
+
+        </div>
+
+        <hr class="section-sep">
+        <div class="section-title-inline">Fichier vidéo</div>
+
+        <!-- Upload vidéo -->
+        <div id="upload-zone-wrap">
+          <div class="upload-zone" id="upload-zone" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFile(event)">
+            <input type="file" id="video-input" accept=".mp4,.mov,.webm,video/*" onchange="handleVideo(this)">
+            <span class="uz-icon">🎞️</span>
+            <div class="uz-title">Glissez votre film ici ou cliquez pour parcourir</div>
+            <div class="uz-sub">La durée sera vérifiée automatiquement côté client puis côté serveur (pipeline FFmpeg)</div>
+            <div class="uz-specs">
+              <span class="uz-spec">MP4</span>
+              <span class="uz-spec">MOV</span>
+              <span class="uz-spec">WebM</span>
+              <span class="uz-spec">Max 2 Go</span>
+              <span class="uz-spec">Min 1080p</span>
+              <span class="uz-spec">60 secondes pile</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Barre de progression upload -->
+        <div class="upload-progress" id="upload-progress">
+          <div class="up-file">
+            <div class="up-file-icon">🎬</div>
+            <div class="up-file-name" id="up-filename">film.mp4</div>
+            <div class="up-file-size" id="up-filesize">—</div>
+          </div>
+          <div class="up-bar-track"><div class="up-bar-fill" id="up-bar" style="width:0%"></div></div>
+          <div class="up-status">
+            <span class="up-pct" id="up-pct">0%</span>
+            <span class="up-msg" id="up-msg">Analyse en cours…</span>
+          </div>
+        </div>
+
+        <!-- Résultat durée -->
+        <div class="duration-result" id="dur-result">
+          <div class="dur-icon" id="dur-icon">⏱️</div>
+          <div class="dur-text">
+            <div class="dur-value" id="dur-value">—</div>
+            <div class="dur-label" id="dur-label">Vérification de la durée…</div>
+          </div>
+        </div>
+        <div class="field-error" id="err-video" style="margin-top:8px;">Fichier vidéo requis</div>
+
+        <hr class="section-sep">
+
+        <div class="fields-grid">
+          <div class="field">
+            <label class="field-label">Note d'intention <span class="req">● requis</span></label>
+            <textarea id="f-intention" rows="5"
+              placeholder="Comment votre film s'inscrit-il dans le thème "Imaginez des futurs souhaitables" ? Décrivez votre démarche artistique et votre rapport à l'IA…"
+              maxlength="1000" oninput="countChars(this,'cc-intention',1000)"></textarea>
+            <div class="char-counter" id="cc-intention">0 / 1000</div>
+            <div class="field-hint">Cette note est lue par le jury lors de la présélection</div>
+            <div class="field-error" id="err-intention">La note d'intention est requise</div>
+          </div>
+        </div>
+
+        <div class="step-nav-btns">
+          <button class="btn-prev" onclick="prevStep(2)">← Retour</button>
+          <button class="btn-next" onclick="nextStep(2)">Étape suivante — Fiche IA →</button>
+        </div>
+      </div>
+
+      <!-- ════ ÉTAPE 3 — Fiche IA ════ -->
+      <div class="step-panel" id="step-3">
+        <div class="step-panel-header">
+          <div class="step-icon si-3">🤖</div>
+          <div>
+            <h2>Fiche IA</h2>
+            <p>Outils utilisés (obligatoire pour image/vidéo) et sous-titres</p>
+          </div>
+        </div>
+
+        <!-- IMAGE / VIDÉO (obligatoire) -->
+        <div class="ia-category">
+          <div class="ia-cat-header" onclick="toggleCat('cat-img')">
+            <div class="ia-cat-icon">🖼️</div>
+            <div class="ia-cat-title">Image & Vidéo générée par IA</div>
+            <span class="ia-cat-badge badge-req">Requis</span>
+            <div class="ia-cat-toggle open" id="toggle-cat-img">▼</div>
+          </div>
+          <div class="ia-cat-body" id="cat-img">
+            <div class="tools-grid">
+              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Runway ML</span></label>
+              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Sora</span></label>
+              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Pika Labs</span></label>
+              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Kling AI</span></label>
+              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Midjourney</span></label>
+              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Stable Diffusion</span></label>
+              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Adobe Firefly</span></label>
+              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Luma Dream</span></label>
+              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Haiper</span></label>
+            </div>
+            <div class="tool-other">
+              <input type="text" id="img-other" placeholder="Autre outil image/vidéo…">
+            </div>
+            <div class="field-error" id="err-ia-img" style="margin-top:8px;">Sélectionnez au moins un outil image/vidéo</div>
+          </div>
+        </div>
+
+        <!-- SON (facultatif) -->
+        <div class="ia-category">
+          <div class="ia-cat-header" onclick="toggleCat('cat-son')">
+            <div class="ia-cat-icon">🎵</div>
+            <div class="ia-cat-title">Son & Musique générés par IA</div>
+            <span class="ia-cat-badge badge-opt">Facultatif</span>
+            <div class="ia-cat-toggle" id="toggle-cat-son">▼</div>
+          </div>
+          <div class="ia-cat-body" id="cat-son" style="display:none;">
+            <div class="tools-grid">
+              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">MusicGen</span></label>
+              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Suno AI</span></label>
+              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Udio</span></label>
+              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">ElevenLabs</span></label>
+              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Mubert</span></label>
+              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Stable Audio</span></label>
+            </div>
+            <div class="tool-other">
+              <input type="text" id="son-other" placeholder="Autre outil son/musique…">
+            </div>
+          </div>
+        </div>
+
+        <!-- SCÉNARIO (facultatif) -->
+        <div class="ia-category">
+          <div class="ia-cat-header" onclick="toggleCat('cat-sc')">
+            <div class="ia-cat-icon">✍️</div>
+            <div class="ia-cat-title">Scénario & Écriture assistée par IA</div>
+            <span class="ia-cat-badge badge-opt">Facultatif</span>
+            <div class="ia-cat-toggle" id="toggle-cat-sc">▼</div>
+          </div>
+          <div class="ia-cat-body" id="cat-sc" style="display:none;">
+            <div class="tools-grid">
+              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">ChatGPT</span></label>
+              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Claude</span></label>
+              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Gemini</span></label>
+              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Mistral</span></label>
+              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Llama</span></label>
+              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Qwen</span></label>
+            </div>
+            <div class="tool-other">
+              <input type="text" id="sc-other" placeholder="Autre outil d'écriture…">
+            </div>
+          </div>
+        </div>
+
+        <!-- POST-PROD (facultatif) -->
+        <div class="ia-category">
+          <div class="ia-cat-header" onclick="toggleCat('cat-post')">
+            <div class="ia-cat-icon">🎞️</div>
+            <div class="ia-cat-title">Post-production & Hybridation réel/IA</div>
+            <span class="ia-cat-badge badge-opt">Facultatif</span>
+            <div class="ia-cat-toggle" id="toggle-cat-post">▼</div>
+          </div>
+          <div class="ia-cat-body" id="cat-post" style="display:none;">
+            <div class="tools-grid">
+              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Adobe Premiere</span></label>
+              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">DaVinci Resolve</span></label>
+              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">After Effects + IA</span></label>
+              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Topaz Video AI</span></label>
+              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Warp Fusion</span></label>
+              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">CapCut AI</span></label>
+            </div>
+            <div class="tool-other">
+              <input type="text" id="post-other" placeholder="Autre outil post-prod…">
+            </div>
+            <div style="margin-top:12px;">
+              <label class="field-label" style="margin-bottom:7px;">Description de l'hybridation <span class="opt">(max 300 car.)</span></label>
+              <textarea rows="2" maxlength="300" placeholder="Décrivez le mélange entre images réelles et génération IA…" oninput="countChars(this,'cc-hybrid',300)" style="background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.09);border-radius:10px;padding:10px 14px;font-family:var(--font-body);font-size:0.85rem;color:var(--white-soft);outline:none;width:100%;resize:vertical;"></textarea>
+              <div class="char-counter" id="cc-hybrid">0 / 300</div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="section-sep">
+        <div class="section-title-inline">Sous-titres</div>
+
+        <!-- Upload sous-titres FR -->
+        <div class="subtitle-upload" id="sub-fr-zone" onclick="">
+          <input type="file" id="sub-fr" accept=".srt,.vtt" onchange="handleSubtitle(this,'sub-fr-status')">
+          <div class="sub-icon">💬</div>
+          <div class="sub-text">
+            <div class="sub-title">Sous-titres Français <span style="color:var(--mist);font-weight:400;font-size:0.72rem;">(recommandé)</span></div>
+            <div class="sub-sub">Formats SRT ou VTT — Aperçu de synchronisation en temps réel</div>
+          </div>
+          <div class="sub-status" id="sub-fr-status">+ Ajouter</div>
+        </div>
+
+        <!-- Upload sous-titres EN -->
+        <div class="subtitle-upload" style="margin-top:8px;">
+          <input type="file" id="sub-en" accept=".srt,.vtt" onchange="handleSubtitle(this,'sub-en-status')">
+          <div class="sub-icon">🌐</div>
+          <div class="sub-text">
+            <div class="sub-title">Sous-titres Anglais <span style="color:var(--mist);font-weight:400;font-size:0.72rem;">(interface bilingue FR/EN)</span></div>
+            <div class="sub-sub">Formats SRT ou VTT</div>
+          </div>
+          <div class="sub-status" id="sub-en-status">+ Ajouter</div>
+        </div>
+
+        <div class="step-nav-btns">
+          <button class="btn-prev" onclick="prevStep(3)">← Retour</button>
+          <button class="btn-next" onclick="nextStep(3)">Étape suivante — Confirmation →</button>
+        </div>
+      </div>
+
+      <!-- ════ ÉTAPE 4 — Confirmation ════ -->
+      <div class="step-panel" id="step-4">
+        <div class="step-panel-header">
+          <div class="step-icon si-4">✅</div>
+          <div>
+            <h2>Confirmation & Droits</h2>
+            <p>Vérifiez votre dossier, acceptez les conditions et soumettez</p>
+          </div>
+        </div>
+
+        <!-- Récap -->
+        <div class="recap-block">
+          <div class="recap-header">Récapitulatif du dossier</div>
+          <div class="recap-body">
+            <div class="recap-row">
+              <span class="recap-key">Réalisateur</span>
+              <span class="recap-val" id="rc-nom">—</span>
+            </div>
+            <div class="recap-row">
+              <span class="recap-key">Email</span>
+              <span class="recap-val mono" id="rc-email">—</span>
+            </div>
+            <div class="recap-row">
+              <span class="recap-key">Pays</span>
+              <span class="recap-val" id="rc-pays">—</span>
+            </div>
+            <div class="recap-row">
+              <span class="recap-key">Titre du film</span>
+              <span class="recap-val" id="rc-titre">—</span>
+            </div>
+            <div class="recap-row">
+              <span class="recap-key">Durée</span>
+              <span class="recap-val ok" id="rc-dur">—</span>
+            </div>
+            <div class="recap-row">
+              <span class="recap-key">Outils IA image</span>
+              <span class="recap-val" id="rc-tools">—</span>
+            </div>
+            <div class="recap-row">
+              <span class="recap-key">Sous-titres</span>
+              <span class="recap-val" id="rc-subs">—</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RGPD & Droits (CDC : checkbox bloquante) -->
+        <div class="section-title-inline">Conditions obligatoires</div>
+        <div class="rgpd-checks">
+
+          <div class="rgpd-item" id="rgpd-1" onclick="toggleRgpd('rgpd-1')">
+            <input type="checkbox" id="chk-rgpd1">
+            <div class="rgpd-box"></div>
+            <div class="rgpd-text">
+              <div class="rgpd-title">Cession de droits de diffusion <span class="req">● obligatoire</span></div>
+              <div class="rgpd-sub">J'accorde à marsAI et à ses partenaires (La Plateforme, Mobile Film Festival) le droit de diffuser, projeter et archiver mon film dans le cadre du festival et de sa plateforme en ligne, pour une durée de 5 ans.</div>
+            </div>
+          </div>
+
+          <div class="rgpd-item" id="rgpd-2" onclick="toggleRgpd('rgpd-2')">
+            <input type="checkbox" id="chk-rgpd2">
+            <div class="rgpd-box"></div>
+            <div class="rgpd-text">
+              <div class="rgpd-title">Conformité RGPD <span class="req">● obligatoire</span></div>
+              <div class="rgpd-sub">J'accepte que mes données personnelles (nom, email, pays) soient conservées 3 ans après le festival conformément au RGPD, puis supprimées ou anonymisées. Je peux exercer mes droits d'accès et de suppression à tout moment.</div>
+            </div>
+          </div>
+
+          <div class="rgpd-item" id="rgpd-3" onclick="toggleRgpd('rgpd-3')">
+            <input type="checkbox" id="chk-rgpd3">
+            <div class="rgpd-box"></div>
+            <div class="rgpd-text">
+              <div class="rgpd-title">Originalité de l'œuvre <span class="req">● obligatoire</span></div>
+              <div class="rgpd-sub">Je certifie être l'auteur ou co-auteur de ce film, que celui-ci n'a pas été soumis à un autre festival concurrent, et que l'usage des outils IA déclarés est exact et complet.</div>
+            </div>
+          </div>
+
+        </div>
+        <div class="rgpd-req-note" id="rgpd-warn">Vous devez accepter toutes les conditions pour soumettre votre film.</div>
+
+        <div class="step-nav-btns">
+          <button class="btn-prev" onclick="prevStep(4)">← Retour</button>
+          <button class="btn-submit" id="btn-submit" onclick="submitForm()">
+            🎬 Soumettre mon film
+          </button>
+        </div>
+      </div>
+
+      <!-- ════ SUCCÈS ════ -->
+      <div class="success-screen" id="success-screen">
+        <div class="success-ring">🎬</div>
+        <h2 style="font-family:var(--font-display);font-size:1.8rem;font-weight:800;margin-bottom:8px;">Film soumis !</h2>
+        <p style="color:var(--mist);font-size:0.88rem;margin-bottom:0;">Votre dossier a été enregistré avec succès.</p>
+        <div class="success-dossier">
+          📄 Dossier n° <span id="dossier-num">MAI-2026-00000</span>
+        </div>
+        <p style="color:var(--mist);font-size:0.82rem;margin-bottom:20px;">Un email de confirmation avec votre récapitulatif PDF a été envoyé à <strong id="confirm-email" style="color:var(--white-soft)">—</strong></p>
+        <div class="success-steps">
+          <div class="ss-item"><span class="ss-icon">⏳</span>Le jury effectue une présélection sur 1 mois</div>
+          <div class="ss-item"><span class="ss-icon">📢</span>Les 50 finalistes sont annoncés à J+90</div>
+          <div class="ss-item"><span class="ss-icon">🏆</span>Cérémonie à Marseille, La Plateforme</div>
+        </div>
+        <a href="prototype.html" style="display:inline-block;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:12px 24px;font-size:0.85rem;color:var(--mist);text-decoration:none;margin-top:8px;">← Retour au site</a>
+      </div>
+
+    </div><!-- /form-content -->
+  </div><!-- /page-wrap -->
+
+  <!-- DEV NAV -->
+  <div class="dev-nav">
+    <div class="dev-label">Prototype</div>
+    <div class="dev-links">
+      <a href="prototype.html" class="dev-btn">🏠</a>
+      <a href="verification-email.html" class="dev-btn">✉️</a>
+      <a href="formulaire-depot.html" class="dev-btn curr">📝</a>
+      <a href="admin-jury.html" class="dev-btn">⚖️</a>
+    </div>
+  </div>
+
+  <script>
+    /* ── STATE ── */
+    let currentStep = 1;
+    let maxUnlocked = 1;
+    let videoValid = false;
+    let uploadPct = 0;
+    let uploadInterval = null;
+
+    /* ── COMPTEUR DE CARACTÈRES ── */
+    function countChars(el, counterId, max) {
+      const n = el.value.length;
+      const cc = document.getElementById(counterId);
+      cc.textContent = n + ' / ' + max;
+      cc.className = 'char-counter' + (n > max * 0.9 ? (n >= max ? ' over' : ' warn') : '');
+    }
+
+    /* ── NAVIGATION ÉTAPES ── */
+    function goStep(n) {
+      maxUnlocked = Math.max(maxUnlocked, n);
+      showStep(n);
+    }
+
+    function nextStep(from) {
+      if (from < 4) {
+        maxUnlocked = Math.max(maxUnlocked, from + 1);
+        showStep(from + 1);
+        if (from + 1 === 4) fillRecap();
+      }
+    }
+
+    function prevStep(from) {
+      if (from > 1) showStep(from - 1);
+    }
+
+    function showStep(n) {
+      document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('step-' + n).classList.add('active');
+      currentStep = n;
+      updateStepsNav();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Auto-simuler la vidéo quand on arrive sur l'étape 2
+      if (n === 2 && !videoValid) autoSimulateVideo();
+    }
+
+    function updateStepsNav() {
+      for (let i = 1; i <= 4; i++) {
+        const item = document.querySelector('[data-step="' + i + '"]');
+        const circle = document.getElementById('snc-' + i);
+        item.className = 'step-nav-item';
+        circle.className = 'sni-circle';
+        if (i < currentStep) {
+          item.classList.add('done');
+          circle.classList.add('done');
+          circle.textContent = '✓';
+        } else if (i === currentStep) {
+          item.classList.add('active');
+          circle.classList.add('active');
+          circle.textContent = i;
+        } else if (i <= maxUnlocked) {
+          circle.classList.add('pending');
+          circle.textContent = i;
+        } else {
+          item.classList.add('locked');
+          circle.classList.add('pending');
+          circle.textContent = i;
+        }
+      }
+    }
+
+    /* ── AUTO-SIMULATION VIDÉO (maquette) ── */
+    function autoSimulateVideo() {
+      const fakeFile = { name: 'mon-film-marsai-2026.mp4', size: 187 * 1024 * 1024 };
+      document.getElementById('upload-zone-wrap').style.display = 'none';
+      const prog = document.getElementById('upload-progress');
+      prog.classList.add('show');
+      document.getElementById('up-filename').textContent = fakeFile.name;
+      document.getElementById('up-filesize').textContent = (fakeFile.size / 1024 / 1024).toFixed(1) + ' Mo';
+
+      let pct = 0;
+      const iv = setInterval(() => {
+        pct += Math.random() * 10 + 4;
+        if (pct >= 100) {
+          pct = 100;
+          clearInterval(iv);
+          document.getElementById('up-bar').style.width = '100%';
+          document.getElementById('up-pct').textContent = '100%';
+          document.getElementById('up-msg').textContent = 'Analyse de la durée…';
+          setTimeout(() => {
+            showDurationResult(59.8);
+            videoValid = true;
+            document.getElementById('err-video').classList.remove('show');
+          }, 700);
+          return;
+        }
+        document.getElementById('up-bar').style.width = pct + '%';
+        document.getElementById('up-pct').textContent = Math.round(pct) + '%';
+        document.getElementById('up-msg').textContent = 'Upload en cours…';
+      }, 100);
+    }
+
+    /* ── UPLOAD VIDÉO SIMULATION ── */
+    function handleVideo(input) {
+      const file = input.files[0];
+      if (!file) return;
+      document.getElementById('upload-zone-wrap').style.display = 'none';
+      const prog = document.getElementById('upload-progress');
+      prog.classList.add('show');
+      document.getElementById('up-filename').textContent = file.name;
+      document.getElementById('up-filesize').textContent = (file.size / 1024 / 1024).toFixed(1) + ' Mo';
+
+      // Simulate upload progress
+      let pct = 0;
+      uploadInterval = setInterval(() => {
+        pct += Math.random() * 8 + 2;
+        if (pct >= 100) { pct = 100; clearInterval(uploadInterval); analyzeVideo(file); }
+        document.getElementById('up-bar').style.width = pct + '%';
+        document.getElementById('up-pct').textContent = Math.round(pct) + '%';
+        document.getElementById('up-msg').textContent = pct < 100 ? 'Upload en cours…' : 'Analyse de la durée…';
+      }, 120);
+    }
+
+    function analyzeVideo(file) {
+      // Simulate duration detection
+      setTimeout(() => {
+        const simDuration = 59.8; // simulation
+        showDurationResult(simDuration);
+        document.getElementById('err-video').classList.remove('show');
+        videoValid = true;
+      }, 800);
+    }
+
+    function showDurationResult(sec) {
+      const el = document.getElementById('dur-result');
+      const val = document.getElementById('dur-value');
+      const lbl = document.getElementById('dur-label');
+      const ico = document.getElementById('dur-icon');
+      const m = Math.floor(sec / 60);
+      const s = (sec % 60).toFixed(1);
+      const display = `${m}:${String(Math.floor(sec % 60)).padStart(2,'0')}.${(sec % 1).toFixed(1).slice(2)}`;
+
+      el.classList.add('show');
+      if (sec <= 90) {
+        el.className = 'duration-result show ok';
+        val.className = 'dur-value ok';
+        ico.textContent = '✓';
+        val.textContent = display;
+        lbl.textContent = 'Durée valide (60 secondes pile)';
+      } else {
+        el.className = 'duration-result show err';
+        val.className = 'dur-value err';
+        ico.textContent = '✗';
+        val.textContent = display;
+        lbl.textContent = 'Durée trop longue — maximum 60 secondes';
+        videoValid = false;
+      }
+    }
+
+    function dragOver(e) { e.preventDefault(); document.getElementById('upload-zone').classList.add('dragover'); }
+    function dragLeave()  { document.getElementById('upload-zone').classList.remove('dragover'); }
+    function dropFile(e)  {
+      e.preventDefault();
+      document.getElementById('upload-zone').classList.remove('dragover');
+      const file = e.dataTransfer.files[0];
+      if (file) { document.getElementById('video-input').files = e.dataTransfer.files; handleVideo({ files: [file] }); }
+    }
+
+    /* ── SOUS-TITRES ── */
+    function handleSubtitle(input, statusId) {
+      const file = input.files[0];
+      if (!file) return;
+      const el = document.getElementById(statusId);
+      el.textContent = '✓ ' + file.name;
+      el.className = 'sub-status added';
+    }
+
+    /* ── OUTILS IA ── */
+    function toggleTool(label) {
+      label.classList.toggle('checked');
+      label.querySelector('input').checked = label.classList.contains('checked');
+    }
+
+    function toggleCat(id) {
+      const body = document.getElementById(id);
+      const toggle = document.getElementById('toggle-' + id);
+      const hidden = body.style.display === 'none';
+      body.style.display = hidden ? 'block' : 'none';
+      toggle.classList.toggle('open', hidden);
+    }
+
+    /* ── RGPD ── */
+    function toggleRgpd(id) {
+      const item = document.getElementById(id);
+      item.classList.toggle('checked');
+      document.getElementById('rgpd-warn').classList.remove('show');
+    }
+
+    /* ── RÉCAP ── */
+    function fillRecap() {
+      const prenom = document.getElementById('f-prenom').value.trim() || 'Marie';
+      const nom    = document.getElementById('f-nom').value.trim()    || 'Dupont';
+      const email  = document.getElementById('f-email').value.trim()  || 'marie.dupont@example.com';
+      const pays   = document.getElementById('f-pays');
+      const titre  = document.getElementById('f-titre').value.trim()  || 'Mon film marsAI';
+
+      document.getElementById('rc-nom').textContent   = prenom + ' ' + nom;
+      document.getElementById('rc-email').textContent = email;
+      const paysText = pays.options[pays.selectedIndex]?.text;
+      document.getElementById('rc-pays').textContent  = (paysText && pays.value) ? paysText : '🇫🇷 France';
+      document.getElementById('rc-titre').textContent = titre;
+      document.getElementById('rc-dur').textContent   = videoValid ? '✓ 0:59.8 — Durée valide' : '⚠ Non vérifié';
+
+      const checkedTools = [...document.querySelectorAll('#cat-img .tool-check.checked')].map(t => t.querySelector('.tc-label').textContent);
+      const otherTool = document.getElementById('img-other').value.trim();
+      if (otherTool) checkedTools.push(otherTool);
+      document.getElementById('rc-tools').textContent = checkedTools.length ? checkedTools.join(', ') : 'Runway ML, Midjourney';
+
+      const subFr = document.getElementById('sub-fr').files[0];
+      const subEn = document.getElementById('sub-en').files[0];
+      const subs = [];
+      if (subFr) subs.push('FR');
+      if (subEn) subs.push('EN');
+      document.getElementById('rc-subs').textContent = subs.length ? subs.join(', ') : 'Aucun';
+    }
+
+    /* ── SOUMISSION ── */
+    function submitForm() {
+      // Auto-cocher les cases RGPD si pas encore cochées (maquette)
+      ['rgpd-1','rgpd-2','rgpd-3'].forEach(id => {
+        document.getElementById(id).classList.add('checked');
+      });
+
+      const btn = document.getElementById('btn-submit');
+      btn.disabled = true;
+      btn.innerHTML = '⏳ Envoi en cours…';
+
+      setTimeout(() => {
+        const num = 'MAI-2026-' + String(Math.floor(Math.random() * 90000) + 10000);
+        document.getElementById('dossier-num').textContent = num;
+        const email = document.getElementById('f-email').value.trim() || 'marie.dupont@example.com';
+        document.getElementById('confirm-email').textContent = email;
+        document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+        document.getElementById('success-screen').classList.add('show');
+        document.querySelector('.form-sidebar').style.display = 'none';
+      }, 1800);
+    }
+
+    /* ── INIT ── */
+    updateStepsNav();
+  </script>
+
+</body>
+</html>

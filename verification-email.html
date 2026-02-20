@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vérification Email — Marseille AI Festival</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --solar:      #F5E642;
+      --aurora:     #4EFFCE;
+      --deep-sky:   #0A0F2E;
+      --horizon:    #1A1F4E;
+      --coral:      #FF6B6B;
+      --lavande:    #C084FC;
+      --white-soft: #F0F4FF;
+      --mist:       #8892B0;
+      --font-display: 'Syne', sans-serif;
+      --font-body:    'Inter', sans-serif;
+      --font-mono:    'JetBrains Mono', monospace;
+      --ease: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { height: 100%; }
+
+    body {
+      background: var(--deep-sky);
+      color: var(--white-soft);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      overflow: hidden;
+    }
+
+    /* ─── GRAIN ─── */
+    body::before {
+      content: "";
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: 0.025;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ─── PANNEAU GAUCHE — Visuel festival ─── */
+    .panel-left {
+      position: relative;
+      background: var(--horizon);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 40px 48px;
+      overflow: hidden;
+    }
+
+    .panel-left::before {
+      content: "";
+      position: absolute;
+      top: -30%; left: -20%;
+      width: 90%; height: 90%;
+      background: radial-gradient(ellipse, rgba(78,255,206,0.15) 0%, transparent 65%);
+      animation: glow1 10s ease-in-out infinite alternate;
+    }
+    .panel-left::after {
+      content: "";
+      position: absolute;
+      bottom: -20%; right: -20%;
+      width: 70%; height: 70%;
+      background: radial-gradient(ellipse, rgba(192,132,252,0.12) 0%, transparent 65%);
+      animation: glow2 13s ease-in-out infinite alternate;
+    }
+    @keyframes glow1 { from { transform: translate(0,0) scale(1); } to { transform: translate(4%,6%) scale(1.1); } }
+    @keyframes glow2 { from { transform: translate(0,0) scale(1); } to { transform: translate(-4%,-6%) scale(1.15); } }
+
+    /* Logo */
+    .left-logo {
+      position: relative; z-index: 2;
+    }
+    .left-logo .logo-text {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .left-logo .logo-text span { color: var(--aurora); }
+
+    /* Festival quote visuel */
+    .left-hero {
+      position: relative; z-index: 2;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .left-pretitle {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--aurora);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .left-pretitle::before {
+      content: "";
+      width: 32px; height: 1px;
+      background: var(--aurora);
+    }
+    .left-big-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.8rem, 4vw, 4.2rem);
+      font-weight: 800;
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+      margin-bottom: 24px;
+    }
+    .left-big-title .grad {
+      background: linear-gradient(135deg, var(--aurora) 0%, var(--lavande) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .left-desc {
+      font-size: 0.9rem;
+      color: var(--mist);
+      line-height: 1.65;
+      max-width: 340px;
+      margin-bottom: 40px;
+    }
+
+    /* Floating cards */
+    .left-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .left-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      backdrop-filter: blur(10px);
+    }
+    .left-card-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .lci-1 { background: rgba(78,255,206,0.1); }
+    .lci-2 { background: rgba(192,132,252,0.1); }
+    .lci-3 { background: rgba(245,230,66,0.1); }
+    .left-card-text .lct-title { font-size: 0.85rem; font-weight: 600; margin-bottom: 2px; }
+    .left-card-text .lct-sub   { font-size: 0.75rem; color: var(--mist); }
+    .left-card-check {
+      margin-left: auto;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: rgba(78,255,206,0.15);
+      border: 1px solid rgba(78,255,206,0.3);
+      color: var(--aurora);
+      font-size: 0.65rem;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* Left footer */
+    .left-footer {
+      position: relative; z-index: 2;
+      font-size: 0.72rem;
+      color: var(--mist);
+      opacity: 0.5;
+    }
+
+    /* ─── PANNEAU DROIT — Formulaire ─── */
+    .panel-right {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 64px;
+      position: relative;
+      overflow-y: auto;
+      background: var(--deep-sky);
+    }
+
+    .right-back {
+      position: absolute;
+      top: 28px; left: 28px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: var(--mist);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .right-back:hover { color: var(--white-soft); }
+
+    .form-box {
+      width: 100%;
+      max-width: 420px;
+    }
+
+    /* ─── STEPS ─── */
+    .steps {
+      display: flex;
+      align-items: center;
+      margin-bottom: 44px;
+    }
+    .step-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .step-circle {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      transition: all 0.4s var(--ease);
+      flex-shrink: 0;
+    }
+    .step-circle.done {
+      background: var(--aurora);
+      color: var(--deep-sky);
+    }
+    .step-circle.active {
+      background: var(--aurora);
+      color: var(--deep-sky);
+      box-shadow: 0 0 0 4px rgba(78,255,206,0.15);
+    }
+    .step-circle.pending {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--mist);
+    }
+    .step-label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+    .step-label.active-label { color: var(--white-soft); }
+    .step-label.dim { color: var(--mist); opacity: 0.5; }
+    .step-connector {
+      flex: 1;
+      height: 1px;
+      margin: 0 12px;
+      background: rgba(255,255,255,0.08);
+      transition: background 0.5s;
+    }
+    .step-connector.done { background: var(--aurora); }
+
+    /* ─── VIEWS ─── */
+    .view { display: none; }
+    .view.active {
+      display: block;
+      animation: slideUp 0.45s var(--ease);
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── TITRES ─── */
+    .form-title {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+    .form-subtitle {
+      font-size: 0.88rem;
+      color: var(--mist);
+      line-height: 1.6;
+      margin-bottom: 36px;
+    }
+    .form-subtitle strong { color: var(--white-soft); }
+
+    /* ─── CHAMP EMAIL ─── */
+    .field-wrap { margin-bottom: 16px; }
+    .field-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--mist);
+      margin-bottom: 8px;
+      display: block;
+    }
+    .input-row {
+      display: flex;
+      gap: 10px;
+    }
+    .input-email {
+      flex: 1;
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 15px 18px;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      color: var(--white-soft);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+    .input-email::placeholder { color: var(--mist); opacity: 0.5; }
+    .input-email:focus {
+      border-color: rgba(78,255,206,0.5);
+      box-shadow: 0 0 0 4px rgba(78,255,206,0.08);
+      background: rgba(78,255,206,0.03);
+    }
+    .input-email.valid {
+      border-color: rgba(78,255,206,0.4);
+    }
+    .input-email.error {
+      border-color: rgba(255,107,107,0.55);
+      box-shadow: 0 0 0 4px rgba(255,107,107,0.07);
+    }
+    .field-msg {
+      margin-top: 8px;
+      font-size: 0.78rem;
+      min-height: 18px;
+      transition: color 0.2s;
+    }
+    .field-msg.err { color: var(--coral); }
+    .field-msg.ok  { color: var(--aurora); }
+
+    /* ─── BOUTON PRINCIPAL ─── */
+    .btn-main {
+      width: 100%;
+      background: var(--aurora);
+      color: var(--deep-sky);
+      border: none;
+      border-radius: 12px;
+      padding: 15px 24px;
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.01em;
+      transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease), opacity 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-main::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+    }
+    .btn-main:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 40px rgba(78,255,206,0.4);
+    }
+    .btn-main:active:not(:disabled) { transform: translateY(0); }
+    .btn-main:disabled { opacity: 0.35; cursor: not-allowed; }
+    .btn-main.loading { color: transparent; }
+    .btn-main.loading::after {
+      content: "";
+      position: absolute;
+      width: 20px; height: 20px;
+      border: 2.5px solid rgba(10,15,46,0.25);
+      border-top-color: var(--deep-sky);
+      border-radius: 50%;
+      animation: spin 0.65s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .btn-solar {
+      width: 100%;
+      background: linear-gradient(135deg, var(--solar) 0%, #e8d500 100%);
+      color: var(--deep-sky);
+      border: none;
+      border-radius: 12px;
+      padding: 15px 24px;
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-solar:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 40px rgba(245,230,66,0.4);
+    }
+
+    /* ─── EMAIL AFFICHÉ ─── */
+    .email-display {
+      background: rgba(78,255,206,0.06);
+      border: 1.5px solid rgba(78,255,206,0.2);
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .email-display-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .email-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--aurora);
+      animation: pulse-dot 2s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.7); }
+    }
+    .email-display-addr {
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      color: var(--white-soft);
+    }
+    .email-change {
+      font-size: 0.75rem;
+      color: var(--mist);
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      flex-shrink: 0;
+      background: none;
+      border: none;
+      font-family: var(--font-body);
+      transition: color 0.2s;
+    }
+    .email-change:hover { color: var(--white-soft); }
+
+    /* ─── OTP ─── */
+    .otp-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--mist);
+      margin-bottom: 12px;
+      display: block;
+    }
+    .otp-wrap {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .otp-digit {
+      width: 48px;
+      height: 52px;
+      flex-shrink: 0;
+      background: rgba(255,255,255,0.04);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 1.3rem;
+      font-weight: 500;
+      color: var(--white-soft);
+      outline: none;
+      caret-color: var(--aurora);
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s, transform 0.15s;
+      padding: 0;
+    }
+    .otp-digit:focus {
+      border-color: rgba(78,255,206,0.6);
+      box-shadow: 0 0 0 4px rgba(78,255,206,0.1);
+      background: rgba(78,255,206,0.04);
+      transform: scale(1.04);
+    }
+    .otp-digit.filled {
+      border-color: rgba(78,255,206,0.4);
+      background: rgba(78,255,206,0.07);
+      color: var(--aurora);
+    }
+    .otp-digit.shake {
+      animation: shake 0.4s var(--ease);
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%  { transform: translateX(-6px); border-color: rgba(255,107,107,0.7); }
+      40%  { transform: translateX(6px); }
+      60%  { transform: translateX(-4px); }
+      80%  { transform: translateX(4px); }
+    }
+    .otp-digit.error-state {
+      border-color: rgba(255,107,107,0.5) !important;
+      background: rgba(255,107,107,0.05) !important;
+      color: var(--coral) !important;
+    }
+
+    /* Message erreur OTP */
+    .otp-error-msg {
+      font-size: 0.78rem;
+      color: var(--coral);
+      min-height: 20px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: all 0.2s;
+    }
+    .otp-error-msg.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Séparateur OTP */
+    .otp-sep {
+      display: flex;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 1.2rem;
+      color: rgba(136,146,176,0.3);
+      padding-bottom: 8px;
+    }
+
+    /* Renvoyer */
+    .resend-section {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      padding: 0 2px;
+    }
+    .resend-left {
+      font-size: 0.8rem;
+      color: var(--mist);
+    }
+    .resend-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-resend {
+      background: none;
+      border: none;
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      color: var(--aurora);
+      cursor: pointer;
+      padding: 0;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      transition: opacity 0.2s;
+    }
+    .btn-resend:disabled { color: var(--mist); text-decoration: none; cursor: default; }
+    .resend-timer {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--mist);
+    }
+
+    /* Hint démo */
+    .demo-hint {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(245,230,66,0.05);
+      border: 1px solid rgba(245,230,66,0.15);
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-top: 20px;
+      font-size: 0.78rem;
+      color: var(--mist);
+    }
+    .demo-hint span { font-family: var(--font-mono); color: var(--solar); font-weight: 500; }
+
+    /* ─── SUCCÈS ─── */
+    .success-wrap {
+      text-align: center;
+      padding: 8px 0;
+    }
+    .success-ring {
+      width: 88px; height: 88px;
+      border-radius: 50%;
+      background: rgba(78,255,206,0.08);
+      border: 2px solid rgba(78,255,206,0.25);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 28px;
+      animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+    }
+    .success-ring::before {
+      content: "";
+      position: absolute; inset: -8px;
+      border-radius: 50%;
+      border: 1px solid rgba(78,255,206,0.1);
+      animation: ringPulse 2s ease-in-out infinite;
+    }
+    @keyframes popIn {
+      from { transform: scale(0.4); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+    @keyframes ringPulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0; }
+    }
+    .success-check {
+      font-size: 2rem;
+      line-height: 1;
+    }
+    .success-wrap .form-title { margin-bottom: 10px; }
+    .success-wrap .form-subtitle { margin-bottom: 28px; }
+
+    .checklist {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 28px;
+      text-align: left;
+    }
+    .checklist li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+      font-size: 0.86rem;
+      color: var(--mist);
+      animation: slideIn 0.4s var(--ease) both;
+    }
+    .checklist li:nth-child(1) { animation-delay: 0.1s; }
+    .checklist li:nth-child(2) { animation-delay: 0.2s; }
+    .checklist li:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-12px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    .check-icon {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: rgba(78,255,206,0.1);
+      border: 1px solid rgba(78,255,206,0.2);
+      color: var(--aurora);
+      font-size: 0.65rem;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* ─── SECURITY ─── */
+    .security-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 16px;
+      font-size: 0.73rem;
+      color: var(--mist);
+      opacity: 0.6;
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 860px) {
+      body { grid-template-columns: 1fr; }
+      .panel-left { display: none; }
+      .panel-right { padding: 48px 28px; justify-content: flex-start; padding-top: 80px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── PANNEAU GAUCHE ─── -->
+  <aside class="panel-left">
+    <div class="left-logo">
+      <div class="logo-text">mars<span>AI</span></div>
+    </div>
+
+    <div class="left-hero">
+      <div class="left-pretitle">Dépôt de film</div>
+      <h1 class="left-big-title">
+        Votre minute<br>
+        <span class="grad">change tout.</span>
+      </h1>
+      <p class="left-desc">
+        60 secondes pour raconter l'avenir. Rejoignez les créateurs qui explorent les frontières entre intelligence artificielle et narration humaine.
+      </p>
+
+      <div class="left-cards">
+        <div class="left-card">
+          <div class="left-card-icon lci-1">🎬</div>
+          <div class="left-card-text">
+            <div class="lct-title">Film de 60 secondes</div>
+            <div class="lct-sub">MP4 · MOV · WebM — jusqu'à 2 Go</div>
+          </div>
+          <div class="left-card-check">✓</div>
+        </div>
+        <div class="left-card">
+          <div class="left-card-icon lci-2">🤖</div>
+          <div class="left-card-text">
+            <div class="lct-title">Outils IA documentés</div>
+            <div class="lct-sub">Image, son, hybridation — tous acceptés</div>
+          </div>
+          <div class="left-card-check">✓</div>
+        </div>
+        <div class="left-card">
+          <div class="left-card-icon lci-3">🌍</div>
+          <div class="left-card-text">
+            <div class="lct-title">Gratuit & international</div>
+            <div class="lct-sub">Ouvert à tous, sous-titres FR requis</div>
+          </div>
+          <div class="left-card-check">✓</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="left-footer">
+      © 2026 marsAI · La Plateforme × Mobile Film Festival · Marseille
+    </div>
+  </aside>
+
+  <!-- ─── PANNEAU DROIT ─── -->
+  <main class="panel-right">
+
+    <a href="prototype.html" class="right-back">← Retour au site</a>
+
+    <div class="form-box">
+
+      <!-- Indicateur d'étapes -->
+      <div class="steps" id="steps-bar">
+        <div class="step-item">
+          <div class="step-circle active" id="sc-1">1</div>
+          <span class="step-label active-label" id="sl-1">Email</span>
+        </div>
+        <div class="step-connector" id="conn-1"></div>
+        <div class="step-item">
+          <div class="step-circle pending" id="sc-2">2</div>
+          <span class="step-label dim" id="sl-2">Code</span>
+        </div>
+        <div class="step-connector" id="conn-2"></div>
+        <div class="step-item">
+          <div class="step-circle pending" id="sc-3">3</div>
+          <span class="step-label dim" id="sl-3">Dépôt</span>
+        </div>
+      </div>
+
+      <!-- ─── VUE 1 : EMAIL ─── -->
+      <div class="view active" id="view-1">
+        <div class="form-title">Votre adresse email</div>
+        <p class="form-subtitle">
+          Entrez votre email pour recevoir un code de vérification. Aucun mot de passe requis.
+        </p>
+
+        <div class="field-wrap">
+          <label class="field-label">Adresse email</label>
+          <input
+            class="input-email"
+            type="email"
+            id="email-input"
+            placeholder="vous@exemple.com"
+            value="marie.dupont@example.com"
+            autocomplete="email"
+            spellcheck="false"
+          >
+          <div class="field-msg" id="field-msg"></div>
+        </div>
+
+        <button class="btn-main" id="btn-send" onclick="sendCode()">
+          Recevoir le code →
+        </button>
+
+        <div class="security-row">
+          <svg width="12" height="14" viewBox="0 0 12 14" fill="none"><path d="M6 1L1.5 3V7C1.5 9.76 3.48 12.34 6 13C8.52 12.34 10.5 9.76 10.5 7V3L6 1Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+          Email utilisé uniquement pour les communications du festival
+        </div>
+      </div>
+
+      <!-- ─── VUE 2 : CODE OTP ─── -->
+      <div class="view" id="view-2">
+        <div class="form-title">Code de vérification</div>
+        <p class="form-subtitle">
+          Un code à 6 chiffres a été envoyé à votre adresse email.
+        </p>
+
+        <div class="email-display">
+          <div class="email-display-left">
+            <div class="email-dot"></div>
+            <span class="email-display-addr" id="display-email">—</span>
+          </div>
+          <button class="email-change" onclick="goBack()">Modifier</button>
+        </div>
+
+        <label class="otp-label">Code de vérification</label>
+        <div class="otp-wrap" id="otp-wrap">
+          <input class="otp-digit" type="text" inputmode="numeric" maxlength="1" id="d1">
+          <input class="otp-digit" type="text" inputmode="numeric" maxlength="1" id="d2">
+          <input class="otp-digit" type="text" inputmode="numeric" maxlength="1" id="d3">
+          <span class="otp-sep">—</span>
+          <input class="otp-digit" type="text" inputmode="numeric" maxlength="1" id="d4">
+          <input class="otp-digit" type="text" inputmode="numeric" maxlength="1" id="d5">
+          <input class="otp-digit" type="text" inputmode="numeric" maxlength="1" id="d6">
+        </div>
+
+        <div class="otp-error-msg" id="otp-error">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="6" stroke="#FF6B6B" stroke-width="1.2"/><line x1="6.5" y1="3.5" x2="6.5" y2="7.5" stroke="#FF6B6B" stroke-width="1.5" stroke-linecap="round"/><circle cx="6.5" cy="9.5" r="0.7" fill="#FF6B6B"/></svg>
+          Code incorrect. Réessayez.
+        </div>
+
+        <button class="btn-main" id="btn-verify" onclick="verifyCode()" disabled>
+          Vérifier
+        </button>
+
+        <div class="resend-section">
+          <span class="resend-left">Pas reçu le code ?</span>
+          <div class="resend-right">
+            <button class="btn-resend" id="btn-resend" onclick="resendCode()" disabled>Renvoyer</button>
+            <span class="resend-timer" id="resend-timer">0:30</span>
+          </div>
+        </div>
+
+        <div class="demo-hint">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#F5E642" stroke-width="1.2"/><line x1="7" y1="5" x2="7" y2="9" stroke="#F5E642" stroke-width="1.5" stroke-linecap="round"/><circle cx="7" cy="3.5" r="0.7" fill="#F5E642"/></svg>
+          Maquette — tapez <span>1 2 3 4 5 6</span> pour valider
+        </div>
+      </div>
+
+      <!-- ─── VUE 3 : SUCCÈS ─── -->
+      <div class="view" id="view-3">
+        <div class="success-wrap">
+          <div class="success-ring">
+            <span class="success-check">✓</span>
+          </div>
+          <div class="form-title">Email confirmé !</div>
+          <p class="form-subtitle">
+            Parfait. Vous pouvez maintenant déposer votre film pour la sélection officielle.
+          </p>
+
+          <ul class="checklist">
+            <li>
+              <span class="check-icon">1</span>
+              Uploader votre vidéo de 60 secondes
+            </li>
+            <li>
+              <span class="check-icon">2</span>
+              Joindre vos sous-titres en français
+            </li>
+            <li>
+              <span class="check-icon">3</span>
+              Documenter vos outils IA
+            </li>
+          </ul>
+
+          <button class="btn-solar" onclick="goToSubmission()">
+            Accéder au formulaire de dépôt →
+          </button>
+
+          <div class="security-row" style="justify-content:center;">
+            <svg width="12" height="14" viewBox="0 0 12 14" fill="none"><path d="M6 1L1.5 3V7C1.5 9.76 3.48 12.34 6 13C8.52 12.34 10.5 9.76 10.5 7V3L6 1Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+            Session sécurisée · Données protégées
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /form-box -->
+  </main>
+
+  <script>
+    /* ─── STATE ─── */
+    let userEmail = '';
+    let resendInterval = null;
+    const DIGITS = ['d1','d2','d3','d4','d5','d6'];
+
+    /* ─── STEPS UI ─── */
+    function setStep(n) {
+      for (let i = 1; i <= 3; i++) {
+        const sc = document.getElementById('sc-' + i);
+        const sl = document.getElementById('sl-' + i);
+        sc.className = 'step-circle ' + (i < n ? 'done' : i === n ? 'active' : 'pending');
+        sc.textContent = i < n ? '✓' : i;
+        sl.className = 'step-label ' + (i === n ? 'active-label' : 'dim');
+      }
+      for (let i = 1; i <= 2; i++) {
+        document.getElementById('conn-' + i).className = 'step-connector' + (i < n ? ' done' : '');
+      }
+    }
+
+    /* ─── SHOW VIEW ─── */
+    function showView(n) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.getElementById('view-' + n).classList.add('active');
+      setStep(n);
+    }
+
+    /* ─── EMAIL LIVE VALIDATION ─── */
+    const emailInput = document.getElementById('email-input');
+    const fieldMsg   = document.getElementById('field-msg');
+
+    emailInput.addEventListener('input', () => {
+      const val = emailInput.value.trim();
+      emailInput.classList.remove('error', 'valid');
+      fieldMsg.className = 'field-msg';
+      fieldMsg.textContent = '';
+      if (val.length > 4) {
+        if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+          emailInput.classList.add('valid');
+          fieldMsg.className = 'field-msg ok';
+          fieldMsg.textContent = '✓ Adresse valide';
+        } else {
+          fieldMsg.className = 'field-msg err';
+          fieldMsg.textContent = 'Format invalide (ex: vous@domaine.com)';
+        }
+      }
+    });
+    emailInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendCode(); });
+
+    /* ─── SEND CODE ─── */
+    function sendCode() {
+      const email = emailInput.value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        emailInput.classList.add('error');
+        emailInput.classList.remove('valid');
+        fieldMsg.className = 'field-msg err';
+        fieldMsg.textContent = 'Veuillez entrer une adresse email valide.';
+        emailInput.focus();
+        return;
+      }
+      userEmail = email;
+      const btn = document.getElementById('btn-send');
+      btn.classList.add('loading');
+      btn.disabled = true;
+
+      setTimeout(() => {
+        btn.classList.remove('loading');
+        btn.disabled = false;
+        document.getElementById('display-email').textContent = email;
+        showView(2);
+        initOTP();
+        startResendTimer();
+      }, 1600);
+    }
+
+    /* ─── OTP SETUP ─── */
+    function initOTP() {
+      DIGITS.forEach((id, i) => {
+        const el = document.getElementById(id);
+        el.value = '';
+        el.className = 'otp-digit';
+
+        // Clone to remove old listeners
+        const fresh = el.cloneNode(true);
+        el.parentNode.replaceChild(fresh, el);
+        const fe = document.getElementById(id);
+
+        fe.addEventListener('keydown', e => {
+          if (e.key === 'Backspace') {
+            if (fe.value) {
+              fe.value = '';
+              fe.classList.remove('filled');
+              checkOTP();
+            } else if (i > 0) {
+              const prev = document.getElementById(DIGITS[i - 1]);
+              prev.value = '';
+              prev.classList.remove('filled');
+              prev.focus();
+              checkOTP();
+            }
+            e.preventDefault();
+            return;
+          }
+          if (e.key === 'ArrowLeft' && i > 0) { document.getElementById(DIGITS[i-1]).focus(); return; }
+          if (e.key === 'ArrowRight' && i < 5) { document.getElementById(DIGITS[i+1]).focus(); return; }
+        });
+
+        fe.addEventListener('input', e => {
+          const raw = fe.value.replace(/\D/g, '');
+          if (!raw) { fe.value = ''; fe.classList.remove('filled'); checkOTP(); return; }
+          fe.value = raw[raw.length - 1];
+          fe.classList.add('filled');
+          clearErrors();
+          if (i < 5) document.getElementById(DIGITS[i + 1]).focus();
+          checkOTP();
+        });
+
+        fe.addEventListener('paste', e => {
+          e.preventDefault();
+          const text = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '').slice(0, 6);
+          text.split('').forEach((ch, j) => {
+            const d = document.getElementById(DIGITS[j]);
+            if (d) { d.value = ch; d.classList.add('filled'); }
+          });
+          const focus = Math.min(text.length, 5);
+          document.getElementById(DIGITS[focus]).focus();
+          clearErrors();
+          checkOTP();
+        });
+      });
+
+      setTimeout(() => document.getElementById('d1').focus(), 80);
+    }
+
+    function checkOTP() {
+      const code = DIGITS.map(id => document.getElementById(id).value).join('');
+      document.getElementById('btn-verify').disabled = code.length < 6;
+    }
+
+    function clearErrors() {
+      DIGITS.forEach(id => document.getElementById(id).classList.remove('error-state'));
+      const msg = document.getElementById('otp-error');
+      msg.classList.remove('show');
+    }
+
+    /* ─── VERIFY ─── */
+    function verifyCode() {
+      const code = DIGITS.map(id => document.getElementById(id).value).join('');
+      const btn = document.getElementById('btn-verify');
+      btn.classList.add('loading');
+      btn.disabled = true;
+
+      setTimeout(() => {
+        btn.classList.remove('loading');
+
+        if (code === '123456') {
+          showView(3);
+        } else {
+          // Shake + error state
+          DIGITS.forEach(id => {
+            const el = document.getElementById(id);
+            el.classList.add('error-state', 'shake');
+            setTimeout(() => { el.classList.remove('shake'); el.value = ''; el.classList.remove('filled', 'error-state'); }, 500);
+          });
+          document.getElementById('otp-error').classList.add('show');
+          setTimeout(() => document.getElementById('d1').focus(), 520);
+          btn.disabled = true;
+        }
+      }, 1100);
+    }
+
+    /* ─── RESEND ─── */
+    function startResendTimer() {
+      let s = 30;
+      const timerEl = document.getElementById('resend-timer');
+      const resendBtn = document.getElementById('btn-resend');
+      resendBtn.disabled = true;
+      timerEl.style.display = 'inline';
+
+      if (resendInterval) clearInterval(resendInterval);
+      resendInterval = setInterval(() => {
+        s--;
+        timerEl.textContent = `0:${String(s).padStart(2,'0')}`;
+        if (s <= 0) {
+          clearInterval(resendInterval);
+          timerEl.style.display = 'none';
+          resendBtn.disabled = false;
+        }
+      }, 1000);
+    }
+
+    function resendCode() {
+      startResendTimer();
+      DIGITS.forEach(id => { const el = document.getElementById(id); el.value = ''; el.classList.remove('filled','error-state'); });
+      clearErrors();
+      document.getElementById('btn-verify').disabled = true;
+      setTimeout(() => document.getElementById('d1').focus(), 50);
+    }
+
+    function goBack() {
+      if (resendInterval) clearInterval(resendInterval);
+      showView(1);
+      setTimeout(() => emailInput.focus(), 80);
+    }
+
+    function goToSubmission() {
+      window.location.href = 'formulaire-depot.html';
+    }
+
+    /* ─── INIT ─── */
+    setStep(1);
+    setTimeout(() => {
+      emailInput.focus();
+      emailInput.classList.add('valid');
+    }, 200);
+  </script>
+
+  <style>
+    .dev-nav{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.85);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.1);border-radius:50px;padding:8px 16px;display:flex;align-items:center;gap:12px;z-index:9999;font-family:Inter,sans-serif;font-size:12px;}
+    .dev-label{color:rgba(255,255,255,.4);letter-spacing:.05em;text-transform:uppercase;}
+    .dev-links{display:flex;gap:6px;}
+    .dev-btn{color:rgba(255,255,255,.6);text-decoration:none;padding:4px 10px;border-radius:20px;transition:all .2s;}
+    .dev-btn:hover,.dev-btn.curr{background:rgba(255,255,255,.12);color:#fff;}
+  </style>
+  <div class="dev-nav">
+    <div class="dev-label">Prototype</div>
+    <div class="dev-links">
+      <a href="prototype.html" class="dev-btn">🏠</a>
+      <a href="verification-email.html" class="dev-btn curr">✉️</a>
+      <a href="formulaire-depot.html" class="dev-btn">📝</a>
+      <a href="admin-jury.html" class="dev-btn">⚖️</a>
+    </div>
+  </div>
+</body>
+</html>
