@@ -235,6 +235,110 @@
       margin-bottom: 16px; margin-top: 4px;
     }
 
+    /* ─── CESSION DE DROITS ─── */
+    .rights-gate {
+      background: rgba(245,230,66,0.03);
+      border: 1px solid rgba(245,230,66,0.18);
+      border-radius: 16px;
+      padding: 26px;
+      margin-bottom: 20px;
+    }
+    .rights-gate-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 20px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid rgba(245,230,66,0.1);
+    }
+    .rights-gate-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      background: rgba(245,230,66,0.08);
+      border: 1px solid rgba(245,230,66,0.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }
+    .rights-gate-title {
+      font-family: var(--font-display);
+      font-size: 0.92rem; font-weight: 800;
+      color: var(--solar); margin-bottom: 4px;
+    }
+    .rights-gate-sub { font-size: 0.73rem; color: var(--mist); line-height: 1.55; }
+
+    .rights-items { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+    .rights-item {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 14px 16px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.02);
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+      user-select: none;
+    }
+    .rights-item:hover { background: rgba(255,255,255,0.04); }
+    .rights-item.accepted { border-color: rgba(78,255,206,0.25); background: rgba(78,255,206,0.04); }
+
+    .rights-box {
+      width: 20px; height: 20px; border-radius: 5px;
+      border: 1.5px solid rgba(255,255,255,0.2);
+      flex-shrink: 0; margin-top: 2px;
+      position: relative; transition: all 0.2s;
+    }
+    .rights-item.accepted .rights-box { background: var(--aurora); border-color: var(--aurora); }
+    .rights-item.accepted .rights-box::after {
+      content: "";
+      position: absolute; top: 3px; left: 6px;
+      width: 5px; height: 9px;
+      border: 2px solid var(--deep-sky);
+      border-top: none; border-left: none;
+      transform: rotate(45deg);
+    }
+    .rights-title { font-size: 0.8rem; font-weight: 700; color: var(--white-soft); margin-bottom: 5px; }
+    .rights-detail { font-size: 0.72rem; color: var(--mist); line-height: 1.65; }
+    .rights-detail strong { color: var(--white-soft); font-weight: 600; }
+
+    .rights-legal-note {
+      font-size: 0.7rem; color: var(--mist);
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      line-height: 1.6;
+    }
+    .rights-legal-note a { color: var(--aurora); text-decoration: none; }
+
+    .rights-warn { display: none; font-size: 0.74rem; color: var(--coral); margin-bottom: 10px; }
+    .rights-warn.show { display: block; }
+
+    .btn-accept-rights {
+      width: 100%; padding: 12px;
+      background: rgba(78,255,206,0.07);
+      border: 1px solid rgba(78,255,206,0.22);
+      border-radius: 10px;
+      font-family: var(--font-body);
+      font-size: 0.84rem; font-weight: 600;
+      color: var(--aurora); cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-accept-rights:hover { background: rgba(78,255,206,0.14); }
+
+    .rights-confirmed {
+      display: none;
+      align-items: center; gap: 10px;
+      font-size: 0.78rem; font-weight: 600;
+      color: var(--aurora);
+      background: rgba(78,255,206,0.05);
+      border: 1px solid rgba(78,255,206,0.15);
+      border-radius: 10px;
+      padding: 10px 16px;
+      margin-bottom: 16px;
+    }
+    .rights-confirmed.show { display: flex; }
+    .rights-confirmed-date { margin-left: auto; font-family: var(--font-mono); font-size: 0.66rem; color: var(--mist); }
+
     /* ─── UPLOAD ZONE ─── */
     .upload-zone {
       border: 2px dashed rgba(78,255,206,0.25);
@@ -752,8 +856,63 @@
         <hr class="section-sep">
         <div class="section-title-inline">Fichier vidéo</div>
 
+        <!-- ── Cession de droits — bloquant avant upload ── -->
+        <div class="rights-gate" id="rights-gate">
+          <div class="rights-gate-header">
+            <div class="rights-gate-icon">📋</div>
+            <div>
+              <div class="rights-gate-title">Cession de droits — requis avant l'envoi du fichier</div>
+              <div class="rights-gate-sub">Conformément au droit d'auteur français (L.131-3 CPI) et au RGPD (UE 2016/679), vous devez accepter les trois points ci-dessous avant de déposer votre film. Cette cession est <strong style="color:var(--white-soft)">non-exclusive</strong> : vous conservez l'intégralité de vos droits d'auteur.</div>
+            </div>
+          </div>
+
+          <div class="rights-items">
+
+            <div class="rights-item" id="ri-1" onclick="toggleRight('ri-1')">
+              <div class="rights-box"></div>
+              <div>
+                <div class="rights-title">Licence de diffusion non-exclusive <span class="req">● obligatoire</span></div>
+                <div class="rights-detail">J'autorise <strong>marsAI, La Plateforme et le Mobile Film Festival</strong> à diffuser, projeter, streamer et archiver mon film dans le cadre du festival marsAI 2026 et de ses archives officielles, pour une durée de <strong>5 ans</strong>, à titre <strong>gratuit</strong>, sur <strong>tout territoire</strong> et tout support (salle, web, TV partenaires). Je conserve mes droits d'auteur et reste libre de diffuser mon film par ailleurs.</div>
+              </div>
+            </div>
+
+            <div class="rights-item" id="ri-2" onclick="toggleRight('ri-2')">
+              <div class="rights-box"></div>
+              <div>
+                <div class="rights-title">Droit d'utilisation à des fins de communication <span class="req">● obligatoire</span></div>
+                <div class="rights-detail">J'autorise l'utilisation d'<strong>extraits de mon film (max. 15 secondes)</strong>, d'images fixes tirées du film et de son titre pour la promotion du festival sur les supports officiels de marsAI : réseaux sociaux, presse écrite et en ligne, affichage, site officiel, bande-annonce du festival.</div>
+              </div>
+            </div>
+
+            <div class="rights-item" id="ri-3" onclick="toggleRight('ri-3')">
+              <div class="rights-box"></div>
+              <div>
+                <div class="rights-title">Déclaration sur l'honneur <span class="req">● obligatoire</span></div>
+                <div class="rights-detail">Je certifie être l'<strong>auteur ou co-auteur</strong> de ce film et détenir tous les droits nécessaires à cette cession. Je confirme que l'œuvre ne viole aucun droit de propriété intellectuelle tiers, que les outils IA déclarés ont été utilisés dans le respect de leurs conditions d'utilisation, et que le film n'est pas actuellement soumis à un festival concurrent imposant l'exclusivité.</div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="rights-legal-note">
+            🔒 Ces données de consentement sont horodatées et conservées 5 ans à des fins de preuve juridique, conformément à l'article L.131-3 du Code de la Propriété Intellectuelle.
+            Pour exercer vos droits ou poser une question : <a href="mailto:droits@marsai.fr">droits@marsai.fr</a> ·
+            <a href="#">Politique de confidentialité complète</a>
+          </div>
+
+          <div class="rights-warn" id="rights-warn">⚠ Vous devez accepter les trois points pour déverrouiller le dépôt de votre film.</div>
+
+          <button class="btn-accept-rights" onclick="acceptRights()">Accepter et déverrouiller l'upload →</button>
+        </div>
+
+        <!-- Confirmation droits acceptés -->
+        <div class="rights-confirmed" id="rights-confirmed">
+          <span>✓</span> Cession de droits acceptée et horodatée
+          <span class="rights-confirmed-date" id="rights-confirmed-date"></span>
+        </div>
+
         <!-- Upload vidéo -->
-        <div id="upload-zone-wrap">
+        <div id="upload-zone-wrap" style="display:none;">
           <div class="upload-zone" id="upload-zone" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFile(event)">
             <input type="file" id="video-input" accept=".mp4,.mov,.webm,video/*" onchange="handleVideo(this)">
             <span class="uz-icon">🎞️</span>
@@ -1081,6 +1240,33 @@
     let videoValid = false;
     let uploadPct = 0;
     let uploadInterval = null;
+    let rightsAccepted = false;
+    const rightState = { 'ri-1': false, 'ri-2': false, 'ri-3': false };
+
+    /* ── CESSION DE DROITS ── */
+    function toggleRight(id) {
+      rightState[id] = !rightState[id];
+      document.getElementById(id).classList.toggle('accepted', rightState[id]);
+      document.getElementById('rights-warn').classList.remove('show');
+    }
+
+    function acceptRights() {
+      const allAccepted = Object.values(rightState).every(v => v);
+      if (!allAccepted) {
+        document.getElementById('rights-warn').classList.add('show');
+        return;
+      }
+      rightsAccepted = true;
+      // Horodatage
+      const now = new Date();
+      const ts = now.toLocaleDateString('fr-FR') + ' à ' + now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+      document.getElementById('rights-confirmed-date').textContent = ts;
+      document.getElementById('rights-gate').style.display = 'none';
+      document.getElementById('rights-confirmed').classList.add('show');
+      document.getElementById('upload-zone-wrap').style.display = 'block';
+      // Lancer la simulation upload
+      if (!videoValid) autoSimulateVideo();
+    }
 
     /* ── COMPTEUR DE CARACTÈRES ── */
     function countChars(el, counterId, max) {
@@ -1115,7 +1301,7 @@
       updateStepsNav();
       window.scrollTo({ top: 0, behavior: 'smooth' });
       // Auto-simuler la vidéo quand on arrive sur l'étape 2
-      if (n === 2 && !videoValid) autoSimulateVideo();
+      // La simulation vidéo se déclenche après acceptation des droits (acceptRights())
     }
 
     function updateStepsNav() {
