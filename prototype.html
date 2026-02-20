@@ -1270,6 +1270,154 @@
       color: var(--mist);
     }
 
+    /* ─── PALMARÈS ────────────────────────────────────────── */
+    .palmares-section {
+      position: relative;
+      background: var(--deep-sky);
+      padding: 100px 0;
+      overflow: hidden;
+    }
+    .palmares-section::before {
+      content: "";
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(245,230,66,0.05) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .palmares-intro {
+      text-align: center;
+      color: var(--mist);
+      font-size: 0.88rem;
+      margin: 0 auto 64px;
+      max-width: 440px;
+    }
+
+    /* Grand Prix */
+    .award-grand {
+      position: relative;
+      overflow: hidden;
+      max-width: 680px;
+      margin: 0 auto 20px;
+      background: linear-gradient(135deg, rgba(245,230,66,0.06) 0%, rgba(245,230,66,0.02) 60%, rgba(245,230,66,0.06) 100%);
+      border: 1px solid rgba(245,230,66,0.22);
+      border-radius: 24px;
+      padding: 44px 48px;
+      display: flex;
+      align-items: center;
+      gap: 36px;
+    }
+    .award-grand-shine {
+      position: absolute; top: 0; bottom: 0; left: 0;
+      width: 45%;
+      background: linear-gradient(90deg, transparent, rgba(245,230,66,0.06), transparent);
+      animation: palmares-shine 5s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes palmares-shine {
+      0%, 100% { transform: translateX(-100%); }
+      50% { transform: translateX(500%); }
+    }
+    .award-grand-icon {
+      width: 80px; height: 80px; flex-shrink: 0;
+      border-radius: 20px;
+      background: rgba(245,230,66,0.07);
+      border: 1px solid rgba(245,230,66,0.18);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .award-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(245,230,66,0.6);
+      margin-bottom: 10px;
+    }
+    .award-grand-name {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--solar);
+      margin-bottom: 10px;
+      line-height: 1;
+    }
+    .award-grand-desc {
+      font-size: 0.85rem;
+      color: var(--mist);
+      line-height: 1.65;
+      margin-bottom: 18px;
+    }
+    .award-bourse {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--solar);
+      background: rgba(245,230,66,0.06);
+      border: 1px solid rgba(245,230,66,0.15);
+      border-radius: 30px;
+      padding: 5px 14px;
+      letter-spacing: 0.06em;
+    }
+
+    /* Prix secondaires */
+    .awards-secondary {
+      max-width: 680px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    .award-card {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 18px;
+      padding: 28px 22px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.25s, border-color 0.25s;
+    }
+    .award-card:hover { transform: translateY(-4px); }
+    .award-card::before {
+      content: "";
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 2px;
+    }
+    .award-jury::before  { background: linear-gradient(90deg, transparent, var(--lavande), transparent); }
+    .award-jury:hover    { border-color: rgba(192,132,252,0.2); }
+    .award-public::before { background: linear-gradient(90deg, transparent, var(--aurora), transparent); }
+    .award-public:hover  { border-color: rgba(78,255,206,0.2); }
+    .award-innov::before { background: linear-gradient(90deg, transparent, var(--coral), transparent); }
+    .award-innov:hover   { border-color: rgba(255,107,107,0.2); }
+
+    .award-icon {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      margin-bottom: 18px;
+    }
+    .award-jury  .award-icon { background: rgba(192,132,252,0.08); }
+    .award-public .award-icon { background: rgba(78,255,206,0.08); }
+    .award-innov .award-icon { background: rgba(255,107,107,0.08); }
+
+    .award-name {
+      font-family: var(--font-display);
+      font-size: 0.92rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .award-jury  .award-name { color: var(--lavande); }
+    .award-public .award-name { color: var(--aurora); }
+    .award-innov .award-name { color: var(--coral); }
+
+    .award-desc {
+      font-size: 0.76rem;
+      color: var(--mist);
+      line-height: 1.6;
+    }
+
     /* ─── FOOTER ─────────────────────────────────────────── */
     footer {
       background: var(--deep-sky);
@@ -1369,11 +1517,11 @@
   <nav>
     <div class="logo">mars<span>AI</span></div>
     <ul class="nav-links">
-      <li>Le Concours</li>
-      <li>Programme</li>
-      <li>Films</li>
+      <li><a href="#concours">Le Concours</a></li>
+      <li><a href="#programme">Programme</a></li>
+      <li><a href="#films">Films</a></li>
       <li><a href="login-jury.html" style="color:var(--white-soft);text-decoration:none;display:flex;align-items:center;gap:5px;"><span style="font-size:0.7rem;color:var(--aurora);">⬡</span> Espace Jury</a></li>
-      <li>Presse</li>
+      <li><a href="#presse">Presse</a></li>
       <li><a class="btn-nav" href="verification-email.html">Soumettre un film</a></li>
       <li style="display:flex;gap:6px;">
         <button id="btn-fr" onclick="setLang('fr')" style="background:rgba(255,255,255,0.06);border:1px solid rgba(78,255,206,0.4);border-radius:6px;padding:6px 12px;font-size:0.85rem;cursor:pointer;font-family:var(--font-body);transition:all 0.2s;" title="Français">🇫🇷</button>
@@ -1446,7 +1594,7 @@
   </section>
 
   <!-- ─── CONCEPT SECTION ──────────────────────────────── -->
-  <section class="concept">
+  <section class="concept" id="concours">
     <div class="section-inner">
       <div class="section-label">Le Concept</div>
       <h2 class="section-title">Une contrainte absolue,<br>une liberté totale</h2>
@@ -1473,7 +1621,7 @@
   </section>
 
   <!-- ─── ABOUT FESTIVAL ───────────────────────────────── -->
-  <section class="about">
+  <section class="about" id="programme">
     <div class="aurora-bg" style="opacity:0.5"></div>
     <div class="section-inner">
       <div class="about-inner">
@@ -1896,38 +2044,51 @@
   </section>
 
   <!-- ─── PRIX SECTION ────────────────────────────────── -->
-  <section style="position:relative;background:var(--horizon);padding:80px 60px;">
-    <div style="max-width:1200px;margin:0 auto;">
-      <div class="section-label" style="text-align:center;margin-bottom:16px;">Palmarès · Modèle Cannes</div>
-      <h2 class="section-title" style="text-align:center;margin-bottom:12px;">Les Prix marsAI</h2>
-      <p style="text-align:center;color:var(--mist);font-size:0.9rem;margin-bottom:56px;">Bourses et récompenses décernées par le jury international + Prix du Public</p>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
-        <div style="background:rgba(245,230,66,0.06);border:1px solid rgba(245,230,66,0.2);border-radius:16px;padding:28px 24px;text-align:center;">
-          <div style="font-size:2rem;margin-bottom:12px;">🏆</div>
-          <div style="font-family:var(--font-display);font-size:1rem;font-weight:800;color:var(--solar);margin-bottom:6px;">Grand Prix</div>
-          <div style="font-size:0.78rem;color:var(--mist);">Meilleur film toutes catégories</div>
+  <section class="palmares-section" id="palmares">
+    <div class="section-inner">
+      <div class="section-label" style="text-align:center;margin-bottom:14px;">Palmarès · Modèle Cannes</div>
+      <h2 class="section-title" style="text-align:center;margin-bottom:16px;">Les Prix marsAI</h2>
+      <p class="palmares-intro">Bourses et récompenses décernées par le jury international au terme des projections officielles.</p>
+
+      <!-- Grand Prix -->
+      <div class="award-grand">
+        <div class="award-grand-shine"></div>
+        <div class="award-grand-icon">
+          <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 3L21.8 13.1H32.6L24 19.4L27.2 29.5L18 23.2L8.8 29.5L12 19.4L3.4 13.1H14.2L18 3Z" fill="rgba(245,230,66,0.85)"/>
+          </svg>
         </div>
-        <div style="background:rgba(192,132,252,0.06);border:1px solid rgba(192,132,252,0.2);border-radius:16px;padding:28px 24px;text-align:center;">
-          <div style="font-size:2rem;margin-bottom:12px;">⚖️</div>
-          <div style="font-family:var(--font-display);font-size:1rem;font-weight:800;color:var(--lavande);margin-bottom:6px;">Prix du Jury</div>
-          <div style="font-size:0.78rem;color:var(--mist);">Sélection spéciale du jury</div>
+        <div>
+          <div class="award-eyebrow">✦ Prix Principal · marsAI 2026</div>
+          <div class="award-grand-name">Grand Prix</div>
+          <div class="award-grand-desc">Meilleur film toutes catégories — décerné par le jury international à l'issue des délibérations finales de la cérémonie de clôture.</div>
+          <div class="award-bourse">✦ Bourse de création · Remise lors du Gala</div>
         </div>
-        <div style="background:rgba(78,255,206,0.06);border:1px solid rgba(78,255,206,0.2);border-radius:16px;padding:28px 24px;text-align:center;">
-          <div style="font-size:2rem;margin-bottom:12px;">🌍</div>
-          <div style="font-family:var(--font-display);font-size:1rem;font-weight:800;color:var(--aurora);margin-bottom:6px;">Prix du Public</div>
-          <div style="font-size:0.78rem;color:var(--mist);">Vote du public en ligne</div>
+      </div>
+
+      <!-- Prix secondaires -->
+      <div class="awards-secondary">
+        <div class="award-card award-jury">
+          <div class="award-icon">⚖️</div>
+          <div class="award-name">Prix du Jury</div>
+          <div class="award-desc">Coup de cœur artistique — sélection spéciale décernée par le jury international.</div>
         </div>
-        <div style="background:rgba(255,107,107,0.06);border:1px solid rgba(255,107,107,0.2);border-radius:16px;padding:28px 24px;text-align:center;">
-          <div style="font-size:2rem;margin-bottom:12px;">🤖</div>
-          <div style="font-family:var(--font-display);font-size:1rem;font-weight:800;color:var(--coral);margin-bottom:6px;">Prix de l'Innovation IA</div>
-          <div style="font-size:0.78rem;color:var(--mist);">Usage le plus créatif de l'IA</div>
+        <div class="award-card award-public">
+          <div class="award-icon">🌍</div>
+          <div class="award-name">Prix du Public</div>
+          <div class="award-desc">Vote ouvert en ligne pendant le festival — le public désigne son film favori.</div>
+        </div>
+        <div class="award-card award-innov">
+          <div class="award-icon">🤖</div>
+          <div class="award-name">Prix Innovation IA</div>
+          <div class="award-desc">Usage le plus audacieux et créatif de l'intelligence artificielle dans la création.</div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ─── FOOTER ──────────────────────────────────────── -->
-  <footer>
+  <footer id="presse">
     <div class="footer-inner">
       <div class="footer-brand">
         <span class="logo">mars<span class="ai">AI</span></span>
