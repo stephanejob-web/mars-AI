@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Espace Jury — marsAI 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --solar:      #F5E642;
+      --aurora:     #4EFFCE;
+      --deep-sky:   #0A0F2E;
+      --horizon:    #1A1F4E;
+      --surface:    #0F1535;
+      --surface-2:  #141B3E;
+      --coral:      #FF6B6B;
+      --lavande:    #C084FC;
+      --white-soft: #F0F4FF;
+      --mist:       #8892B0;
+      --font-display: 'Syne', sans-serif;
+      --font-body:    'Inter', sans-serif;
+      --font-mono:    'JetBrains Mono', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      background: var(--deep-sky);
+      color: var(--white-soft);
+      font-family: var(--font-body);
+    }
+
+    /* ─── BACKGROUND ─── */
+    body::before {
+      content: "";
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse at 20% 30%, rgba(78,255,206,0.07) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 70%, rgba(192,132,252,0.07) 0%, transparent 55%);
+      pointer-events: none;
+    }
+
+    /* ─── LAYOUT ─── */
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px 100px;
+      position: relative; z-index: 1;
+    }
+
+    /* ─── LOGO ─── */
+    .logo {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--white-soft);
+      margin-bottom: 40px;
+    }
+    .logo span { color: var(--aurora); }
+
+    /* ─── CARD ─── */
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 40px 36px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.4);
+    }
+
+    .card-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .card-icon {
+      width: 56px; height: 56px;
+      background: rgba(78,255,206,0.08);
+      border: 1px solid rgba(78,255,206,0.2);
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      margin: 0 auto 16px;
+    }
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--white-soft);
+      margin-bottom: 6px;
+    }
+    .card-subtitle {
+      font-size: 0.82rem;
+      color: var(--mist);
+    }
+
+    /* ─── ROLE SWITCH ─── */
+    .role-switch {
+      display: flex;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 28px;
+      gap: 4px;
+    }
+    .role-btn {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      border-radius: 7px;
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--mist);
+      background: transparent;
+    }
+    .role-btn.active {
+      background: rgba(78,255,206,0.1);
+      border: 1px solid rgba(78,255,206,0.25);
+      color: var(--aurora);
+    }
+
+    /* ─── FORM ─── */
+    .field { margin-bottom: 18px; }
+    .field label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--mist);
+      margin-bottom: 7px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .field input {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 11px 14px;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      color: var(--white-soft);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .field input:focus {
+      border-color: rgba(78,255,206,0.4);
+    }
+    .field input::placeholder { color: rgba(136,146,176,0.5); }
+
+    .forgot {
+      text-align: right;
+      margin-top: -10px;
+      margin-bottom: 24px;
+    }
+    .forgot a {
+      font-size: 0.75rem;
+      color: var(--mist);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .forgot a:hover { color: var(--aurora); }
+
+    .btn-submit {
+      width: 100%;
+      padding: 13px;
+      background: var(--aurora);
+      color: var(--deep-sky);
+      border: none;
+      border-radius: 10px;
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+      letter-spacing: 0.02em;
+    }
+    .btn-submit:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-submit:active { transform: translateY(0); }
+
+    /* ─── ERROR ─── */
+    .error-msg {
+      display: none;
+      background: rgba(255,107,107,0.1);
+      border: 1px solid rgba(255,107,107,0.25);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.8rem;
+      color: var(--coral);
+      margin-bottom: 18px;
+      text-align: center;
+    }
+    .error-msg.show { display: block; }
+
+    /* ─── BACK ─── */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 28px;
+      font-size: 0.8rem;
+      color: var(--mist);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--white-soft); }
+
+    /* ─── DEV NAV ─── */
+    .dev-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: rgba(5,8,24,0.95);
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding: 10px 24px;
+      display: flex; align-items: center; gap: 16px;
+      z-index: 999; backdrop-filter: blur(12px);
+    }
+    .dev-nav-label {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: rgba(136,146,176,0.5);
+      white-space: nowrap;
+    }
+    .dev-nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+    .dev-btn {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--mist);
+      text-decoration: none;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .dev-btn:hover { border-color: rgba(78,255,206,0.3); color: var(--aurora); }
+    .dev-btn.current { border-color: rgba(78,255,206,0.4); color: var(--aurora); background: rgba(78,255,206,0.08); }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <a href="prototype.html" class="logo">mars<span>AI</span></a>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">⬡</div>
+      <div class="card-title">Espace Jury</div>
+      <div class="card-subtitle">Accès réservé aux membres du jury et aux administrateurs</div>
+    </div>
+
+    <!-- Sélecteur de rôle -->
+    <div class="role-switch">
+      <button class="role-btn active" onclick="switchRole('jury', this)">⚖️ Membre du jury</button>
+      <button class="role-btn" onclick="switchRole('admin', this)">🛡️ Administrateur</button>
+    </div>
+
+    <!-- Formulaire -->
+    <div class="error-msg" id="error-msg">Identifiants incorrects. Veuillez réessayer.</div>
+
+    <form onsubmit="handleLogin(event)">
+      <div class="field">
+        <label>Adresse e-mail</label>
+        <input type="email" id="email" value="jury@marsai.fr" required autocomplete="email">
+      </div>
+      <div class="field">
+        <label>Mot de passe</label>
+        <input type="password" id="password" value="jury2026" required autocomplete="current-password">
+      </div>
+      <div class="forgot">
+        <a href="#">Mot de passe oublié ?</a>
+      </div>
+      <button type="submit" class="btn-submit">Accéder à l'espace jury →</button>
+    </form>
+  </div>
+
+  <a href="prototype.html" class="back-link">← Retour au site</a>
+
+</div>
+
+<!-- ─── DEV NAV ─── -->
+<div class="dev-nav">
+  <div class="dev-nav-label">Prototype — Navigation</div>
+  <div class="dev-nav-links">
+    <a href="prototype.html" class="dev-btn">🏠 Accueil</a>
+    <a href="verification-email.html" class="dev-btn">✉️ Vérif. Email</a>
+    <a href="formulaire-depot.html" class="dev-btn">📝 Formulaire</a>
+    <a href="login-jury.html" class="dev-btn current">🔐 Connexion Jury</a>
+    <a href="admin-jury.html" class="dev-btn">⚖️ Interface Jury</a>
+  </div>
+</div>
+
+<script>
+  let currentRole = 'jury';
+
+  const creds = {
+    jury:  { email: 'jury@marsai.fr',  password: 'jury2026' },
+    admin: { email: 'admin@marsai.fr', password: 'admin2026' },
+  };
+
+  function switchRole(role, btn) {
+    currentRole = role;
+    document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('email').value    = creds[role].email;
+    document.getElementById('password').value = creds[role].password;
+  }
+
+  function handleLogin(e) {
+    e.preventDefault();
+    window.location.href = 'admin-jury.html';
+  }
+</script>
+
+</body>
+</html>
