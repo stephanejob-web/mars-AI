@@ -515,39 +515,49 @@
       border: 1px solid rgba(255,255,255,0.08);
       border-radius: 20px;
       overflow: hidden;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.5);
     }
     .venue-map {
-      height: 220px;
-      background:
-        linear-gradient(rgba(26,31,78,0.8), rgba(26,31,78,0.8)),
-        repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(78,255,206,0.05) 40px, rgba(78,255,206,0.05) 41px),
-        repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(78,255,206,0.05) 40px, rgba(78,255,206,0.05) 41px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      height: 300px;
       position: relative;
+      overflow: hidden;
     }
-    .venue-map-label {
-      text-align: center;
+    .venue-map iframe {
+      width: 100%; height: 115%; border: none;
+      filter: saturate(0.2) brightness(0.55) hue-rotate(185deg);
+      margin-top: -7%;
+      display: block;
+    }
+    .venue-map-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, rgba(10,15,46,0.2) 0%, rgba(10,15,46,0.75) 100%);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 12px;
     }
     .venue-pin {
-      font-size: 2.5rem;
+      font-size: 2.8rem;
       display: block;
-      margin-bottom: 8px;
       animation: bounce 2s ease-in-out infinite;
+      filter: drop-shadow(0 6px 16px rgba(78,255,206,0.45));
     }
     @keyframes bounce {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
+      50% { transform: translateY(-9px); }
     }
-    .venue-map-label span {
+    .venue-coords-badge {
       font-family: var(--font-mono);
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: var(--aurora);
-      letter-spacing: 0.06em;
+      background: rgba(10,15,46,0.75);
+      border: 1px solid rgba(78,255,206,0.22);
+      border-radius: 30px;
+      padding: 6px 16px;
+      letter-spacing: 0.07em;
+      backdrop-filter: blur(8px);
     }
     .venue-info {
-      padding: 24px 28px;
+      padding: 24px 28px 28px;
     }
     .venue-name {
       font-family: var(--font-display);
@@ -558,12 +568,77 @@
     .venue-address {
       font-size: 0.85rem;
       color: var(--mist);
+      margin-bottom: 16px;
     }
+    .venue-tags {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .venue-tag {
+      font-size: 0.72rem; font-weight: 600;
+      padding: 4px 11px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.09);
+      color: var(--mist);
+    }
+    .venue-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: rgba(78,255,206,0.08);
+      border: 1px solid rgba(78,255,206,0.25);
+      border-radius: 10px;
+      padding: 10px 20px;
+      font-family: var(--font-body);
+      font-size: 0.82rem; font-weight: 600;
+      color: var(--aurora);
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .venue-btn:hover { background: rgba(78,255,206,0.16); transform: translateY(-1px); }
     .about-stats {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 16px;
       margin-top: 16px;
+    }
+
+    /* ─── PROGRAMME ─── */
+    .event-programme {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-top: 28px;
+      border-left: 1px solid rgba(255,255,255,0.08);
+      padding-left: 24px;
+    }
+    .prog-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      position: relative;
+    }
+    .prog-item:last-child { border-bottom: none; }
+    .prog-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      margin-top: 5px;
+      flex-shrink: 0;
+      position: absolute;
+      left: -29px;
+      box-shadow: 0 0 10px currentColor;
+    }
+    .prog-day {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--white-soft);
+      margin-bottom: 3px;
+    }
+    .prog-desc {
+      font-size: 0.78rem;
+      color: var(--mist);
+      line-height: 1.5;
     }
     .stat-chip {
       background: rgba(78,255,206,0.07);
@@ -1297,13 +1372,12 @@
       <li>Le Concours</li>
       <li>Programme</li>
       <li>Films</li>
-      <li>Jury</li>
+      <li><a href="login-jury.html" style="color:var(--white-soft);text-decoration:none;display:flex;align-items:center;gap:5px;"><span style="font-size:0.7rem;color:var(--aurora);">⬡</span> Espace Jury</a></li>
       <li>Presse</li>
       <li><a class="btn-nav" href="verification-email.html">Soumettre un film</a></li>
-      <li>
-        <button onclick="toggleLang(this)" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:6px;padding:6px 14px;font-size:0.8rem;font-weight:600;color:var(--white-soft);cursor:pointer;font-family:var(--font-body);transition:all 0.2s;">
-          FR / EN
-        </button>
+      <li style="display:flex;gap:6px;">
+        <button id="btn-fr" onclick="setLang('fr')" style="background:rgba(255,255,255,0.06);border:1px solid rgba(78,255,206,0.4);border-radius:6px;padding:6px 12px;font-size:0.85rem;cursor:pointer;font-family:var(--font-body);transition:all 0.2s;" title="Français">🇫🇷</button>
+        <button id="btn-en" onclick="setLang('en')" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:6px;padding:6px 12px;font-size:0.85rem;cursor:pointer;font-family:var(--font-body);transition:all 0.2s;" title="English">🇬🇧</button>
       </li>
     </ul>
   </nav>
@@ -1404,26 +1478,47 @@
     <div class="section-inner">
       <div class="about-inner">
         <div class="about-text">
-          <div class="section-label">L'Événement</div>
-          <h2 class="section-title">Marseille, capitale mondiale du film IA</h2>
-          <p class="section-desc">La Plateforme accueille la première édition de marsAI. Projections officielles, jury international, Prix du Public et démos live d'outils IA. Date de clôture à confirmer avec le client.</p>
+          <div class="section-label">L'Événement · Marseille 2026</div>
+          <h2 class="section-title">Vivez la naissance<br>d'un nouveau cinéma</h2>
+          <p class="section-desc">Trois jours aux Friches Belle de Mai — une ancienne manufacture industrielle transformée en capitale culturelle. Salles de projection, lumières basses, jury international, et sur scène : les créateurs qui réinventent le 7e art avec l'IA. Vous y serez.</p>
 
-          <div class="about-stats">
-            <div class="stat-chip">
+          <!-- Programme -->
+          <div class="event-programme">
+            <div class="prog-item">
+              <span class="prog-dot" style="background:var(--aurora)"></span>
+              <div>
+                <div class="prog-day">Vendredi soir</div>
+                <div class="prog-desc">Séance d'ouverture & cocktail de bienvenue — 120+ pays représentés</div>
+              </div>
+            </div>
+            <div class="prog-item">
+              <span class="prog-dot" style="background:var(--lavande)"></span>
+              <div>
+                <div class="prog-day">Samedi</div>
+                <div class="prog-desc">Projections publiques · Délibérations du jury · Village IA & démos live</div>
+              </div>
+            </div>
+            <div class="prog-item">
+              <span class="prog-dot" style="background:var(--solar)"></span>
+              <div>
+                <div class="prog-day">Dimanche — Gala de clôture</div>
+                <div class="prog-desc">Cérémonie des Prix marsAI · Grand Prix · Prix du Public · Bourses</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:12px;margin-top:28px;flex-wrap:wrap;">
+            <div class="stat-chip" style="flex:1;min-width:110px;">
+              <div class="stat-value">50</div>
+              <div class="stat-label">Films en compétition</div>
+            </div>
+            <div class="stat-chip" style="flex:1;min-width:110px;">
               <div class="stat-value">120+</div>
               <div class="stat-label">Pays représentés</div>
             </div>
-            <div class="stat-chip">
-              <div class="stat-value">20 000</div>
-              <div class="stat-label">Candidatures attendues</div>
-            </div>
-            <div class="stat-chip">
-              <div class="stat-value">M+</div>
-              <div class="stat-label">Vues en ligne</div>
-            </div>
-            <div class="stat-chip">
-              <div class="stat-value">50</div>
-              <div class="stat-label">Films en compétition</div>
+            <div class="stat-chip" style="flex:1;min-width:110px;">
+              <div class="stat-value">Gratuit</div>
+              <div class="stat-label">Accès public</div>
             </div>
           </div>
         </div>
@@ -1431,14 +1526,27 @@
         <div class="about-visual">
           <div class="venue-card">
             <div class="venue-map">
-              <div class="venue-map-label">
+              <iframe
+                src="https://www.openstreetmap.org/export/embed.html?bbox=5.3536%2C43.2864%2C5.3936%2C43.3064&layer=mapnik&marker=43.2964%2C5.3736"
+                loading="lazy"
+                title="Carte La Plateforme — Marseille"
+              ></iframe>
+              <div class="venue-map-overlay">
                 <span class="venue-pin">📍</span>
-                <span>43°17'47"N — 5°22'25"E</span>
+                <div class="venue-coords-badge">43°17'47"N — 5°22'25"E</div>
               </div>
             </div>
             <div class="venue-info">
               <div class="venue-name">La Plateforme</div>
               <div class="venue-address">Friches Belle de Mai · Marseille, 13003</div>
+              <div class="venue-tags">
+                <span class="venue-tag">🎬 Projections officielles</span>
+                <span class="venue-tag">🤖 Démos IA live</span>
+                <span class="venue-tag">🌍 Jury international</span>
+              </div>
+              <a href="https://www.google.com/maps/search/?api=1&query=La+Plateforme+Friches+Belle+de+Mai+Marseille" target="_blank" class="venue-btn">
+                ↗ Ouvrir l'itinéraire
+              </a>
             </div>
           </div>
         </div>
@@ -1874,6 +1982,7 @@
       <a href="prototype.html" class="dev-btn current">🏠 Accueil</a>
       <a href="verification-email.html" class="dev-btn">✉️ Vérif. Email</a>
       <a href="formulaire-depot.html" class="dev-btn">📝 Formulaire</a>
+      <a href="login-jury.html" class="dev-btn">🔐 Connexion Jury</a>
       <a href="admin-jury.html" class="dev-btn">⚖️ Interface Jury</a>
     </div>
   </div>
@@ -1926,11 +2035,10 @@
 
     // Toggle FR / EN
     let lang = 'fr';
-    function toggleLang(btn) {
-      lang = lang === 'fr' ? 'en' : 'fr';
-      btn.style.color = lang === 'en' ? 'var(--aurora)' : 'var(--white-soft)';
-      btn.style.borderColor = lang === 'en' ? 'rgba(78,255,206,0.4)' : 'rgba(255,255,255,0.12)';
-      // Basculer les éléments bilingues
+    function setLang(newLang) {
+      lang = newLang;
+      document.getElementById('btn-fr').style.borderColor = lang === 'fr' ? 'rgba(78,255,206,0.4)' : 'rgba(255,255,255,0.12)';
+      document.getElementById('btn-en').style.borderColor = lang === 'en' ? 'rgba(78,255,206,0.4)' : 'rgba(255,255,255,0.12)';
       document.querySelectorAll('[data-fr]').forEach(el => {
         el.textContent = lang === 'en' ? el.dataset.en : el.dataset.fr;
       });
