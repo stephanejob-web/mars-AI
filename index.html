@@ -80,6 +80,92 @@
     }
     .nav-links li:hover { color: var(--white-soft); cursor: pointer; transition: color 0.2s; }
     .nav-links a { color: inherit; text-decoration: none; }
+
+    /* lien nav standard avec indicateur scrollspy */
+    .nav-item {
+      position: relative;
+      padding-bottom: 2px;
+    }
+    .nav-item::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0; right: 0;
+      height: 1.5px;
+      background: var(--aurora);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.25s ease;
+    }
+    .nav-item.nav-active {
+      color: var(--white-soft);
+    }
+    .nav-item.nav-active::after {
+      transform: scaleX(1);
+    }
+
+    /* lien Espace Jury — discret mais identifiable */
+    .nav-jury {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--mist) !important;
+      font-size: 0.85rem;
+      transition: color 0.2s;
+    }
+    .nav-jury:hover { color: var(--white-soft) !important; }
+    .nav-jury-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--aurora);
+      opacity: 0.7;
+      flex-shrink: 0;
+    }
+    /* ─── LANG SWITCH ────────────────────────────────────── */
+    .lang-switch {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+    .lang-btn {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--mist);
+      padding: 2px 0 4px;
+      position: relative;
+      transition: color 0.22s ease;
+    }
+    .lang-btn::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1.5px;
+      background: var(--aurora);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.25s ease;
+    }
+    .lang-btn.active {
+      color: var(--aurora);
+    }
+    .lang-btn.active::after {
+      transform: scaleX(1);
+    }
+    .lang-btn:not(.active):hover {
+      color: var(--white-soft);
+    }
+    .lang-sep {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: rgba(136,146,176,0.28);
+      user-select: none;
+      line-height: 1;
+    }
+
     .btn-nav {
       background: var(--aurora);
       color: var(--deep-sky);
@@ -1634,6 +1720,251 @@
       .scroll-hint { display: none; }
       .player-section { padding: 48px 24px; }
       .cta-section { padding: 0 24px 64px; }
+      .manifeste-section { padding: 80px 24px; }
+      .manifeste-line { font-size: clamp(1.8rem, 8vw, 3rem); }
+      .marsnight-content { padding: 70px 24px; }
+      .marsnight-title { font-size: clamp(2rem, 7vw, 3rem); }
+      .marsnight-details { flex-direction: column; align-items: stretch; }
+    }
+
+    /* ─── MANIFESTE ──────────────────────────────────────── */
+    .manifeste-section {
+      padding: 130px 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .manifeste-section::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 40%, rgba(78,255,206,0.055) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .m-fade {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.85s ease, transform 0.85s ease;
+    }
+    .m-fade.visible { opacity: 1; transform: translateY(0); }
+    .manifeste-line {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 5.5vw, 4.6rem);
+      font-weight: 800;
+      line-height: 1.07;
+      letter-spacing: -0.025em;
+      color: var(--white-soft);
+      display: block;
+    }
+    .manifeste-line.dim { color: rgba(136,146,176,0.65); }
+    .manifeste-line .hl-aurora { color: var(--aurora); }
+    .manifeste-line .hl-solar  { color: var(--solar);  }
+    .manifeste-sep {
+      display: block;
+      width: 64px; height: 2px;
+      margin: 36px auto;
+      background: linear-gradient(90deg, transparent, var(--aurora) 50%, transparent);
+      transform: scaleX(0);
+      transition: transform 0.7s ease;
+    }
+    .manifeste-sep.visible { transform: scaleX(1); }
+    .manifeste-sub {
+      font-size: 1.05rem;
+      color: var(--mist);
+      line-height: 1.85;
+      max-width: 560px;
+      margin: 44px auto 0;
+    }
+    .manifeste-tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 28px;
+    }
+    .manifeste-tool {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      padding: 5px 14px;
+      background: rgba(78,255,206,0.06);
+      border: 1px solid rgba(78,255,206,0.16);
+      border-radius: 6px;
+      color: var(--aurora);
+    }
+
+    /* ─── COMPTEURS ANIMÉS ───────────────────────────────── */
+    .counters-section {
+      padding: 80px 60px;
+      position: relative;
+    }
+    .counters-grid {
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+    }
+    .counter-item {
+      text-align: center;
+      padding: 40px 20px;
+      position: relative;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 2px;
+      transition: background 0.3s;
+    }
+    .counter-item:first-child { border-radius: 14px 2px 2px 14px; }
+    .counter-item:last-child  { border-radius: 2px 14px 14px 2px; }
+    .counter-item:hover { background: rgba(255,255,255,0.04); }
+    .counter-num {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 4.5vw, 3.8rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      display: block;
+      margin-bottom: 10px;
+    }
+    .counter-num.c-aurora  { color: var(--aurora); }
+    .counter-num.c-solar   { color: var(--solar);  }
+    .counter-num.c-lavande { color: var(--lavande);}
+    .counter-num.c-white   { color: var(--white-soft); }
+    .counter-label {
+      font-size: 0.8rem;
+      color: var(--mist);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    @media (max-width: 700px) {
+      .counters-grid { grid-template-columns: repeat(2,1fr); }
+      .counter-item:first-child { border-radius: 14px 2px 2px 2px; }
+      .counter-item:last-child  { border-radius: 2px 2px 2px 14px; }
+      .counters-section { padding: 60px 24px; }
+    }
+
+    /* ─── CINÉMA PLAYER ──────────────────────────────────── */
+    .cinema-wrap {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 0 80px rgba(0,0,0,0.7);
+    }
+    .cinema-wrap video {
+      width: 100%; display: block;
+      background: #000; aspect-ratio: 16/9; object-fit: cover;
+    }
+    .cinema-overlay {
+      position: absolute; inset: 0; z-index: 2;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      background: linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.65) 100%);
+      transition: opacity 0.5s ease;
+    }
+    .cinema-overlay.gone { opacity: 0; pointer-events: none; }
+    .cinema-play {
+      width: 86px; height: 86px; border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(12px);
+      border: 2px solid rgba(255,255,255,0.25);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; color: #fff;
+      transition: transform 0.2s, background 0.2s, border-color 0.2s;
+      margin-bottom: 18px;
+    }
+    .cinema-play:hover {
+      transform: scale(1.12);
+      background: rgba(78,255,206,0.18);
+      border-color: rgba(78,255,206,0.5);
+    }
+    .cinema-overlay-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem; font-weight: 700;
+      color: rgba(255,255,255,0.92); margin-bottom: 6px;
+    }
+    .cinema-overlay-sub {
+      font-size: 0.8rem; color: rgba(255,255,255,0.5);
+    }
+    .cinema-ia-badge {
+      position: absolute; top: 16px; left: 16px; z-index: 3;
+      background: rgba(10,15,46,0.75); backdrop-filter: blur(8px);
+      border: 1px solid rgba(78,255,206,0.25); border-radius: 8px;
+      padding: 6px 12px; display: flex; align-items: center; gap: 7px;
+      pointer-events: none; transition: opacity 0.4s;
+    }
+    .cinema-ia-badge span {
+      font-family: var(--font-mono); font-size: 0.7rem;
+      color: var(--aurora); font-weight: 500;
+    }
+
+    /* ─── MARS.AI NIGHT ──────────────────────────────────── */
+    .marsnight-section {
+      position: relative; overflow: hidden;
+      min-height: 72vh;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .marsnight-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 25% 50%, rgba(255,107,107,0.20) 0%, transparent 52%),
+        radial-gradient(ellipse at 75% 40%, rgba(192,132,252,0.16) 0%, transparent 52%),
+        radial-gradient(ellipse at 50% 90%, rgba(78,255,206,0.07) 0%, transparent 40%),
+        linear-gradient(180deg, rgba(10,15,46,0.9) 0%, #0d0516 45%, rgba(10,15,46,0.9) 100%);
+    }
+    .marsnight-stars {
+      position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+    }
+    .marsnight-content {
+      position: relative; z-index: 1;
+      text-align: center; padding: 110px 60px;
+      max-width: 780px;
+    }
+    .marsnight-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,107,107,0.1);
+      border: 1px solid rgba(255,107,107,0.28);
+      border-radius: 999px; padding: 6px 20px;
+      font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--coral); margin-bottom: 30px;
+    }
+    .marsnight-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.8rem, 6.5vw, 5rem);
+      font-weight: 800; line-height: 1.02;
+      letter-spacing: -0.025em; color: var(--white-soft);
+      margin-bottom: 20px;
+    }
+    .marsnight-title .glow-coral { color: var(--coral); text-shadow: 0 0 40px rgba(255,107,107,0.5); }
+    .marsnight-desc {
+      font-size: 1.05rem; color: var(--mist);
+      line-height: 1.85; max-width: 480px;
+      margin: 0 auto 44px;
+    }
+    .marsnight-details {
+      display: flex; align-items: center; justify-content: center;
+      gap: 12px; flex-wrap: wrap; margin-bottom: 48px;
+    }
+    .marsnight-detail {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px; padding: 10px 18px;
+      font-size: 0.85rem; color: var(--white-soft); font-weight: 500;
+    }
+    .marsnight-cta {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: linear-gradient(135deg, var(--coral) 0%, var(--lavande) 100%);
+      color: #fff; font-family: var(--font-display);
+      font-size: 1rem; font-weight: 800;
+      padding: 16px 42px; border-radius: 12px;
+      letter-spacing: 0.02em; text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 0 50px rgba(255,107,107,0.22);
+    }
+    .marsnight-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 60px rgba(255,107,107,0.38);
     }
   </style>
 </head>
@@ -1643,17 +1974,21 @@
 
   <!-- ─── NAVIGATION ──────────────────────────────────── -->
   <nav>
-    <div class="logo">mars<span>AI</span></div>
+    <a href="#home" class="logo">mars<span class="ai">AI</span></a>
     <ul class="nav-links">
-      <li><a href="#concours">Le Concours</a></li>
-      <li><a href="#programme">Programme</a></li>
-      <li><a href="#films">Films</a></li>
-      <li><a href="login-jury.html" style="color:var(--white-soft);text-decoration:none;display:flex;align-items:center;gap:5px;"><span style="font-size:0.7rem;color:var(--aurora);">⬡</span> Espace Jury</a></li>
-      <li><a href="#presse">Presse</a></li>
+      <li><a href="#concours"  class="nav-item" data-section="concours">Le Concours</a></li>
+      <li><a href="#programme" class="nav-item" data-section="programme">Programme</a></li>
+      <li><a href="#films"     class="nav-item" data-section="films">Films</a></li>
+      <li><a href="#palmares"  class="nav-item" data-section="palmares">Les Prix</a></li>
+      <li><a href="#presse"    class="nav-item" data-section="presse">Contact</a></li>
+      <li><a href="login-jury.html" class="nav-jury"><span class="nav-jury-dot"></span>Espace Jury</a></li>
       <li><a class="btn-nav" href="verification-email.html">Soumettre un film</a></li>
-      <li style="display:flex;gap:6px;">
-        <button id="btn-fr" onclick="setLang('fr')" style="background:rgba(255,255,255,0.06);border:1px solid rgba(78,255,206,0.4);border-radius:6px;padding:6px 12px;font-size:0.85rem;cursor:pointer;font-family:var(--font-body);transition:all 0.2s;" title="Français">🇫🇷</button>
-        <button id="btn-en" onclick="setLang('en')" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:6px;padding:6px 12px;font-size:0.85rem;cursor:pointer;font-family:var(--font-body);transition:all 0.2s;" title="English">🇬🇧</button>
+      <li>
+        <div class="lang-switch">
+          <button id="btn-fr" class="lang-btn active" onclick="setLang('fr')" title="Français">FR</button>
+          <span class="lang-sep">╱</span>
+          <button id="btn-en" class="lang-btn" onclick="setLang('en')" title="English">EN</button>
+        </div>
       </li>
     </ul>
   </nav>
@@ -1695,8 +2030,8 @@
       </div>
 
       <div class="hero-cta">
-        <a href="formulaire-depot.html" class="btn-primary">
-          Soumettre mon film
+        <a href="verification-email.html" class="btn-primary">
+          60 secondes pour changer le cinéma
           <span class="arrow">→</span>
         </a>
       </div>
@@ -1755,6 +2090,67 @@
           <div class="concept-card-title">Films en compétition</div>
           <p>Le jury sélectionne 50 œuvres parmi 20 000 candidatures. Grand Prix, Prix du Jury, Prix du Public — modèle Cannes avec bourses.</p>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── MANIFESTE ───────────────────────────────────── -->
+  <section class="manifeste-section">
+
+    <div class="m-fade" style="transition-delay:0s">
+      <span class="manifeste-line dim">Le cinéma a été inventé en 1895.</span>
+    </div>
+
+    <div class="m-fade" style="transition-delay:0.15s">
+      <span class="manifeste-line dim">Pendant 130 ans, la caméra était la seule voie.</span>
+    </div>
+
+    <div class="manifeste-sep m-fade" style="transition-delay:0.35s"></div>
+
+    <div class="m-fade" style="transition-delay:0.5s">
+      <span class="manifeste-line"><span class="hl-aurora">L'IA générative</span> vient de tout réinventer.</span>
+    </div>
+
+    <div class="m-fade" style="transition-delay:0.65s">
+      <span class="manifeste-line">Et <span class="hl-solar">vous</span> êtes au bord de cette révolution.</span>
+    </div>
+
+    <div class="m-fade manifeste-sub" style="transition-delay:0.9s">
+      Sora, Runway, Kling, Pika, Stable Video, ComfyUI…<br>
+      Les outils existent. La question n'est plus <em>comment</em>.<br>
+      <strong style="color:var(--white-soft);">La question est : qu'avez-vous à dire en 60 secondes ?</strong>
+    </div>
+
+    <div class="manifeste-tools m-fade" style="transition-delay:1.1s">
+      <span class="manifeste-tool">Sora</span>
+      <span class="manifeste-tool">Runway</span>
+      <span class="manifeste-tool">Kling</span>
+      <span class="manifeste-tool">Pika</span>
+      <span class="manifeste-tool">Stable Video</span>
+      <span class="manifeste-tool">ComfyUI</span>
+      <span class="manifeste-tool">+ tous les autres</span>
+    </div>
+
+  </section>
+
+  <!-- ─── COMPTEURS ANIMÉS ──────────────────────────────── -->
+  <section class="counters-section">
+    <div class="counters-grid">
+      <div class="counter-item">
+        <span class="counter-num c-aurora" data-target="20000" data-suffix="">0</span>
+        <div class="counter-label">Candidatures attendues</div>
+      </div>
+      <div class="counter-item">
+        <span class="counter-num c-solar" data-target="120" data-suffix="+">0</span>
+        <div class="counter-label">Pays représentés</div>
+      </div>
+      <div class="counter-item">
+        <span class="counter-num c-lavande" data-target="50" data-suffix="">0</span>
+        <div class="counter-label">Films finalistes</div>
+      </div>
+      <div class="counter-item">
+        <span class="counter-num c-white" data-target="60" data-suffix="s">0</span>
+        <div class="counter-label">Secondes pour tout dire</div>
       </div>
     </div>
   </section>
@@ -1901,7 +2297,7 @@
             <div class="label">Clôture des dépôts</div>
             <div class="date">30 septembre 2026</div>
           </div>
-          <a href="verification-email.html" class="btn-cta-main">Déposer mon film →</a>
+          <a href="verification-email.html" class="btn-cta-main">60 secondes pour changer le cinéma →</a>
           <span class="cta-free">Participation gratuite · Toutes nationalités</span>
         </div>
       </div>
@@ -1963,8 +2359,8 @@
       </div>
 
       <div class="how-cta fade-in">
-        <a href="formulaire-depot.html" class="btn-primary">
-          Déposer mon film maintenant
+        <a href="verification-email.html" class="btn-primary">
+          Montrez votre vision du futur
           <span class="arrow">→</span>
         </a>
         <p style="margin-top:14px;font-size:0.78rem;color:var(--mist);">Participation gratuite · Ouvert à 120+ pays · Clôture le 30 sept. 2026</p>
@@ -2247,49 +2643,133 @@
     </div>
   </section>
 
-  <!-- ─── PLAYER SECTION ──────────────────────────────── -->
-  <section class="player-section">
-    <div style="max-width:1200px;margin:0 auto 48px;display:flex;gap:12px;align-items:center;">
-      <span class="section-label" style="margin:0">Lecteur Intégré</span>
-      <span style="font-size:0.8rem;color:var(--mist);">— support sous-titres · HLS adaptatif · plein écran</span>
+  <!-- ─── DÉMO IA CINÉMA ───────────────────────────────── -->
+  <section class="player-section" id="demo-ia" style="padding:80px 60px 100px;">
+    <div style="max-width:900px;margin:0 auto;">
+
+      <!-- En-tête centré -->
+      <div style="text-align:center;margin-bottom:48px;">
+        <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(78,255,206,0.08);border:1px solid rgba(78,255,206,0.22);border-radius:999px;padding:6px 20px;font-size:0.73rem;font-weight:700;letter-spacing:0.09em;color:var(--aurora);text-transform:uppercase;margin-bottom:22px;">
+          <span style="width:7px;height:7px;border-radius:50%;background:var(--aurora);display:inline-block;animation:pulse-dot 1.8s ease-in-out infinite;flex-shrink:0;"></span>
+          Exemple concret · Vidéo générée à 100% par IA
+        </div>
+        <h2 style="font-family:var(--font-display);font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:800;color:var(--white-soft);margin-bottom:18px;line-height:1.1;">
+          Voici ce qu'une IA peut créer.<br>
+          <span style="color:var(--aurora);">Imaginez ce que vous allez faire.</span>
+        </h2>
+        <p style="font-size:0.95rem;color:var(--mist);max-width:520px;margin:0 auto;line-height:1.75;">
+          Aucune caméra. Aucun acteur. Aucun tournage.<br>
+          Uniquement un prompt, un modèle, et une vision.
+        </p>
+      </div>
+
+      <!-- Player cinématographique -->
+      <div class="cinema-wrap" id="cinema-wrap">
+
+        <div class="cinema-ia-badge" id="cinema-badge">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2L9 9H2L7.5 13.5L5.5 21L12 16.5L18.5 21L16.5 13.5L22 9H15L12 2Z" fill="#4EFFCE" opacity="0.9"/>
+          </svg>
+          <span>Généré par IA</span>
+        </div>
+
+        <!-- Overlay cinéma cliquable -->
+        <div class="cinema-overlay" id="cinema-overlay" onclick="startDemo()">
+          <div class="cinema-play" id="cinema-play">▶</div>
+          <div class="cinema-overlay-title">Exemple — Film IA · marsAI 2026</div>
+          <div class="cinema-overlay-sub">Cliquez pour lancer la projection</div>
+        </div>
+
+        <video
+          id="demo-video"
+          src="assets/video.mp4"
+          style="width:100%;display:block;background:#000;aspect-ratio:16/9;object-fit:cover;"
+          preload="metadata"
+          playsinline
+        ></video>
+
+      </div>
+
+      <!-- Barre info sous le player -->
+      <div style="background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.06);border-top:none;border-radius:0 0 16px 16px;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:28px;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:32px;height:32px;border-radius:8px;background:rgba(78,255,206,0.1);border:1px solid rgba(78,255,206,0.18);display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0;">🤖</div>
+          <div>
+            <div style="font-size:0.85rem;font-weight:600;color:var(--white-soft);">Film de démonstration · Vidéo générée par IA</div>
+            <div style="font-size:0.72rem;color:var(--mist);margin-top:1px;">Aucune caméra · Aucun acteur · Exemple marsAI 2026</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap;">
+          <span style="font-family:var(--font-mono);font-size:0.7rem;padding:3px 10px;background:rgba(245,230,66,0.08);border:1px solid rgba(245,230,66,0.2);border-radius:6px;color:var(--solar);">IA Pure</span>
+          <span style="font-family:var(--font-mono);font-size:0.7rem;padding:3px 10px;background:rgba(78,255,206,0.06);border:1px solid rgba(78,255,206,0.15);border-radius:6px;color:var(--aurora);">60 s</span>
+          <span style="font-family:var(--font-mono);font-size:0.7rem;padding:3px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:6px;color:var(--mist);">16:9</span>
+        </div>
+      </div>
+
+      <!-- 3 encarts -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-bottom:40px;">
+        <div style="background:rgba(78,255,206,0.04);border:1px solid rgba(78,255,206,0.11);border-radius:14px;padding:20px;">
+          <div style="font-size:0.8rem;font-weight:700;color:var(--aurora);margin-bottom:8px;display:flex;align-items:center;gap:6px;"><span>✦</span> Ce que vous voyez</div>
+          <div style="font-size:0.8rem;color:var(--mist);line-height:1.65;">Chaque image a été générée pixel par pixel par un modèle de diffusion vidéo. Zéro tournage, 100% IA.</div>
+        </div>
+        <div style="background:rgba(245,230,66,0.03);border:1px solid rgba(245,230,66,0.11);border-radius:14px;padding:20px;">
+          <div style="font-size:0.8rem;font-weight:700;color:var(--solar);margin-bottom:8px;display:flex;align-items:center;gap:6px;"><span>✦</span> Maintenant c'est votre tour</div>
+          <div style="font-size:0.8rem;color:var(--mist);line-height:1.65;">Soumettez votre propre court-métrage de 60 secondes et rejoignez les 20 000 créateurs du monde entier.</div>
+        </div>
+        <div style="background:rgba(192,132,252,0.03);border:1px solid rgba(192,132,252,0.11);border-radius:14px;padding:20px;">
+          <div style="font-size:0.8rem;font-weight:700;color:var(--lavande);margin-bottom:8px;display:flex;align-items:center;gap:6px;"><span>✦</span> Tous les outils IA</div>
+          <div style="font-size:0.8rem;color:var(--mist);line-height:1.65;">Sora, Runway, Kling, Pika, Stable Video, ComfyUI… seuls ou combinés, tous les modèles sont acceptés.</div>
+        </div>
+      </div>
+
+      <!-- CTA fort -->
+      <div style="text-align:center;">
+        <a href="verification-email.html" style="display:inline-flex;align-items:center;gap:12px;background:var(--aurora);color:var(--deep-sky);font-family:var(--font-display);font-size:1rem;font-weight:800;padding:16px 40px;border-radius:12px;text-decoration:none;letter-spacing:0.02em;box-shadow:0 0 50px rgba(78,255,206,0.25);transition:transform 0.2s,box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 60px rgba(78,255,206,0.35)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 0 50px rgba(78,255,206,0.25)'">
+          Montrez votre vision du futur →
+        </a>
+        <p style="margin-top:14px;font-size:0.78rem;color:var(--mist);">Participation gratuite · Ouvert à 120+ pays · Clôture 30 sept. 2026</p>
+      </div>
+
     </div>
+  </section>
 
-    <div class="player-preview">
-      <div class="player-window">
-        <div class="player-screen">
-          <div class="player-center-play">▶</div>
-          <div class="player-subtitle-bar">
-            "Les machines ont appris à rêver — mais rêvent-elles en couleurs ?"
-          </div>
-        </div>
-        <div class="player-controls">
-          <div class="player-progress">
-            <div class="progress-track">
-              <div class="progress-fill"></div>
-            </div>
-            <span class="time-display">0:39 / 1:00</span>
-          </div>
-          <div class="player-btns">
-            <div class="player-left-btns">
-              <button class="player-btn">⏮</button>
-              <button class="player-btn play-main">▶</button>
-              <button class="player-btn">⏭</button>
-              <button class="player-btn">🔊</button>
-              <span style="font-family:var(--font-mono);font-size:0.8rem;color:var(--mist);">Rêves de Silicium — Léa Fontaine</span>
-            </div>
-            <div style="display:flex;gap:10px;align-items:center;">
-              <span class="subtitle-toggle">CC FR</span>
-              <button class="player-btn">⛶</button>
-            </div>
-          </div>
-        </div>
+  <!-- ─── MARS.AI NIGHT ─────────────────────────────────── -->
+  <section class="marsnight-section" id="marsnight">
+    <div class="marsnight-bg"></div>
+
+    <div class="marsnight-content">
+      <div class="marsnight-eyebrow">
+        <span style="width:6px;height:6px;border-radius:50%;background:var(--coral);display:inline-block;animation:pulse-dot 1.6s ease-in-out infinite;"></span>
+        Événement exclusif · Sur invitation
       </div>
 
-      <div class="film-nav">
-        <div class="film-nav-btn">← Film précédent</div>
-        <span class="film-counter">5 / 50</span>
-        <div class="film-nav-btn">Film suivant →</div>
+      <h2 class="marsnight-title">
+        La nuit où le cinéma<br>
+        bascule dans l'<span class="glow-coral">ère IA</span>.
+      </h2>
+
+      <p class="marsnight-desc">
+        Dimanche soir, Marseille s'illumine.<br>
+        Le jury délibère. Les prix sont remis.<br>
+        Les créateurs montent sur scène.<br>
+        <strong style="color:var(--white-soft);">C'est la Mars.AI Night.</strong>
+      </p>
+
+      <div class="marsnight-details">
+        <div class="marsnight-detail">🌙 Gala de clôture</div>
+        <div class="marsnight-detail">📍 Marseille · Friches Belle de Mai</div>
+        <div class="marsnight-detail">🎬 Cérémonie des Prix marsAI</div>
+        <div class="marsnight-detail">🎶 DJ set génératif live</div>
+        <div class="marsnight-detail">🌍 Jury international</div>
       </div>
+
+      <a href="verification-email.html" class="marsnight-cta">
+        Soumettre mon film · Être dans la course
+      </a>
+
+      <p style="margin-top:20px;font-size:0.78rem;color:rgba(136,146,176,0.6);">
+        Les 50 finalistes sont invités à la cérémonie · Participation gratuite
+      </p>
     </div>
   </section>
 
@@ -2434,6 +2914,89 @@
 
     document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
+    // ── Manifeste scroll reveal ────────────────────────────
+    const mObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          mObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2, rootMargin: '0px 0px -30px 0px' });
+
+    document.querySelectorAll('.m-fade').forEach((el, i) => {
+      const delay = el.style.transitionDelay || '0s';
+      el.style.transitionDelay = delay;
+      mObserver.observe(el);
+    });
+
+    // ── Compteurs animés ───────────────────────────────────
+    function animateCounter(el) {
+      const target  = parseInt(el.dataset.target, 10);
+      const suffix  = el.dataset.suffix || '';
+      const dur     = 1800; // ms
+      const start   = performance.now();
+      function step(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / dur, 1);
+        // easeOutExpo
+        const ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+        const val  = Math.round(ease * target);
+        el.textContent = target >= 1000
+          ? val.toLocaleString('fr-FR') + suffix
+          : val + suffix;
+        if (progress < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    const cObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCounter(entry.target);
+          cObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('.counter-num[data-target]').forEach(el => cObserver.observe(el));
+
+    // ── Cinéma player ──────────────────────────────────────
+    function startDemo() {
+      const vid     = document.getElementById('demo-video');
+      const overlay = document.getElementById('cinema-overlay');
+      const badge   = document.getElementById('cinema-badge');
+      if (!vid) return;
+      overlay.classList.add('gone');
+      badge.style.opacity = '0';
+      vid.controls = true;
+      vid.play();
+    }
+
+    // Ré-affiche l'overlay si la vidéo se termine
+    (function() {
+      const vid = document.getElementById('demo-video');
+      if (!vid) return;
+      vid.addEventListener('ended', () => {
+        const overlay = document.getElementById('cinema-overlay');
+        const badge   = document.getElementById('cinema-badge');
+        vid.controls  = false;
+        overlay.classList.remove('gone');
+        badge.style.opacity = '1';
+        vid.currentTime = 0;
+      });
+    })();
+
+    // ── keyframes inline ───────────────────────────────────
+    const ks = document.createElement('style');
+    ks.textContent = `
+      @keyframes pulse-dot {
+        0%, 100% { opacity:1; transform:scale(1); }
+        50%       { opacity:0.4; transform:scale(0.6); }
+      }
+    `;
+    document.head.appendChild(ks);
+
     // Filter chips interactivity
     document.querySelectorAll('.filter-chip').forEach(chip => {
       chip.addEventListener('click', () => {
@@ -2446,21 +3009,41 @@
     let lang = 'fr';
     function setLang(newLang) {
       lang = newLang;
-      document.getElementById('btn-fr').style.borderColor = lang === 'fr' ? 'rgba(78,255,206,0.4)' : 'rgba(255,255,255,0.12)';
-      document.getElementById('btn-en').style.borderColor = lang === 'en' ? 'rgba(78,255,206,0.4)' : 'rgba(255,255,255,0.12)';
+      document.getElementById('btn-fr').classList.toggle('active', lang === 'fr');
+      document.getElementById('btn-en').classList.toggle('active', lang === 'en');
       document.querySelectorAll('[data-fr]').forEach(el => {
         el.textContent = lang === 'en' ? el.dataset.en : el.dataset.fr;
       });
     }
 
-    // Nav scroll effect
+    // Nav scroll effect + scrollspy
+    const navSections = [
+      { id: 'concours',  el: null },
+      { id: 'programme', el: null },
+      { id: 'films',     el: null },
+      { id: 'palmares',  el: null },
+      { id: 'presse',    el: null },
+    ];
+    navSections.forEach(s => { s.el = document.getElementById(s.id); });
+
     window.addEventListener('scroll', () => {
       const nav = document.querySelector('nav');
-      if (window.scrollY > 80) {
-        nav.style.background = 'rgba(10,15,46,0.97)';
-      } else {
-        nav.style.background = 'linear-gradient(to bottom, rgba(10,15,46,0.95) 0%, transparent 100%)';
-      }
+      const y   = window.scrollY;
+
+      // fond de nav
+      nav.style.background = y > 80
+        ? 'rgba(10,15,46,0.97)'
+        : 'linear-gradient(to bottom, rgba(10,15,46,0.95) 0%, transparent 100%)';
+
+      // scrollspy — section active = celle dont le top est la plus proche au-dessus du centre écran
+      const mid = y + window.innerHeight * 0.35;
+      let active = null;
+      navSections.forEach(s => {
+        if (s.el && s.el.offsetTop <= mid) active = s.id;
+      });
+      document.querySelectorAll('.nav-item').forEach(a => {
+        a.classList.toggle('nav-active', a.dataset.section === active);
+      });
     });
   </script>
 
