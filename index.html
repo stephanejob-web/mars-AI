@@ -274,7 +274,8 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding: 140px 60px 80px;
+      align-items: flex-start;
+      padding: 140px 60px 120px;
       overflow: hidden;
     }
 
@@ -290,7 +291,7 @@
       height: 100%;
       object-fit: cover;
       object-position: center;
-      opacity: 0.40;
+      opacity: 0.18;
     }
     .hero-video-bg::after {
       content: "";
@@ -321,7 +322,65 @@
     .hero-content {
       position: relative;
       z-index: 2;
-      max-width: 750px;
+      display: grid;
+      grid-template-columns: 1fr 440px;
+      gap: 64px;
+      align-items: center;
+      max-width: 1200px;
+      width: 100%;
+    }
+
+    /* ─── HERO SPLIT — colonne droite ────────────────────── */
+    .hero-right {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .hero-right-text {
+      padding: 4px 0;
+    }
+    .hero-right-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.1rem, 2vw, 1.4rem);
+      font-weight: 700;
+      line-height: 1.35;
+      color: var(--white-soft);
+      margin-bottom: 10px;
+    }
+    .hero-right-sub {
+      font-size: 0.88rem;
+      color: var(--mist);
+      line-height: 1.7;
+    }
+
+    /* description claire sous le titre */
+    .hero-desc {
+      font-size: 1.05rem;
+      color: var(--mist);
+      line-height: 1.75;
+      margin-bottom: 10px;
+      max-width: 520px;
+    }
+    .hero-desc strong { color: var(--white-soft); }
+    .hero-action {
+      font-family: var(--font-display);
+      font-size: 1.0rem;
+      font-weight: 700;
+      color: var(--white-soft);
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .hero-action-sep {
+      color: rgba(78,255,206,0.4);
+      font-weight: 400;
+    }
+
+    @media (max-width: 1024px) {
+      .hero-content { grid-template-columns: 1fr; gap: 36px; }
+      .hero-right { max-width: 600px; }
     }
 
     .hero-badge {
@@ -1703,28 +1762,167 @@
     .fade-in:nth-child(3) { transition-delay: 0.2s; }
     .fade-in:nth-child(4) { transition-delay: 0.3s; }
 
-    /* ─── MOBILE RESPONSIVE (basique) ────────────────────── */
-    @media (max-width: 900px) {
+    /* ─── HAMBURGER & PANEL MOBILE ───────────────────────── */
+    .nav-mobile-right { display: none; align-items: center; gap: 16px; }
+    .nav-burger {
+      background: none; border: none; cursor: pointer;
+      display: flex; flex-direction: column; gap: 5px; padding: 4px;
+    }
+    .nav-burger span {
+      display: block; width: 22px; height: 2px;
+      background: var(--white-soft); border-radius: 2px;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+    .nav-burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-burger.open span:nth-child(2) { opacity: 0; }
+    .nav-burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    .nav-panel {
+      display: none;
+      position: fixed; top: 64px; left: 0; right: 0;
+      background: rgba(10,15,46,0.98);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      padding: 20px 24px 28px;
+      flex-direction: column; gap: 4px;
+      z-index: 99;
+      transform: translateY(-10px); opacity: 0;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+    .nav-panel.open {
+      display: flex; transform: translateY(0); opacity: 1;
+    }
+    .nav-panel-link {
+      display: flex; align-items: center; gap: 10px;
+      padding: 13px 0;
+      font-size: 1rem; font-weight: 500;
+      color: var(--mist);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-panel-link:hover, .nav-panel-jury { color: var(--white-soft); }
+    .nav-panel-sep { height: 1px; background: rgba(255,255,255,0.08); margin: 8px 0; }
+    .nav-panel-cta {
+      display: inline-flex; align-items: center; justify-content: center;
+      margin-top: 16px;
+      background: var(--aurora); color: var(--deep-sky);
+      font-family: var(--font-display); font-weight: 800;
+      font-size: 0.95rem; padding: 14px 24px;
+      border-radius: 10px; text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .nav-panel-cta:hover { opacity: 0.88; }
+
+    /* ─── TABLETTE (≤ 768px) ──────────────────────────────── */
+    @media (max-width: 768px) {
+      /* nav */
       nav { padding: 16px 24px; }
       .nav-links { display: none; }
-      .hero { padding: 120px 24px 80px; }
-      .section-inner { padding: 64px 24px; }
-      .concept-grid { grid-template-columns: 1fr; }
+      .nav-mobile-right { display: flex; }
+
+      /* hero */
+      .hero { padding: 100px 24px 110px; align-items: center; }
+      .hero-content { text-align: center; max-width: 100%; }
+      .hero-right { max-width: 100%; }
+      .hero-partners { justify-content: center; }
+      .hero-tags { justify-content: center; }
+      .hero-right-title { text-align: center; }
+      .hero-right-sub { text-align: center; }
+
+      /* sections */
+      .section-inner { padding: 60px 24px; }
+      .concept-grid { grid-template-columns: 1fr; gap: 16px; }
       .about-inner { grid-template-columns: 1fr; }
-      .how-steps { grid-template-columns: 1fr 1fr; gap: 32px; }
+      .how-steps { grid-template-columns: 1fr 1fr; gap: 20px; }
       .how-steps::before { display: none; }
-      .footer-inner { grid-template-columns: 1fr 1fr; }
-      .films-grid { grid-template-columns: repeat(2, 1fr); }
-      .cta-block { grid-template-columns: 1fr; padding: 40px 32px; }
-      .countdown-wrapper { right: 24px; bottom: 24px; }
+      .films-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .cta-block { grid-template-columns: 1fr; padding: 40px 24px; }
+      .cta-section { padding: 0 24px 60px; }
+      .player-section { padding: 60px 24px; }
+      .footer-inner { grid-template-columns: 1fr 1fr; gap: 36px; }
+      .awards-secondary { grid-template-columns: 1fr 1fr; gap: 12px; }
+      .award-grand { flex-direction: column; gap: 16px; }
+
+      /* countdown */
+      .countdown-inner { padding: 14px 24px 18px; }
+      .countdown-units { gap: 16px; }
       .scroll-hint { display: none; }
-      .player-section { padding: 48px 24px; }
-      .cta-section { padding: 0 24px 64px; }
+
+      /* manifeste */
       .manifeste-section { padding: 80px 24px; }
-      .manifeste-line { font-size: clamp(1.8rem, 8vw, 3rem); }
+      .manifeste-line { font-size: clamp(1.7rem, 6vw, 2.8rem); }
+      .manifeste-sub { font-size: 0.92rem; }
+
+      /* compteurs */
+      .counters-section { padding: 60px 24px; }
+      .counters-grid { grid-template-columns: repeat(2, 1fr); }
+      .counter-item:first-child { border-radius: 14px 2px 2px 2px; }
+      .counter-item:last-child  { border-radius: 2px 2px 2px 14px; }
+
+      /* mars.AI night */
       .marsnight-content { padding: 70px 24px; }
       .marsnight-title { font-size: clamp(2rem, 7vw, 3rem); }
       .marsnight-details { flex-direction: column; align-items: stretch; }
+      .marsnight-cta { padding: 14px 28px; font-size: 0.9rem; }
+    }
+
+    /* ─── IPHONE (≤ 480px) ────────────────────────────────── */
+    @media (max-width: 480px) {
+      /* nav */
+      nav { padding: 14px 20px; }
+
+      /* hero */
+      .hero { padding: 88px 20px 110px; }
+      .hero-title { font-size: clamp(3rem, 13vw, 4.2rem); }
+      .hero-badge { font-size: 0.58rem; letter-spacing: 0.07em; }
+      .hero-partners { gap: 8px; }
+      .hero-partners-logo img { height: 18px; }
+      .hero-partners-name { font-size: 0.75rem; }
+      .hero-tags { gap: 8px; }
+      .tag { font-size: 0.78rem; padding: 5px 10px; }
+      .hero-desc { font-size: 0.92rem; }
+      .hero-right-title { font-size: 1rem; }
+      .hero-right-sub { font-size: 0.82rem; }
+
+      /* sections */
+      .section-inner { padding: 48px 20px; }
+      .section-title { font-size: clamp(1.5rem, 7vw, 2rem); }
+      .section-desc { font-size: 0.9rem; }
+      .concept-grid { gap: 12px; }
+      .how-steps { grid-template-columns: 1fr; gap: 16px; }
+      .films-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+      .film-card { border-radius: 10px; }
+      .awards-secondary { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr; gap: 28px; }
+      .cta-block { padding: 32px 20px; }
+
+      /* countdown */
+      .countdown-num { font-size: clamp(1.6rem, 7vw, 2.2rem); }
+      .countdown-lbl { font-size: 0.58rem; }
+      .countdown-label { font-size: 0.68rem; }
+
+      /* compteurs */
+      .counter-num { font-size: clamp(1.8rem, 9vw, 2.8rem); }
+      .counter-label { font-size: 0.72rem; }
+      .counter-item { padding: 28px 12px; }
+
+      /* boutons */
+      .btn-primary { font-size: 0.85rem; padding: 12px 20px; }
+      .btn-nav { font-size: 0.72rem; padding: 8px 14px; }
+
+      /* manifeste */
+      .manifeste-line { font-size: clamp(1.4rem, 7.5vw, 2rem); }
+      .manifeste-sub { font-size: 0.88rem; }
+
+      /* mars.AI night */
+      .marsnight-title { font-size: clamp(1.8rem, 9vw, 2.5rem); }
+      .marsnight-desc { font-size: 0.9rem; }
+      .marsnight-detail { padding: 8px 14px; font-size: 0.8rem; }
+
+      /* about */
+      .stat-chip { min-width: unset; }
+      .prog-desc { font-size: 0.82rem; }
     }
 
     /* ─── MANIFESTE ──────────────────────────────────────── */
@@ -1835,13 +2033,6 @@
       letter-spacing: 0.04em;
       text-transform: uppercase;
     }
-    @media (max-width: 700px) {
-      .counters-grid { grid-template-columns: repeat(2,1fr); }
-      .counter-item:first-child { border-radius: 14px 2px 2px 2px; }
-      .counter-item:last-child  { border-radius: 2px 2px 2px 14px; }
-      .counters-section { padding: 60px 24px; }
-    }
-
     /* ─── CINÉMA PLAYER ──────────────────────────────────── */
     .cinema-wrap {
       position: relative;
@@ -1991,7 +2182,35 @@
         </div>
       </li>
     </ul>
+    <!-- Hamburger mobile -->
+    <div class="nav-mobile-right">
+      <div class="lang-switch">
+        <button class="lang-btn active" onclick="setLang('fr')" title="Français">FR</button>
+        <span class="lang-sep">╱</span>
+        <button class="lang-btn" onclick="setLang('en')" title="English">EN</button>
+      </div>
+      <button class="nav-burger" id="nav-burger" onclick="toggleMenu()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
   </nav>
+
+  <!-- Panel menu mobile -->
+  <div class="nav-panel" id="nav-panel">
+    <a href="#concours"  class="nav-panel-link" onclick="closeMenu()">Le Concours</a>
+    <a href="#programme" class="nav-panel-link" onclick="closeMenu()">Programme</a>
+    <a href="#films"     class="nav-panel-link" onclick="closeMenu()">Films</a>
+    <a href="#palmares"  class="nav-panel-link" onclick="closeMenu()">Les Prix</a>
+    <a href="#presse"    class="nav-panel-link" onclick="closeMenu()">Contact</a>
+    <div class="nav-panel-sep"></div>
+    <a href="login-jury.html" class="nav-panel-link nav-panel-jury">
+      <span style="width:5px;height:5px;border-radius:50%;background:var(--aurora);display:inline-block;flex-shrink:0;"></span>
+      Espace Jury
+    </a>
+    <a href="verification-email.html" class="nav-panel-cta" onclick="closeMenu()">
+      Soumettre un film →
+    </a>
+  </div>
 
   <!-- ─── HERO ────────────────────────────────────────── -->
   <section class="hero" id="home">
@@ -2004,37 +2223,84 @@
 
     <div class="hero-content">
 
-      <!-- Partenariat — mis en avant en premier -->
-      <div class="hero-partners">
-        <span class="hero-partners-label">Co-organisé par</span>
-        <a href="https://laplateforme.io/coding-school/" target="_blank" rel="noopener" class="hero-partners-logo">
-          <img src="assets/logo-laplateforme.png" alt="La Plateforme · Coding School">
-        </a>
-        <span class="hero-partners-sep">×</span>
-        <span class="hero-partners-name">Mobile Film Festival</span>
+      <!-- ── Colonne gauche — texte ───────────────────────── -->
+      <div class="hero-left">
+
+        <!-- Partenaires -->
+        <div class="hero-partners">
+          <span class="hero-partners-label">Co-organisé par</span>
+          <a href="https://laplateforme.io/coding-school/" target="_blank" rel="noopener" class="hero-partners-logo">
+            <img src="assets/logo-laplateforme.png" alt="La Plateforme · Coding School">
+          </a>
+          <span class="hero-partners-sep">×</span>
+          <span class="hero-partners-name">Mobile Film Festival</span>
+        </div>
+
+        <!-- Badge concours -->
+        <div class="hero-badge">Festival International · Première Édition · Marseille 2026</div>
+
+        <!-- Titre marque -->
+        <h1 class="hero-title">
+          mars<span class="gradient-text">AI</span>
+        </h1>
+
+        <!-- Description CLAIRE — ce que c'est -->
+        <p class="hero-desc">
+          <strong>Le premier festival mondial du cinéma généré par intelligence artificielle.</strong>
+        </p>
+
+        <!-- Tags essentiels -->
+        <div class="hero-tags">
+          <span class="tag"><strong>60 secondes</strong> pile</span>
+          <span class="tag"><strong>120+</strong> pays</span>
+          <span class="tag"><strong>Gratuit</strong> · ouvert à tous</span>
+          <span class="tag"><strong>Prix</strong> remis à Marseille</span>
+        </div>
+
+      </div><!-- /hero-left -->
+
+      <!-- ── Colonne droite — texte + cinema player ──────────── -->
+      <div class="hero-right">
+
+        <!-- Texte accroche -->
+        <div class="hero-right-text">
+          <p class="hero-right-title">
+            Voici ce qu'une IA peut créer.<br>
+            <span style="color:var(--aurora);">Imaginez ce que vous allez faire.</span>
+          </p>
+          <p class="hero-right-sub">
+            Aucune caméra. Aucun acteur. Aucun tournage.<br>
+            Uniquement un prompt, un modèle, et une vision.
+          </p>
+        </div>
+
+        <!-- Cinema player -->
+        <div class="cinema-wrap" id="cinema-wrap">
+
+          <div class="cinema-ia-badge" id="cinema-badge">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2L9 9H2L7.5 13.5L5.5 21L12 16.5L18.5 21L16.5 13.5L22 9H15L12 2Z" fill="#4EFFCE" opacity="0.9"/>
+            </svg>
+            <span>Généré par IA</span>
+          </div>
+
+          <div class="cinema-overlay" id="cinema-overlay" onclick="startDemo()">
+            <div class="cinema-play" id="cinema-play">▶</div>
+            <div class="cinema-overlay-sub">Cliquez pour lancer la projection</div>
+          </div>
+
+          <video
+            id="demo-video"
+            src="assets/video.mp4"
+            style="width:100%;display:block;background:#000;aspect-ratio:16/9;object-fit:cover;"
+            preload="metadata"
+            playsinline
+          ></video>
+
+        </div>
+
       </div>
 
-      <div class="hero-badge">Concours International · Première Édition 2026</div>
-
-      <h1 class="hero-title">
-        mars<span class="gradient-text">AI</span>
-      </h1>
-      <p class="hero-subtitle" data-fr="Imaginez des futurs souhaitables." data-en="Imagine desirable futures.">Imaginez des futurs souhaitables.</p>
-      <div class="hero-ai-badge">✦ Extrait généré par IA · Courts-métrages 60 secondes</div>
-
-      <div class="hero-tags">
-        <span class="tag"><strong>60 secondes</strong> pile</span>
-        <span class="tag"><strong>120+</strong> pays représentés</span>
-        <span class="tag"><strong>20 000</strong> candidatures attendues</span>
-        <span class="tag"><strong>Millions</strong> de vues en ligne</span>
-      </div>
-
-      <div class="hero-cta">
-        <a href="verification-email.html" class="btn-primary">
-          60 secondes pour changer le cinéma
-          <span class="arrow">→</span>
-        </a>
-      </div>
     </div>
 
     <!-- Countdown pleine largeur -->
@@ -2643,96 +2909,6 @@
     </div>
   </section>
 
-  <!-- ─── DÉMO IA CINÉMA ───────────────────────────────── -->
-  <section class="player-section" id="demo-ia" style="padding:80px 60px 100px;">
-    <div style="max-width:900px;margin:0 auto;">
-
-      <!-- En-tête centré -->
-      <div style="text-align:center;margin-bottom:48px;">
-        <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(78,255,206,0.08);border:1px solid rgba(78,255,206,0.22);border-radius:999px;padding:6px 20px;font-size:0.73rem;font-weight:700;letter-spacing:0.09em;color:var(--aurora);text-transform:uppercase;margin-bottom:22px;">
-          <span style="width:7px;height:7px;border-radius:50%;background:var(--aurora);display:inline-block;animation:pulse-dot 1.8s ease-in-out infinite;flex-shrink:0;"></span>
-          Exemple concret · Vidéo générée à 100% par IA
-        </div>
-        <h2 style="font-family:var(--font-display);font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:800;color:var(--white-soft);margin-bottom:18px;line-height:1.1;">
-          Voici ce qu'une IA peut créer.<br>
-          <span style="color:var(--aurora);">Imaginez ce que vous allez faire.</span>
-        </h2>
-        <p style="font-size:0.95rem;color:var(--mist);max-width:520px;margin:0 auto;line-height:1.75;">
-          Aucune caméra. Aucun acteur. Aucun tournage.<br>
-          Uniquement un prompt, un modèle, et une vision.
-        </p>
-      </div>
-
-      <!-- Player cinématographique -->
-      <div class="cinema-wrap" id="cinema-wrap">
-
-        <div class="cinema-ia-badge" id="cinema-badge">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
-            <path d="M12 2L9 9H2L7.5 13.5L5.5 21L12 16.5L18.5 21L16.5 13.5L22 9H15L12 2Z" fill="#4EFFCE" opacity="0.9"/>
-          </svg>
-          <span>Généré par IA</span>
-        </div>
-
-        <!-- Overlay cinéma cliquable -->
-        <div class="cinema-overlay" id="cinema-overlay" onclick="startDemo()">
-          <div class="cinema-play" id="cinema-play">▶</div>
-          <div class="cinema-overlay-title">Exemple — Film IA · marsAI 2026</div>
-          <div class="cinema-overlay-sub">Cliquez pour lancer la projection</div>
-        </div>
-
-        <video
-          id="demo-video"
-          src="assets/video.mp4"
-          style="width:100%;display:block;background:#000;aspect-ratio:16/9;object-fit:cover;"
-          preload="metadata"
-          playsinline
-        ></video>
-
-      </div>
-
-      <!-- Barre info sous le player -->
-      <div style="background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.06);border-top:none;border-radius:0 0 16px 16px;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:28px;">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div style="width:32px;height:32px;border-radius:8px;background:rgba(78,255,206,0.1);border:1px solid rgba(78,255,206,0.18);display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0;">🤖</div>
-          <div>
-            <div style="font-size:0.85rem;font-weight:600;color:var(--white-soft);">Film de démonstration · Vidéo générée par IA</div>
-            <div style="font-size:0.72rem;color:var(--mist);margin-top:1px;">Aucune caméra · Aucun acteur · Exemple marsAI 2026</div>
-          </div>
-        </div>
-        <div style="display:flex;gap:7px;flex-wrap:wrap;">
-          <span style="font-family:var(--font-mono);font-size:0.7rem;padding:3px 10px;background:rgba(245,230,66,0.08);border:1px solid rgba(245,230,66,0.2);border-radius:6px;color:var(--solar);">IA Pure</span>
-          <span style="font-family:var(--font-mono);font-size:0.7rem;padding:3px 10px;background:rgba(78,255,206,0.06);border:1px solid rgba(78,255,206,0.15);border-radius:6px;color:var(--aurora);">60 s</span>
-          <span style="font-family:var(--font-mono);font-size:0.7rem;padding:3px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:6px;color:var(--mist);">16:9</span>
-        </div>
-      </div>
-
-      <!-- 3 encarts -->
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-bottom:40px;">
-        <div style="background:rgba(78,255,206,0.04);border:1px solid rgba(78,255,206,0.11);border-radius:14px;padding:20px;">
-          <div style="font-size:0.8rem;font-weight:700;color:var(--aurora);margin-bottom:8px;display:flex;align-items:center;gap:6px;"><span>✦</span> Ce que vous voyez</div>
-          <div style="font-size:0.8rem;color:var(--mist);line-height:1.65;">Chaque image a été générée pixel par pixel par un modèle de diffusion vidéo. Zéro tournage, 100% IA.</div>
-        </div>
-        <div style="background:rgba(245,230,66,0.03);border:1px solid rgba(245,230,66,0.11);border-radius:14px;padding:20px;">
-          <div style="font-size:0.8rem;font-weight:700;color:var(--solar);margin-bottom:8px;display:flex;align-items:center;gap:6px;"><span>✦</span> Maintenant c'est votre tour</div>
-          <div style="font-size:0.8rem;color:var(--mist);line-height:1.65;">Soumettez votre propre court-métrage de 60 secondes et rejoignez les 20 000 créateurs du monde entier.</div>
-        </div>
-        <div style="background:rgba(192,132,252,0.03);border:1px solid rgba(192,132,252,0.11);border-radius:14px;padding:20px;">
-          <div style="font-size:0.8rem;font-weight:700;color:var(--lavande);margin-bottom:8px;display:flex;align-items:center;gap:6px;"><span>✦</span> Tous les outils IA</div>
-          <div style="font-size:0.8rem;color:var(--mist);line-height:1.65;">Sora, Runway, Kling, Pika, Stable Video, ComfyUI… seuls ou combinés, tous les modèles sont acceptés.</div>
-        </div>
-      </div>
-
-      <!-- CTA fort -->
-      <div style="text-align:center;">
-        <a href="verification-email.html" style="display:inline-flex;align-items:center;gap:12px;background:var(--aurora);color:var(--deep-sky);font-family:var(--font-display);font-size:1rem;font-weight:800;padding:16px 40px;border-radius:12px;text-decoration:none;letter-spacing:0.02em;box-shadow:0 0 50px rgba(78,255,206,0.25);transition:transform 0.2s,box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 60px rgba(78,255,206,0.35)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 0 50px rgba(78,255,206,0.25)'">
-          Montrez votre vision du futur →
-        </a>
-        <p style="margin-top:14px;font-size:0.78rem;color:var(--mist);">Participation gratuite · Ouvert à 120+ pays · Clôture 30 sept. 2026</p>
-      </div>
-
-    </div>
-  </section>
-
   <!-- ─── MARS.AI NIGHT ─────────────────────────────────── -->
   <section class="marsnight-section" id="marsnight">
     <div class="marsnight-bg"></div>
@@ -3003,6 +3179,28 @@
         document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
         chip.classList.add('active');
       });
+    });
+
+    // ── Hamburger menu ─────────────────────────────────────
+    function toggleMenu() {
+      const burger = document.getElementById('nav-burger');
+      const panel  = document.getElementById('nav-panel');
+      burger.classList.toggle('open');
+      panel.classList.toggle('open');
+      document.body.style.overflow = panel.classList.contains('open') ? 'hidden' : '';
+    }
+    function closeMenu() {
+      document.getElementById('nav-burger').classList.remove('open');
+      document.getElementById('nav-panel').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    // Fermer au clic en dehors
+    document.addEventListener('click', (e) => {
+      const panel  = document.getElementById('nav-panel');
+      const burger = document.getElementById('nav-burger');
+      if (panel.classList.contains('open') && !panel.contains(e.target) && !burger.contains(e.target)) {
+        closeMenu();
+      }
     });
 
     // Toggle FR / EN
