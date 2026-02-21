@@ -192,20 +192,44 @@
       overflow: hidden;
     }
 
-    /* Simulated video background */
+    /* Video background */
     .hero-video-bg {
       position: absolute;
       inset: 0;
-      background:
-        linear-gradient(135deg, rgba(78,255,206,0.05) 0%, transparent 50%),
-        linear-gradient(225deg, rgba(192,132,252,0.07) 0%, transparent 50%);
       z-index: 0;
+      overflow: hidden;
+    }
+    .hero-video-bg video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      opacity: 0.40;
     }
     .hero-video-bg::after {
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(to right, rgba(10,15,46,0.9) 50%, rgba(10,15,46,0.3) 100%);
+      background:
+        linear-gradient(to right,  rgba(10,15,46,0.88) 35%, rgba(10,15,46,0.30) 100%),
+        linear-gradient(to top,    rgba(10,15,46,0.80) 0%,  transparent 35%),
+        linear-gradient(to bottom, rgba(10,15,46,0.50) 0%,  transparent 20%);
+    }
+    /* Badge IA généré */
+    .hero-ai-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(192,132,252,0.12);
+      border: 1px solid rgba(192,132,252,0.30);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--lavande);
+      letter-spacing: 0.06em;
+      margin-top: 14px;
+      opacity: 0.85;
     }
 
     .hero-content {
@@ -1544,7 +1568,11 @@
   <!-- ─── HERO ────────────────────────────────────────── -->
   <section class="hero" id="home">
     <div class="aurora-bg"></div>
-    <div class="hero-video-bg"></div>
+    <div class="hero-video-bg">
+      <video autoplay muted loop playsinline preload="auto">
+        <source src="assets/hero-bg.mp4" type="video/mp4">
+      </video>
+    </div>
 
     <div class="hero-content">
       <div class="hero-badge">Concours International · Première Édition 2026</div>
@@ -1553,6 +1581,7 @@
         mars<span class="gradient-text">AI</span>
       </h1>
       <p class="hero-subtitle" data-fr="Imaginez des futurs souhaitables." data-en="Imagine desirable futures.">Imaginez des futurs souhaitables.</p>
+      <div class="hero-ai-badge">✦ Extrait généré par IA · Courts-métrages 60 secondes</div>
 
       <div class="hero-tags">
         <span class="tag"><strong>60 secondes</strong> pile</span>
@@ -2333,221 +2362,71 @@
     });
   </script>
 
-  <!-- ── NEURAL NETWORK — THREE.JS ───────────────────────── -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <!-- ── AURORA MORPHING ───────────────────────────────────── -->
   <script>
   (function() {
     const canvas = document.getElementById('mars-canvas');
-    if (!canvas || !window.THREE) return;
-    const THREE = window.THREE;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let W, H;
 
-    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-    renderer.setClearColor(0x000000, 0);
-    const scene   = new THREE.Scene();
-    const camera  = new THREE.PerspectiveCamera(62, 1, 0.1, 100);
-    camera.position.z = 8;
-
-    /* ── Texture glow ── */
-    const glowTex = (() => {
-      const c = document.createElement('canvas'); c.width = c.height = 64;
-      const g = c.getContext('2d');
-      const gr = g.createRadialGradient(32,32,0,32,32,32);
-      gr.addColorStop(0,   'rgba(255,255,255,1)');
-      gr.addColorStop(0.4, 'rgba(255,255,255,0.4)');
-      gr.addColorStop(1,   'rgba(255,255,255,0)');
-      g.fillStyle = gr; g.fillRect(0,0,64,64);
-      return new THREE.CanvasTexture(c);
-    })();
-
-    /* ── Étoiles ── */
-    const sp = new Float32Array(260 * 3);
-    for (let i = 0; i < 260; i++) {
-      sp[i*3]=(Math.random()-0.5)*32; sp[i*3+1]=(Math.random()-0.5)*22; sp[i*3+2]=(Math.random()-0.5)*8-5;
-    }
-    const starGeo = new THREE.BufferGeometry();
-    starGeo.setAttribute('position', new THREE.BufferAttribute(sp, 3));
-    scene.add(new THREE.Points(starGeo, new THREE.PointsMaterial({
-      color:0xC8DEFF, size:0.05, map:glowTex,
-      transparent:true, opacity:0.5, blending:THREE.AdditiveBlending, depthWrite:false,
-    })));
-
-    /* ── Architecture du réseau ── */
-    const LAYERS       = [4, 7, 9, 9, 7, 4];   // nœuds par couche
-    const LAYER_GAP    = 1.15;                   // espacement horizontal
-    const NODE_GAP     = 0.85;                   // espacement vertical
-    const totalW       = (LAYERS.length - 1) * LAYER_GAP;
-
-    /* Construction des nœuds */
-    const nodes = [];
-    LAYERS.forEach((count, li) => {
-      const x = -totalW / 2 + li * LAYER_GAP;
-      const totalH = (count - 1) * NODE_GAP;
-      const isEdge = li === 0 || li === LAYERS.length - 1;
-      for (let j = 0; j < count; j++) {
-        nodes.push({
-          x, y: -totalH / 2 + j * NODE_GAP,
-          z: (Math.random() - 0.5) * 0.25,
-          li, isEdge,
-          phase: Math.random() * Math.PI * 2,
-          speed: 0.7 + Math.random() * 0.8,
-          act: 0,   // activation en cours [0-1]
-        });
-      }
-    });
-    const N = nodes.length;
-
-    /* Construction des arêtes (couches adjacentes, fully connected) */
-    const edges = [];
-    let off = 0;
-    for (let l = 0; l < LAYERS.length - 1; l++) {
-      for (let a = 0; a < LAYERS[l]; a++)
-        for (let b = 0; b < LAYERS[l+1]; b++)
-          edges.push([off + a, off + LAYERS[l] + b, l]); // layer index pour couleur
-      off += LAYERS[l];
-    }
-    const NE = edges.length;
-
-    /* ── Géometries ── */
-    const nPos = new Float32Array(N  * 3);
-    const nCol = new Float32Array(N  * 3);
-    const ePos = new Float32Array(NE * 6);
-    const eCol = new Float32Array(NE * 6);
-    const NP   = 35;
-    const pPos = new Float32Array(NP * 3);
-    const pCol = new Float32Array(NP * 3);
-
-    /* Positions fixes des nœuds */
-    nodes.forEach((n, i) => { nPos[i*3]=n.x; nPos[i*3+1]=n.y; nPos[i*3+2]=n.z; });
-
-    /* Positions fixes des arêtes */
-    edges.forEach(([a,b], i) => {
-      ePos[i*6]=nPos[a*3]; ePos[i*6+1]=nPos[a*3+1]; ePos[i*6+2]=nPos[a*3+2];
-      ePos[i*6+3]=nPos[b*3]; ePos[i*6+4]=nPos[b*3+1]; ePos[i*6+5]=nPos[b*3+2];
-    });
-
-    const nGeo = new THREE.BufferGeometry();
-    nGeo.setAttribute('position', new THREE.BufferAttribute(nPos, 3));
-    nGeo.setAttribute('color',    new THREE.BufferAttribute(nCol, 3));
-
-    const eGeo = new THREE.BufferGeometry();
-    eGeo.setAttribute('position', new THREE.BufferAttribute(ePos, 3));
-    eGeo.setAttribute('color',    new THREE.BufferAttribute(eCol, 3));
-
-    const pGeo = new THREE.BufferGeometry();
-    pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-    pGeo.setAttribute('color',    new THREE.BufferAttribute(pCol, 3));
-
-    /* ── Groupe réseau (décalé à droite) ── */
-    const net = new THREE.Group();
-    net.position.x = 1.6;
-    scene.add(net);
-
-    net.add(new THREE.Points(nGeo, new THREE.PointsMaterial({
-      size:0.20, map:glowTex, vertexColors:true,
-      transparent:true, opacity:0.95, blending:THREE.AdditiveBlending, depthWrite:false,
-    })));
-    net.add(new THREE.LineSegments(eGeo, new THREE.LineBasicMaterial({
-      vertexColors:true, transparent:true, opacity:1,
-      blending:THREE.AdditiveBlending, depthWrite:false,
-    })));
-    net.add(new THREE.Points(pGeo, new THREE.PointsMaterial({
-      size:0.26, map:glowTex, vertexColors:true,
-      transparent:true, opacity:1, blending:THREE.AdditiveBlending, depthWrite:false,
-    })));
-
-    /* ── Flux (pulses) ── */
-    const pulses = Array.from({length: NP}, () => {
-      const ei = Math.floor(Math.random() * NE);
-      return {
-        ei, t: Math.random(),
-        sp: 0.00035 + Math.random() * 0.00045,
-        aurora: Math.random() < 0.62,
-      };
-    });
-
-    /* ── Vague d'activation forward-pass ── */
-    let lastWave = -4;
-    function fireWave(t) {
-      let off2 = 0;
-      LAYERS.forEach((count, li) => {
-        const delay = li * 0.55; // propagation couche par couche
-        setTimeout(() => {
-          for (let j = 0; j < count; j++) nodes[off2 + j].act = 1.0;
-          off2 += count;
-        }, delay * 1000);
-      });
-    }
-
-    /* ── Boucle animation ── */
-    let last = 0;
-    function animate(time) {
-      requestAnimationFrame(animate);
-      const dt = time - last; if (dt < 14) return; last = time;
-      const t = time * 0.001;
-
-      /* Déclencher une vague toutes les 4 s */
-      if (t - lastWave > 4) { lastWave = t; fireWave(t); }
-
-      /* Couleur des nœuds */
-      nodes.forEach((n, i) => {
-        const pulse = 0.55 + Math.sin(t * n.speed + n.phase) * 0.35;
-        let r, g, b;
-        if (n.act > 0) {
-          // Flash blanc/jaune lors de l'activation
-          r = n.act * 1.0 + (1-n.act) * (n.li%2===0 ? 0.3 : 0.75);
-          g = n.act * 0.95 + (1-n.act) * (n.li%2===0 ? 1.0 : 0.51);
-          b = n.act * 0.4  + (1-n.act) * (n.li%2===0 ? 0.8 : 0.99);
-          n.act = Math.max(0, n.act - dt * 0.0018);
-        } else if (n.li % 2 === 0) {
-          r = 0.30*pulse; g = 1.00*pulse; b = 0.80*pulse; // aurora
-        } else {
-          r = 0.75*pulse; g = 0.51*pulse; b = 0.99*pulse; // lavande
-        }
-        nCol[i*3]=r; nCol[i*3+1]=g; nCol[i*3+2]=b;
-      });
-      nGeo.attributes.color.needsUpdate = true;
-
-      /* Couleur des arêtes */
-      edges.forEach(([a,b,li], i) => {
-        const base = 0.12;
-        const ca = li%2===0 ? [0.3,1.0,0.8] : [0.75,0.51,0.99];
-        const cb = (li+1)%2===0 ? [0.3,1.0,0.8] : [0.75,0.51,0.99];
-        eCol[i*6  ]=ca[0]*base; eCol[i*6+1]=ca[1]*base; eCol[i*6+2]=ca[2]*base;
-        eCol[i*6+3]=cb[0]*base; eCol[i*6+4]=cb[1]*base; eCol[i*6+5]=cb[2]*base;
-      });
-      eGeo.attributes.color.needsUpdate = true;
-
-      /* Flux */
-      pulses.forEach((p, i) => {
-        p.t += p.sp * dt;
-        if (p.t > 1) { p.t=0; p.ei=Math.floor(Math.random()*NE); }
-        const [a,b] = edges[p.ei];
-        pPos[i*3  ]=ePos[p.ei*6]  +(ePos[p.ei*6+3]-ePos[p.ei*6]  )*p.t;
-        pPos[i*3+1]=ePos[p.ei*6+1]+(ePos[p.ei*6+4]-ePos[p.ei*6+1])*p.t;
-        pPos[i*3+2]=ePos[p.ei*6+2]+(ePos[p.ei*6+5]-ePos[p.ei*6+2])*p.t;
-        if (p.aurora) { pCol[i*3]=0.3; pCol[i*3+1]=1.0; pCol[i*3+2]=0.8; }
-        else          { pCol[i*3]=0.75;pCol[i*3+1]=0.51;pCol[i*3+2]=0.99; }
-      });
-      pGeo.attributes.position.needsUpdate = true;
-      pGeo.attributes.color.needsUpdate    = true;
-
-      /* Rotation douce */
-      net.rotation.y = Math.sin(t * 0.22) * 0.45;
-      net.rotation.x = Math.sin(t * 0.16) * 0.10;
-
-      renderer.render(scene, camera);
-    }
+    /*
+     * 6 blobs de couleur fluides — chacun se déplace lentement sur
+     * une trajectoire sinusoïdale indépendante. Les gradients se
+     * superposent pour créer un effet aurora liquide premium.
+     *
+     * bx / by  : position de base (fraction de l'écran)
+     * ox / oy  : amplitude du mouvement (fraction de l'écran)
+     * fx / fy  : fréquence angulaire (rad/s) — lent = ~20-30s de cycle
+     * px / py  : phase initiale (rad) — décale les blobs dans le temps
+     * r        : rayon = fraction de la diagonale de l'écran
+     * c        : [R, G, B]
+     */
+    const blobs = [
+      { bx:0.18, by:0.25, ox:0.10, oy:0.08, fx:0.27, fy:0.21, px:0.0,  py:1.2,  r:0.50, c:[78,255,206]  }, // aurora — haut gauche
+      { bx:0.82, by:0.72, ox:0.09, oy:0.11, fx:0.20, fy:0.32, px:2.1,  py:0.7,  r:0.54, c:[245,230,66]  }, // solar  — bas droite
+      { bx:0.50, by:0.42, ox:0.08, oy:0.09, fx:0.34, fy:0.24, px:1.5,  py:3.8,  r:0.44, c:[192,132,252] }, // lavande — centre
+      { bx:0.10, by:0.78, ox:0.07, oy:0.08, fx:0.29, fy:0.37, px:4.3,  py:2.0,  r:0.38, c:[78,255,206]  }, // aurora — bas gauche
+      { bx:0.88, by:0.20, ox:0.08, oy:0.07, fx:0.23, fy:0.28, px:0.9,  py:5.1,  r:0.40, c:[245,230,66]  }, // solar  — haut droite
+      { bx:0.62, by:0.80, ox:0.11, oy:0.07, fx:0.31, fy:0.19, px:3.3,  py:1.8,  r:0.36, c:[192,132,252] }, // lavande — bas centre
+    ];
 
     function resize() {
-      const W = canvas.clientWidth  || canvas.offsetWidth  || window.innerWidth;
-      const H = canvas.clientHeight || canvas.offsetHeight || window.innerHeight;
-      camera.aspect = W / H; camera.updateProjectionMatrix();
-      renderer.setSize(W, H, false);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      W = window.innerWidth;
+      H = window.innerHeight;
+      canvas.width  = W;
+      canvas.height = H;
     }
-    if (document.readyState === 'complete') { resize(); animate(0); }
-    else window.addEventListener('load', () => { resize(); animate(0); });
+
+    let lastFrame = 0;
+    function draw(ts) {
+      requestAnimationFrame(draw);
+      if (ts - lastFrame < 33) return; // ~30 fps
+      lastFrame = ts;
+      const t = ts * 0.001;
+
+      ctx.clearRect(0, 0, W, H);
+
+      blobs.forEach(b => {
+        const cx  = (b.bx + Math.sin(t * b.fx + b.px) * b.ox) * W;
+        const cy  = (b.by + Math.cos(t * b.fy + b.py) * b.oy) * H;
+        const rad = Math.hypot(W, H) * b.r;
+
+        const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, rad);
+        const [r, gv, bv] = b.c;
+        g.addColorStop(0,    `rgba(${r},${gv},${bv},0.14)`);
+        g.addColorStop(0.35, `rgba(${r},${gv},${bv},0.07)`);
+        g.addColorStop(0.70, `rgba(${r},${gv},${bv},0.02)`);
+        g.addColorStop(1,    `rgba(${r},${gv},${bv},0)`);
+
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, W, H);
+      });
+    }
+
+    resize();
     window.addEventListener('resize', resize);
+    requestAnimationFrame(draw);
   })();
   </script>
 
