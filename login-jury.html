@@ -275,7 +275,7 @@
         <input type="password" id="password" value="jury2026" required autocomplete="current-password">
       </div>
       <div class="forgot">
-        <a href="#">Mot de passe oublié ?</a>
+        <a href="#" onclick="event.preventDefault();this.closest('.forgot').nextElementSibling.insertAdjacentHTML('beforebegin','<div style=\'margin-bottom:10px;padding:10px 14px;background:rgba(78,255,206,0.07);border:1px solid rgba(78,255,206,0.2);border-radius:8px;font-size:0.78rem;color:var(--aurora);\'>📧 Contactez l\'administrateur : <strong>admin@marsai.fr</strong></div>');this.closest('.forgot').remove();">Mot de passe oublié ?</a>
       </div>
       <button type="submit" class="btn-submit">Accéder à l'espace jury →</button>
     </form>

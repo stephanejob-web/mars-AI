@@ -974,51 +974,7 @@
           <!-- Votes des autres jurés -->
           <div class="section-card">
             <h4>Notes du jury</h4>
-            <div class="votes-list">
-              <div>
-                <div class="vote-row">
-                  <div class="vote-avatar va-1">ML</div>
-                  <div style="flex:1;">
-                    <div class="vote-name">Marie Lefebvre</div>
-                    <div class="vote-role">Présidente · Réalisatrice</div>
-                  </div>
-                  <div class="vote-score high">9</div>
-                </div>
-                <div class="vote-comment">"Maîtrise de la durée exceptionnelle, narration très forte pour 60 secondes."</div>
-              </div>
-              <div>
-                <div class="vote-row">
-                  <div class="vote-avatar va-2">PD</div>
-                  <div style="flex:1;">
-                    <div class="vote-name">Pierre Dubois</div>
-                    <div class="vote-role">Directeur artistique</div>
-                  </div>
-                  <div class="vote-score mid">7.5</div>
-                </div>
-                <div class="vote-comment">"Esthétique cohérente. Fin un peu abrupte."</div>
-              </div>
-              <div>
-                <div class="vote-row">
-                  <div class="vote-avatar va-3">KI</div>
-                  <div style="flex:1;">
-                    <div class="vote-name">Kenji Ito</div>
-                    <div class="vote-role">Artiste numérique</div>
-                  </div>
-                  <div class="vote-score high">8</div>
-                </div>
-                <div class="vote-comment">"Beau travail sonore, transitions à améliorer."</div>
-              </div>
-              <div>
-                <div class="vote-row" style="opacity:0.4;border-style:dashed;">
-                  <div class="vote-avatar va-4">SE</div>
-                  <div style="flex:1;">
-                    <div class="vote-name">Sofia Eriksson</div>
-                    <div class="vote-role">En attente de notation</div>
-                  </div>
-                  <div class="vote-score none">—</div>
-                </div>
-              </div>
-            </div>
+            <div class="votes-list" id="votes-list"></div>
           </div>
 
         </div><!-- /detail-scroll -->
@@ -1130,9 +1086,10 @@
     let isPlaying = false;
     let progress = 42;
 
-    function renderList() {
+    function renderList(filterFn) {
       const el = document.getElementById('film-list-scroll');
-      el.innerHTML = films.map(f => {
+      const list = filterFn ? films.filter(filterFn) : films;
+      el.innerHTML = list.map(f => {
         const a = avg(f.scores);
         const sc = a === null ? 'fs-none' : a >= 8 ? 'fs-high' : a >= 6 ? 'fs-mid' : 'fs-low';
         const ds = f.status === 'selected' ? 's-select' : f.status === 'rejected' ? 's-reject' : 's-pending';
@@ -1166,6 +1123,8 @@
       const avgEl = document.getElementById('d-avg');
       avgEl.textContent = a || '—';
       avgEl.style.color = a === null ? 'var(--mist)' : a >= 8 ? 'var(--aurora)' : a >= 6 ? 'var(--solar)' : 'var(--coral)';
+      // Mettre à jour les votes jury pour ce film
+      renderVotes(f);
       // Reset player
       stopPlayer();
       progress = 0;
@@ -1237,9 +1196,43 @@
     }
 
     /* ── TABS ── */
+    const jurors = [
+      { initials:'ML', name:'Marie Lefebvre', role:'Présidente · Réalisatrice', cls:'va-1' },
+      { initials:'PD', name:'Pierre Dubois',  role:'Directeur artistique',      cls:'va-2' },
+      { initials:'KI', name:'Kenji Ito',      role:'Artiste numérique',         cls:'va-3' },
+      { initials:'SE', name:'Sofia Eriksson', role:'Critique de cinéma',        cls:'va-4' },
+    ];
+    const voteComments = {
+      high: ['Narration percutante, maîtrise formelle remarquable.','Direction visuelle exceptionnelle pour 60 secondes.','Très forte proposition artistique, bravo.','Travail sonore et visuel parfaitement cohérents.'],
+      mid:  ['Esthétique cohérente, fin un peu abrupte.','Beau travail, quelques transitions à affiner.','Proposition intéressante, le propos pourrait être plus clair.','Bonne maîtrise globale, à peaufiner.'],
+      low:  ['Concept intéressant mais exécution inégale.','La narration manque de cohérence.','Travail à retravailler sur le plan visuel.','Le propos est là, la mise en forme moins.'],
+    };
+    function renderVotes(f) {
+      const el = document.getElementById('votes-list');
+      if (!el) return;
+      el.innerHTML = jurors.map((j, i) => {
+        const sc = f.scores[i];
+        const pending = sc === null;
+        const scClass = pending ? 'none' : sc >= 8 ? 'high' : sc >= 6 ? 'mid' : 'low';
+        const comArr = sc >= 8 ? voteComments.high : sc >= 6 ? voteComments.mid : sc !== null ? voteComments.low : [];
+        const comment = comArr[i % (comArr.length || 1)] || '';
+        return `<div>
+          <div class="vote-row" style="${pending ? 'opacity:0.4;border-style:dashed;' : ''}">
+            <div class="vote-avatar ${j.cls}">${j.initials}</div>
+            <div style="flex:1;"><div class="vote-name">${j.name}</div><div class="vote-role">${pending ? 'En attente de notation' : j.role}</div></div>
+            <div class="vote-score ${scClass}">${sc !== null ? sc : '—'}</div>
+          </div>
+          ${!pending && comment ? `<div class="vote-comment">"${comment}"</div>` : ''}
+        </div>`;
+      }).join('');
+    }
+
     function setTab(el, label) {
       document.querySelectorAll('.ltab').forEach(t=>t.classList.remove('active'));
       el.classList.add('active');
+      if (label === 'À noter') renderList(f => avg(f.scores) === null || f.scores.some(s => s === null));
+      else if (label === 'Notés') renderList(f => avg(f.scores) !== null && f.scores.every(s => s !== null));
+      else renderList();
     }
 
     /* ── VUES ── */
@@ -1318,6 +1311,7 @@
     /* ── INIT ── */
     renderList();
     updateCounts();
+    renderVotes(films[0]);
   </script>
 
   <style>
