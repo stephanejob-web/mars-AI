@@ -403,76 +403,77 @@
     /* ─── COUNTDOWN ──────────────────────────────────────── */
     .countdown-wrapper {
       position: absolute;
-      bottom: 48px;
-      right: 60px;
+      bottom: 0; left: 0; right: 0;
       z-index: 2;
+      padding: 22px 60px 34px;
+      background: linear-gradient(to top, rgba(10,15,46,0.85) 0%, transparent 100%);
+    }
+    .countdown-inner {
+      max-width: 1200px;
+      margin: 0 auto;
       display: flex;
-      gap: 4px;
+      flex-direction: column;
       align-items: center;
+      gap: 16px;
+    }
+    .countdown-top {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .countdown-top-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(78,255,206,0.35));
+    }
+    .countdown-top-line.r {
+      background: linear-gradient(90deg, rgba(78,255,206,0.35), transparent);
     }
     .countdown-label {
-      font-size: 0.7rem;
-      color: var(--mist);
-      letter-spacing: 0.1em;
+      font-size: 0.73rem;
+      font-weight: 600;
+      letter-spacing: 0.13em;
       text-transform: uppercase;
-      writing-mode: vertical-rl;
-      margin-right: 12px;
+      color: var(--mist);
+      white-space: nowrap;
+    }
+    .countdown-units {
+      display: flex;
+      align-items: flex-start;
     }
     .countdown-unit {
       text-align: center;
+      padding: 0 44px;
+    }
+    .countdown-unit + .countdown-unit {
+      border-left: 1px solid rgba(255,255,255,0.07);
     }
     .countdown-num {
       font-family: var(--font-mono);
-      font-size: 2rem;
+      font-size: 3.8rem;
       font-weight: 500;
       color: var(--white-soft);
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 8px;
-      padding: 12px 16px;
-      min-width: 64px;
       display: block;
       text-align: center;
+      line-height: 1;
+      text-shadow: 0 0 40px rgba(78,255,206,0.28);
+      background: none;
+      border: none;
+      border-radius: 0;
+      padding: 0;
+      min-width: auto;
     }
-    .countdown-sep {
-      font-family: var(--font-mono);
-      font-size: 2rem;
-      color: var(--aurora);
-      opacity: 0.6;
-      align-self: flex-start;
-      padding-top: 10px;
-    }
+    .countdown-sep { display: none; }
     .countdown-lbl {
-      font-size: 0.70rem;
+      font-size: 0.73rem;
       color: var(--mist);
-      letter-spacing: 0.08em;
+      letter-spacing: 0.13em;
       text-transform: uppercase;
-      margin-top: 6px;
+      margin-top: 10px;
+      font-weight: 500;
     }
 
-    /* ─── SCROLL INDICATOR ───────────────────────────────── */
-    .scroll-hint {
-      position: absolute;
-      bottom: 48px;
-      left: 60px;
-      z-index: 2;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 0.75rem;
-      color: var(--mist);
-      letter-spacing: 0.06em;
-    }
-    .scroll-line {
-      width: 40px;
-      height: 1px;
-      background: var(--mist);
-      animation: scroll-anim 2s ease-in-out infinite;
-    }
-    @keyframes scroll-anim {
-      0%, 100% { transform: scaleX(1); opacity: 0.4; }
-      50% { transform: scaleX(1.5); opacity: 1; }
-    }
 
     /* ─── SECTION COMMONS ────────────────────────────────── */
     section { position: relative; }
@@ -1704,34 +1705,33 @@
       </div>
     </div>
 
-    <!-- Countdown -->
+    <!-- Countdown pleine largeur -->
     <div class="countdown-wrapper">
-      <div class="countdown-label">Clôture des dépôts</div>
-      <div class="countdown-unit">
-        <span class="countdown-num" id="days">47</span>
-        <div class="countdown-lbl">jours</div>
+      <div class="countdown-inner">
+        <div class="countdown-top">
+          <span class="countdown-top-line"></span>
+          <span class="countdown-label">Clôture des dépôts · 30 septembre 2026</span>
+          <span class="countdown-top-line r"></span>
+        </div>
+        <div class="countdown-units">
+          <div class="countdown-unit">
+            <span class="countdown-num" id="days">221</span>
+            <div class="countdown-lbl">Jours</div>
+          </div>
+          <div class="countdown-unit">
+            <span class="countdown-num" id="hours">08</span>
+            <div class="countdown-lbl">Heures</div>
+          </div>
+          <div class="countdown-unit">
+            <span class="countdown-num" id="minutes">33</span>
+            <div class="countdown-lbl">Minutes</div>
+          </div>
+          <div class="countdown-unit">
+            <span class="countdown-num" id="seconds">47</span>
+            <div class="countdown-lbl">Secondes</div>
+          </div>
+        </div>
       </div>
-      <span class="countdown-sep">:</span>
-      <div class="countdown-unit">
-        <span class="countdown-num" id="hours">12</span>
-        <div class="countdown-lbl">heures</div>
-      </div>
-      <span class="countdown-sep">:</span>
-      <div class="countdown-unit">
-        <span class="countdown-num" id="minutes">33</span>
-        <div class="countdown-lbl">min</div>
-      </div>
-      <span class="countdown-sep">:</span>
-      <div class="countdown-unit">
-        <span class="countdown-num" id="seconds">08</span>
-        <div class="countdown-lbl">sec</div>
-      </div>
-    </div>
-
-    <!-- Scroll hint -->
-    <div class="scroll-hint">
-      <span class="scroll-line"></span>
-      DÉFILER
     </div>
   </section>
 
