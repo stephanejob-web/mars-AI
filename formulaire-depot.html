@@ -340,59 +340,111 @@
     .rights-confirmed-date { margin-left: auto; font-family: var(--font-mono); font-size: 0.66rem; color: var(--mist); }
 
     /* ─── UPLOAD ZONE ─── */
+    @keyframes uz-float {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(-9px); }
+    }
     .upload-zone {
-      border: 2px dashed rgba(78,255,206,0.25);
-      border-radius: 14px;
-      padding: 36px 24px;
+      border: 2px dashed rgba(78,255,206,0.28);
+      border-radius: 18px;
+      padding: 52px 32px 44px;
       text-align: center;
       cursor: pointer;
-      transition: all 0.2s;
-      background: rgba(78,255,206,0.02);
+      transition: all 0.25s ease;
+      background: rgba(78,255,206,0.015);
       position: relative;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      min-height: 300px;
     }
-    .upload-zone:hover, .upload-zone.dragover {
+    .upload-zone:hover {
       border-color: rgba(78,255,206,0.55);
-      background: rgba(78,255,206,0.05);
+      background: rgba(78,255,206,0.04);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(78,255,206,0.07);
     }
     .upload-zone input[type="file"] {
       position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
     }
-    .uz-icon { font-size: 2rem; margin-bottom: 10px; display: block; }
-    .uz-title { font-size: 0.92rem; font-weight: 600; margin-bottom: 5px; }
-    .uz-sub { font-size: 0.75rem; color: var(--mist); line-height: 1.5; }
-    .uz-specs {
-      display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 12px;
+    .uz-cloud {
+      width: 72px; height: 72px;
+      background: rgba(78,255,206,0.08);
+      border: 1.5px solid rgba(78,255,206,0.22);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 22px;
+      animation: uz-float 3s ease-in-out infinite;
     }
+    .uz-drop-btn {
+      display: inline-flex; align-items: center; gap: 9px;
+      background: var(--aurora);
+      color: var(--deep-sky);
+      border-radius: 11px; padding: 13px 28px;
+      font-size: 0.95rem; font-weight: 700;
+      font-family: var(--font-display);
+      margin-bottom: 18px;
+      pointer-events: none;
+      letter-spacing: 0.01em;
+      box-shadow: 0 4px 22px rgba(78,255,206,0.28);
+    }
+    .uz-or { font-size: 0.78rem; color: var(--mist); margin-bottom: 14px; letter-spacing: 0.05em; }
+    .uz-browse { font-size: 0.88rem; color: var(--aurora); font-weight: 600; text-decoration: underline; margin-bottom: 28px; }
+    .uz-specs { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
     .uz-spec {
       background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 5px; padding: 3px 10px;
-      font-family: var(--font-mono); font-size: 0.68rem; color: var(--mist);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 4px 12px;
+      font-family: var(--font-mono); font-size: 0.7rem; color: var(--mist);
     }
 
-    /* Upload progress */
-    .upload-progress {
-      display: none;
+    /* ─── FILE CARD après sélection ─── */
+    .file-card {
       background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 12px;
-      padding: 16px 20px;
+      border: 1px solid rgba(78,255,206,0.18);
+      border-radius: 16px;
+      overflow: hidden;
     }
-    .upload-progress.show { display: block; }
-    .up-file { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-    .up-file-icon {
-      width: 36px; height: 36px; border-radius: 8px;
-      background: rgba(78,255,206,0.1);
+    .file-card-header {
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 18px;
+    }
+    .file-card-thumb {
+      width: 96px; height: 54px;
+      background: #000; border-radius: 8px; overflow: hidden;
+      flex-shrink: 0; position: relative;
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.1rem; flex-shrink: 0;
     }
-    .up-file-name { font-size: 0.85rem; font-weight: 600; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .up-file-size { font-family: var(--font-mono); font-size: 0.72rem; color: var(--mist); }
-    .up-bar-track { height: 5px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
-    .up-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--aurora), var(--lavande)); transition: width 0.3s; }
-    .up-status { display: flex; align-items: center; justify-content: space-between; }
-    .up-pct { font-family: var(--font-mono); font-size: 0.72rem; color: var(--aurora); }
-    .up-msg { font-size: 0.72rem; color: var(--mist); }
+    .file-card-thumb canvas { width: 96px; height: 54px; display: block; }
+    .file-card-thumb-ph {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; color: rgba(255,255,255,0.15);
+    }
+    .file-card-info { flex: 1; min-width: 0; }
+    .file-card-name {
+      font-size: 0.88rem; font-weight: 700; color: var(--white-soft);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 6px;
+    }
+    .file-card-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .file-card-ext {
+      font-family: var(--font-mono); font-size: 0.65rem; font-weight: 700;
+      padding: 2px 8px; border-radius: 4px;
+      background: rgba(78,255,206,0.1); border: 1px solid rgba(78,255,206,0.2); color: var(--aurora);
+    }
+    .file-card-size { font-family: var(--font-mono); font-size: 0.72rem; color: var(--mist); }
+    .file-card-warn { font-size: 0.68rem; color: var(--solar); }
+    .file-card-remove {
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09);
+      color: var(--mist); cursor: pointer; font-size: 0.75rem;
+      padding: 7px 13px; border-radius: 8px; transition: all 0.15s;
+      font-family: var(--font-body); flex-shrink: 0; white-space: nowrap;
+    }
+    .file-card-remove:hover { background: rgba(255,107,107,0.1); border-color: rgba(255,107,107,0.25); color: var(--coral); }
+    .file-card-progress { padding: 0 18px 16px; }
+    .file-card-bar-track { height: 4px; background: rgba(255,255,255,0.07); border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
+    .file-card-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--aurora), var(--lavande)); transition: width 0.3s; }
+    .file-card-status { display: flex; justify-content: space-between; font-size: 0.72rem; }
+    .file-card-pct { font-family: var(--font-mono); color: var(--aurora); }
+    .file-card-msg { color: var(--mist); }
 
     /* Durée check */
     .duration-result {
@@ -648,6 +700,46 @@
     @keyframes slideIn { from{opacity:0;transform:translateX(-10px)} to{opacity:1;transform:translateX(0)} }
     .ss-icon { font-size: 1rem; flex-shrink: 0; }
 
+    /* ─── UPLOAD ZONE — DRAG & DROP AMÉLIORÉ ─── */
+    @keyframes uz-bounce {
+      from { transform: translateY(0); }
+      to   { transform: translateY(-10px); }
+    }
+    @keyframes uz-pulse-border {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(78,255,206,0.2); }
+      50%       { box-shadow: 0 0 0 8px rgba(78,255,206,0); }
+    }
+    .upload-zone {
+      min-height: 320px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .upload-zone.dragover {
+      border-color: rgba(78,255,206,0.85) !important;
+      background: linear-gradient(170deg, rgba(78,255,206,0.1) 0%, rgba(10,15,46,0) 60%) !important;
+      animation: uz-pulse-border 1s ease-in-out infinite;
+      transform: scale(1.015);
+      box-shadow: 0 0 40px rgba(78,255,206,0.15);
+    }
+    .upload-zone.format-err {
+      border-color: rgba(255,107,107,0.6) !important;
+      background: rgba(255,107,107,0.05) !important;
+      animation: none;
+    }
+
+    /* ─── YOUTUBE CHECK ITEMS ─── */
+    .yt-check-item {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.78rem; color: var(--mist); padding: 4px 0;
+      transition: all 0.3s;
+    }
+    .yt-check-icon { font-size: 0.85rem; width: 18px; text-align: center; flex-shrink: 0; }
+    .yt-check-item.done .yt-check-icon { color: var(--aurora); }
+    .yt-check-item.done .yt-check-label { color: var(--white-soft); opacity: 1 !important; }
+    .yt-check-item.running .yt-check-icon { color: var(--solar); }
+    .yt-check-item.error .yt-check-icon { color: var(--coral); }
+    .yt-check-item.error .yt-check-label { color: var(--coral); opacity: 1 !important; }
+
     /* ─── DEV NAV ─── */
     .dev-nav {
       position: fixed; bottom: 20px; right: 20px; z-index: 500;
@@ -732,9 +824,9 @@
       <div class="rules-block">
         <h4>Règles essentielles</h4>
         <div class="rule-item"><div class="rule-dot"></div><span>Durée : <strong>60 secondes</strong> pile</span></div>
-        <div class="rule-item"><div class="rule-dot"></div><span>Formats : <strong>MP4, MOV, WebM</strong></span></div>
-        <div class="rule-item"><div class="rule-dot"></div><span>Résolution min. : <strong>1920×1080</strong></span></div>
-        <div class="rule-item"><div class="rule-dot"></div><span>Taille max. : <strong>2 Go</strong></span></div>
+        <div class="rule-item"><div class="rule-dot"></div><span>Formats : <strong>MP4, MOV</strong></span></div>
+        <div class="rule-item"><div class="rule-dot"></div><span>Résolution min. : <strong>1920×1080</strong> · Ratio <strong>16:9</strong></span></div>
+        <div class="rule-item"><div class="rule-dot"></div><span>Taille : <strong>200 à 300 Mo</strong></span></div>
         <div class="rule-item"><div class="rule-dot"></div><span>Plusieurs films par réalisateur <strong>autorisés</strong></span></div>
         <div class="rule-item"><div class="rule-dot"></div><span>Ouverture : <strong>2 mois</strong>, fermeture auto</span></div>
       </div>
@@ -813,8 +905,26 @@
           </div>
 
           <div class="field span2">
-            <label class="field-label">Lien portfolio / réseaux <span class="opt">(facultatif)</span></label>
-            <input type="url" id="f-portfolio" placeholder="https://votresite.com ou lien Vimeo/Instagram">
+            <label class="field-label">Site / Portfolio <span class="opt">(facultatif)</span></label>
+            <input type="url" id="f-portfolio" placeholder="https://votresite.com ou lien Vimeo…">
+          </div>
+
+          <!-- Réseaux sociaux -->
+          <div class="field span2">
+            <label class="field-label">Réseaux sociaux <span class="opt">(facultatif — utilisés pour promouvoir votre film si sélectionné)</span></label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <input type="text" id="f-instagram" placeholder="Instagram  @votre_compte" style="background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.09);border-radius:10px;padding:10px 14px;font-family:var(--font-body);font-size:0.88rem;color:var(--white-soft);outline:none;transition:border-color 0.2s;" onfocus="this.style.borderColor='rgba(78,255,206,0.45)'" onblur="this.style.borderColor='rgba(255,255,255,0.09)'">
+              <input type="text" id="f-tiktok" placeholder="TikTok  @votre_compte" style="background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.09);border-radius:10px;padding:10px 14px;font-family:var(--font-body);font-size:0.88rem;color:var(--white-soft);outline:none;transition:border-color 0.2s;" onfocus="this.style.borderColor='rgba(78,255,206,0.45)'" onblur="this.style.borderColor='rgba(255,255,255,0.09)'">
+              <input type="text" id="f-youtube" placeholder="YouTube  @chaîne ou URL" style="background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.09);border-radius:10px;padding:10px 14px;font-family:var(--font-body);font-size:0.88rem;color:var(--white-soft);outline:none;transition:border-color 0.2s;" onfocus="this.style.borderColor='rgba(78,255,206,0.45)'" onblur="this.style.borderColor='rgba(255,255,255,0.09)'">
+              <input type="text" id="f-xtwitter" placeholder="X / Twitter  @votre_compte" style="background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.09);border-radius:10px;padding:10px 14px;font-family:var(--font-body);font-size:0.88rem;color:var(--white-soft);outline:none;transition:border-color 0.2s;" onfocus="this.style.borderColor='rgba(78,255,206,0.45)'" onblur="this.style.borderColor='rgba(255,255,255,0.09)'">
+            </div>
+          </div>
+
+          <!-- Tags -->
+          <div class="field span2">
+            <label class="field-label">Tags / mots-clés <span class="opt">(facultatif · max 5, séparés par des virgules)</span></label>
+            <input type="text" id="f-tags" placeholder="ex: dystopie, nature, espoir, technologie, famille…" maxlength="150">
+            <div class="field-hint">Utilisés pour la découverte de votre film dans la galerie</div>
           </div>
 
         </div>
@@ -845,10 +955,18 @@
           </div>
 
           <div class="field">
-            <label class="field-label">Synopsis <span class="req">● requis</span></label>
+            <label class="field-label">Synopsis — Français <span class="req">● requis</span></label>
             <textarea id="f-synopsis" rows="4" placeholder="Décrivez brièvement votre film en 2-3 phrases…" maxlength="500" oninput="countChars(this,'cc-synopsis',500)"></textarea>
             <div class="char-counter" id="cc-synopsis">0 / 500</div>
             <div class="field-error" id="err-synopsis">Champ requis</div>
+          </div>
+
+          <div class="field">
+            <label class="field-label">Synopsis — English <span class="req">● requis</span></label>
+            <textarea id="f-synopsis-en" rows="4" placeholder="Briefly describe your film in 2-3 sentences…" maxlength="500" oninput="countChars(this,'cc-synopsis-en',500)"></textarea>
+            <div class="char-counter" id="cc-synopsis-en">0 / 500</div>
+            <div class="field-hint">International audiences and jury members need the English version</div>
+            <div class="field-error" id="err-synopsis-en">English synopsis is required</div>
           </div>
 
         </div>
@@ -911,37 +1029,92 @@
           <span class="rights-confirmed-date" id="rights-confirmed-date"></span>
         </div>
 
-        <!-- Upload vidéo -->
-        <div id="upload-zone-wrap" style="display:none;">
-          <div class="upload-zone" id="upload-zone" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFile(event)">
-            <input type="file" id="video-input" accept=".mp4,.mov,.webm,video/*" onchange="handleVideo(this)">
-            <span class="uz-icon">🎞️</span>
-            <div class="uz-title">Glissez votre film ici ou cliquez pour parcourir</div>
-            <div class="uz-sub">La durée sera vérifiée automatiquement côté client puis côté serveur (pipeline FFmpeg)</div>
-            <div class="uz-specs">
-              <span class="uz-spec">MP4</span>
-              <span class="uz-spec">MOV</span>
-              <span class="uz-spec">WebM</span>
-              <span class="uz-spec">Max 2 Go</span>
-              <span class="uz-spec">Min 1080p</span>
-              <span class="uz-spec">60 secondes pile</span>
-            </div>
-          </div>
-        </div>
+        <!-- Upload vidéo — input caché, déclenché programmatiquement -->
+        <input type="file" id="video-input" accept=".mp4,.mov,video/mp4,video/quicktime" onchange="handleVideo(this)" style="display:none;">
 
-        <!-- Barre de progression upload -->
-        <div class="upload-progress" id="upload-progress">
-          <div class="up-file">
-            <div class="up-file-icon">🎬</div>
-            <div class="up-file-name" id="up-filename">film.mp4</div>
-            <div class="up-file-size" id="up-filesize">—</div>
-          </div>
-          <div class="up-bar-track"><div class="up-bar-fill" id="up-bar" style="width:0%"></div></div>
-          <div class="up-status">
-            <span class="up-pct" id="up-pct">0%</span>
-            <span class="up-msg" id="up-msg">Analyse en cours…</span>
-          </div>
-        </div>
+        <div id="upload-zone-wrap" style="display:none;">
+
+          <!-- ── Zone de dépôt principale ── -->
+          <div class="upload-zone" id="upload-zone"
+            ondragenter="onDragEnter(event)"
+            ondragover="onDragOver(event)"
+            ondragleave="onDragLeave(event)"
+            ondrop="onDrop(event)"
+            onclick="document.getElementById('video-input').click()">
+
+            <!-- État par défaut -->
+            <div id="uz-state-default">
+              <div class="uz-cloud">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--aurora)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="16 16 12 12 8 16"></polyline>
+                  <line x1="12" y1="12" x2="12" y2="21"></line>
+                  <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path>
+                </svg>
+              </div>
+              <div class="uz-drop-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="16 16 12 12 8 16"></polyline>
+                  <line x1="12" y1="12" x2="12" y2="21"></line>
+                  <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path>
+                </svg>
+                Glisser-déposer votre film
+              </div>
+              <div class="uz-or">— ou —</div>
+              <div class="uz-browse">Cliquer pour parcourir vos fichiers</div>
+              <div class="uz-specs">
+                <span class="uz-spec">MP4</span>
+                <span class="uz-spec">MOV</span>
+                <span class="uz-spec">200–300 Mo</span>
+                <span class="uz-spec">16:9</span>
+                <span class="uz-spec">60 sec pile</span>
+              </div>
+            </div>
+
+            <!-- État : fichier survolé (dragover) -->
+            <div id="uz-state-drag" style="display:none;">
+              <div style="font-size:3.5rem;margin-bottom:16px;animation:uz-bounce 0.45s ease-in-out infinite alternate;filter:drop-shadow(0 4px 20px rgba(78,255,206,0.5));">⬇️</div>
+              <div style="font-size:1.15rem;font-weight:700;font-family:var(--font-display);color:var(--aurora);margin-bottom:8px;">Relâchez pour déposer</div>
+              <div style="font-size:0.82rem;color:rgba(78,255,206,0.7);">MP4 ou MOV — votre film va être analysé</div>
+            </div>
+
+            <!-- État : format refusé -->
+            <div id="uz-state-error" style="display:none;">
+              <div style="font-size:3.5rem;margin-bottom:16px;">🚫</div>
+              <div style="font-size:1.15rem;font-weight:700;font-family:var(--font-display);color:var(--coral);margin-bottom:8px;">Format non accepté</div>
+              <div style="font-size:0.82rem;color:rgba(255,107,107,0.8);">Uniquement MP4 ou MOV sont acceptés</div>
+            </div>
+
+          </div><!-- /upload-zone -->
+
+          <!-- ── File card après sélection ── -->
+          <div class="file-card" id="file-card" style="display:none;margin-top:12px;">
+            <div class="file-card-header">
+              <div class="file-card-thumb">
+                <canvas id="video-thumb" width="192" height="108"></canvas>
+                <div class="file-card-thumb-ph" id="thumb-placeholder">🎬</div>
+              </div>
+              <div class="file-card-info">
+                <div class="file-card-name" id="preview-name">—</div>
+                <div class="file-card-meta">
+                  <span class="file-card-ext" id="preview-ext">—</span>
+                  <span class="file-card-size" id="preview-size">—</span>
+                  <span class="file-card-warn" id="preview-size-warn" style="display:none;">⚠ &gt; 300 Mo</span>
+                </div>
+              </div>
+              <button class="file-card-remove" onclick="resetVideoUpload(event)">✕ Changer</button>
+            </div>
+            <div class="file-card-progress">
+              <div class="file-card-bar-track">
+                <div class="file-card-bar-fill" id="up-bar" style="width:0%"></div>
+              </div>
+              <div class="file-card-status">
+                <span class="file-card-pct" id="up-pct">0%</span>
+                <span class="file-card-msg" id="up-msg">Upload en cours…</span>
+              </div>
+            </div>
+          </div><!-- /file-card -->
+
+        </div><!-- /upload-zone-wrap -->
 
         <!-- Résultat durée -->
         <div class="duration-result" id="dur-result">
@@ -1087,6 +1260,15 @@
         <hr class="section-sep">
         <div class="section-title-inline">Sous-titres</div>
 
+        <!-- Avertissement sous-titres -->
+        <div style="display:flex;align-items:flex-start;gap:12px;background:rgba(245,230,66,0.04);border:1px solid rgba(245,230,66,0.18);border-radius:10px;padding:12px 16px;margin-bottom:16px;">
+          <span style="font-size:1.1rem;flex-shrink:0;">⚠️</span>
+          <div style="font-size:0.8rem;color:var(--mist);line-height:1.6;">
+            <strong style="color:var(--solar);display:block;margin-bottom:3px;">Ne pas incruster les sous-titres dans la vidéo</strong>
+            Fournissez-les en fichier séparé (SRT ou VTT). Le festival les applique dynamiquement sur la plateforme de diffusion, permettant au spectateur de les activer ou désactiver.
+          </div>
+        </div>
+
         <!-- Upload sous-titres FR -->
         <div class="subtitle-upload" id="sub-fr-zone" onclick="">
           <input type="file" id="sub-fr" accept=".srt,.vtt" onchange="handleSubtitle(this,'sub-fr-status')">
@@ -1202,21 +1384,148 @@
         </div>
       </div>
 
-      <!-- ════ SUCCÈS ════ -->
+      <!-- ════ SUCCÈS — en attente validation YouTube ════ -->
       <div class="success-screen" id="success-screen">
+
+        <!-- En-tête dossier -->
         <div class="success-ring">🎬</div>
-        <h2 style="font-family:var(--font-display);font-size:1.8rem;font-weight:800;margin-bottom:8px;">Film soumis !</h2>
-        <p style="color:var(--mist);font-size:0.88rem;margin-bottom:0;">Votre dossier a été enregistré avec succès.</p>
+        <h2 style="font-family:var(--font-display);font-size:1.8rem;font-weight:800;margin-bottom:8px;">Dossier enregistré !</h2>
+        <p style="color:var(--mist);font-size:0.88rem;margin-bottom:0;">Votre film a été reçu. Une confirmation a été envoyée à votre adresse validée.</p>
+
         <div class="success-dossier">
           📄 Dossier n° <span id="dossier-num">MAI-2026-00000</span>
         </div>
-        <p style="color:var(--mist);font-size:0.82rem;margin-bottom:20px;">Un email de confirmation avec votre récapitulatif PDF a été envoyé à <strong id="confirm-email" style="color:var(--white-soft)">—</strong></p>
-        <div class="success-steps">
-          <div class="ss-item"><span class="ss-icon">⏳</span>Le jury effectue une présélection sur 1 mois</div>
-          <div class="ss-item"><span class="ss-icon">📢</span>Les 50 finalistes sont annoncés à J+90</div>
-          <div class="ss-item"><span class="ss-icon">🏆</span>Cérémonie à Marseille, La Plateforme</div>
+
+        <p style="color:var(--mist);font-size:0.82rem;margin-bottom:24px;">
+          Email de confirmation envoyé à <strong id="confirm-email" style="color:var(--white-soft)">—</strong>
+          <span style="display:inline-flex;align-items:center;gap:4px;font-size:0.7rem;margin-left:8px;color:var(--aurora);background:rgba(78,255,206,0.08);border:1px solid rgba(78,255,206,0.2);border-radius:20px;padding:2px 10px;">✓ Email vérifié (OTP)</span>
+        </p>
+
+        <!-- Étape YouTube validation — état en attente -->
+        <div id="yt-pending" style="max-width:480px;margin:0 auto 24px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.09);border-radius:16px;overflow:hidden;">
+          <div style="background:rgba(255,255,255,0.03);border-bottom:1px solid rgba(255,255,255,0.06);padding:12px 20px;display:flex;align-items:center;gap:10px;">
+            <span style="font-size:1rem;">▶️</span>
+            <span style="font-size:0.75rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--mist);">Validation YouTube API</span>
+            <span id="yt-status-badge" style="margin-left:auto;font-size:0.65rem;font-weight:700;padding:3px 10px;border-radius:20px;background:rgba(245,230,66,0.1);border:1px solid rgba(245,230,66,0.25);color:var(--solar);">⏳ En cours…</span>
+          </div>
+          <div style="padding:20px;">
+            <!-- Barre de progression YouTube -->
+            <div style="margin-bottom:14px;">
+              <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:var(--mist);margin-bottom:6px;">
+                <span id="yt-step-label">Upload sur la chaîne YouTube sécurisée…</span>
+                <span id="yt-pct" style="font-family:var(--font-mono);">0%</span>
+              </div>
+              <div style="height:4px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;">
+                <div id="yt-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#FF0000,#FF4444);border-radius:2px;transition:width 0.3s;"></div>
+              </div>
+            </div>
+            <!-- Étapes de contrôle -->
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div class="yt-check-item" id="ytc-upload">
+                <span class="yt-check-icon">⏳</span>
+                <span class="yt-check-label">Upload vidéo</span>
+              </div>
+              <div class="yt-check-item" id="ytc-copyright">
+                <span class="yt-check-icon" style="opacity:0.3;">○</span>
+                <span class="yt-check-label" style="opacity:0.4;">Vérification copyright Content ID</span>
+              </div>
+              <div class="yt-check-item" id="ytc-policy">
+                <span class="yt-check-icon" style="opacity:0.3;">○</span>
+                <span class="yt-check-label" style="opacity:0.4;">Analyse contenu (politique YouTube)</span>
+              </div>
+              <div class="yt-check-item" id="ytc-confirm">
+                <span class="yt-check-icon" style="opacity:0.3;">○</span>
+                <span class="yt-check-label" style="opacity:0.4;">Confirmation et indexation</span>
+              </div>
+            </div>
+          </div>
         </div>
+
+        <!-- Résultat : APPROUVÉ -->
+        <div id="yt-approved" style="display:none;max-width:480px;margin:0 auto 24px;background:rgba(78,255,206,0.05);border:1px solid rgba(78,255,206,0.2);border-radius:16px;padding:20px 24px;">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+            <div style="width:40px;height:40px;border-radius:50%;background:rgba(78,255,206,0.1);border:1.5px solid rgba(78,255,206,0.3);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">✓</div>
+            <div>
+              <div style="font-weight:700;color:var(--aurora);font-size:0.95rem;">Film validé par YouTube</div>
+              <div style="font-size:0.75rem;color:var(--mist);margin-top:2px;">Aucune violation détectée — votre film est en compétition</div>
+            </div>
+          </div>
+          <div class="success-steps" style="margin:0;">
+            <div class="ss-item"><span class="ss-icon">⏳</span>Présélection jury — résultats sous 1 mois</div>
+            <div class="ss-item"><span class="ss-icon">📢</span>Les 50 finalistes annoncés à J+90</div>
+            <div class="ss-item"><span class="ss-icon">🏆</span>Cérémonie à Marseille · Mars.AI Night</div>
+          </div>
+        </div>
+
+        <!-- Résultat : REJETÉ YouTube -->
+        <div id="yt-rejected" style="display:none;max-width:480px;margin:0 auto 24px;">
+          <div style="background:rgba(255,107,107,0.06);border:1px solid rgba(255,107,107,0.25);border-radius:16px;padding:20px 24px;margin-bottom:16px;">
+            <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:16px;">
+              <div style="width:40px;height:40px;border-radius:50%;background:rgba(255,107,107,0.1);border:1.5px solid rgba(255,107,107,0.3);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">✗</div>
+              <div>
+                <div style="font-weight:700;color:var(--coral);font-size:0.95rem;">Film rejeté par YouTube</div>
+                <div style="font-size:0.75rem;color:var(--mist);margin-top:2px;" id="yt-reject-reason">Violation de la politique de contenu détectée</div>
+              </div>
+            </div>
+            <div style="font-size:0.8rem;color:var(--mist);line-height:1.65;border-top:1px solid rgba(255,107,107,0.12);padding-top:14px;">
+              Votre film n'a pas pu être publié car YouTube a détecté un contenu non conforme à sa politique (contenu inapproprié, violation de droits d'auteur, etc.).
+            </div>
+          </div>
+
+          <!-- Aperçu de l'email envoyé -->
+          <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;overflow:hidden;">
+            <div style="background:rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.07);padding:12px 18px;display:flex;align-items:center;gap:10px;">
+              <span style="font-size:0.9rem;">✉️</span>
+              <span style="font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--mist);">Email envoyé automatiquement à</span>
+              <span style="font-family:var(--font-mono);font-size:0.78rem;color:var(--aurora);" id="yt-reject-email">—</span>
+            </div>
+            <!-- Corps de l'email -->
+            <div style="padding:20px 22px;font-size:0.82rem;line-height:1.75;color:var(--mist);">
+              <div style="font-weight:700;color:var(--white-soft);margin-bottom:12px;font-size:0.88rem;">Objet : [marsAI 2026] Votre film nécessite une nouvelle soumission — Dossier <span id="yt-reject-dossier">MAI-2026-XXXXX</span></div>
+              <p>Bonjour <strong id="yt-reject-prenom" style="color:var(--white-soft);">—</strong>,</p>
+              <br>
+              <p>Nous avons bien reçu votre film <em id="yt-reject-titre" style="color:var(--white-soft);">"—"</em> (dossier <span id="yt-reject-dossier2">MAI-2026-XXXXX</span>).</p>
+              <br>
+              <p>Malheureusement, lors de la mise en ligne sur notre plateforme de diffusion, YouTube a automatiquement détecté un contenu non conforme :</p>
+              <div style="margin:12px 0;padding:10px 14px;background:rgba(255,107,107,0.06);border-left:3px solid var(--coral);border-radius:4px;color:var(--coral);font-size:0.8rem;" id="yt-reject-detail">
+                Violation détectée : Contenu inapproprié
+              </div>
+              <p>Votre dossier reste enregistré. Vous pouvez soumettre une nouvelle version de votre film en utilisant le lien ci-dessous :</p>
+              <br>
+              <div style="text-align:center;margin:16px 0;">
+                <div style="display:inline-block;background:rgba(78,255,206,0.08);border:1px solid rgba(78,255,206,0.25);border-radius:10px;padding:10px 22px;font-family:var(--font-mono);font-size:0.78rem;color:var(--aurora);">
+                  🔗 Lien de re-soumission (données pré-remplies, valable 7 jours)
+                </div>
+              </div>
+              <p style="font-size:0.78rem;opacity:0.7;">Ce lien contient toutes les informations de votre dossier original. Vous n'aurez qu'à remplacer le fichier vidéo.</p>
+              <br>
+              <p>Pour toute question : <a href="mailto:contact@marsai.fr" style="color:var(--aurora);">contact@marsai.fr</a></p>
+              <br>
+              <p>Cordialement,<br><strong style="color:var(--white-soft);">L'équipe marsAI</strong><br><span style="font-size:0.75rem;opacity:0.6;">La Plateforme × Mobile Film Festival</span></p>
+            </div>
+          </div>
+
+          <!-- Bouton re-soumission -->
+          <div style="text-align:center;margin-top:16px;">
+            <a href="formulaire-depot.html" style="display:inline-flex;align-items:center;gap:8px;background:var(--aurora);color:var(--deep-sky);padding:12px 28px;border-radius:10px;font-weight:700;font-size:0.88rem;text-decoration:none;">
+              ↺ Soumettre une nouvelle version
+            </a>
+          </div>
+        </div>
+
+        <!-- Bouton retour -->
         <a href="prototype.html" style="display:inline-block;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:12px 24px;font-size:0.85rem;color:var(--mist);text-decoration:none;margin-top:8px;">← Retour au site</a>
+
+        <!-- [MAQUETTE] Simuler le résultat YouTube -->
+        <div style="margin-top:32px;padding:16px 20px;background:rgba(192,132,252,0.05);border:1px dashed rgba(192,132,252,0.2);border-radius:12px;font-size:0.75rem;color:var(--mist);text-align:left;max-width:480px;margin-left:auto;margin-right:auto;">
+          <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--lavande);margin-bottom:10px;">⬡ Mode maquette — simuler la réponse YouTube</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button onclick="simulateYouTube('approved')" style="background:rgba(78,255,206,0.08);border:1px solid rgba(78,255,206,0.25);border-radius:8px;padding:7px 16px;font-size:0.78rem;color:var(--aurora);cursor:pointer;font-family:var(--font-body);">✓ Simuler : Approuvé</button>
+            <button onclick="simulateYouTube('copyright')" style="background:rgba(255,107,107,0.08);border:1px solid rgba(255,107,107,0.25);border-radius:8px;padding:7px 16px;font-size:0.78rem;color:var(--coral);cursor:pointer;font-family:var(--font-body);">✗ Simuler : Copyright</button>
+            <button onclick="simulateYouTube('content')" style="background:rgba(255,107,107,0.08);border:1px solid rgba(255,107,107,0.25);border-radius:8px;padding:7px 16px;font-size:0.78rem;color:var(--coral);cursor:pointer;font-family:var(--font-body);">✗ Simuler : Contenu interdit</button>
+          </div>
+        </div>
+
       </div>
 
     </div><!-- /form-content -->
@@ -1332,11 +1641,14 @@
     /* ── AUTO-SIMULATION VIDÉO (maquette) ── */
     function autoSimulateVideo() {
       const fakeFile = { name: 'mon-film-marsai-2026.mp4', size: 187 * 1024 * 1024 };
-      document.getElementById('upload-zone-wrap').style.display = 'none';
-      const prog = document.getElementById('upload-progress');
-      prog.classList.add('show');
-      document.getElementById('up-filename').textContent = fakeFile.name;
-      document.getElementById('up-filesize').textContent = (fakeFile.size / 1024 / 1024).toFixed(1) + ' Mo';
+      document.getElementById('upload-zone').style.display = 'none';
+      document.getElementById('preview-name').textContent = fakeFile.name;
+      document.getElementById('preview-size').textContent = (fakeFile.size / 1024 / 1024).toFixed(1) + ' Mo';
+      document.getElementById('preview-ext').textContent = 'MP4';
+      document.getElementById('file-card').style.display = 'block';
+      document.getElementById('up-bar').style.width = '0%';
+      document.getElementById('up-pct').textContent = '0%';
+      document.getElementById('up-msg').textContent = 'Upload en cours…';
 
       let pct = 0;
       const iv = setInterval(() => {
@@ -1360,35 +1672,91 @@
       }, 100);
     }
 
-    /* ── UPLOAD VIDÉO SIMULATION ── */
+    /* ── UPLOAD — entrée clavier/clic ── */
     function handleVideo(input) {
       const file = input.files[0];
       if (!file) return;
-      document.getElementById('upload-zone-wrap').style.display = 'none';
-      const prog = document.getElementById('upload-progress');
-      prog.classList.add('show');
-      document.getElementById('up-filename').textContent = file.name;
-      document.getElementById('up-filesize').textContent = (file.size / 1024 / 1024).toFixed(1) + ' Mo';
+      processVideoFile(file);
+    }
 
-      // Simulate upload progress
+    /* ── TRAITEMENT FICHIER (drag ou clic) ── */
+    function processVideoFile(file) {
+      // Masquer la zone de dépôt
+      document.getElementById('upload-zone').style.display = 'none';
+
+      // Remplir la file card
+      const sizeMo = file.size / 1024 / 1024;
+      document.getElementById('preview-name').textContent = file.name;
+      document.getElementById('preview-size').textContent = sizeMo.toFixed(1) + ' Mo';
+      document.getElementById('preview-ext').textContent = file.name.split('.').pop().toUpperCase();
+      document.getElementById('preview-size-warn').style.display = sizeMo > 300 ? 'inline' : 'none';
+      document.getElementById('up-bar').style.width = '0%';
+      document.getElementById('up-pct').textContent = '0%';
+      document.getElementById('up-msg').textContent = 'Upload en cours…';
+      document.getElementById('file-card').style.display = 'block';
+
+      // Générer thumbnail depuis le flux vidéo
+      generateThumbnail(file);
+
+      // Simulation progression
       let pct = 0;
       uploadInterval = setInterval(() => {
         pct += Math.random() * 8 + 2;
-        if (pct >= 100) { pct = 100; clearInterval(uploadInterval); analyzeVideo(file); }
+        if (pct >= 100) {
+          pct = 100;
+          clearInterval(uploadInterval);
+          document.getElementById('up-bar').style.width = '100%';
+          document.getElementById('up-pct').textContent = '100%';
+          document.getElementById('up-msg').textContent = 'Analyse de la durée…';
+          setTimeout(() => {
+            showDurationResult(59.8);
+            videoValid = true;
+            document.getElementById('err-video').classList.remove('show');
+          }, 700);
+          return;
+        }
         document.getElementById('up-bar').style.width = pct + '%';
         document.getElementById('up-pct').textContent = Math.round(pct) + '%';
-        document.getElementById('up-msg').textContent = pct < 100 ? 'Upload en cours…' : 'Analyse de la durée…';
+        document.getElementById('up-msg').textContent = 'Upload en cours…';
       }, 120);
     }
 
-    function analyzeVideo(file) {
-      // Simulate duration detection
-      setTimeout(() => {
-        const simDuration = 59.8; // simulation
-        showDurationResult(simDuration);
-        document.getElementById('err-video').classList.remove('show');
-        videoValid = true;
-      }, 800);
+    /* ── THUMBNAIL canvas depuis la vidéo ── */
+    function generateThumbnail(file) {
+      const url = URL.createObjectURL(file);
+      const vid  = document.createElement('video');
+      vid.src     = url;
+      vid.muted   = true;
+      vid.preload = 'metadata';
+      vid.addEventListener('loadedmetadata', () => { vid.currentTime = Math.min(1, vid.duration * 0.1); });
+      vid.addEventListener('seeked', () => {
+        const canvas = document.getElementById('video-thumb');
+        canvas.width  = 256;
+        canvas.height = 144;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(vid, 0, 0, 256, 144);
+        document.getElementById('thumb-placeholder').style.display = 'none';
+        URL.revokeObjectURL(url);
+      });
+      vid.load();
+    }
+
+    /* ── RESET upload ── */
+    function resetVideoUpload(e) {
+      e.stopPropagation();
+      document.getElementById('video-input').value = '';
+      document.getElementById('upload-zone').style.display = 'flex';
+      document.getElementById('file-card').style.display = 'none';
+      _uzState('uz-state-default');
+      document.getElementById('dur-result').classList.remove('show');
+      document.getElementById('up-bar').style.width = '0%';
+      document.getElementById('up-pct').textContent = '0%';
+      document.getElementById('up-msg').textContent = 'Upload en cours…';
+      const canvas = document.getElementById('video-thumb');
+      canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+      document.getElementById('thumb-placeholder').style.display = 'flex';
+      if (uploadInterval) clearInterval(uploadInterval);
+      videoValid = false;
     }
 
     function showDurationResult(sec) {
@@ -1417,13 +1785,63 @@
       }
     }
 
-    function dragOver(e) { e.preventDefault(); document.getElementById('upload-zone').classList.add('dragover'); }
-    function dragLeave()  { document.getElementById('upload-zone').classList.remove('dragover'); }
-    function dropFile(e)  {
+    /* ── DRAG & DROP — état ── */
+    let _dragDepth = 0; // compteur pour ignorer les dragLeave sur enfants
+
+    function _uzState(id) {
+      ['uz-state-default','uz-state-drag','uz-state-error'].forEach(s => {
+        document.getElementById(s).style.display = s === id ? 'block' : 'none';
+      });
+    }
+
+    function onDragEnter(e) {
       e.preventDefault();
-      document.getElementById('upload-zone').classList.remove('dragover');
+      _dragDepth++;
+      if (_dragDepth === 1) {
+        document.getElementById('upload-zone').classList.add('dragover');
+        _uzState('uz-state-drag');
+      }
+    }
+
+    function onDragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'copy';
+    }
+
+    function onDragLeave(e) {
+      _dragDepth--;
+      if (_dragDepth <= 0) {
+        _dragDepth = 0;
+        document.getElementById('upload-zone').classList.remove('dragover');
+        _uzState('uz-state-default');
+      }
+    }
+
+    function onDrop(e) {
+      e.preventDefault();
+      _dragDepth = 0;
+      const zone = document.getElementById('upload-zone');
+      zone.classList.remove('dragover');
+
       const file = e.dataTransfer.files[0];
-      if (file) { document.getElementById('video-input').files = e.dataTransfer.files; handleVideo({ files: [file] }); }
+      if (!file) return;
+
+      // Validation format
+      const ext = file.name.split('.').pop().toLowerCase();
+      const okTypes = ['video/mp4','video/quicktime'];
+      const okExts  = ['mp4','mov'];
+      if (!okTypes.includes(file.type) && !okExts.includes(ext)) {
+        // Format refusé — feedback visuel 2s
+        zone.classList.add('format-err');
+        _uzState('uz-state-error');
+        setTimeout(() => {
+          zone.classList.remove('format-err');
+          _uzState('uz-state-default');
+        }, 2200);
+        return;
+      }
+
+      processVideoFile(file);
     }
 
     /* ── SOUS-TITRES ── */
@@ -1486,24 +1904,119 @@
 
     /* ── SOUMISSION ── */
     function submitForm() {
-      // Auto-cocher les cases RGPD si pas encore cochées (maquette)
-      ['rgpd-1','rgpd-2','rgpd-3'].forEach(id => {
-        document.getElementById(id).classList.add('checked');
-      });
+      ['rgpd-1','rgpd-2','rgpd-3'].forEach(id => document.getElementById(id).classList.add('checked'));
 
       const btn = document.getElementById('btn-submit');
       btn.disabled = true;
       btn.innerHTML = '⏳ Envoi en cours…';
 
+      const num   = 'MAI-2026-' + String(Math.floor(Math.random() * 90000) + 10000);
+      const email = document.getElementById('f-email').value.trim()  || 'marie.dupont@example.com';
+      const prenom = document.getElementById('f-prenom').value.trim() || 'Marie';
+      const titre  = document.getElementById('f-titre').value.trim()  || 'Mon film marsAI';
+
+      // Stocker pour réutilisation dans les écrans rejet
+      window._formData = { num, email, prenom, titre };
+
       setTimeout(() => {
-        const num = 'MAI-2026-' + String(Math.floor(Math.random() * 90000) + 10000);
-        document.getElementById('dossier-num').textContent = num;
-        const email = document.getElementById('f-email').value.trim() || 'marie.dupont@example.com';
+        document.getElementById('dossier-num').textContent  = num;
         document.getElementById('confirm-email').textContent = email;
         document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
         document.getElementById('success-screen').classList.add('show');
         document.querySelector('.form-sidebar').style.display = 'none';
+        // Lancer la simulation de validation YouTube
+        runYouTubeValidation();
       }, 1800);
+    }
+
+    /* ── SIMULATION VALIDATION YOUTUBE ── */
+    function runYouTubeValidation() {
+      const steps = [
+        { id: 'ytc-upload',    label: 'Upload vidéo',                     icon: '✓', delay: 1200 },
+        { id: 'ytc-copyright', label: 'Vérification copyright Content ID', icon: '✓', delay: 2400 },
+        { id: 'ytc-policy',    label: 'Analyse contenu (politique YouTube)', icon: '✓', delay: 3600 },
+        { id: 'ytc-confirm',   label: 'Confirmation et indexation',        icon: '✓', delay: 4800 },
+      ];
+
+      // Animation barre de progression
+      let pct = 0;
+      const iv = setInterval(() => {
+        pct = Math.min(pct + 1.8, 95);
+        document.getElementById('yt-bar').style.width = pct + '%';
+        document.getElementById('yt-pct').textContent = Math.round(pct) + '%';
+      }, 80);
+
+      // Activation des étapes une par une
+      steps.forEach((step, i) => {
+        // Passer l'étape en "running"
+        setTimeout(() => {
+          const el = document.getElementById(step.id);
+          el.querySelector('.yt-check-icon').textContent = '⏳';
+          el.querySelector('.yt-check-icon').style.opacity = '1';
+          el.querySelector('.yt-check-label').style.opacity = '1';
+          el.classList.add('running');
+          document.getElementById('yt-step-label').textContent = step.label + '…';
+        }, step.delay - 600);
+
+        // Valider l'étape
+        setTimeout(() => {
+          const el = document.getElementById(step.id);
+          el.classList.remove('running');
+          el.classList.add('done');
+          el.querySelector('.yt-check-icon').textContent = '✓';
+        }, step.delay);
+      });
+
+      // Fin — en attente du clic maquette (pas de résultat automatique)
+      setTimeout(() => {
+        clearInterval(iv);
+        document.getElementById('yt-bar').style.width = '100%';
+        document.getElementById('yt-pct').textContent = '100%';
+        document.getElementById('yt-step-label').textContent = 'Analyse terminée — en attente de confirmation YouTube';
+        document.getElementById('yt-status-badge').textContent = '⏳ Résultat…';
+      }, 5200);
+    }
+
+    /* ── SIMULATION RÉSULTAT YOUTUBE (boutons maquette) ── */
+    const ytRejectReasons = {
+      copyright: {
+        badge: '⚠ Violation copyright',
+        reason: 'Violation de droits d\'auteur détectée par Content ID',
+        detail: 'Violation détectée : Droits d\'auteur — musique ou image protégée identifiée par Content ID YouTube',
+      },
+      content: {
+        badge: '✗ Contenu interdit',
+        reason: 'Contenu non conforme à la politique YouTube',
+        detail: 'Violation détectée : Contenu inapproprié — nudité, discours haineux ou violence excessive',
+      },
+    };
+
+    function simulateYouTube(result) {
+      const d = window._formData || { num: 'MAI-2026-12345', email: 'marie@exemple.com', prenom: 'Marie', titre: 'Mon film' };
+      document.getElementById('yt-pending').style.display = 'none';
+
+      if (result === 'approved') {
+        document.getElementById('yt-status-badge').textContent = '✓ Approuvé';
+        document.getElementById('yt-approved').style.display = 'block';
+        document.getElementById('yt-rejected').style.display = 'none';
+      } else {
+        const r = ytRejectReasons[result];
+        document.getElementById('yt-status-badge').style.background = 'rgba(255,107,107,0.1)';
+        document.getElementById('yt-status-badge').style.borderColor = 'rgba(255,107,107,0.25)';
+        document.getElementById('yt-status-badge').style.color = 'var(--coral)';
+        document.getElementById('yt-status-badge').textContent = r.badge;
+        document.getElementById('yt-reject-reason').textContent  = r.reason;
+        document.getElementById('yt-reject-detail').textContent  = r.detail;
+        document.getElementById('yt-reject-email').textContent   = d.email;
+        document.getElementById('yt-reject-prenom').textContent  = d.prenom;
+        document.getElementById('yt-reject-titre').textContent   = d.titre;
+        document.getElementById('yt-reject-dossier').textContent  = d.num;
+        document.getElementById('yt-reject-dossier2').textContent = d.num;
+        document.getElementById('yt-approved').style.display = 'none';
+        document.getElementById('yt-rejected').style.display = 'block';
+        // Re-afficher le bloc pending (juste le badge a changé)
+        document.getElementById('yt-pending').style.display = 'block';
+      }
     }
 
     /* ── INIT ── */
