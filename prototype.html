@@ -32,7 +32,7 @@
       background: var(--deep-sky);
       color: var(--white-soft);
       font-family: var(--font-body);
-      font-size: 16px;
+      font-size: 17px;
       line-height: 1.6;
       overflow-x: hidden;
       position: relative;
@@ -301,7 +301,7 @@
       border-radius: 6px;
       padding: 8px 16px;
       font-family: var(--font-mono);
-      font-size: 0.82rem;
+      font-size: 0.90rem;
       color: var(--mist);
     }
     .tag strong { color: var(--white-soft); }
@@ -350,6 +350,56 @@
     }
     .btn-ghost:hover { opacity: 1; }
 
+    /* ─── HERO PARTNERS ──────────────────────────────────── */
+    .hero-partners {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 14px;
+      padding: 12px 20px;
+      backdrop-filter: blur(8px);
+      flex-wrap: wrap;
+    }
+    .hero-partners-label {
+      font-size: 0.73rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--mist);
+      white-space: nowrap;
+      padding-right: 4px;
+      border-right: 1px solid rgba(255,255,255,0.12);
+    }
+    .hero-partners-logo {
+      display: flex;
+      align-items: center;
+      transition: opacity 0.2s;
+    }
+    .hero-partners-logo img {
+      height: 34px;
+      width: auto;
+      filter: brightness(0) invert(1);
+      opacity: 0.90;
+      transition: opacity 0.2s;
+    }
+    .hero-partners-logo:hover img { opacity: 1; }
+    .hero-partners-sep {
+      color: var(--aurora);
+      font-family: var(--font-display);
+      font-size: 1.0rem;
+      opacity: 0.55;
+    }
+    .hero-partners-name {
+      font-size: 0.90rem;
+      font-weight: 700;
+      color: var(--white-soft);
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+    }
+
     /* ─── COUNTDOWN ──────────────────────────────────────── */
     .countdown-wrapper {
       position: absolute;
@@ -393,7 +443,7 @@
       padding-top: 10px;
     }
     .countdown-lbl {
-      font-size: 0.62rem;
+      font-size: 0.70rem;
       color: var(--mist);
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -432,7 +482,7 @@
       padding: 100px 60px;
     }
     .section-label {
-      font-size: 0.75rem;
+      font-size: 0.80rem;
       font-weight: 600;
       letter-spacing: 0.12em;
       text-transform: uppercase;
@@ -1491,9 +1541,51 @@
       transition: color 0.2s;
     }
     .footer-links a:hover { color: var(--white-soft); }
+    .footer-partners {
+      max-width: 1200px;
+      margin: 36px auto 0;
+      padding-top: 32px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .footer-partners-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--mist);
+      padding-right: 20px;
+      border-right: 1px solid rgba(255,255,255,0.08);
+    }
+    .footer-partners-logo img {
+      height: 32px;
+      width: auto;
+      filter: brightness(0) invert(1);
+      opacity: 0.65;
+      transition: opacity 0.2s;
+      display: block;
+    }
+    .footer-partners-logo:hover img { opacity: 1; }
+    .footer-partners-sep {
+      color: var(--mist);
+      font-size: 1rem;
+      opacity: 0.35;
+    }
+    .footer-partners-name {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--white-soft);
+      opacity: 0.55;
+      transition: opacity 0.2s;
+    }
+    .footer-partners-name:hover { opacity: 0.9; }
+
     .footer-bottom {
       max-width: 1200px;
-      margin: 40px auto 0;
+      margin: 28px auto 0;
       padding-top: 24px;
       border-top: 1px solid rgba(255,255,255,0.05);
       display: flex;
@@ -1575,6 +1667,17 @@
     </div>
 
     <div class="hero-content">
+
+      <!-- Partenariat — mis en avant en premier -->
+      <div class="hero-partners">
+        <span class="hero-partners-label">Co-organisé par</span>
+        <a href="https://laplateforme.io/coding-school/" target="_blank" rel="noopener" class="hero-partners-logo">
+          <img src="assets/logo-laplateforme.png" alt="La Plateforme · Coding School">
+        </a>
+        <span class="hero-partners-sep">×</span>
+        <span class="hero-partners-name">Mobile Film Festival</span>
+      </div>
+
       <div class="hero-badge">Concours International · Première Édition 2026</div>
 
       <h1 class="hero-title">
@@ -2273,12 +2376,14 @@
         </ul>
       </div>
     </div>
-    <!-- Co-logos -->
-    <div style="max-width:1200px;margin:32px auto 0;padding-top:28px;border-top:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;gap:24px;flex-wrap:wrap;">
-      <span style="font-size:0.7rem;color:var(--mist);letter-spacing:0.08em;text-transform:uppercase;opacity:0.5;">Co-organisé par</span>
-      <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:8px 20px;font-family:var(--font-display);font-size:0.85rem;font-weight:800;color:var(--white-soft);">La Plateforme</div>
-      <div style="color:var(--mist);opacity:0.4;font-size:1rem;">×</div>
-      <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:8px 20px;font-family:var(--font-display);font-size:0.85rem;font-weight:800;color:var(--white-soft);">Mobile Film Festival</div>
+    <!-- Co-organisateurs -->
+    <div class="footer-partners">
+      <span class="footer-partners-label">Co-organisé par</span>
+      <a href="https://laplateforme.io/coding-school/" target="_blank" rel="noopener" class="footer-partners-logo">
+        <img src="assets/logo-laplateforme.png" alt="La Plateforme · Coding School">
+      </a>
+      <span class="footer-partners-sep">×</span>
+      <span class="footer-partners-name">Mobile Film Festival</span>
     </div>
     <div class="footer-bottom">
       <span>© 2026 marsAI · Une co-création La Plateforme × Mobile Film Festival</span>
