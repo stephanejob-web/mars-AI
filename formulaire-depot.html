@@ -340,59 +340,111 @@
     .rights-confirmed-date { margin-left: auto; font-family: var(--font-mono); font-size: 0.66rem; color: var(--mist); }
 
     /* ─── UPLOAD ZONE ─── */
+    @keyframes uz-float {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(-9px); }
+    }
     .upload-zone {
-      border: 2px dashed rgba(78,255,206,0.25);
-      border-radius: 14px;
-      padding: 36px 24px;
+      border: 2px dashed rgba(78,255,206,0.28);
+      border-radius: 18px;
+      padding: 52px 32px 44px;
       text-align: center;
       cursor: pointer;
-      transition: all 0.2s;
-      background: rgba(78,255,206,0.02);
+      transition: all 0.25s ease;
+      background: rgba(78,255,206,0.015);
       position: relative;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      min-height: 300px;
     }
-    .upload-zone:hover, .upload-zone.dragover {
+    .upload-zone:hover {
       border-color: rgba(78,255,206,0.55);
-      background: rgba(78,255,206,0.05);
+      background: rgba(78,255,206,0.04);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(78,255,206,0.07);
     }
     .upload-zone input[type="file"] {
       position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
     }
-    .uz-icon { font-size: 2rem; margin-bottom: 10px; display: block; }
-    .uz-title { font-size: 0.92rem; font-weight: 600; margin-bottom: 5px; }
-    .uz-sub { font-size: 0.75rem; color: var(--mist); line-height: 1.5; }
-    .uz-specs {
-      display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 12px;
+    .uz-cloud {
+      width: 72px; height: 72px;
+      background: rgba(78,255,206,0.08);
+      border: 1.5px solid rgba(78,255,206,0.22);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 22px;
+      animation: uz-float 3s ease-in-out infinite;
     }
+    .uz-drop-btn {
+      display: inline-flex; align-items: center; gap: 9px;
+      background: var(--aurora);
+      color: var(--deep-sky);
+      border-radius: 11px; padding: 13px 28px;
+      font-size: 0.95rem; font-weight: 700;
+      font-family: var(--font-display);
+      margin-bottom: 18px;
+      pointer-events: none;
+      letter-spacing: 0.01em;
+      box-shadow: 0 4px 22px rgba(78,255,206,0.28);
+    }
+    .uz-or { font-size: 0.78rem; color: var(--mist); margin-bottom: 14px; letter-spacing: 0.05em; }
+    .uz-browse { font-size: 0.88rem; color: var(--aurora); font-weight: 600; text-decoration: underline; margin-bottom: 28px; }
+    .uz-specs { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
     .uz-spec {
       background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 5px; padding: 3px 10px;
-      font-family: var(--font-mono); font-size: 0.68rem; color: var(--mist);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 4px 12px;
+      font-family: var(--font-mono); font-size: 0.7rem; color: var(--mist);
     }
 
-    /* Upload progress */
-    .upload-progress {
-      display: none;
+    /* ─── FILE CARD après sélection ─── */
+    .file-card {
       background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 12px;
-      padding: 16px 20px;
+      border: 1px solid rgba(78,255,206,0.18);
+      border-radius: 16px;
+      overflow: hidden;
     }
-    .upload-progress.show { display: block; }
-    .up-file { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-    .up-file-icon {
-      width: 36px; height: 36px; border-radius: 8px;
-      background: rgba(78,255,206,0.1);
+    .file-card-header {
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 18px;
+    }
+    .file-card-thumb {
+      width: 96px; height: 54px;
+      background: #000; border-radius: 8px; overflow: hidden;
+      flex-shrink: 0; position: relative;
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.1rem; flex-shrink: 0;
     }
-    .up-file-name { font-size: 0.85rem; font-weight: 600; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .up-file-size { font-family: var(--font-mono); font-size: 0.72rem; color: var(--mist); }
-    .up-bar-track { height: 5px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
-    .up-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--aurora), var(--lavande)); transition: width 0.3s; }
-    .up-status { display: flex; align-items: center; justify-content: space-between; }
-    .up-pct { font-family: var(--font-mono); font-size: 0.72rem; color: var(--aurora); }
-    .up-msg { font-size: 0.72rem; color: var(--mist); }
+    .file-card-thumb canvas { width: 96px; height: 54px; display: block; }
+    .file-card-thumb-ph {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; color: rgba(255,255,255,0.15);
+    }
+    .file-card-info { flex: 1; min-width: 0; }
+    .file-card-name {
+      font-size: 0.88rem; font-weight: 700; color: var(--white-soft);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 6px;
+    }
+    .file-card-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .file-card-ext {
+      font-family: var(--font-mono); font-size: 0.65rem; font-weight: 700;
+      padding: 2px 8px; border-radius: 4px;
+      background: rgba(78,255,206,0.1); border: 1px solid rgba(78,255,206,0.2); color: var(--aurora);
+    }
+    .file-card-size { font-family: var(--font-mono); font-size: 0.72rem; color: var(--mist); }
+    .file-card-warn { font-size: 0.68rem; color: var(--solar); }
+    .file-card-remove {
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09);
+      color: var(--mist); cursor: pointer; font-size: 0.75rem;
+      padding: 7px 13px; border-radius: 8px; transition: all 0.15s;
+      font-family: var(--font-body); flex-shrink: 0; white-space: nowrap;
+    }
+    .file-card-remove:hover { background: rgba(255,107,107,0.1); border-color: rgba(255,107,107,0.25); color: var(--coral); }
+    .file-card-progress { padding: 0 18px 16px; }
+    .file-card-bar-track { height: 4px; background: rgba(255,255,255,0.07); border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
+    .file-card-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--aurora), var(--lavande)); transition: width 0.3s; }
+    .file-card-status { display: flex; justify-content: space-between; font-size: 0.72rem; }
+    .file-card-pct { font-family: var(--font-mono); color: var(--aurora); }
+    .file-card-msg { color: var(--mist); }
 
     /* Durée check */
     .duration-result {
@@ -658,15 +710,16 @@
       50%       { box-shadow: 0 0 0 8px rgba(78,255,206,0); }
     }
     .upload-zone {
-      min-height: 200px;
+      min-height: 320px;
       cursor: pointer;
       user-select: none;
     }
     .upload-zone.dragover {
-      border-color: rgba(78,255,206,0.75) !important;
-      background: rgba(78,255,206,0.07) !important;
-      animation: uz-pulse-border 1.2s ease-in-out infinite;
-      transform: scale(1.01);
+      border-color: rgba(78,255,206,0.85) !important;
+      background: linear-gradient(170deg, rgba(78,255,206,0.1) 0%, rgba(10,15,46,0) 60%) !important;
+      animation: uz-pulse-border 1s ease-in-out infinite;
+      transform: scale(1.015);
+      box-shadow: 0 0 40px rgba(78,255,206,0.15);
     }
     .upload-zone.format-err {
       border-color: rgba(255,107,107,0.6) !important;
@@ -991,12 +1044,24 @@
 
             <!-- État par défaut -->
             <div id="uz-state-default">
-              <span class="uz-icon">🎬</span>
-              <div class="uz-title">Glissez votre film ici</div>
-              <div class="uz-sub">
-                ou <span style="color:var(--aurora);text-decoration:underline;cursor:pointer;">cliquez pour parcourir</span>
+              <div class="uz-cloud">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--aurora)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="16 16 12 12 8 16"></polyline>
+                  <line x1="12" y1="12" x2="12" y2="21"></line>
+                  <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path>
+                </svg>
               </div>
-              <div class="uz-specs" style="margin-top:14px;">
+              <div class="uz-drop-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="16 16 12 12 8 16"></polyline>
+                  <line x1="12" y1="12" x2="12" y2="21"></line>
+                  <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path>
+                </svg>
+                Glisser-déposer votre film
+              </div>
+              <div class="uz-or">— ou —</div>
+              <div class="uz-browse">Cliquer pour parcourir vos fichiers</div>
+              <div class="uz-specs">
                 <span class="uz-spec">MP4</span>
                 <span class="uz-spec">MOV</span>
                 <span class="uz-spec">200–300 Mo</span>
@@ -1007,58 +1072,49 @@
 
             <!-- État : fichier survolé (dragover) -->
             <div id="uz-state-drag" style="display:none;">
-              <div style="font-size:2.8rem;margin-bottom:12px;animation:uz-bounce 0.55s ease-in-out infinite alternate;">⬇️</div>
-              <div class="uz-title" style="color:var(--aurora);">Relâchez pour déposer</div>
-              <div class="uz-sub" style="color:rgba(78,255,206,0.7);">MP4 ou MOV accepté</div>
+              <div style="font-size:3.5rem;margin-bottom:16px;animation:uz-bounce 0.45s ease-in-out infinite alternate;filter:drop-shadow(0 4px 20px rgba(78,255,206,0.5));">⬇️</div>
+              <div style="font-size:1.15rem;font-weight:700;font-family:var(--font-display);color:var(--aurora);margin-bottom:8px;">Relâchez pour déposer</div>
+              <div style="font-size:0.82rem;color:rgba(78,255,206,0.7);">MP4 ou MOV — votre film va être analysé</div>
             </div>
 
             <!-- État : format refusé -->
             <div id="uz-state-error" style="display:none;">
-              <div style="font-size:2.8rem;margin-bottom:12px;">🚫</div>
-              <div class="uz-title" style="color:var(--coral);">Format non accepté</div>
-              <div class="uz-sub" style="color:rgba(255,107,107,0.8);">Uniquement MP4 ou MOV</div>
+              <div style="font-size:3.5rem;margin-bottom:16px;">🚫</div>
+              <div style="font-size:1.15rem;font-weight:700;font-family:var(--font-display);color:var(--coral);margin-bottom:8px;">Format non accepté</div>
+              <div style="font-size:0.82rem;color:rgba(255,107,107,0.8);">Uniquement MP4 ou MOV sont acceptés</div>
             </div>
 
           </div><!-- /upload-zone -->
 
-          <!-- ── Aperçu fichier déposé ── -->
-          <div id="uz-preview" style="display:none;margin-top:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(78,255,206,0.18);border-radius:12px;overflow:hidden;">
-            <div style="display:grid;grid-template-columns:128px 1fr;">
-
-              <!-- Thumbnail canvas -->
-              <div style="background:#000;position:relative;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;min-height:72px;">
-                <canvas id="video-thumb" style="width:128px;height:72px;display:block;object-fit:cover;"></canvas>
-                <div id="thumb-placeholder" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:rgba(255,255,255,0.15);">🎬</div>
+          <!-- ── File card après sélection ── -->
+          <div class="file-card" id="file-card" style="display:none;margin-top:12px;">
+            <div class="file-card-header">
+              <div class="file-card-thumb">
+                <canvas id="video-thumb" width="192" height="108"></canvas>
+                <div class="file-card-thumb-ph" id="thumb-placeholder">🎬</div>
               </div>
-
-              <!-- Infos fichier -->
-              <div style="padding:14px 16px;display:flex;flex-direction:column;justify-content:center;gap:5px;">
-                <div id="preview-name" style="font-size:0.86rem;font-weight:700;color:var(--white-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">—</div>
-                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                  <span id="preview-size" style="font-family:var(--font-mono);font-size:0.72rem;color:var(--mist);">—</span>
-                  <span id="preview-ext" style="font-family:var(--font-mono);font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:4px;background:rgba(78,255,206,0.1);border:1px solid rgba(78,255,206,0.2);color:var(--aurora);">—</span>
-                  <span id="preview-size-warn" style="display:none;font-size:0.68rem;color:var(--solar);">⚠ &gt; 300 Mo</span>
+              <div class="file-card-info">
+                <div class="file-card-name" id="preview-name">—</div>
+                <div class="file-card-meta">
+                  <span class="file-card-ext" id="preview-ext">—</span>
+                  <span class="file-card-size" id="preview-size">—</span>
+                  <span class="file-card-warn" id="preview-size-warn" style="display:none;">⚠ &gt; 300 Mo</span>
                 </div>
-                <button onclick="resetVideoUpload(event)" style="margin-top:4px;align-self:flex-start;background:none;border:none;font-size:0.72rem;color:var(--mist);cursor:pointer;padding:0;font-family:var(--font-body);text-decoration:underline;">✕ Changer de fichier</button>
+              </div>
+              <button class="file-card-remove" onclick="resetVideoUpload(event)">✕ Changer</button>
+            </div>
+            <div class="file-card-progress">
+              <div class="file-card-bar-track">
+                <div class="file-card-bar-fill" id="up-bar" style="width:0%"></div>
+              </div>
+              <div class="file-card-status">
+                <span class="file-card-pct" id="up-pct">0%</span>
+                <span class="file-card-msg" id="up-msg">Upload en cours…</span>
               </div>
             </div>
-          </div><!-- /uz-preview -->
+          </div><!-- /file-card -->
 
         </div><!-- /upload-zone-wrap -->
-
-        <!-- Barre de progression upload -->
-        <div class="upload-progress" id="upload-progress">
-          <div class="up-file">
-            <div class="up-file-icon">🎬</div>
-            <div class="up-file-name" id="up-filename">film.mp4</div>
-            <div class="up-file-size" id="up-filesize">—</div>
-          </div>
-          <div class="up-bar-track"><div class="up-bar-fill" id="up-bar" style="width:0%"></div></div>
-          <div class="up-status">
-            <span class="up-pct" id="up-pct">0%</span>
-            <span class="up-msg" id="up-msg">Analyse en cours…</span>
-          </div>
-        </div>
 
         <!-- Résultat durée -->
         <div class="duration-result" id="dur-result">
@@ -1585,11 +1641,14 @@
     /* ── AUTO-SIMULATION VIDÉO (maquette) ── */
     function autoSimulateVideo() {
       const fakeFile = { name: 'mon-film-marsai-2026.mp4', size: 187 * 1024 * 1024 };
-      document.getElementById('upload-zone-wrap').style.display = 'none';
-      const prog = document.getElementById('upload-progress');
-      prog.classList.add('show');
-      document.getElementById('up-filename').textContent = fakeFile.name;
-      document.getElementById('up-filesize').textContent = (fakeFile.size / 1024 / 1024).toFixed(1) + ' Mo';
+      document.getElementById('upload-zone').style.display = 'none';
+      document.getElementById('preview-name').textContent = fakeFile.name;
+      document.getElementById('preview-size').textContent = (fakeFile.size / 1024 / 1024).toFixed(1) + ' Mo';
+      document.getElementById('preview-ext').textContent = 'MP4';
+      document.getElementById('file-card').style.display = 'block';
+      document.getElementById('up-bar').style.width = '0%';
+      document.getElementById('up-pct').textContent = '0%';
+      document.getElementById('up-msg').textContent = 'Upload en cours…';
 
       let pct = 0;
       const iv = setInterval(() => {
@@ -1625,27 +1684,21 @@
       // Masquer la zone de dépôt
       document.getElementById('upload-zone').style.display = 'none';
 
-      // Avertissement taille
+      // Remplir la file card
       const sizeMo = file.size / 1024 / 1024;
-      const sizeWarn = document.getElementById('preview-size-warn');
-      sizeWarn.style.display = sizeMo > 300 ? 'inline' : 'none';
-
-      // Afficher la preview fichier
       document.getElementById('preview-name').textContent = file.name;
       document.getElementById('preview-size').textContent = sizeMo.toFixed(1) + ' Mo';
-      const ext = file.name.split('.').pop().toUpperCase();
-      document.getElementById('preview-ext').textContent = ext;
-      document.getElementById('uz-preview').style.display = 'block';
+      document.getElementById('preview-ext').textContent = file.name.split('.').pop().toUpperCase();
+      document.getElementById('preview-size-warn').style.display = sizeMo > 300 ? 'inline' : 'none';
+      document.getElementById('up-bar').style.width = '0%';
+      document.getElementById('up-pct').textContent = '0%';
+      document.getElementById('up-msg').textContent = 'Upload en cours…';
+      document.getElementById('file-card').style.display = 'block';
 
       // Générer thumbnail depuis le flux vidéo
       generateThumbnail(file);
 
-      // Lancer simulation upload
-      const prog = document.getElementById('upload-progress');
-      prog.classList.add('show');
-      document.getElementById('up-filename').textContent = file.name;
-      document.getElementById('up-filesize').textContent = sizeMo.toFixed(1) + ' Mo';
-
+      // Simulation progression
       let pct = 0;
       uploadInterval = setInterval(() => {
         pct += Math.random() * 8 + 2;
@@ -1691,17 +1744,14 @@
     /* ── RESET upload ── */
     function resetVideoUpload(e) {
       e.stopPropagation();
-      // Réinitialiser l'input
       document.getElementById('video-input').value = '';
-      // Réinitialiser l'état visuel
-      document.getElementById('upload-zone').style.display = 'block';
-      document.getElementById('uz-preview').style.display = 'none';
+      document.getElementById('upload-zone').style.display = 'flex';
+      document.getElementById('file-card').style.display = 'none';
       _uzState('uz-state-default');
-      // Réinitialiser progression & durée
-      document.getElementById('upload-progress').classList.remove('show');
       document.getElementById('dur-result').classList.remove('show');
       document.getElementById('up-bar').style.width = '0%';
-      // Réinitialiser canvas
+      document.getElementById('up-pct').textContent = '0%';
+      document.getElementById('up-msg').textContent = 'Upload en cours…';
       const canvas = document.getElementById('video-thumb');
       canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
       document.getElementById('thumb-placeholder').style.display = 'flex';
