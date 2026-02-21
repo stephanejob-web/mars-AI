@@ -452,7 +452,6 @@
       border-radius: 10px;
       padding: 12px 16px;
       margin-top: 10px;
-      display: none;
       align-items: center;
       gap: 14px;
     }
@@ -1769,18 +1768,25 @@
       const display = `${m}:${String(Math.floor(sec % 60)).padStart(2,'0')}.${(sec % 1).toFixed(1).slice(2)}`;
 
       el.classList.add('show');
-      if (sec <= 90) {
+      if (sec >= 58 && sec <= 62) {
         el.className = 'duration-result show ok';
         val.className = 'dur-value ok';
         ico.textContent = '✓';
         val.textContent = display;
-        lbl.textContent = 'Durée valide (60 secondes pile)';
+        lbl.textContent = 'Durée valide — 60 secondes pile ✓';
+      } else if (sec < 58) {
+        el.className = 'duration-result show warn';
+        val.className = 'dur-value warn';
+        ico.textContent = '⚠';
+        val.textContent = display;
+        lbl.textContent = 'Film trop court — durée exacte requise : 60 secondes';
+        videoValid = false;
       } else {
         el.className = 'duration-result show err';
         val.className = 'dur-value err';
         ico.textContent = '✗';
         val.textContent = display;
-        lbl.textContent = 'Durée trop longue — maximum 60 secondes';
+        lbl.textContent = 'Film trop long — durée exacte requise : 60 secondes';
         videoValid = false;
       }
     }
