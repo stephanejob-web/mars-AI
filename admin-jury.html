@@ -1433,6 +1433,8 @@
     renderList();
     updateCounts();
     renderVotes(films[0]);
+    renderComments(films[0]);
+    document.getElementById('comment-input').value = films[0].comments?.['ML'] || '';
   </script>
 
   <style>
