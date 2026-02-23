@@ -2377,6 +2377,93 @@
     .jury-card-role {
       font-size: 0.75rem; color: var(--mist); line-height: 1.45;
     }
+
+    /* ─── SPONSORS SECTION ───────────────────────────────── */
+    .sponsors-section {
+      background: rgba(8,12,38,0.92);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 64px 0;
+    }
+    .sponsors-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 60px;
+    }
+    .sponsors-eyebrow {
+      text-align: center;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--mist);
+      margin-bottom: 44px;
+      display: flex; align-items: center; justify-content: center; gap: 16px;
+    }
+    .sponsors-eyebrow::before,
+    .sponsors-eyebrow::after {
+      content: "";
+      flex: 1; max-width: 120px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12));
+    }
+    .sponsors-eyebrow::after {
+      background: linear-gradient(90deg, rgba(255,255,255,0.12), transparent);
+    }
+    .sponsors-tier-block { margin-bottom: 36px; }
+    .sponsors-tier-block:last-child { margin-bottom: 0; }
+    .sponsors-tier-label {
+      font-size: 0.62rem; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(136,146,176,0.4);
+      text-align: center; margin-bottom: 16px;
+    }
+    .sponsors-row {
+      display: flex; justify-content: center;
+      align-items: center; flex-wrap: wrap; gap: 12px;
+    }
+    .sponsor-card {
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px;
+      padding: 14px 28px; min-width: 130px;
+      text-decoration: none;
+      transition: border-color 0.22s, background 0.22s, transform 0.2s;
+    }
+    .sponsor-card:hover {
+      border-color: rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.05);
+      transform: translateY(-2px);
+    }
+    .sponsor-card.tier-principal {
+      padding: 20px 44px; min-width: 200px;
+      border-color: rgba(245,230,66,0.14);
+      background: rgba(245,230,66,0.03);
+    }
+    .sponsor-card.tier-principal:hover {
+      border-color: rgba(245,230,66,0.28);
+      background: rgba(245,230,66,0.06);
+    }
+    .sponsor-logo-img {
+      max-height: 32px; max-width: 130px;
+      object-fit: contain;
+      filter: brightness(0) invert(1); opacity: 0.55;
+      transition: opacity 0.2s;
+    }
+    .sponsor-card:hover .sponsor-logo-img { opacity: 0.8; }
+    .sponsor-card.tier-principal .sponsor-logo-img { max-height: 40px; max-width: 170px; opacity: 0.7; }
+    .sponsor-name-text {
+      font-family: var(--font-display);
+      font-size: 0.85rem; font-weight: 700;
+      color: rgba(240,244,255,0.45); letter-spacing: 0.04em;
+      text-align: center; transition: color 0.2s;
+    }
+    .sponsor-card:hover .sponsor-name-text { color: rgba(240,244,255,0.7); }
+    .sponsor-card.tier-principal .sponsor-name-text {
+      font-size: 1rem; color: rgba(245,230,66,0.55);
+    }
+    .sponsor-card.tier-principal:hover .sponsor-name-text { color: rgba(245,230,66,0.85); }
   </style>
 </head>
 <body>
@@ -3261,6 +3348,14 @@
     </div>
   </section>
 
+  <!-- ─── SPONSORS ───────────────────────────────────── -->
+  <section class="sponsors-section" id="sponsors-section">
+    <div class="sponsors-inner">
+      <div class="sponsors-eyebrow">Ils soutiennent marsAI 2026</div>
+      <div id="sponsors-display"></div>
+    </div>
+  </section>
+
   <!-- ─── FOOTER ──────────────────────────────────────── -->
   <footer id="presse">
     <div class="footer-inner">
@@ -3578,6 +3673,59 @@
         </div>`).join('');
     }
     renderJury();
+
+    // ─── SPONSORS ───────────────────────────────────────────
+    const defaultSponsors = [
+      { id:1, name:"TechVision AI",           tier:"principal",      logo:"", url:"#", visible:true },
+      { id:2, name:"Studio Lumière",           tier:"partenaire",     logo:"", url:"#", visible:true },
+      { id:3, name:"CinéLab",                 tier:"partenaire",     logo:"", url:"#", visible:true },
+      { id:4, name:"DigitalCreators Hub",     tier:"partenaire",     logo:"", url:"#", visible:true },
+      { id:5, name:"Région PACA",             tier:"institutionnel", logo:"", url:"#", visible:true },
+      { id:6, name:"Ville de Marseille",      tier:"institutionnel", logo:"", url:"#", visible:true },
+      { id:7, name:"Ministère de la Culture", tier:"institutionnel", logo:"", url:"#", visible:true },
+    ];
+
+    function renderSponsors() {
+      const saved = localStorage.getItem('marsai_sponsors_data');
+      const data  = saved ? JSON.parse(saved) : defaultSponsors;
+      const visible = data.filter(s => s.visible !== false);
+
+      const section = document.getElementById('sponsors-section');
+      if (!visible.length) { section.style.display = 'none'; return; }
+      section.style.display = '';
+
+      const byTier = {
+        principal:      visible.filter(s => s.tier === 'principal'),
+        partenaire:     visible.filter(s => s.tier === 'partenaire'),
+        institutionnel: visible.filter(s => s.tier === 'institutionnel'),
+      };
+      const tierLabels = {
+        principal:      'Sponsor Principal',
+        partenaire:     'Partenaires',
+        institutionnel: 'Soutiens Institutionnels',
+      };
+
+      let html = '';
+      ['principal','partenaire','institutionnel'].forEach(tier => {
+        const items = byTier[tier];
+        if (!items.length) return;
+        html += `<div class="sponsors-tier-block">
+          <div class="sponsors-tier-label">${tierLabels[tier]}</div>
+          <div class="sponsors-row">
+            ${items.map(s => `
+              <a class="sponsor-card tier-${s.tier}"
+                href="${s.url || '#'}"
+                ${s.url && s.url !== '#' ? 'target="_blank" rel="noopener"' : ''}>
+                ${s.logo
+                  ? `<img class="sponsor-logo-img" src="${s.logo}" alt="${s.name}">`
+                  : `<div class="sponsor-name-text">${s.name}</div>`}
+              </a>`).join('')}
+          </div>
+        </div>`;
+      });
+      document.getElementById('sponsors-display').innerHTML = html;
+    }
+    renderSponsors();
   </script>
 
   <!-- ── AURORA MORPHING ───────────────────────────────────── -->
