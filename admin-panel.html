@@ -281,6 +281,111 @@
     }
     .btn-confirm:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(78,255,206,0.35); }
 
+    /* ── ADMINISTRATION SITE ── */
+    .site-section {
+      background: var(--surface-2);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 14px; margin-bottom: 16px; overflow: hidden;
+    }
+    .site-section-header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 16px 20px; cursor: pointer; user-select: none;
+      transition: background 0.15s;
+    }
+    .site-section-header:hover { background: rgba(255,255,255,0.03); }
+    .site-section-icon {
+      width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 1rem;
+    }
+    .ssi-video  { background: rgba(78,255,206,0.1);  border: 1px solid rgba(78,255,206,0.2); }
+    .ssi-info   { background: rgba(192,132,252,0.1); border: 1px solid rgba(192,132,252,0.2); }
+    .ssi-cal    { background: rgba(245,230,66,0.08); border: 1px solid rgba(245,230,66,0.2); }
+    .site-section-title { font-family: var(--font-display); font-size: 0.9rem; font-weight: 800; flex: 1; }
+    .site-section-sub   { font-size: 0.72rem; color: var(--mist); margin-top: 2px; }
+    .site-chevron { color: var(--mist); font-size: 0.75rem; transition: transform 0.2s; }
+    .site-chevron.open { transform: rotate(180deg); }
+    .site-section-body  { padding: 0 20px 20px; border-top: 1px solid rgba(255,255,255,0.05); }
+
+    .site-field { margin-bottom: 14px; }
+    .site-field:last-child { margin-bottom: 0; }
+    .site-label {
+      display: block; font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--mist); margin-bottom: 7px; margin-top: 16px;
+    }
+    .site-input {
+      width: 100%; background: rgba(255,255,255,0.04);
+      border: 1.5px solid rgba(255,255,255,0.09); border-radius: 9px;
+      padding: 10px 13px; font-family: var(--font-body);
+      font-size: 0.88rem; color: var(--white-soft); outline: none;
+      transition: border-color 0.2s;
+    }
+    .site-input:focus { border-color: rgba(78,255,206,0.4); }
+    .site-input::placeholder { color: var(--mist); opacity: 0.5; }
+    .site-textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+
+    .video-drop {
+      border: 2px dashed rgba(78,255,206,0.25);
+      border-radius: 12px; padding: 28px 20px;
+      text-align: center; cursor: pointer; position: relative;
+      transition: all 0.2s; margin-top: 16px;
+    }
+    .video-drop:hover { border-color: rgba(78,255,206,0.5); background: rgba(78,255,206,0.04); }
+    .video-drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .video-drop-icon  { font-size: 2rem; margin-bottom: 10px; }
+    .video-drop-title { font-size: 0.88rem; font-weight: 700; color: var(--white-soft); margin-bottom: 5px; }
+    .video-drop-sub   { font-size: 0.75rem; color: var(--mist); }
+
+    .video-preview {
+      position: relative; border-radius: 10px; overflow: hidden;
+      margin-top: 16px; aspect-ratio: 16/9; background: #000;
+    }
+    .video-preview video { width: 100%; height: 100%; object-fit: cover; }
+    .video-preview-label {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 8px 12px; background: rgba(5,8,24,0.8);
+      font-size: 0.72rem; color: var(--aurora);
+      backdrop-filter: blur(6px);
+    }
+
+    .cal-item {
+      display: grid; grid-template-columns: 1fr auto auto;
+      align-items: center; gap: 12px;
+      padding: 12px 14px; border-radius: 9px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.06);
+      margin-top: 10px;
+    }
+    .cal-name  { font-size: 0.82rem; font-weight: 600; }
+    .cal-sub   { font-size: 0.68rem; color: var(--mist); margin-top: 2px; }
+    .cal-date  {
+      font-family: var(--font-mono); font-size: 0.78rem;
+      background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.09);
+      border-radius: 7px; padding: 6px 10px; color: var(--white-soft);
+      outline: none; color-scheme: dark;
+    }
+    .cal-toggle {
+      width: 34px; height: 18px; border-radius: 9px;
+      background: rgba(255,255,255,0.08); position: relative;
+      cursor: pointer; transition: background 0.2s; flex-shrink: 0;
+    }
+    .cal-toggle.on { background: rgba(78,255,206,0.35); }
+    .cal-toggle::after {
+      content: ''; position: absolute; top: 2px; left: 2px;
+      width: 14px; height: 14px; border-radius: 50%;
+      background: var(--mist); transition: transform 0.2s, background 0.2s;
+    }
+    .cal-toggle.on::after { transform: translateX(16px); background: var(--aurora); }
+
+    .btn-save-site {
+      width: 100%; padding: 10px; margin-top: 16px;
+      background: rgba(78,255,206,0.08); border: 1px solid rgba(78,255,206,0.25);
+      border-radius: 9px; font-family: var(--font-display);
+      font-size: 0.82rem; font-weight: 800; color: var(--aurora);
+      cursor: pointer; transition: all 0.15s;
+    }
+    .btn-save-site:hover { background: rgba(78,255,206,0.16); }
+
     /* ── MÉDIATHÈQUE FILMS ── */
     .film-card {
       background: var(--surface-2);
@@ -408,6 +513,43 @@
     .page-btn.active { background: rgba(78,255,206,0.12); border-color: rgba(78,255,206,0.4); color: var(--aurora); }
     .page-btn:disabled { opacity: 0.3; cursor: default; pointer-events: none; }
 
+    /* ── FILTRE PAYS DROPDOWN ── */
+    #country-btn {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1.5px solid rgba(255,255,255,0.09);
+      border-radius: 10px;
+      font-family: var(--font-body); font-size: 0.84rem;
+      color: var(--mist); cursor: pointer; transition: all 0.2s;
+    }
+    #country-btn:hover, #country-btn.open {
+      border-color: rgba(78,255,206,0.35);
+      color: var(--white-soft);
+      background: rgba(78,255,206,0.05);
+    }
+    #country-btn.has-filter {
+      border-color: rgba(78,255,206,0.5);
+      color: var(--aurora);
+      background: rgba(78,255,206,0.1);
+    }
+    .country-check-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 7px 10px; border-radius: 8px;
+      font-size: 0.82rem; color: var(--mist);
+      cursor: pointer; transition: background 0.12s; user-select: none;
+    }
+    .country-check-item:hover { background: rgba(255,255,255,0.05); color: var(--white-soft); }
+    .country-check-item.checked { color: var(--white-soft); }
+    .ccheck {
+      width: 16px; height: 16px; flex-shrink: 0;
+      border-radius: 4px; border: 1.5px solid rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.55rem; font-weight: 900; color: var(--deep-sky);
+      transition: all 0.15s;
+    }
+    .ccheck.on { background: var(--aurora); border-color: var(--aurora); }
+
     /* ── MODAL ASSIGNATION ── */
     .assign-list { display: flex; flex-direction: column; gap: 6px; max-height: 320px; overflow-y: auto; }
     .assign-item {
@@ -501,6 +643,13 @@
       Phases & Dates
     </div>
 
+    <div class="nav-label" style="margin-top:8px;">Site</div>
+
+    <div class="nav-item" onclick="showView('site', this)">
+      <span class="icon">🌐</span>
+      Administration site
+    </div>
+
     <div class="nav-label" style="margin-top:8px;">Compte</div>
 
     <div class="nav-item" onclick="window.location.href='index.html'" style="color:var(--coral);">
@@ -559,6 +708,20 @@
       <button class="btn-create" onclick="openModal('create')">+ Créer un compte</button>
     </div>
 
+    <!-- Barre de recherche -->
+    <div style="position:relative;margin-bottom:14px;">
+      <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:0.85rem;opacity:0.4;pointer-events:none;">🔍</span>
+      <input
+        id="user-search"
+        type="text"
+        placeholder="Rechercher par nom, email ou rôle…"
+        oninput="filterUsers(this.value)"
+        style="width:100%;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.09);border-radius:10px;padding:9px 14px 9px 36px;font-family:var(--font-body);font-size:0.85rem;color:var(--white-soft);outline:none;transition:border-color 0.2s;"
+        onfocus="this.style.borderColor='rgba(78,255,206,0.4)'"
+        onblur="this.style.borderColor='rgba(255,255,255,0.09)'"
+      >
+    </div>
+
     <div class="user-table-wrap">
       <table class="user-table" id="user-table">
         <thead>
@@ -583,6 +746,38 @@
       <div>
         <h2>Films soumis</h2>
         <p>Visionnez chaque film et assignez-le au jury de votre choix.</p>
+      </div>
+    </div>
+
+    <!-- Barre de recherche films -->
+    <div style="position:relative;margin-bottom:16px;">
+      <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:0.85rem;opacity:0.4;pointer-events:none;">🔍</span>
+      <input
+        id="film-search"
+        type="text"
+        placeholder="Rechercher par titre, réalisateur ou pays…"
+        oninput="filterFilms(this.value)"
+        style="width:100%;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.09);border-radius:10px;padding:9px 14px 9px 36px;font-family:var(--font-body);font-size:0.85rem;color:var(--white-soft);outline:none;transition:border-color 0.2s;"
+        onfocus="this.style.borderColor='rgba(78,255,206,0.4)'"
+        onblur="this.style.borderColor='rgba(255,255,255,0.09)'"
+      >
+    </div>
+
+    <!-- Filtre par pays -->
+    <div style="position:relative;margin-bottom:16px;" id="country-filter-wrap">
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button id="country-btn" onclick="toggleCountryDropdown()">
+          <span id="country-btn-icon">🌍</span>
+          <span id="country-btn-label">Tous les pays</span>
+          <span id="country-btn-arrow" style="font-size:0.7rem;opacity:0.6;margin-left:2px;">▾</span>
+        </button>
+        <button id="country-reset-btn" onclick="resetCountryFilter()" style="display:none;align-items:center;gap:5px;padding:7px 12px;background:rgba(255,107,107,0.08);border:1px solid rgba(255,107,107,0.22);border-radius:10px;font-family:var(--font-body);font-size:0.78rem;color:var(--coral);cursor:pointer;transition:all 0.2s;">
+          × Réinitialiser
+        </button>
+      </div>
+      <div id="country-dropdown" style="display:none;position:absolute;top:calc(100% + 6px);left:0;z-index:200;background:var(--surface-2);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:8px;min-width:230px;max-height:340px;box-shadow:0 16px 48px rgba(0,0,0,0.5);">
+        <input type="text" id="country-search" placeholder="Filtrer les pays…" oninput="renderCountryDropdown(this.value)" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:7px 10px;font-family:var(--font-body);font-size:0.8rem;color:var(--white-soft);outline:none;margin-bottom:6px;" autocomplete="off">
+        <div id="country-list" style="overflow-y:auto;max-height:260px;"></div>
       </div>
     </div>
 
@@ -658,6 +853,102 @@
     </div>
   </div>
 
+  <!-- ══════ VUE SITE ══════ -->
+  <div class="content" id="view-site" style="display:none;max-width:720px;">
+
+    <!-- ── 1. Vidéo Hero ── -->
+    <div class="site-section">
+      <div class="site-section-header" onclick="toggleSiteSection('sec-video', this)">
+        <div class="site-section-icon ssi-video">🎬</div>
+        <div>
+          <div class="site-section-title">Vidéo Hero</div>
+          <div class="site-section-sub">Vidéo de fond affichée en plein écran sur la page d'accueil</div>
+        </div>
+        <span class="site-chevron open">▼</span>
+      </div>
+      <div class="site-section-body" id="sec-video">
+        <div class="video-preview">
+          <video src="assets/ia1.mp4" autoplay muted loop playsinline></video>
+          <div class="video-preview-label">✓ Vidéo actuelle — ia1.mp4</div>
+        </div>
+        <div class="video-drop" onclick="document.getElementById('hero-video-input').click()">
+          <input type="file" id="hero-video-input" accept="video/mp4,video/quicktime" onchange="handleHeroVideo(this)">
+          <div class="video-drop-icon">📁</div>
+          <div class="video-drop-title">Remplacer la vidéo</div>
+          <div class="video-drop-sub">Glissez un fichier MP4 ou MOV · Recommandé : 1920×1080, max 200 Mo</div>
+        </div>
+        <button class="btn-save-site" onclick="showToast('✓ Vidéo hero mise à jour', 'ok')">Enregistrer la vidéo →</button>
+      </div>
+    </div>
+
+    <!-- ── 2. Informations du site ── -->
+    <div class="site-section">
+      <div class="site-section-header" onclick="toggleSiteSection('sec-info', this)">
+        <div class="site-section-icon ssi-info">ℹ️</div>
+        <div>
+          <div class="site-section-title">Informations du site</div>
+          <div class="site-section-sub">Titre, description, contact et réseaux sociaux</div>
+        </div>
+        <span class="site-chevron">▼</span>
+      </div>
+      <div class="site-section-body" id="sec-info" style="display:none;">
+        <label class="site-label">Nom du festival</label>
+        <input class="site-input" type="text" value="marsAI 2026" placeholder="Nom du festival">
+        <label class="site-label">Sous-titre / accroche</label>
+        <input class="site-input" type="text" value="Le premier festival mondial du film d'intelligence artificielle" placeholder="Accroche">
+        <label class="site-label">Description courte</label>
+        <textarea class="site-input site-textarea" placeholder="Présentation du festival…">Marseille accueille la première édition de marsAI, festival international dédié aux films créés par ou avec l'intelligence artificielle.</textarea>
+        <label class="site-label">Email de contact</label>
+        <input class="site-input" type="email" value="contact@marsai.fr" placeholder="contact@festival.fr">
+        <label class="site-label">Instagram</label>
+        <input class="site-input" type="text" value="@marsai.festival" placeholder="@compte">
+        <label class="site-label">Site web</label>
+        <input class="site-input" type="url" value="https://marsai.fr" placeholder="https://…">
+        <button class="btn-save-site" onclick="showToast('✓ Informations sauvegardées', 'ok')">Enregistrer les informations →</button>
+      </div>
+    </div>
+
+    <!-- ── 3. Calendrier ── -->
+    <div class="site-section">
+      <div class="site-section-header" onclick="toggleSiteSection('sec-cal', this)">
+        <div class="site-section-icon ssi-cal">📅</div>
+        <div>
+          <div class="site-section-title">Calendrier</div>
+          <div class="site-section-sub">Dates clés affichées publiquement sur le site</div>
+        </div>
+        <span class="site-chevron">▼</span>
+      </div>
+      <div class="site-section-body" id="sec-cal" style="display:none;">
+        <div class="cal-item">
+          <div><div class="cal-name">Ouverture des candidatures</div><div class="cal-sub">Formulaire de dépôt accessible</div></div>
+          <input type="date" class="cal-date" value="2026-03-01">
+          <div class="cal-toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="cal-item">
+          <div><div class="cal-name">Clôture des candidatures</div><div class="cal-sub">Fermeture du formulaire</div></div>
+          <input type="date" class="cal-date" value="2026-10-31">
+          <div class="cal-toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="cal-item">
+          <div><div class="cal-name">Phase 1 — Jury Top 50</div><div class="cal-sub">Évaluation première sélection</div></div>
+          <input type="date" class="cal-date" value="2026-12-12">
+          <div class="cal-toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="cal-item">
+          <div><div class="cal-name">Phase 2 — Jury Top 5</div><div class="cal-sub">Délibération finale</div></div>
+          <input type="date" class="cal-date" value="2026-12-22">
+          <div class="cal-toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="cal-item">
+          <div><div class="cal-name">Cérémonie de clôture</div><div class="cal-sub">Remise des prix — Marseille</div></div>
+          <input type="date" class="cal-date" value="2027-01-15">
+          <div class="cal-toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <button class="btn-save-site" onclick="showToast('✓ Calendrier mis à jour', 'ok')">Enregistrer le calendrier →</button>
+      </div>
+    </div>
+
+  </div>
 
 </div>
 
@@ -921,6 +1212,11 @@
   function switchFilmTab(tab) {
     currentFilmTab = tab;
     currentPage = 1;
+    filmSearchQuery = '';
+    filmCountryFilters = [];
+    updateCountryBtn();
+    const searchEl = document.getElementById('film-search');
+    if (searchEl) searchEl.value = '';
     document.getElementById('tab-pending').classList.toggle('active', tab === 'pending');
     document.getElementById('tab-assigned').classList.toggle('active', tab === 'assigned');
     renderAssignView();
@@ -933,9 +1229,19 @@
     const grid = document.getElementById('assign-grid');
     const juryUsers = users.filter(u => u.role === 'jury' && u.active);
 
+    // Filtrer par recherche + pays
+    const filteredFilms = films.filter(f => {
+      const matchSearch = !filmSearchQuery || (f.title + f.author + f.country).toLowerCase().includes(filmSearchQuery);
+      const matchCountry = !filmCountryFilters.length || filmCountryFilters.includes(f.country);
+      return matchSearch && matchCountry;
+    });
+
+    // Rafraîchir les pills pays
+    renderCountryFilters();
+
     // Séparer films selon l'onglet
-    const pending  = films.filter(f => !juryUsers.some(u => u.assigned.includes(f.id)));
-    const assigned = films.filter(f =>  juryUsers.some(u => u.assigned.includes(f.id)));
+    const pending  = filteredFilms.filter(f => !juryUsers.some(u => u.assigned.includes(f.id)));
+    const assigned = filteredFilms.filter(f =>  juryUsers.some(u => u.assigned.includes(f.id)));
 
     // Mettre à jour les compteurs des onglets
     document.getElementById('count-pending').textContent  = pending.length;
@@ -951,6 +1257,11 @@
     const emptyEl = document.getElementById('assign-empty');
     if (filmList.length === 0) {
       grid.innerHTML = '';
+      emptyEl.querySelector
+        ? null : null;
+      emptyEl.innerHTML = filmSearchQuery
+        ? `<div style="font-size:2rem;margin-bottom:12px;">🔍</div><div style="font-family:var(--font-display);font-size:1rem;font-weight:800;color:var(--white-soft);margin-bottom:6px;">Aucun résultat pour "${filmSearchQuery}"</div><div style="font-size:0.78rem;color:var(--mist);">Essayez un autre titre, réalisateur ou pays.</div>`
+        : `<div style="font-size:3rem;margin-bottom:16px;">🎉</div><div style="font-family:var(--font-display);font-size:1.1rem;font-weight:800;color:var(--white-soft);margin-bottom:8px;">Tous les films sont assignés !</div><div style="font-size:0.8rem;color:var(--mist);">Retrouvez-les dans l'onglet "Assignés".</div>`;
       emptyEl.style.display = 'block';
       document.getElementById('pagination').innerHTML = '';
       return;
@@ -993,7 +1304,7 @@
         </div>
         <div class="film-body">
           <div class="film-title">${f.title}</div>
-          <div class="film-meta">${f.author} · ${f.country}</div>
+          <div class="film-meta">${f.author} · ${flags[f.country] || ''} ${f.country}</div>
           <div style="display:flex;align-items:center;gap:8px;margin-top:10px;">${avatars}</div>
         </div>
       </div>`;
@@ -1026,11 +1337,12 @@
   }
 
   /* ── VUES ── */
-  const views = ['users','assign','phases'];
+  const views = ['users','assign','phases','site'];
   const titles = {
     users:  ['Gestion des utilisateurs',  'Jurys et modérateurs — accès par token permanent'],
     assign: ['Films soumis',              'Visionnez et assignez chaque film au jury'],
     phases: ['Phases & Dates',            'Définissez les dates des sessions jury'],
+    site:   ['Administration du site',    'Vidéo hero, informations et calendrier public'],
   };
 
   function showView(name, el) {
@@ -1043,12 +1355,162 @@
     if (name === 'assign') renderAssignView();
   }
 
+  /* ── DRAPEAUX PAYS ── */
+  const flags = {
+    'France':'🇫🇷','Tunisie':'🇹🇳','Japon':'🇯🇵','Espagne':'🇪🇸','Inde':'🇮🇳',
+    'Sénégal':'🇸🇳','Suède':'🇸🇪','Chine':'🇨🇳','Allemagne':'🇩🇪','Nigeria':'🇳🇬',
+    'Corée du Sud':'🇰🇷','Maroc':'🇲🇦','Russie':'🇷🇺','Italie':'🇮🇹','Ghana':'🇬🇭',
+    'Norvège':'🇳🇴','Algérie':'🇩🇿','Tchéquie':'🇨🇿','Égypte':'🇪🇬','Mexique':'🇲🇽',
+    'Turquie':'🇹🇷','Portugal':'🇵🇹','Kenya':'🇰🇪','Belgique':'🇧🇪','Brésil':'🇧🇷',
+    'Mali':'🇲🇱','Iran':'🇮🇷','Ukraine':'🇺🇦','Burkina Faso':'🇧🇫','Croatie':'🇭🇷',
+    'Colombie':'🇨🇴','Tonga':'🇹🇴','Liban':'🇱🇧','Canada':'🇨🇦','Pakistan':'🇵🇰','Argentine':'🇦🇷',
+  };
+
+  /* ── RECHERCHE & FILTRE FILMS ── */
+  let filmSearchQuery = '';
+  let filmCountryFilters = []; // multi-sélection
+
+  function filterFilms(query) {
+    filmSearchQuery = query.toLowerCase().trim();
+    currentPage = 1;
+    renderAssignView();
+  }
+
+  function toggleCountryDropdown() {
+    const dd = document.getElementById('country-dropdown');
+    const btn = document.getElementById('country-btn');
+    const isOpen = dd.style.display !== 'none';
+    if (isOpen) {
+      dd.style.display = 'none';
+      btn.classList.remove('open');
+    } else {
+      dd.style.display = 'block';
+      btn.classList.add('open');
+      renderCountryDropdown('');
+      const si = document.getElementById('country-search');
+      si.value = '';
+      setTimeout(() => si.focus(), 50);
+    }
+  }
+
+  function renderCountryDropdown(query) {
+    const q = (query || '').toLowerCase().trim();
+    const countries = [...new Set(films.map(f => f.country))].sort();
+    const filtered = q ? countries.filter(c => c.toLowerCase().includes(q)) : countries;
+    const list = document.getElementById('country-list');
+    if (!filtered.length) {
+      list.innerHTML = '<div style="padding:12px;text-align:center;font-size:0.78rem;color:var(--mist);">Aucun pays trouvé</div>';
+      return;
+    }
+    list.innerHTML = filtered.map(c => {
+      const checked = filmCountryFilters.includes(c);
+      return `<div class="country-check-item ${checked ? 'checked' : ''}" onclick="toggleCountry('${c}')">
+        <span class="ccheck ${checked ? 'on' : ''}">✓</span>
+        <span>${flags[c] || ''} ${c}</span>
+      </div>`;
+    }).join('');
+  }
+
+  function toggleCountry(country) {
+    const idx = filmCountryFilters.indexOf(country);
+    if (idx === -1) filmCountryFilters.push(country);
+    else filmCountryFilters.splice(idx, 1);
+    updateCountryBtn();
+    renderCountryDropdown(document.getElementById('country-search').value);
+    currentPage = 1;
+    renderAssignView();
+  }
+
+  function resetCountryFilter() {
+    filmCountryFilters = [];
+    updateCountryBtn();
+    currentPage = 1;
+    renderAssignView();
+  }
+
+  function updateCountryBtn() {
+    const btn = document.getElementById('country-btn');
+    const label = document.getElementById('country-btn-label');
+    const icon = document.getElementById('country-btn-icon');
+    const resetBtn = document.getElementById('country-reset-btn');
+    const n = filmCountryFilters.length;
+    if (n === 0) {
+      label.textContent = 'Tous les pays';
+      icon.textContent = '🌍';
+      btn.classList.remove('has-filter');
+      resetBtn.style.display = 'none';
+    } else if (n === 1) {
+      label.textContent = filmCountryFilters[0];
+      icon.textContent = flags[filmCountryFilters[0]] || '🌍';
+      btn.classList.add('has-filter');
+      resetBtn.style.display = 'flex';
+    } else {
+      label.textContent = `${n} pays`;
+      icon.textContent = '🌍';
+      btn.classList.add('has-filter');
+      resetBtn.style.display = 'flex';
+    }
+  }
+
+  function renderCountryFilters() { /* remplacé par dropdown */ }
+
+  /* ── RECHERCHE UTILISATEURS ── */
+  function filterUsers(query) {
+    const q = query.toLowerCase().trim();
+    const rows = document.querySelectorAll('#user-tbody tr');
+    let visible = 0;
+    rows.forEach(row => {
+      const match = !q || row.textContent.toLowerCase().includes(q);
+      row.style.display = match ? '' : 'none';
+      if (match) visible++;
+    });
+    let empty = document.getElementById('user-search-empty');
+    if (!empty) {
+      empty = document.createElement('div');
+      empty.id = 'user-search-empty';
+      empty.style.cssText = 'text-align:center;padding:24px;font-size:0.8rem;color:var(--mist);display:none;';
+      empty.textContent = 'Aucun utilisateur trouvé.';
+      document.querySelector('.user-table-wrap').after(empty);
+    }
+    empty.style.display = visible === 0 && q ? 'block' : 'none';
+  }
+
+  /* ── ADMINISTRATION SITE ── */
+  function toggleSiteSection(id, header) {
+    const body = document.getElementById(id);
+    const chevron = header.querySelector('.site-chevron');
+    const isOpen = body.style.display !== 'none';
+    body.style.display = isOpen ? 'none' : 'block';
+    chevron.classList.toggle('open', !isOpen);
+  }
+
+  function handleHeroVideo(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    const preview = document.querySelector('.video-preview video');
+    const label   = document.querySelector('.video-preview-label');
+    preview.src = url;
+    label.textContent = '⏳ Nouvelle vidéo — ' + file.name;
+    showToast('Vidéo chargée — cliquez sur Enregistrer', 'warn');
+  }
+
   /* ── TOAST ── */
   function showToast(msg, type='ok') {
     const t = document.getElementById('toast');
     t.textContent = msg; t.className = `toast ${type} show`;
     setTimeout(() => t.classList.remove('show'), 3000);
   }
+
+  /* ── FERMETURE DROPDOWN PAYS AU CLIC EXTÉRIEUR ── */
+  document.addEventListener('click', function(e) {
+    const wrap = document.getElementById('country-filter-wrap');
+    const dd = document.getElementById('country-dropdown');
+    if (wrap && dd && !wrap.contains(e.target)) {
+      dd.style.display = 'none';
+      document.getElementById('country-btn').classList.remove('open');
+    }
+  });
 
   /* ── INIT ── */
   renderUsers();
