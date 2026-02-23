@@ -281,6 +281,133 @@
     }
     .btn-confirm:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(78,255,206,0.35); }
 
+    /* ── MÉDIATHÈQUE FILMS ── */
+    .film-card {
+      background: var(--surface-2);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 14px; overflow: hidden;
+      transition: border-color 0.2s, transform 0.15s;
+    }
+    .film-card:hover { border-color: rgba(255,255,255,0.1); transform: translateY(-2px); }
+
+    .film-thumb {
+      position: relative; width: 100%; aspect-ratio: 16/9;
+      background: #000; overflow: hidden; cursor: pointer;
+    }
+    .film-thumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .film-thumb-overlay {
+      position: absolute; inset: 0;
+      background: rgba(5,8,24,0.45);
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .film-thumb:hover .film-thumb-overlay { background: rgba(5,8,24,0.2); }
+    .play-btn {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: rgba(78,255,206,0.15);
+      border: 2px solid rgba(78,255,206,0.5);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; transition: transform 0.15s, background 0.15s;
+    }
+    .film-thumb:hover .play-btn { transform: scale(1.1); background: rgba(78,255,206,0.25); }
+
+    .film-num-badge {
+      position: absolute; top: 8px; left: 8px;
+      font-family: var(--font-mono); font-size: 0.6rem; font-weight: 700;
+      background: rgba(5,8,24,0.75); color: var(--mist);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 5px; padding: 2px 7px; backdrop-filter: blur(6px);
+    }
+    .assigned-badge {
+      position: absolute; top: 8px; right: 8px;
+      font-size: 0.6rem; font-weight: 700;
+      border-radius: 9999px; padding: 2px 8px;
+      backdrop-filter: blur(6px);
+    }
+    .ab-none { background: rgba(255,107,107,0.2); color: var(--coral); border: 1px solid rgba(255,107,107,0.3); }
+    .ab-ok   { background: rgba(78,255,206,0.15); color: var(--aurora); border: 1px solid rgba(78,255,206,0.3); }
+
+    .film-body { padding: 14px 16px; }
+    .film-title { font-size: 0.88rem; font-weight: 700; margin-bottom: 3px; }
+    .film-meta  { font-size: 0.7rem; color: var(--mist); margin-bottom: 12px; }
+
+    .film-assigned-row {
+      display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; min-height: 22px;
+    }
+    .jp-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 8px 3px 4px; border-radius: 9999px;
+      font-size: 0.65rem; font-weight: 600;
+      background: rgba(78,255,206,0.08); color: var(--aurora);
+      border: 1px solid rgba(78,255,206,0.2);
+    }
+    .jp-pill-av {
+      width: 16px; height: 16px; border-radius: 50%;
+      font-size: 0.5rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .no-jury { font-size: 0.72rem; color: var(--coral); font-style: italic; }
+
+    .btn-assign-film {
+      width: 100%; padding: 9px;
+      background: rgba(78,255,206,0.07);
+      border: 1px solid rgba(78,255,206,0.22);
+      border-radius: 9px; font-family: var(--font-display);
+      font-size: 0.78rem; font-weight: 800; color: var(--aurora);
+      cursor: pointer; transition: all 0.15s; letter-spacing: 0.01em;
+    }
+    .btn-assign-film:hover { background: rgba(78,255,206,0.15); border-color: rgba(78,255,206,0.4); }
+
+    /* ── ONGLETS FILMS ── */
+    .film-tabs {
+      display: flex; gap: 8px; margin-bottom: 20px;
+    }
+    .film-tab {
+      flex: 1; padding: 12px 16px; border-radius: 10px;
+      border: 2px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      font-family: var(--font-body); font-size: 0.84rem; font-weight: 600;
+      color: var(--mist); cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .film-tab:hover {
+      border-color: rgba(255,255,255,0.18);
+      color: var(--white-soft);
+      background: rgba(255,255,255,0.06);
+    }
+    .film-tab.active.pending-tab {
+      background: rgba(255,107,107,0.12);
+      border-color: rgba(255,107,107,0.5);
+      color: var(--coral);
+      box-shadow: 0 0 0 1px rgba(255,107,107,0.2), 0 4px 16px rgba(255,107,107,0.1);
+    }
+    .film-tab.active.assigned-tab {
+      background: rgba(78,255,206,0.1);
+      border-color: rgba(78,255,206,0.5);
+      color: var(--aurora);
+      box-shadow: 0 0 0 1px rgba(78,255,206,0.2), 0 4px 16px rgba(78,255,206,0.08);
+    }
+    .tab-count {
+      font-family: var(--font-mono); font-size: 0.72rem; font-weight: 800;
+      padding: 3px 9px; border-radius: 9999px;
+    }
+    .pending-tab .tab-count { background: rgba(255,107,107,0.15); color: var(--coral); }
+    .assigned-tab .tab-count { background: rgba(78,255,206,0.12); color: var(--aurora); }
+    .film-tab:not(.active) .tab-count { background: rgba(255,255,255,0.06); color: var(--mist); }
+
+    /* ── PAGINATION ── */
+    .page-btn {
+      min-width: 34px; height: 34px; padding: 0 10px;
+      border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04); color: var(--mist);
+      font-family: var(--font-mono); font-size: 0.78rem; font-weight: 600;
+      cursor: pointer; transition: all 0.15s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .page-btn:hover { border-color: rgba(78,255,206,0.3); color: var(--aurora); background: rgba(78,255,206,0.06); }
+    .page-btn.active { background: rgba(78,255,206,0.12); border-color: rgba(78,255,206,0.4); color: var(--aurora); }
+    .page-btn:disabled { opacity: 0.3; cursor: default; pointer-events: none; }
+
     /* ── MODAL ASSIGNATION ── */
     .assign-list { display: flex; flex-direction: column; gap: 6px; max-height: 320px; overflow-y: auto; }
     .assign-item {
@@ -364,7 +491,7 @@
     <div class="nav-item" onclick="showView('assign', this)">
       <span class="icon">🎬</span>
       Assignation films
-      <span class="nav-count" id="count-assign">10</span>
+      <span class="nav-count" id="count-assign">50</span>
     </div>
 
     <div class="nav-label" style="margin-top:8px;">Concours</div>
@@ -372,11 +499,6 @@
     <div class="nav-item" onclick="showView('phases', this)">
       <span class="icon">📅</span>
       Phases & Dates
-    </div>
-
-    <div class="nav-item" onclick="showView('stats', this)">
-      <span class="icon">📊</span>
-      Progression
     </div>
 
     <div class="nav-label" style="margin-top:8px;">Compte</div>
@@ -457,14 +579,36 @@
 
   <!-- ══════ VUE ASSIGNATION ══════ -->
   <div class="content" id="view-assign" style="display:none;">
-    <div class="section-head" style="margin-bottom:20px;">
+    <div class="section-head" style="margin-bottom:16px;">
       <div>
-        <h2>Assignation des films aux jurys</h2>
-        <p>Chaque membre du jury ne voit que les films qui lui sont assignés.</p>
+        <h2>Films soumis</h2>
+        <p>Visionnez chaque film et assignez-le au jury de votre choix.</p>
       </div>
     </div>
 
-    <div id="assign-grid" style="display:flex;flex-direction:column;gap:12px;"></div>
+    <!-- Onglets -->
+    <div class="film-tabs">
+      <button class="film-tab pending-tab active" id="tab-pending" onclick="switchFilmTab('pending')">
+        🎬 À assigner
+        <span class="tab-count" id="count-pending">—</span>
+      </button>
+      <button class="film-tab assigned-tab" id="tab-assigned" onclick="switchFilmTab('assigned')">
+        ✓ Assignés
+        <span class="tab-count" id="count-assigned">—</span>
+      </button>
+    </div>
+
+    <div id="assign-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;"></div>
+
+    <!-- État vide -->
+    <div id="assign-empty" style="display:none;text-align:center;padding:60px 20px;">
+      <div style="font-size:3rem;margin-bottom:16px;">🎉</div>
+      <div style="font-family:var(--font-display);font-size:1.1rem;font-weight:800;color:var(--white-soft);margin-bottom:8px;">Tous les films sont assignés !</div>
+      <div style="font-size:0.8rem;color:var(--mist);">Retrouvez-les dans l'onglet "Assignés".</div>
+    </div>
+
+    <!-- Pagination -->
+    <div id="pagination" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:24px;"></div>
   </div>
 
   <!-- ══════ VUE PHASES ══════ -->
@@ -514,13 +658,6 @@
     </div>
   </div>
 
-  <!-- ══════ VUE PROGRESSION ══════ -->
-  <div class="content" id="view-stats" style="display:none;">
-    <div class="section-head" style="margin-bottom:20px;">
-      <div><h2>Progression des évaluations</h2><p>Vue d'ensemble des décisions du jury par film.</p></div>
-    </div>
-    <div id="stats-grid" style="display:flex;flex-direction:column;gap:8px;"></div>
-  </div>
 
 </div>
 
@@ -602,25 +739,65 @@
 <script>
   /* ── DONNÉES MAQUETTE ── */
   const films = [
-    { id:1,  title:"Rêves de Silicium",  author:"Léa Fontaine",   country:"France" },
-    { id:2,  title:"L'Enfant-Pixel",     author:"Amira Ben Said", country:"Tunisie" },
-    { id:3,  title:"Archipel 2048",      author:"Kenji Ito",      country:"Japon" },
-    { id:4,  title:"Mémoire Vive",       author:"Carlos Ruiz",    country:"Espagne" },
-    { id:5,  title:"Nouveaux Soleils",   author:"Priya Mehta",    country:"Inde" },
-    { id:6,  title:"Frontières Douces",  author:"Omar Diallo",    country:"Sénégal" },
-    { id:7,  title:"Vague Numérique",    author:"Sofia Ek",       country:"Suède" },
-    { id:8,  title:"Jardin des Codes",   author:"Lin Wei",        country:"Chine" },
-    { id:9,  title:"Signal Perdu",       author:"Aya Tanaka",     country:"Japon" },
-    { id:10, title:"Horizon Zéro",       author:"Mia Schultz",    country:"Allemagne" },
+    { id:1,  title:"Rêves de Silicium",       author:"Léa Fontaine",      country:"France" },
+    { id:2,  title:"L'Enfant-Pixel",          author:"Amira Ben Said",     country:"Tunisie" },
+    { id:3,  title:"Archipel 2048",           author:"Kenji Ito",          country:"Japon" },
+    { id:4,  title:"Mémoire Vive",            author:"Carlos Ruiz",        country:"Espagne" },
+    { id:5,  title:"Nouveaux Soleils",        author:"Priya Mehta",        country:"Inde" },
+    { id:6,  title:"Frontières Douces",       author:"Omar Diallo",        country:"Sénégal" },
+    { id:7,  title:"Vague Numérique",         author:"Sofia Ek",           country:"Suède" },
+    { id:8,  title:"Jardin des Codes",        author:"Lin Wei",            country:"Chine" },
+    { id:9,  title:"Signal Perdu",            author:"Aya Tanaka",         country:"Japon" },
+    { id:10, title:"Horizon Zéro",            author:"Mia Schultz",        country:"Allemagne" },
+    { id:11, title:"Corps Électrique",        author:"Nadia Okonkwo",      country:"Nigeria" },
+    { id:12, title:"Le Miroir Bruité",        author:"Thomas Vidal",       country:"France" },
+    { id:13, title:"Synthèse Éternelle",      author:"Park Ji-won",        country:"Corée du Sud" },
+    { id:14, title:"Désert de Données",       author:"Yasmine Alaoui",     country:"Maroc" },
+    { id:15, title:"Pulse",                   author:"Elena Petrov",       country:"Russie" },
+    { id:16, title:"La Dernière Fréquence",   author:"Marco Ferretti",     country:"Italie" },
+    { id:17, title:"Matière Grise",           author:"Chidi Osei",         country:"Ghana" },
+    { id:18, title:"Lumière Froide",          author:"Ingrid Larsen",      country:"Norvège" },
+    { id:19, title:"Algorithme du Cœur",      author:"Fatima Zahra",       country:"Algérie" },
+    { id:20, title:"Neurones d'Acier",        author:"Viktor Novak",       country:"Tchéquie" },
+    { id:21, title:"L'Œil Augmenté",          author:"Rania Hassan",       country:"Égypte" },
+    { id:22, title:"Boucle Infinie",          author:"Diego Castillo",     country:"Mexique" },
+    { id:23, title:"Écho d'Humanité",         author:"Yuki Nakamura",      country:"Japon" },
+    { id:24, title:"Partition Invisible",     author:"Selin Yıldız",       country:"Turquie" },
+    { id:25, title:"Terra Incognita",         author:"Ana Rodrigues",      country:"Portugal" },
+    { id:26, title:"Conscience Liquide",      author:"Samuel Oduya",       country:"Kenya" },
+    { id:27, title:"Émergence",               author:"Claire Morin",       country:"France" },
+    { id:28, title:"Le Temps Fracturé",       author:"Hana Kim",           country:"Corée du Sud" },
+    { id:29, title:"Biomécanique",            author:"Rafael Santos",      country:"Brésil" },
+    { id:30, title:"Flux",                    author:"Amara Touré",        country:"Mali" },
+    { id:31, title:"Phosphène",              author:"Giulia Romano",       country:"Italie" },
+    { id:32, title:"L'Arbre Numérique",       author:"Mehdi Karimi",       country:"Iran" },
+    { id:33, title:"Strates",                 author:"Olga Sorokina",      country:"Ukraine" },
+    { id:34, title:"Hyperréel",               author:"James Okafor",       country:"Nigeria" },
+    { id:35, title:"Protocole Zéro",          author:"Sven Eriksson",      country:"Suède" },
+    { id:36, title:"Mutation Douce",          author:"Layla Al-Rashid",    country:"Irak" },
+    { id:37, title:"Zéro Latence",            author:"Chen Mingzhi",       country:"Chine" },
+    { id:38, title:"Le Chant des Machines",   author:"Idrissa Coulibaly",  country:"Burkina Faso" },
+    { id:39, title:"Fractale",                author:"Nina Kovač",         country:"Croatie" },
+    { id:40, title:"Résonance",               author:"Pablo Herrera",      country:"Colombie" },
+    { id:41, title:"Interface",               author:"Mele Tupou",         country:"Tonga" },
+    { id:42, title:"Continuum",               author:"Aiko Suzuki",        country:"Japon" },
+    { id:43, title:"L'Ère du Vide",           author:"Camille Perret",     country:"Belgique" },
+    { id:44, title:"Données Sensibles",       author:"Kofi Mensah",        country:"Ghana" },
+    { id:45, title:"Synthétique",             author:"Lucía Fernández",    country:"Argentine" },
+    { id:46, title:"Grille",                  author:"Dmitri Volkov",      country:"Russie" },
+    { id:47, title:"Post-Humain",             author:"Leila Nasser",       country:"Liban" },
+    { id:48, title:"Code Source",             author:"Étienne Blanchard",  country:"Canada" },
+    { id:49, title:"Éveil",                   author:"Sunita Rao",         country:"Inde" },
+    { id:50, title:"La Mémoire des Pixels",   author:"Zara Ahmed",         country:"Pakistan" },
   ];
 
   let users = [
-    { id:1, name:"Marie Lefebvre", email:"m.lefebvre@marsai.fr",  role:"jury",       active:true,  token:"MLF-7A2K-X9P",  assigned:[1,2,3,5],   cls:"ua-1" },
-    { id:2, name:"Pierre Dubois",  email:"p.dubois@marsai.fr",    role:"jury",       active:true,  token:"PDB-3R8M-Q1T",  assigned:[1,4,6,7],   cls:"ua-2" },
-    { id:3, name:"Kenji Ito",      email:"k.ito@marsai.jp",       role:"jury",       active:true,  token:"KIT-9S4N-W2V",  assigned:[2,3,8,9],   cls:"ua-3" },
-    { id:4, name:"Sofia Eriksson", email:"s.eriksson@marsai.se",  role:"jury",       active:true,  token:"SEK-5H1B-R4C",  assigned:[5,6,7,10],  cls:"ua-4" },
-    { id:5, name:"Camille Moreau", email:"c.moreau@marsai.fr",    role:"moderateur", active:true,  token:"CMR-2J6D-L8Z",  assigned:[],           cls:"ua-5" },
-    { id:6, name:"Thomas Leroy",   email:"t.leroy@marsai.fr",     role:"moderateur", active:false, token:"TLR-8K3F-P7Y",  assigned:[],           cls:"ua-6" },
+    { id:1, name:"Marie Lefebvre", email:"m.lefebvre@marsai.fr",  role:"jury",       active:true,  token:"MLF-7A2K-X9P",  assigned:[1,2,3,5],  cls:"ua-1", avatar:"https://i.pravatar.cc/150?img=47" },
+    { id:2, name:"Pierre Dubois",  email:"p.dubois@marsai.fr",    role:"jury",       active:true,  token:"PDB-3R8M-Q1T",  assigned:[1,4,6,7],  cls:"ua-2", avatar:"https://i.pravatar.cc/150?img=12" },
+    { id:3, name:"Kenji Ito",      email:"k.ito@marsai.jp",       role:"jury",       active:true,  token:"KIT-9S4N-W2V",  assigned:[2,3,8,9],  cls:"ua-3", avatar:"https://i.pravatar.cc/150?img=68" },
+    { id:4, name:"Sofia Eriksson", email:"s.eriksson@marsai.se",  role:"jury",       active:true,  token:"SEK-5H1B-R4C",  assigned:[5,6,7,10], cls:"ua-4", avatar:"https://i.pravatar.cc/150?img=44" },
+    { id:5, name:"Camille Moreau", email:"c.moreau@marsai.fr",    role:"moderateur", active:true,  token:"CMR-2J6D-L8Z",  assigned:[],         cls:"ua-5", avatar:"https://i.pravatar.cc/150?img=25" },
+    { id:6, name:"Thomas Leroy",   email:"t.leroy@marsai.fr",     role:"moderateur", active:false, token:"TLR-8K3F-P7Y",  assigned:[],         cls:"ua-6", avatar:"https://i.pravatar.cc/150?img=15" },
   ];
 
   let newUserRole = 'jury';
@@ -650,7 +827,7 @@
       return `<tr>
         <td>
           <div style="display:flex;align-items:center;gap:10px;">
-            <div class="u-avatar ${u.cls}">${u.name.split(' ').map(n=>n[0]).join('')}</div>
+            <img src="${u.avatar}" alt="${u.name}" style="width:32px;height:32px;border-radius:8px;object-fit:cover;flex-shrink:0;${!u.active?'opacity:0.4;filter:grayscale(1);':''}">
             <div>
               <div class="u-name" style="${!u.active?'opacity:0.45;':''}">${u.name}</div>
               <div class="u-email">${u.email}</div>
@@ -719,117 +896,141 @@
     renderUsers();
   }
 
-  /* ── MODAL ASSIGNATION ── */
-  function openAssign(userId) {
-    currentAssignUserId = userId;
-    const u = users.find(x=>x.id===userId);
-    tempAssigned = [...u.assigned];
-    document.getElementById('assign-modal-title').textContent = `Films assignés — ${u.name}`;
-    document.getElementById('assign-modal-sub').textContent   = `${tempAssigned.length} film(s) actuellement assigné(s)`;
-    const list = document.getElementById('assign-film-list');
-    list.innerHTML = films.map(f => {
-      const checked = tempAssigned.includes(f.id);
-      return `<div class="assign-item ${checked?'checked':''}" id="ai-${f.id}" onclick="toggleAssign(${f.id})">
-        <div class="ai-cb">${checked?'✓':''}</div>
-        <div style="flex:1;">
-          <div class="ai-title">${f.title}</div>
-          <div class="ai-author">${f.author} · ${f.country}</div>
-        </div>
-      </div>`;
-    }).join('');
-    openModal('assign');
-  }
-
-  function toggleAssign(filmId) {
-    const idx = tempAssigned.indexOf(filmId);
-    if (idx > -1) tempAssigned.splice(idx, 1);
-    else tempAssigned.push(filmId);
-    const item = document.getElementById('ai-'+filmId);
-    item.classList.toggle('checked', tempAssigned.includes(filmId));
-    item.querySelector('.ai-cb').textContent = tempAssigned.includes(filmId) ? '✓' : '';
-    document.getElementById('assign-modal-sub').textContent = `${tempAssigned.length} film(s) sélectionné(s)`;
-  }
-
-  function saveAssign() {
-    const u = users.find(x=>x.id===currentAssignUserId);
-    if (!u) return;
-    u.assigned = [...tempAssigned];
-    closeModal('assign');
-    showToast(`✓ ${u.assigned.length} film(s) assigné(s) à ${u.name}`, 'ok');
-    renderUsers();
+  /* ── ASSIGNATION DIRECTE (clic avatar) ── */
+  function toggleFilmJury(filmId, userId) {
+    const u = users.find(x => x.id === userId);
+    const f = films.find(x => x.id === filmId);
+    if (!u || !f) return;
+    const idx = u.assigned.indexOf(filmId);
+    if (idx > -1) {
+      u.assigned.splice(idx, 1);
+      showToast(`${u.name.split(' ')[0]} retiré de "${f.title}"`, 'warn');
+    } else {
+      u.assigned.push(filmId);
+      showToast(`✓ ${u.name.split(' ')[0]} assigné à "${f.title}"`, 'ok');
+    }
     renderAssignView();
+    renderUsers();
   }
 
-  /* ── VUE ASSIGNATION (synthèse) ── */
-  function renderAssignView() {
+  /* ── VUE ASSIGNATION (médiathèque) ── */
+  const FILMS_PER_PAGE = 6;
+  let currentPage = 1;
+  let currentFilmTab = 'pending';
+
+  function switchFilmTab(tab) {
+    currentFilmTab = tab;
+    currentPage = 1;
+    document.getElementById('tab-pending').classList.toggle('active', tab === 'pending');
+    document.getElementById('tab-assigned').classList.toggle('active', tab === 'assigned');
+    renderAssignView();
+    // Scroll en haut de la grille
+    document.getElementById('assign-grid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function renderAssignView(page) {
+    if (page !== undefined) currentPage = page;
     const grid = document.getElementById('assign-grid');
-    const juryUsers = users.filter(u => u.role === 'jury');
-    grid.innerHTML = juryUsers.map(u => {
-      const assignedFilms = films.filter(f => u.assigned.includes(f.id));
-      return `<div style="background:var(--surface-2);border:1px solid rgba(255,255,255,0.05);border-radius:12px;padding:16px 18px;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-          <div class="u-avatar ${u.cls}">${u.name.split(' ').map(n=>n[0]).join('')}</div>
-          <div style="flex:1;">
-            <div style="font-size:0.85rem;font-weight:600;">${u.name}</div>
-            <div style="font-size:0.7rem;color:var(--mist);">${u.email}</div>
+    const juryUsers = users.filter(u => u.role === 'jury' && u.active);
+
+    // Séparer films selon l'onglet
+    const pending  = films.filter(f => !juryUsers.some(u => u.assigned.includes(f.id)));
+    const assigned = films.filter(f =>  juryUsers.some(u => u.assigned.includes(f.id)));
+
+    // Mettre à jour les compteurs des onglets
+    document.getElementById('count-pending').textContent  = pending.length;
+    document.getElementById('count-assigned').textContent = assigned.length;
+    document.getElementById('count-assign').textContent   = pending.length;
+
+    const filmList = currentFilmTab === 'pending' ? pending : assigned;
+    const totalPages = Math.ceil(filmList.length / FILMS_PER_PAGE);
+    if (currentPage > totalPages) currentPage = Math.max(1, totalPages);
+    const pageFilms = filmList.slice((currentPage - 1) * FILMS_PER_PAGE, currentPage * FILMS_PER_PAGE);
+
+    // État vide
+    const emptyEl = document.getElementById('assign-empty');
+    if (filmList.length === 0) {
+      grid.innerHTML = '';
+      emptyEl.style.display = 'block';
+      document.getElementById('pagination').innerHTML = '';
+      return;
+    }
+    emptyEl.style.display = 'none';
+
+    grid.innerHTML = pageFilms.map(f => {
+      const assignedJury = juryUsers.filter(u => u.assigned.includes(f.id));
+      const isAssigned = assignedJury.length > 0;
+
+      const assignedBadge = isAssigned
+        ? `<div class="assigned-badge ab-ok">✓ ${assignedJury.length} juré${assignedJury.length > 1 ? 's' : ''}</div>`
+        : `<div class="assigned-badge ab-none">Non assigné</div>`;
+
+      const avatars = juryUsers.map(u => {
+        const assigned = u.assigned.includes(f.id);
+        return `<img
+          src="${u.avatar}" alt="${u.name}" title="${u.name}"
+          onclick="toggleFilmJury(${f.id}, ${u.id})"
+          style="
+            width:36px;height:36px;border-radius:50%;object-fit:cover;
+            cursor:pointer;flex-shrink:0;
+            transition:transform 0.15s,box-shadow 0.15s,opacity 0.15s;
+            box-shadow:${assigned ? '0 0 0 2.5px var(--aurora),0 0 10px rgba(78,255,206,0.3)' : '0 0 0 2px rgba(255,255,255,0.12)'};
+            opacity:${assigned ? '1' : '0.3'};
+          "
+          onmouseover="this.style.transform='scale(1.12)';this.style.opacity='1'"
+          onmouseout="this.style.transform='scale(1)';this.style.opacity='${assigned ? '1' : '0.3'}'"
+        >`;
+      }).join('');
+
+      return `<div class="film-card">
+        <div class="film-thumb" onclick="playFilm(${f.id})">
+          <video src="assets/video.mp4" muted preload="none" id="vid-${f.id}"></video>
+          <div class="film-thumb-overlay">
+            <div class="play-btn">▶</div>
           </div>
-          <button onclick="openAssign(${u.id})" style="background:rgba(78,255,206,0.08);border:1px solid rgba(78,255,206,0.2);border-radius:7px;padding:5px 12px;font-size:0.75rem;font-weight:600;color:var(--aurora);cursor:pointer;">
-            Modifier ✎
-          </button>
+          <div class="film-num-badge">#${String(f.id).padStart(2,'0')}</div>
+          ${assignedBadge}
         </div>
-        <div style="display:flex;flex-wrap:wrap;gap:6px;">
-          ${assignedFilms.length === 0
-            ? `<span style="font-size:0.75rem;color:var(--mist);opacity:0.6;font-style:italic;">Aucun film assigné</span>`
-            : assignedFilms.map(f => `<span style="font-size:0.72rem;padding:4px 10px;background:rgba(245,230,66,0.07);border:1px solid rgba(245,230,66,0.18);border-radius:6px;color:var(--solar);">${f.title}</span>`).join('')
-          }
+        <div class="film-body">
+          <div class="film-title">${f.title}</div>
+          <div class="film-meta">${f.author} · ${f.country}</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:10px;">${avatars}</div>
         </div>
       </div>`;
     }).join('');
+
+    // Pagination
+    const pag = document.getElementById('pagination');
+    if (!pag) return;
+    if (totalPages <= 1) { pag.innerHTML = ''; return; }
+    let html = `<button class="page-btn" onclick="renderAssignView(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>←</button>`;
+    for (let i = 1; i <= totalPages; i++) {
+      html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="renderAssignView(${i})">${i}</button>`;
+    }
+    html += `<button class="page-btn" onclick="renderAssignView(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>→</button>`;
+    html += `<span style="font-size:0.7rem;color:var(--mist);margin-left:6px;">${(currentPage-1)*FILMS_PER_PAGE+1}–${Math.min(currentPage*FILMS_PER_PAGE, filmList.length)} / ${filmList.length} films</span>`;
+    pag.innerHTML = html;
   }
 
-  /* ── VUE PROGRESSION ── */
-  function renderStats() {
-    const grid = document.getElementById('stats-grid');
-    const decColors = { valide:'var(--aurora)', aRevoir:'var(--solar)', refuse:'var(--coral)' };
-    const decLabels = { valide:'Validé', aRevoir:'À revoir', refuse:'Refusé' };
-    // Données fictives de progression
-    const progressData = [
-      { film:"Rêves de Silicium",  total:4, valide:2, arevoir:1, refuse:0, pending:1 },
-      { film:"L'Enfant-Pixel",     total:4, valide:3, arevoir:0, refuse:0, pending:1 },
-      { film:"Archipel 2048",      total:4, valide:1, arevoir:2, refuse:0, pending:1 },
-      { film:"Mémoire Vive",       total:4, valide:0, arevoir:0, refuse:0, pending:4 },
-      { film:"Nouveaux Soleils",   total:4, valide:4, arevoir:0, refuse:0, pending:0 },
-      { film:"Frontières Douces",  total:4, valide:0, arevoir:1, refuse:2, pending:1 },
-      { film:"Vague Numérique",    total:4, valide:2, arevoir:1, refuse:0, pending:1 },
-      { film:"Jardin des Codes",   total:4, valide:2, arevoir:1, refuse:0, pending:1 },
-      { film:"Signal Perdu",       total:4, valide:0, arevoir:0, refuse:0, pending:4 },
-      { film:"Horizon Zéro",       total:4, valide:4, arevoir:0, refuse:0, pending:0 },
-    ];
-    grid.innerHTML = progressData.map(d => {
-      const done = d.valide + d.arevoir + d.refuse;
-      const pct  = Math.round((done / d.total) * 100);
-      return `<div style="background:var(--surface-2);border:1px solid rgba(255,255,255,0.05);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:16px;">
-        <div style="font-size:0.84rem;font-weight:600;flex:1;min-width:180px;">${d.film}</div>
-        <div style="flex:2;display:flex;height:8px;border-radius:4px;overflow:hidden;background:rgba(255,255,255,0.05);min-width:160px;">
-          ${d.valide  ? `<div style="width:${d.valide/d.total*100}%;background:var(--aurora);"></div>` : ''}
-          ${d.arevoir ? `<div style="width:${d.arevoir/d.total*100}%;background:var(--solar);"></div>` : ''}
-          ${d.refuse  ? `<div style="width:${d.refuse/d.total*100}%;background:var(--coral);"></div>` : ''}
-        </div>
-        <div style="font-family:var(--font-mono);font-size:0.72rem;color:${pct===100?'var(--aurora)':'var(--mist)'};min-width:60px;text-align:right;">${done}/${d.total} évalués</div>
-        ${d.valide  ? `<span style="font-size:0.68rem;padding:2px 8px;border-radius:9999px;background:rgba(78,255,206,0.1);color:var(--aurora);">${d.valide} ✓</span>` : ''}
-        ${d.arevoir ? `<span style="font-size:0.68rem;padding:2px 8px;border-radius:9999px;background:rgba(245,230,66,0.08);color:var(--solar);">${d.arevoir} ↩</span>` : ''}
-        ${d.refuse  ? `<span style="font-size:0.68rem;padding:2px 8px;border-radius:9999px;background:rgba(255,107,107,0.08);color:var(--coral);">${d.refuse} ✕</span>` : ''}
-      </div>`;
-    }).join('');
+  function playFilm(filmId) {
+    const vid = document.getElementById('vid-' + filmId);
+    if (!vid) return;
+    if (vid.paused) {
+      document.querySelectorAll('.film-thumb video').forEach(v => { if (v !== vid) v.pause(); });
+      vid.play();
+      vid.closest('.film-thumb').querySelector('.film-thumb-overlay').style.opacity = '0';
+    } else {
+      vid.pause();
+      vid.closest('.film-thumb').querySelector('.film-thumb-overlay').style.opacity = '1';
+    }
   }
 
   /* ── VUES ── */
-  const views = ['users','assign','phases','stats'];
+  const views = ['users','assign','phases'];
   const titles = {
     users:  ['Gestion des utilisateurs',  'Jurys et modérateurs — accès par token permanent'],
-    assign: ['Assignation des films',      'Chaque jury ne voit que ses films assignés'],
-    phases: ['Phases & Dates',             'Définissez les dates des sessions jury'],
-    stats:  ['Progression des évaluations','Décisions du jury en temps réel'],
+    assign: ['Films soumis',              'Visionnez et assignez chaque film au jury'],
+    phases: ['Phases & Dates',            'Définissez les dates des sessions jury'],
   };
 
   function showView(name, el) {
@@ -840,7 +1041,6 @@
     document.getElementById('topbar-title').textContent = titles[name][0];
     document.getElementById('topbar-info').textContent  = titles[name][1];
     if (name === 'assign') renderAssignView();
-    if (name === 'stats')  renderStats();
   }
 
   /* ── TOAST ── */
