@@ -55,11 +55,16 @@
       position: fixed;
       top: 0; left: 0; right: 0;
       z-index: 100;
-      display: flex;
-      justify-content: space-between;
-      padding: 20px 60px;
       background: linear-gradient(to bottom, rgba(10,15,46,0.95) 0%, transparent 100%);
       backdrop-filter: blur(12px);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 60px;
+      max-width: 1760px;
+      margin: 0 auto;
     }
     .logo {
       font-family: var(--font-display);
@@ -1779,7 +1784,7 @@
     /* ─── TABLETTE (≤ 1024px) ─────────────────────────────── */
     @media (max-width: 1024px) {
       /* nav */
-      nav { padding: 16px 24px; }
+      .nav-inner { padding: 16px 24px; }
       .nav-links { display: none; }
       .nav-mobile-right { display: flex; }
 
@@ -1832,7 +1837,7 @@
     /* ─── IPHONE (≤ 480px) ────────────────────────────────── */
     @media (max-width: 480px) {
       /* nav */
-      nav { padding: 14px 20px; }
+      .nav-inner { padding: 14px 20px; }
 
       /* hero */
       .hero { padding: 88px 20px 180px; }
@@ -1893,16 +1898,6 @@
       text-align: center;
       position: relative;
       overflow: hidden;
-    }
-    /* Vidéo fond */
-    .manifeste-video-bg {
-      position: absolute; inset: 0; z-index: 0;
-      pointer-events: none;
-    }
-    .manifeste-video-bg video {
-      width: 100%; height: 100%;
-      object-fit: cover;
-      opacity: 0.55;
     }
     /* Overlay sombre : fondu haut/bas + teinture deep-sky */
     .manifeste-section::before {
@@ -2181,15 +2176,6 @@
       min-height: 72vh;
       display: flex; align-items: center; justify-content: center;
     }
-    .marsnight-video {
-      position: absolute; inset: 0; z-index: 0;
-      pointer-events: none;
-    }
-    .marsnight-video video {
-      width: 100%; height: 100%;
-      object-fit: cover;
-      opacity: 0.55;
-    }
     .marsnight-bg {
       position: absolute; inset: 0; z-index: 1;
       background:
@@ -2261,33 +2247,35 @@
 
   <!-- ─── NAVIGATION ──────────────────────────────────── -->
   <nav>
-    <a href="#home" class="logo">mars<span class="ai">AI</span></a>
-    <ul class="nav-links">
-      <li><a href="#concours"  class="nav-item" data-section="concours">Le Concours</a></li>
-      <li><a href="#programme" class="nav-item" data-section="programme">Programme</a></li>
-      <li><a href="#films"     class="nav-item" data-section="films">Films</a></li>
-      <li><a href="#palmares"  class="nav-item" data-section="palmares">Les Prix</a></li>
-      <li><a href="#presse"    class="nav-item" data-section="presse">Contact</a></li>
-      <li><a href="login-jury.html" class="nav-jury"><span class="nav-jury-dot"></span>Espace Jury</a></li>
-      <li><a class="btn-nav" href="verification-email.html">Soumettre un film</a></li>
-      <li>
+    <div class="nav-inner">
+      <a href="#home" class="logo">mars<span class="ai">AI</span></a>
+      <ul class="nav-links">
+        <li><a href="#concours"  class="nav-item" data-section="concours">Le Concours</a></li>
+        <li><a href="#programme" class="nav-item" data-section="programme">Programme</a></li>
+        <li><a href="#films"     class="nav-item" data-section="films">Films</a></li>
+        <li><a href="#palmares"  class="nav-item" data-section="palmares">Les Prix</a></li>
+        <li><a href="#presse"    class="nav-item" data-section="presse">Contact</a></li>
+        <li><a href="login-jury.html" class="nav-jury"><span class="nav-jury-dot"></span>Espace Jury</a></li>
+        <li><a class="btn-nav" href="verification-email.html">Soumettre un film</a></li>
+        <li>
+          <div class="lang-switch">
+            <button id="btn-fr" class="lang-btn active" onclick="setLang('fr')" title="Français">FR</button>
+            <span class="lang-sep">╱</span>
+            <button id="btn-en" class="lang-btn" onclick="setLang('en')" title="English">EN</button>
+          </div>
+        </li>
+      </ul>
+      <!-- Hamburger mobile -->
+      <div class="nav-mobile-right">
         <div class="lang-switch">
-          <button id="btn-fr" class="lang-btn active" onclick="setLang('fr')" title="Français">FR</button>
+          <button class="lang-btn active" onclick="setLang('fr')" title="Français">FR</button>
           <span class="lang-sep">╱</span>
-          <button id="btn-en" class="lang-btn" onclick="setLang('en')" title="English">EN</button>
+          <button class="lang-btn" onclick="setLang('en')" title="English">EN</button>
         </div>
-      </li>
-    </ul>
-    <!-- Hamburger mobile -->
-    <div class="nav-mobile-right">
-      <div class="lang-switch">
-        <button class="lang-btn active" onclick="setLang('fr')" title="Français">FR</button>
-        <span class="lang-sep">╱</span>
-        <button class="lang-btn" onclick="setLang('en')" title="English">EN</button>
+        <button class="nav-burger" id="nav-burger" onclick="toggleMenu()" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
       </div>
-      <button class="nav-burger" id="nav-burger" onclick="toggleMenu()" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </button>
     </div>
   </nav>
 
@@ -2482,13 +2470,6 @@
 
   <!-- ─── MANIFESTE ───────────────────────────────────── -->
   <section class="manifeste-section">
-
-    <!-- Vidéo fond atmosphérique -->
-    <div class="manifeste-video-bg">
-      <video autoplay muted loop playsinline preload="none">
-        <source src="assets/tunnel.mp4" type="video/mp4">
-      </video>
-    </div>
 
     <!-- Contenu -->
     <div class="manifeste-inner">
@@ -3043,11 +3024,6 @@
 
   <!-- ─── MARS.AI NIGHT ─────────────────────────────────── -->
   <section class="marsnight-section" id="marsnight">
-    <div class="marsnight-video">
-      <video autoplay muted loop playsinline preload="none">
-        <source src="assets/tunnel.mp4" type="video/mp4">
-      </video>
-    </div>
     <div class="marsnight-bg"></div>
 
     <div class="marsnight-content">
