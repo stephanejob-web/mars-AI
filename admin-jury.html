@@ -758,6 +758,53 @@
     }
     .export-btn:hover { color: var(--white-soft); border-color: rgba(255,255,255,0.2); }
 
+    /* ══════════════════════════════════════════
+       COMMENTAIRES THREAD
+    ══════════════════════════════════════════ */
+    .comments-thread { display: flex; flex-direction: column; gap: 8px; }
+    .ct-item {
+      display: flex; gap: 10px;
+      padding: 11px 13px;
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 10px;
+    }
+    .ct-body { flex: 1; min-width: 0; }
+    .ct-header {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 5px;
+    }
+    .ct-name { font-size: 0.8rem; font-weight: 600; }
+    .ct-role { font-size: 0.7rem; color: var(--mist); }
+    .ct-text {
+      font-size: 0.82rem;
+      color: rgba(240,244,255,0.78);
+      line-height: 1.6;
+    }
+    .ct-empty {
+      text-align: center; padding: 20px;
+      font-size: 0.8rem; color: var(--mist); font-style: italic;
+    }
+    .ct-mine { border-color: rgba(78,255,206,0.15); background: rgba(78,255,206,0.04); }
+
+    /* Bouton publier commentaire */
+    .btn-publish {
+      flex-shrink: 0; align-self: flex-end;
+      padding: 9px 18px;
+      background: rgba(78,255,206,0.1);
+      border: 1px solid rgba(78,255,206,0.3);
+      border-radius: 9px;
+      font-family: var(--font-display);
+      font-size: 0.82rem; font-weight: 800;
+      color: var(--aurora); cursor: pointer;
+      transition: all 0.18s; white-space: nowrap;
+      height: 46px;
+    }
+    .btn-publish:hover {
+      background: var(--aurora); color: var(--deep-sky);
+      box-shadow: 0 4px 16px rgba(78,255,206,0.3);
+    }
+
     /* Toast */
     .toast {
       position: fixed;
@@ -962,10 +1009,18 @@
             <p id="d-note">"J'ai travaillé avec Runway ML pour générer des séquences oniriques, puis dirigé les mouvements de caméra image par image. Le son est composé via MusicGen. Ce film explore la porosité entre mémoire humaine et apprentissage machine."</p>
           </div>
 
-          <!-- Votes des autres jurés -->
+          <!-- Décisions du jury -->
           <div class="section-card">
-            <h4>Notes du jury</h4>
+            <h4>Décisions du jury</h4>
             <div class="votes-list" id="votes-list"></div>
+          </div>
+
+          <!-- Commentaires du jury -->
+          <div class="section-card">
+            <h4>Commentaires du jury</h4>
+            <div class="comments-thread" id="comments-thread">
+              <div class="ct-empty">Aucun commentaire pour ce film.</div>
+            </div>
           </div>
 
         </div><!-- /detail-scroll -->
@@ -981,9 +1036,10 @@
           <!-- Commentaire -->
           <div class="notation-bottom">
             <div class="comment-wrap">
-              <div class="comment-label">Commentaire (facultatif — visible par le jury)</div>
-              <textarea class="comment-input" id="comment-input" placeholder="Ajoutez un commentaire pour les délibérations…"></textarea>
+              <div class="comment-label">Mon commentaire (visible par tout le jury)</div>
+              <textarea class="comment-input" id="comment-input" placeholder="Ajoutez un commentaire sur ce film…"></textarea>
             </div>
+            <button class="btn-publish" onclick="postComment()">💬 Publier</button>
           </div>
         </div>
 
@@ -1139,8 +1195,9 @@
         const map = { valide:'valide', aRevoir:'arevoir', refuse:'refuse' };
         document.getElementById('btn-'+map[f.myDecision])?.classList.add('active');
       }
-      document.getElementById('comment-input').value = '';
+      document.getElementById('comment-input').value = f.comments?.['ML'] || '';
       renderVotes(f);
+      renderComments(f);
       stopPlayer(); progress = 0;
       document.getElementById('pbar').style.width = '0%';
       document.getElementById('ptime').textContent = '0:00 / 1:00';
@@ -1177,6 +1234,9 @@
       const f = films.find(x=>x.id===activeFilm);
       if (!f) return;
       f.myDecision = type;
+      // Sauvegarder le commentaire en même temps que la décision
+      const comment = document.getElementById('comment-input').value.trim();
+      if (comment) f.comments['ML'] = comment;
       // Feedback toast selon type
       const toasts = {
         valide:   ['✓ Validé : ' + f.title, 'ok'],
@@ -1199,6 +1259,48 @@
       const pending   = films.length - evaluated;
       document.getElementById('nav-pending').textContent  = pending;
       document.getElementById('nav-selected').textContent = evaluated;
+    }
+
+    /* ── PUBLIER COMMENTAIRE ── */
+    function postComment() {
+      const f = films.find(x=>x.id===activeFilm);
+      if (!f) return;
+      const comment = document.getElementById('comment-input').value.trim();
+      if (!comment) { showToast('Écrivez un commentaire avant de publier.', 'err'); return; }
+      f.comments['ML'] = comment;
+      f.juryDec['ML'] = f.juryDec['ML'] || null; // ne change pas la décision
+      renderVotes(f);
+      renderComments(f);
+      showToast('💬 Commentaire publié', 'ok');
+    }
+
+    /* ── RENDU COMMENTAIRES ── */
+    function renderComments(f) {
+      const el = document.getElementById('comments-thread');
+      if (!el) return;
+      const withComments = jurors.filter(j => f.comments?.[j.key]);
+      if (!withComments.length) {
+        el.innerHTML = '<div class="ct-empty">Aucun commentaire pour ce film.</div>';
+        return;
+      }
+      el.innerHTML = withComments.map(j => {
+        const dec = f.juryDec[j.key];
+        const isMine = j.key === 'ML';
+        const pillHtml = dec
+          ? `<span class="vote-dec ${decPillCls[dec]}">${decLabel[dec]}</span>`
+          : '';
+        return `<div class="ct-item ${isMine ? 'ct-mine' : ''}">
+          <div class="vote-avatar ${j.cls}">${j.initials}</div>
+          <div class="ct-body">
+            <div class="ct-header">
+              <span class="ct-name">${j.name}</span>
+              ${isMine ? '<span style="font-size:0.68rem;color:var(--aurora);font-weight:600;">Moi</span>' : `<span class="ct-role">${j.role}</span>`}
+              ${pillHtml}
+            </div>
+            <div class="ct-text">"${f.comments[j.key]}"</div>
+          </div>
+        </div>`;
+      }).join('');
     }
 
     /* ── VOTES JURY ── */
@@ -1331,6 +1433,8 @@
     renderList();
     updateCounts();
     renderVotes(films[0]);
+    renderComments(films[0]);
+    document.getElementById('comment-input').value = films[0].comments?.['ML'] || '';
   </script>
 
   <style>
