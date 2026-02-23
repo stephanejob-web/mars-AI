@@ -1810,6 +1810,10 @@
       .footer-inner { grid-template-columns: 1fr 1fr; gap: 36px; }
       .awards-secondary { grid-template-columns: 1fr 1fr; gap: 12px; }
       .award-grand { flex-direction: column; gap: 16px; }
+      .jury-featured { grid-template-columns: 160px 1fr; gap: 28px; padding: 28px 32px; }
+      .jury-featured-photo { width: 160px; height: 196px; border-radius: 14px; }
+      .jury-featured-name { font-size: clamp(1.4rem, 4vw, 2rem); }
+      .jury-grid { grid-template-columns: repeat(3, 1fr); gap: 14px; }
 
       /* countdown */
       .countdown-inner { padding: 14px 24px 18px; }
@@ -1863,6 +1867,9 @@
       .awards-secondary { grid-template-columns: 1fr; }
       .footer-inner { grid-template-columns: 1fr; gap: 28px; }
       .cta-block { padding: 32px 20px; }
+      .jury-featured { grid-template-columns: 1fr; gap: 24px; padding: 28px 24px; }
+      .jury-featured-photo { width: 100%; height: 260px; }
+      .jury-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
 
       /* countdown */
       .countdown-num { font-size: clamp(1.6rem, 7vw, 2.2rem); }
@@ -2239,6 +2246,137 @@
       transform: translateY(-2px);
       box-shadow: 0 8px 60px rgba(255,107,107,0.38);
     }
+
+    /* ─── JURY SECTION ───────────────────────────────── */
+    /* ─── JURY SECTION ───────────────────────────────── */
+    .jury-section {
+      position: relative;
+      background: rgba(8,12,38,0.85);
+      backdrop-filter: blur(2px);
+      padding: 120px 0;
+      overflow: hidden;
+    }
+    .jury-section::before {
+      content: "";
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(78,255,206,0.05) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 30%, rgba(192,132,252,0.05) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .jury-section::after {
+      content: "";
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(78,255,206,0.3), transparent);
+    }
+
+    /* Carte vedette — Président(e) */
+    .jury-featured {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 48px;
+      align-items: center;
+      background: linear-gradient(135deg, rgba(78,255,206,0.05) 0%, rgba(78,255,206,0.01) 50%, transparent 100%);
+      border: 1px solid rgba(78,255,206,0.18);
+      border-radius: 28px;
+      padding: 48px 52px;
+      margin-bottom: 36px;
+      position: relative;
+      overflow: hidden;
+    }
+    .jury-featured::before {
+      content: "";
+      position: absolute; top: 0; left: 0;
+      width: 40%; height: 100%;
+      background: linear-gradient(90deg, rgba(78,255,206,0.04) 0%, transparent 100%);
+      pointer-events: none;
+    }
+    .jury-featured-photo {
+      width: 260px; height: 320px;
+      object-fit: cover;
+      border-radius: 18px;
+      display: block;
+      border: 1px solid rgba(78,255,206,0.2);
+      box-shadow: 0 0 60px rgba(78,255,206,0.08), 0 24px 60px rgba(0,0,0,0.4);
+      position: relative; z-index: 1;
+    }
+    .jury-featured-body { position: relative; z-index: 1; }
+    .jury-featured-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-family: var(--font-mono);
+      font-size: 0.64rem; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--aurora);
+      background: rgba(78,255,206,0.08);
+      border: 1px solid rgba(78,255,206,0.22);
+      border-radius: 20px;
+      padding: 5px 14px;
+      margin-bottom: 20px;
+    }
+    .jury-featured-badge::before {
+      content: "";
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--aurora);
+      animation: pulse-dot 1.6s ease-in-out infinite;
+    }
+    .jury-featured-name {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      font-weight: 800; letter-spacing: -0.03em; line-height: 1.05;
+      color: var(--white-soft);
+      margin-bottom: 12px;
+    }
+    .jury-featured-role {
+      font-size: 1rem; font-weight: 500;
+      color: var(--aurora);
+      margin-bottom: 20px;
+    }
+    .jury-featured-quote {
+      font-size: 0.88rem; color: var(--mist); line-height: 1.75;
+      border-left: 2px solid rgba(78,255,206,0.25);
+      padding-left: 18px;
+      max-width: 460px;
+    }
+
+    /* Grille membres */
+    .jury-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+    .jury-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 20px;
+      overflow: hidden;
+      transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+      cursor: default;
+    }
+    .jury-card:hover {
+      border-color: rgba(78,255,206,0.2);
+      transform: translateY(-5px);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.3), 0 0 30px rgba(78,255,206,0.05);
+    }
+    .jury-card-photo {
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      object-fit: cover;
+      display: block;
+    }
+    .jury-card-info {
+      padding: 18px 20px 20px;
+    }
+    .jury-card-name {
+      font-family: var(--font-display);
+      font-size: 1rem; font-weight: 800;
+      color: var(--white-soft);
+      margin-bottom: 5px; line-height: 1.2;
+    }
+    .jury-card-role {
+      font-size: 0.75rem; color: var(--mist); line-height: 1.45;
+    }
   </style>
 </head>
 <body>
@@ -2253,6 +2391,7 @@
         <li><a href="#concours"  class="nav-item" data-section="concours">Le Concours</a></li>
         <li><a href="#programme" class="nav-item" data-section="programme">Programme</a></li>
         <li><a href="#films"     class="nav-item" data-section="films">Films</a></li>
+        <li><a href="#jury"      class="nav-item" data-section="jury">Le Jury</a></li>
         <li><a href="#palmares"  class="nav-item" data-section="palmares">Les Prix</a></li>
         <li><a href="#presse"    class="nav-item" data-section="presse">Contact</a></li>
         <li><a href="login-jury.html" class="nav-jury"><span class="nav-jury-dot"></span>Espace Jury</a></li>
@@ -2284,6 +2423,7 @@
     <a href="#concours"  class="nav-panel-link" onclick="closeMenu()">Le Concours</a>
     <a href="#programme" class="nav-panel-link" onclick="closeMenu()">Programme</a>
     <a href="#films"     class="nav-panel-link" onclick="closeMenu()">Films</a>
+    <a href="#jury"      class="nav-panel-link" onclick="closeMenu()">Le Jury</a>
     <a href="#palmares"  class="nav-panel-link" onclick="closeMenu()">Les Prix</a>
     <a href="#presse"    class="nav-panel-link" onclick="closeMenu()">Contact</a>
     <div class="nav-panel-sep"></div>
@@ -3062,6 +3202,21 @@
     </div>
   </section>
 
+  <!-- ─── JURY SECTION ───────────────────────────────── -->
+  <section class="jury-section" id="jury">
+    <div class="section-inner">
+      <div class="section-label">Jury International · marsAI 2026</div>
+      <h2 class="section-title">Le Jury</h2>
+      <p class="section-desc" style="margin-bottom:52px;">Des créateurs, artistes et personnalités du cinéma venus du monde entier pour évaluer les œuvres en compétition.</p>
+
+      <!-- Carte vedette (président·e) -->
+      <div id="jury-featured-wrap"></div>
+
+      <!-- Grille membres -->
+      <div class="jury-grid" id="jury-grid"></div>
+    </div>
+  </section>
+
   <!-- ─── PRIX SECTION ────────────────────────────────── -->
   <section class="palmares-section" id="palmares">
     <div class="section-inner">
@@ -3343,6 +3498,7 @@
       { id: 'concours',  el: null },
       { id: 'programme', el: null },
       { id: 'films',     el: null },
+      { id: 'jury',      el: null },
       { id: 'palmares',  el: null },
       { id: 'presse',    el: null },
     ];
@@ -3367,6 +3523,61 @@
         a.classList.toggle('nav-active', a.dataset.section === active);
       });
     });
+
+    // ─── JURY SECTION ──────────────────────────────────────
+    const defaultJury = [
+      { id:1,  name:"Marie Lefebvre", label:"Présidente · Réalisatrice",  quote:"Figure incontournable du cinéma d'auteur, trois fois primée au Festival de Cannes. Elle préside le jury marsAI 2026 avec l'ambition d'élever la création IA au rang d'art majeur.", avatar:"https://i.pravatar.cc/400?img=47", featured:true },
+      { id:2,  name:"Pierre Dubois",  label:"Directeur artistique",       avatar:"https://i.pravatar.cc/400?img=12"  },
+      { id:3,  name:"Kenji Ito",      label:"Artiste numérique",          avatar:"https://i.pravatar.cc/400?img=68"  },
+      { id:4,  name:"Sofia Eriksson", label:"Critique de cinéma",         avatar:"https://i.pravatar.cc/400?img=44"  },
+      { id:7,  name:"Amara Touré",    label:"Productrice",                avatar:"https://i.pravatar.cc/400?img=32"  },
+      { id:8,  name:"Elena Petrov",   label:"Compositrice",               avatar:"https://i.pravatar.cc/400?img=29"  },
+      { id:9,  name:"Yuki Nakamura",  label:"Réalisatrice",               avatar:"https://i.pravatar.cc/400?img=56"  },
+      { id:10, name:"Carlos Ruiz",    label:"Chef opérateur",             avatar:"https://i.pravatar.cc/400?img=18"  },
+      { id:11, name:"Priya Mehta",    label:"Scénariste",                 avatar:"https://i.pravatar.cc/400?img=36"  },
+      { id:12, name:"Omar Diallo",    label:"Directeur photo",            avatar:"https://i.pravatar.cc/400?img=11"  },
+    ];
+
+    function renderJury() {
+      // Priorité aux données éditées depuis le panneau admin
+      const savedData = localStorage.getItem('marsai_jury_data');
+      const jurySource = savedData ? JSON.parse(savedData) : defaultJury;
+      const visible = jurySource.filter(j => j.visible !== false);
+
+      const featuredWrap = document.getElementById('jury-featured-wrap');
+      const grid         = document.getElementById('jury-grid');
+
+      if (!visible.length) {
+        featuredWrap.innerHTML = '';
+        grid.innerHTML = '<p style="color:var(--mist);grid-column:1/-1;text-align:center;font-size:0.9rem;">Le jury est en cours de constitution.</p>';
+        return;
+      }
+
+      // Premier membre visible = vedette
+      const president = visible[0];
+      const members   = visible.slice(1);
+
+      featuredWrap.innerHTML = `
+        <div class="jury-featured">
+          <img class="jury-featured-photo" src="${president.avatar}" alt="${president.name}">
+          <div class="jury-featured-body">
+            <div class="jury-featured-badge">✦ Présidence du jury</div>
+            <div class="jury-featured-name">${president.name}</div>
+            <div class="jury-featured-role">${president.label}</div>
+            ${president.quote ? `<p class="jury-featured-quote">${president.quote}</p>` : ''}
+          </div>
+        </div>`;
+
+      grid.innerHTML = members.map(j => `
+        <div class="jury-card">
+          <img class="jury-card-photo" src="${j.avatar}" alt="${j.name}">
+          <div class="jury-card-info">
+            <div class="jury-card-name">${j.name}</div>
+            <div class="jury-card-role">${j.label}</div>
+          </div>
+        </div>`).join('');
+    }
+    renderJury();
   </script>
 
   <!-- ── AURORA MORPHING ───────────────────────────────────── -->
