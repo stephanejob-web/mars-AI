@@ -657,7 +657,88 @@
       .fields-grid.col2, .fields-grid.col3 { grid-template-columns: 1fr; }
       .field.span2 { grid-column: span 1; }
       .tools-grid { grid-template-columns: 1fr 1fr; }
+      .social-grid { grid-template-columns: 1fr; }
     }
+
+    /* ── RADIO CARDS (civilité, classification IA) ── */
+    .radio-group { display: flex; gap: 10px; flex-wrap: wrap; }
+    .radio-card {
+      display: flex; align-items: center; gap: 8px;
+      padding: 9px 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 10px; cursor: pointer;
+      font-size: 0.84rem; color: var(--mist);
+      transition: all 0.15s; user-select: none;
+    }
+    .radio-card input[type="radio"] { display: none; }
+    .radio-card:has(input:checked) {
+      background: rgba(78,255,206,0.08);
+      border-color: rgba(78,255,206,0.35);
+      color: var(--aurora);
+    }
+    .radio-card-dot {
+      width: 13px; height: 13px; border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.25);
+      flex-shrink: 0; transition: all 0.15s;
+    }
+    .radio-card:has(input:checked) .radio-card-dot {
+      border-color: var(--aurora);
+      background: var(--aurora);
+      box-shadow: 0 0 0 3px rgba(78,255,206,0.15);
+    }
+
+    /* Classification IA — grandes cartes */
+    .ia-class-cards { display: flex; flex-direction: column; gap: 10px; }
+    .ia-class-card {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 18px 20px;
+      background: rgba(255,255,255,0.03);
+      border: 1.5px solid rgba(255,255,255,0.08);
+      border-radius: 14px; cursor: pointer;
+      transition: all 0.2s; user-select: none;
+    }
+    .ia-class-card input[type="radio"] { display: none; }
+    .ia-class-card:has(input:checked) {
+      background: rgba(78,255,206,0.05);
+      border-color: rgba(78,255,206,0.3);
+    }
+    .ia-class-card:has(input:checked) .ia-class-dot {
+      border-color: var(--aurora); background: var(--aurora);
+      box-shadow: 0 0 0 4px rgba(78,255,206,0.12);
+    }
+    .ia-class-dot {
+      width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0; margin-top: 2px;
+      border: 2px solid rgba(255,255,255,0.2); transition: all 0.15s;
+    }
+    .ia-class-title { font-size: 0.9rem; font-weight: 700; color: var(--white-soft); margin-bottom: 3px; }
+    .ia-class-desc  { font-size: 0.76rem; color: var(--mist); line-height: 1.5; }
+    .ia-class-badge {
+      display: inline-flex; align-items: center;
+      font-size: 0.63rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 2px 9px;
+      border-radius: 20px; margin-top: 5px;
+    }
+    .badge-full { background: rgba(78,255,206,0.1); color: var(--aurora); border: 1px solid rgba(78,255,206,0.25); }
+    .badge-hybrid { background: rgba(192,132,252,0.1); color: var(--lavande); border: 1px solid rgba(192,132,252,0.25); }
+
+    /* Champs réseaux sociaux icônés */
+    .social-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .social-input-wrap { position: relative; }
+    .social-icon {
+      position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+      font-size: 0.85rem; pointer-events: none; opacity: 0.5;
+    }
+    .social-input {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1.5px solid rgba(255,255,255,0.09);
+      border-radius: 10px; padding: 10px 14px 10px 34px;
+      font-family: var(--font-body); font-size: 0.84rem;
+      color: var(--white-soft); outline: none; transition: border-color 0.2s;
+    }
+    .social-input:focus { border-color: rgba(78,255,206,0.4); }
+    .social-input::placeholder { color: rgba(136,146,176,0.45); }
   </style>
 </head>
 <body>
@@ -697,14 +778,14 @@
           <div class="sni-circle pending" id="snc-2">2</div>
           <div class="sni-text">
             <div class="sni-title">Le Film</div>
-            <div class="sni-sub">Titre, synopsis, vidéo</div>
+            <div class="sni-sub">Titre FR/EN, synopsis, vidéo</div>
           </div>
         </div>
         <div class="step-nav-item locked" data-step="3" onclick="goStep(3)">
           <div class="sni-circle pending" id="snc-3">3</div>
           <div class="sni-text">
-            <div class="sni-title">Fiche IA</div>
-            <div class="sni-sub">Outils & sous-titres</div>
+            <div class="sni-title">Déclaration IA</div>
+            <div class="sni-sub">Type de prod. & outils</div>
           </div>
         </div>
         <div class="step-nav-item locked" data-step="4" onclick="goStep(4)">
@@ -740,6 +821,21 @@
           </div>
         </div>
 
+        <!-- Civilité -->
+        <div class="field" style="margin-bottom:20px;">
+          <label class="field-label">Civilité <span class="req">● requis</span></label>
+          <div class="radio-group">
+            <label class="radio-card">
+              <input type="radio" name="civilite" value="M" checked>
+              <span class="radio-card-dot"></span>M.
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="civilite" value="Mme">
+              <span class="radio-card-dot"></span>Mme
+            </label>
+          </div>
+        </div>
+
         <div class="fields-grid col2">
 
           <div class="field">
@@ -754,10 +850,17 @@
             <div class="field-error" id="err-nom">Champ requis</div>
           </div>
 
-          <div class="field span2">
-            <label class="field-label">Nom du groupe / équipe <span class="opt">(si plusieurs réalisateurs)</span></label>
-            <input type="text" id="f-groupe" placeholder="ex: Collectif Aurora, Studio XYZ…" maxlength="200">
-            <div class="field-hint">Un seul réalisateur référent doit être inscrit pour les droits d'auteur. Les autres membres sont détaillés ici.</div>
+          <div class="field">
+            <label class="field-label">Date de naissance <span class="req">● requis</span></label>
+            <input type="date" id="f-dob" autocomplete="bday" onchange="validateAge(this)">
+            <div class="field-hint">Vous devez avoir au moins 18 ans pour candidater</div>
+            <div class="field-error" id="err-dob">Vous devez avoir 18 ans révolus à la date de dépôt</div>
+          </div>
+
+          <div class="field">
+            <label class="field-label">Métier actuel <span class="req">● requis</span></label>
+            <input type="text" id="f-metier" placeholder="ex : Réalisateur, Étudiant, Designer…" autocomplete="organization-title">
+            <div class="field-error" id="err-metier">Champ requis</div>
           </div>
 
           <div class="field span2">
@@ -768,9 +871,44 @@
           </div>
 
           <div class="field">
-            <label class="field-label">Pays de résidence <span class="req">● requis</span></label>
-            <select id="f-pays">
-              <option value="">— Sélectionnez votre pays —</option>
+            <label class="field-label">Téléphone <span class="opt">(facultatif)</span></label>
+            <input type="tel" id="f-tel" placeholder="+33 1 00 00 00 00" autocomplete="tel-national">
+          </div>
+
+          <div class="field">
+            <label class="field-label">Mobile <span class="req">● requis</span></label>
+            <input type="tel" id="f-mobile" placeholder="+33 6 00 00 00 00" autocomplete="tel">
+            <div class="field-error" id="err-mobile">Numéro de mobile requis</div>
+          </div>
+
+        </div>
+
+        <hr class="section-sep">
+        <div class="section-title-inline">Adresse postale</div>
+
+        <div class="fields-grid" style="margin-bottom:12px;">
+          <div class="field">
+            <label class="field-label">Rue / Numéro <span class="req">● requis</span></label>
+            <input type="text" id="f-rue" placeholder="12 rue de la République" autocomplete="street-address">
+            <div class="field-error" id="err-rue">Champ requis</div>
+          </div>
+        </div>
+
+        <div class="fields-grid col3">
+          <div class="field">
+            <label class="field-label">Code postal <span class="req">● requis</span></label>
+            <input type="text" id="f-cp" placeholder="13001" autocomplete="postal-code" maxlength="10">
+            <div class="field-error" id="err-cp">Champ requis</div>
+          </div>
+          <div class="field">
+            <label class="field-label">Ville <span class="req">● requis</span></label>
+            <input type="text" id="f-ville" placeholder="Marseille" autocomplete="address-level2">
+            <div class="field-error" id="err-ville">Champ requis</div>
+          </div>
+          <div class="field">
+            <label class="field-label">Pays <span class="req">● requis</span></label>
+            <select id="f-pays" autocomplete="country">
+              <option value="">— Pays —</option>
               <option value="FR">🇫🇷 France</option>
               <option value="BE">🇧🇪 Belgique</option>
               <option value="CH">🇨🇭 Suisse</option>
@@ -789,40 +927,64 @@
               <option value="IN">🇮🇳 Inde</option>
               <option value="CN">🇨🇳 Chine</option>
               <option value="AU">🇦🇺 Australie</option>
-              <option value="other">🌍 Autre pays (120+ pays acceptés)</option>
+              <option value="other">🌍 Autre pays</option>
             </select>
             <div class="field-error" id="err-pays">Sélectionnez votre pays</div>
           </div>
-
-          <div class="field">
-            <label class="field-label">École / Institution <span class="opt">(facultatif)</span></label>
-            <input type="text" id="f-ecole" placeholder="ex: La Fémis, ESRA, Gobelins…">
-          </div>
-
-          <div class="field span2">
-            <label class="field-label">Site / Portfolio <span class="opt">(facultatif)</span></label>
-            <input type="url" id="f-portfolio" placeholder="https://votresite.com ou lien Vimeo…">
-          </div>
-
-          <!-- Réseaux sociaux -->
-          <div class="field span2">
-            <label class="field-label">Réseaux sociaux <span class="opt">(facultatif — utilisés pour promouvoir votre film si sélectionné)</span></label>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-              <input type="text" id="f-instagram" placeholder="Instagram  @votre_compte" style="background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.09);border-radius:10px;padding:10px 14px;font-family:var(--font-body);font-size:0.88rem;color:var(--white-soft);outline:none;transition:border-color 0.2s;" onfocus="this.style.borderColor='rgba(78,255,206,0.45)'" onblur="this.style.borderColor='rgba(255,255,255,0.09)'">
-              <input type="text" id="f-tiktok" placeholder="TikTok  @votre_compte" style="background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.09);border-radius:10px;padding:10px 14px;font-family:var(--font-body);font-size:0.88rem;color:var(--white-soft);outline:none;transition:border-color 0.2s;" onfocus="this.style.borderColor='rgba(78,255,206,0.45)'" onblur="this.style.borderColor='rgba(255,255,255,0.09)'">
-              <input type="text" id="f-youtube" placeholder="YouTube  @chaîne ou URL" style="background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.09);border-radius:10px;padding:10px 14px;font-family:var(--font-body);font-size:0.88rem;color:var(--white-soft);outline:none;transition:border-color 0.2s;" onfocus="this.style.borderColor='rgba(78,255,206,0.45)'" onblur="this.style.borderColor='rgba(255,255,255,0.09)'">
-              <input type="text" id="f-xtwitter" placeholder="X / Twitter  @votre_compte" style="background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.09);border-radius:10px;padding:10px 14px;font-family:var(--font-body);font-size:0.88rem;color:var(--white-soft);outline:none;transition:border-color 0.2s;" onfocus="this.style.borderColor='rgba(78,255,206,0.45)'" onblur="this.style.borderColor='rgba(255,255,255,0.09)'">
-            </div>
-          </div>
-
-          <!-- Tags -->
-          <div class="field span2">
-            <label class="field-label">Tags / mots-clés <span class="opt">(facultatif · max 5, séparés par des virgules)</span></label>
-            <input type="text" id="f-tags" placeholder="ex: dystopie, nature, espoir, technologie, famille…" maxlength="150">
-            <div class="field-hint">Utilisés pour la découverte de votre film dans la galerie</div>
-          </div>
-
         </div>
+
+        <hr class="section-sep">
+        <div class="section-title-inline">Réseaux sociaux <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.7rem;color:var(--mist);opacity:0.8;">(facultatif — utilisés pour promouvoir votre film si sélectionné)</span></div>
+
+        <div class="social-grid">
+          <div class="social-input-wrap">
+            <span class="social-icon">▶</span>
+            <input type="text" class="social-input" id="f-youtube" placeholder="YouTube — @chaîne ou URL">
+          </div>
+          <div class="social-input-wrap">
+            <span class="social-icon">📸</span>
+            <input type="text" class="social-input" id="f-instagram" placeholder="Instagram — @votre_compte">
+          </div>
+          <div class="social-input-wrap">
+            <span class="social-icon" style="font-family:serif;font-weight:700;font-size:0.75rem;">in</span>
+            <input type="text" class="social-input" id="f-linkedin" placeholder="LinkedIn — profil ou URL">
+          </div>
+          <div class="social-input-wrap">
+            <span class="social-icon" style="font-weight:700;font-size:0.8rem;">f</span>
+            <input type="text" class="social-input" id="f-facebook" placeholder="Facebook — page ou URL">
+          </div>
+          <div class="social-input-wrap">
+            <span class="social-icon" style="font-weight:700;">𝕏</span>
+            <input type="text" class="social-input" id="f-xtwitter" placeholder="X / Twitter — @votre_compte">
+          </div>
+        </div>
+
+        <hr class="section-sep">
+
+        <div class="fields-grid col2" style="margin-bottom:16px;">
+          <div class="field">
+            <label class="field-label">Comment avez-vous connu marsAI ? <span class="opt">(facultatif)</span></label>
+            <select id="f-discovery">
+              <option value="">— Sélectionnez —</option>
+              <option value="rs">Réseaux sociaux</option>
+              <option value="presse">Presse / Média</option>
+              <option value="bouche">Bouche à oreille</option>
+              <option value="ecole">École / Université</option>
+              <option value="partenaire">Partenaire / Festival</option>
+              <option value="newsletter">Newsletter</option>
+              <option value="autre">Autre</option>
+            </select>
+          </div>
+        </div>
+
+        <label class="rgpd-item" id="newsletter-item" onclick="this.classList.toggle('checked');document.getElementById('chk-newsletter').checked=this.classList.contains('checked');" style="cursor:pointer;">
+          <input type="checkbox" id="chk-newsletter" style="display:none;">
+          <div class="rgpd-box"></div>
+          <div class="rgpd-text">
+            <div class="rgpd-title">Newsletter marsAI <span class="opt">(facultatif)</span></div>
+            <div class="rgpd-sub">Je souhaite recevoir les actualités du festival, les annonces de résultats et les informations sur les prochaines éditions.</div>
+          </div>
+        </label>
 
         <div class="step-nav-btns">
           <div></div>
@@ -840,20 +1002,63 @@
           </div>
         </div>
 
-        <div class="fields-grid">
+        <div class="fields-grid col2">
 
           <div class="field">
-            <label class="field-label">Titre du film <span class="req">● requis</span></label>
-            <input type="text" id="f-titre" placeholder="Titre de votre court-métrage" maxlength="100" oninput="countChars(this, 'cc-titre', 100)">
+            <label class="field-label">Titre original <span class="req">● requis</span></label>
+            <input type="text" id="f-titre" placeholder="Titre en français" maxlength="100" oninput="countChars(this,'cc-titre',100)">
             <div class="char-counter" id="cc-titre">0 / 100</div>
             <div class="field-error" id="err-titre">Champ requis</div>
           </div>
 
           <div class="field">
-            <label class="field-label">Synopsis <span class="req">● requis</span></label>
-            <textarea id="f-synopsis" rows="4" placeholder="Décrivez brièvement votre film en 2-3 phrases…" maxlength="500" oninput="countChars(this,'cc-synopsis',500)"></textarea>
-            <div class="char-counter" id="cc-synopsis">0 / 500</div>
+            <label class="field-label">Titre traduit en anglais <span class="req">● requis</span></label>
+            <input type="text" id="f-titre-en" placeholder="English title" maxlength="100" oninput="countChars(this,'cc-titre-en',100)">
+            <div class="char-counter" id="cc-titre-en">0 / 100</div>
+            <div class="field-error" id="err-titre-en">Champ requis</div>
+          </div>
+
+          <div class="field">
+            <label class="field-label">Langue parlée du film <span class="req">● requis</span></label>
+            <select id="f-langue">
+              <option value="">— Sélectionnez —</option>
+              <option value="fr">🇫🇷 Français</option>
+              <option value="en">🇬🇧 Anglais</option>
+              <option value="es">🇪🇸 Espagnol</option>
+              <option value="ar">🌍 Arabe</option>
+              <option value="de">🇩🇪 Allemand</option>
+              <option value="it">🇮🇹 Italien</option>
+              <option value="pt">🇧🇷 Portugais</option>
+              <option value="zh">🇨🇳 Mandarin</option>
+              <option value="ja">🇯🇵 Japonais</option>
+              <option value="sans">🔇 Sans dialogue (film muet)</option>
+              <option value="autre">Autre langue</option>
+            </select>
+            <div class="field-error" id="err-langue">Sélectionnez la langue du film</div>
+          </div>
+
+          <div class="field">
+            <label class="field-label">Tags thématiques <span class="opt">(max 5, séparés par des virgules)</span></label>
+            <input type="text" id="f-tags" placeholder="ex: espoir, nature, technologie, solidarité…" maxlength="150">
+            <div class="field-hint">En lien avec le thème "Futurs souhaitables"</div>
+          </div>
+
+        </div>
+
+        <div class="fields-grid" style="margin-top:4px;">
+
+          <div class="field">
+            <label class="field-label">Synopsis en français <span class="req">● requis</span></label>
+            <textarea id="f-synopsis" rows="4" placeholder="Décrivez brièvement votre film en 2-3 phrases…" maxlength="300" oninput="countChars(this,'cc-synopsis',300)"></textarea>
+            <div class="char-counter" id="cc-synopsis">0 / 300</div>
             <div class="field-error" id="err-synopsis">Champ requis</div>
+          </div>
+
+          <div class="field">
+            <label class="field-label">Synopsis en anglais <span class="req">● requis</span></label>
+            <textarea id="f-synopsis-en" rows="4" placeholder="Briefly describe your film in 2-3 sentences…" maxlength="300" oninput="countChars(this,'cc-synopsis-en',300)"></textarea>
+            <div class="char-counter" id="cc-synopsis-en">0 / 300</div>
+            <div class="field-error" id="err-synopsis-en">English synopsis required</div>
           </div>
 
         </div>
@@ -983,10 +1188,39 @@
         <div class="step-panel-header">
           <div class="step-icon si-3">🤖</div>
           <div>
-            <h2>Fiche IA</h2>
-            <p>Outils utilisés (obligatoire pour image/vidéo) et sous-titres</p>
+            <h2>Déclaration d'Usage de l'IA</h2>
+            <p>Type de production, outils utilisés et sous-titres</p>
           </div>
         </div>
+
+        <!-- Classification IA -->
+        <div class="field" style="margin-bottom:24px;">
+          <label class="field-label">Type de production IA <span class="req">● requis</span></label>
+          <div class="ia-class-cards">
+            <label class="ia-class-card">
+              <input type="radio" name="ia-class" value="full" checked>
+              <div class="ia-class-dot"></div>
+              <div>
+                <div class="ia-class-title">Génération intégrale</div>
+                <div class="ia-class-desc">Le film a été entièrement généré par IA, sans éléments filmés, dessinés ou enregistrés par un humain. Textes, images, sons et montage sont tous issus d'outils IA.</div>
+                <span class="ia-class-badge badge-full">100% IA</span>
+              </div>
+            </label>
+            <label class="ia-class-card">
+              <input type="radio" name="ia-class" value="hybrid">
+              <div class="ia-class-dot"></div>
+              <div>
+                <div class="ia-class-title">Production hybride</div>
+                <div class="ia-class-desc">Le film combine des éléments humains (tournage, dessin, voix, musique composée) et des outils IA utilisés en post-production ou en complément créatif.</div>
+                <span class="ia-class-badge badge-hybrid">Hybride IA + Humain</span>
+              </div>
+            </label>
+          </div>
+          <div class="field-error" id="err-ia-class">Sélectionnez le type de production</div>
+        </div>
+
+        <hr class="section-sep">
+        <div class="section-title-inline">Outils utilisés</div>
 
         <!-- OUTILS IA -->
         <div class="field">
@@ -1071,20 +1305,36 @@
               <span class="recap-val" id="rc-nom">—</span>
             </div>
             <div class="recap-row">
+              <span class="recap-key">Date de naissance</span>
+              <span class="recap-val" id="rc-dob">—</span>
+            </div>
+            <div class="recap-row">
               <span class="recap-key">Email</span>
               <span class="recap-val mono" id="rc-email">—</span>
             </div>
             <div class="recap-row">
-              <span class="recap-key">Pays</span>
+              <span class="recap-key">Mobile</span>
+              <span class="recap-val mono" id="rc-mobile">—</span>
+            </div>
+            <div class="recap-row">
+              <span class="recap-key">Ville / Pays</span>
               <span class="recap-val" id="rc-pays">—</span>
             </div>
             <div class="recap-row">
-              <span class="recap-key">Titre du film</span>
+              <span class="recap-key">Titre du film (FR)</span>
               <span class="recap-val" id="rc-titre">—</span>
+            </div>
+            <div class="recap-row">
+              <span class="recap-key">Titre (EN)</span>
+              <span class="recap-val" id="rc-titre-en">—</span>
             </div>
             <div class="recap-row">
               <span class="recap-key">Durée</span>
               <span class="recap-val ok" id="rc-dur">—</span>
+            </div>
+            <div class="recap-row">
+              <span class="recap-key">Type de production</span>
+              <span class="recap-val" id="rc-ia-class">—</span>
             </div>
             <div class="recap-row">
               <span class="recap-key">Outils IA image</span>
@@ -1304,6 +1554,15 @@
     let videoValid = false;
     let uploadPct = 0;
     let uploadInterval = null;
+
+    /* Initialisation — limiter la date de naissance à 18 ans avant aujourd'hui */
+    (function initDobMax() {
+      const dob = document.getElementById('f-dob');
+      if (!dob) return;
+      const d = new Date();
+      d.setFullYear(d.getFullYear() - 18);
+      dob.max = d.toISOString().split('T')[0];
+    })();
     /* ── COMPTEUR DE CARACTÈRES ── */
     function countChars(el, counterId, max) {
       const n = el.value.length;
@@ -1594,20 +1853,52 @@
       document.getElementById('rgpd-warn').classList.remove('show');
     }
 
+    /* ── VALIDATION ÂGE (≥ 18 ans) ── */
+    function validateAge(input) {
+      const dob = new Date(input.value);
+      if (!input.value) return;
+      const today = new Date();
+      let age = today.getFullYear() - dob.getFullYear();
+      const m = today.getMonth() - dob.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+      const errEl = document.getElementById('err-dob');
+      if (age < 18) {
+        input.classList.add('err');
+        errEl.classList.add('show');
+      } else {
+        input.classList.remove('err');
+        input.classList.add('valid');
+        errEl.classList.remove('show');
+      }
+    }
+
     /* ── RÉCAP ── */
     function fillRecap() {
-      const prenom = document.getElementById('f-prenom').value.trim() || 'Marie';
-      const nom    = document.getElementById('f-nom').value.trim()    || 'Dupont';
-      const email  = document.getElementById('f-email').value.trim()  || 'marie.dupont@example.com';
-      const pays   = document.getElementById('f-pays');
-      const titre  = document.getElementById('f-titre').value.trim()  || 'Mon film marsAI';
+      const prenom  = document.getElementById('f-prenom').value.trim()  || 'Marie';
+      const nom     = document.getElementById('f-nom').value.trim()      || 'Dupont';
+      const dob     = document.getElementById('f-dob').value;
+      const email   = document.getElementById('f-email').value.trim()    || 'marie.dupont@example.com';
+      const mobile  = document.getElementById('f-mobile').value.trim()   || '—';
+      const pays    = document.getElementById('f-pays');
+      const ville   = document.getElementById('f-ville').value.trim()    || '';
+      const titre   = document.getElementById('f-titre').value.trim()    || 'Mon film marsAI';
+      const titreEn = document.getElementById('f-titre-en').value.trim() || '—';
+      const civEl   = document.querySelector('input[name="civilite"]:checked');
+      const civ     = civEl ? civEl.value + ' ' : '';
+      const iaEl    = document.querySelector('input[name="ia-class"]:checked');
+      const iaClass = iaEl ? (iaEl.value === 'full' ? '🤖 100% IA — Génération intégrale' : '🎬 Production hybride (IA + Humain)') : '—';
 
-      document.getElementById('rc-nom').textContent   = prenom + ' ' + nom;
-      document.getElementById('rc-email').textContent = email;
+      document.getElementById('rc-nom').textContent    = civ + prenom + ' ' + nom;
+      document.getElementById('rc-dob').textContent    = dob ? new Date(dob).toLocaleDateString('fr-FR') : '—';
+      document.getElementById('rc-email').textContent  = email;
+      document.getElementById('rc-mobile').textContent = mobile;
       const paysText = pays.options[pays.selectedIndex]?.text;
-      document.getElementById('rc-pays').textContent  = (paysText && pays.value) ? paysText : '🇫🇷 France';
-      document.getElementById('rc-titre').textContent = titre;
-      document.getElementById('rc-dur').textContent   = videoValid ? '✓ 0:59.8 — Durée valide' : '⚠ Non vérifié';
+      const paysVal  = (paysText && pays.value) ? paysText.replace(/^.{1,2}\s/, '') : 'France';
+      document.getElementById('rc-pays').textContent   = (ville ? ville + ', ' : '') + paysVal;
+      document.getElementById('rc-titre').textContent  = titre;
+      document.getElementById('rc-titre-en').textContent = titreEn;
+      document.getElementById('rc-dur').textContent    = videoValid ? '✓ 0:59.8 — Durée valide' : '⚠ Non vérifié';
+      document.getElementById('rc-ia-class').textContent = iaClass;
 
       const otherTool = document.getElementById('img-other').value.trim();
       document.getElementById('rc-tools').textContent = otherTool || 'Non renseigné';
