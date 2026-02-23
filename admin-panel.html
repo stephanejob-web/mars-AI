@@ -432,6 +432,44 @@
     }
     .btn-add-jury:hover { border-color: rgba(78,255,206,0.3); color: var(--aurora); background: rgba(78,255,206,0.04); }
 
+    /* ── SPONSOR ADMIN EDITOR ── */
+    .sponsor-admin-row {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .sponsor-admin-row:last-child { border-bottom: none; }
+    .sponsor-admin-preview {
+      width: 56px; height: 44px; flex-shrink: 0;
+      border-radius: 9px; overflow: hidden;
+      background: rgba(255,255,255,0.04);
+      border: 1.5px solid rgba(255,255,255,0.09);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.6rem; color: var(--mist); text-align: center;
+      transition: border-color 0.2s;
+    }
+    .sponsor-admin-preview:hover { border-color: rgba(245,230,66,0.4); }
+    .sponsor-admin-preview img { width: 100%; height: 100%; object-fit: contain; }
+    .sponsor-admin-fields { flex: 1; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+    .sponsor-admin-top { display: flex; gap: 6px; align-items: center; }
+    .sponsor-admin-select {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 7px; padding: 6px 8px;
+      font-family: var(--font-body); font-size: 0.73rem;
+      color: var(--mist); outline: none; cursor: pointer; flex-shrink: 0;
+    }
+    .sponsor-admin-select:focus { border-color: rgba(78,255,206,0.4); }
+    .btn-add-sponsor {
+      width: 100%; margin-top: 14px; padding: 9px;
+      background: rgba(255,255,255,0.03);
+      border: 1px dashed rgba(255,255,255,0.15); border-radius: 9px;
+      color: var(--mist); font-family: var(--font-body); font-size: 0.82rem;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-add-sponsor:hover { border-color: rgba(245,230,66,0.3); color: var(--solar); background: rgba(245,230,66,0.03); }
+
     /* ── MÉDIATHÈQUE FILMS ── */
     .film-card {
       background: var(--surface-2);
@@ -1247,6 +1285,27 @@
       </div>
     </div>
 
+    <!-- ── 5. Partenaires & Sponsors ── -->
+    <div class="site-section">
+      <div class="site-section-header" onclick="toggleSiteSection('sec-sponsors', this)">
+        <div class="site-section-icon" style="background:rgba(245,230,66,0.07);border-color:rgba(245,230,66,0.2);">🤝</div>
+        <div>
+          <div class="site-section-title">Partenaires & Sponsors</div>
+          <div class="site-section-sub">Logos et liens affichés sur la page d'accueil</div>
+        </div>
+        <span class="site-chevron">▼</span>
+      </div>
+      <div class="site-section-body" id="sec-sponsors" style="display:none;">
+        <p style="font-size:0.8rem;color:var(--mist);margin-bottom:14px;line-height:1.55;">
+          3 niveaux disponibles : <strong style="color:var(--solar);">Sponsor Principal</strong> · <strong style="color:var(--white-soft);">Partenaire</strong> · Institutionnel.<br>
+          Cliquez sur l'icône logo pour changer l'image. Laissez le logo vide pour afficher le nom en texte.
+        </p>
+        <div id="sponsors-admin-list"></div>
+        <button class="btn-add-sponsor" onclick="addSponsor()">+ Ajouter un partenaire</button>
+        <button class="btn-save-site" onclick="saveSponsorsAdmin()">Enregistrer les modifications →</button>
+      </div>
+    </div>
+
   </div>
 
 </div>
@@ -1719,7 +1778,7 @@
     document.getElementById('topbar-title').textContent = titles[name][0];
     document.getElementById('topbar-info').textContent  = titles[name][1];
     if (name === 'assign') renderAssignView();
-    if (name === 'site')   renderJuryAdmin();
+    if (name === 'site')   { renderJuryAdmin(); renderSponsorsAdmin(); }
   }
 
   /* ── DRAPEAUX PAYS ── */
@@ -1935,6 +1994,91 @@
     localStorage.setItem('marsai_jury_data', JSON.stringify(juryAdminData));
     showToast('✓ Jury mis à jour sur la page d\'accueil', 'ok');
     renderJuryAdmin(); // refresh pour afficher ⭐ correctement
+  }
+
+  /* ── SPONSORS EDITOR ── */
+  const defaultSponsorsData = [
+    { id:1, name:"TechVision AI",           tier:"principal",      logo:"", url:"#", visible:true },
+    { id:2, name:"Studio Lumière",           tier:"partenaire",     logo:"", url:"#", visible:true },
+    { id:3, name:"CinéLab",                 tier:"partenaire",     logo:"", url:"#", visible:true },
+    { id:4, name:"DigitalCreators Hub",     tier:"partenaire",     logo:"", url:"#", visible:true },
+    { id:5, name:"Région PACA",             tier:"institutionnel", logo:"", url:"#", visible:true },
+    { id:6, name:"Ville de Marseille",      tier:"institutionnel", logo:"", url:"#", visible:true },
+    { id:7, name:"Ministère de la Culture", tier:"institutionnel", logo:"", url:"#", visible:true },
+  ];
+
+  let sponsorsAdminData = [];
+
+  function loadSponsorsData() {
+    const saved = localStorage.getItem('marsai_sponsors_data');
+    sponsorsAdminData = saved ? JSON.parse(saved) : defaultSponsorsData.map(s => ({ ...s }));
+  }
+
+  function renderSponsorsAdmin() {
+    loadSponsorsData();
+    const list = document.getElementById('sponsors-admin-list');
+    if (!list) return;
+    const tierLabels = { principal:'Principal', partenaire:'Partenaire', institutionnel:'Institutionnel' };
+    list.innerHTML = sponsorsAdminData.map(s => `
+      <div class="sponsor-admin-row" id="sar-${s.id}">
+        <div class="sponsor-admin-preview" onclick="editSponsorLogo(${s.id})" title="Cliquer pour changer le logo">
+          ${s.logo ? `<img src="${s.logo}" alt="${s.name}">` : '<span>Logo</span>'}
+        </div>
+        <div class="sponsor-admin-fields">
+          <div class="sponsor-admin-top">
+            <input class="jury-admin-input" id="sname-${s.id}" value="${s.name}" placeholder="Nom du sponsor" style="flex:1;">
+            <select class="sponsor-admin-select" id="stier-${s.id}">
+              <option value="principal"      ${s.tier==='principal'      ? 'selected':''}>Principal</option>
+              <option value="partenaire"     ${s.tier==='partenaire'     ? 'selected':''}>Partenaire</option>
+              <option value="institutionnel" ${s.tier==='institutionnel' ? 'selected':''}>Institutionnel</option>
+            </select>
+          </div>
+          <input class="jury-admin-input small" id="surl-${s.id}" value="${s.url === '#' ? '' : s.url}" placeholder="https://site-du-sponsor.fr">
+        </div>
+        <div class="cal-toggle ${s.visible ? 'on' : ''}" id="svis-${s.id}"
+          onclick="this.classList.toggle('on')" title="Visible sur la page d'accueil"></div>
+        <button class="jury-admin-del" onclick="deleteSponsor(${s.id})" title="Supprimer">🗑️</button>
+      </div>`).join('');
+  }
+
+  function addSponsor() {
+    collectSponsorEdits();
+    const newId = Date.now();
+    sponsorsAdminData.push({ id: newId, name:'', tier:'partenaire', logo:'', url:'', visible:true });
+    renderSponsorsAdmin();
+    setTimeout(() => document.getElementById('sname-' + newId)?.focus(), 40);
+  }
+
+  function deleteSponsor(id) {
+    sponsorsAdminData = sponsorsAdminData.filter(s => s.id !== id);
+    renderSponsorsAdmin();
+  }
+
+  function editSponsorLogo(id) {
+    const s = sponsorsAdminData.find(x => x.id === id);
+    if (!s) return;
+    const url = window.prompt('URL du logo (PNG/SVG transparent recommandé) :', s.logo);
+    if (url !== null) {
+      s.logo = url.trim();
+      renderSponsorsAdmin();
+    }
+  }
+
+  function collectSponsorEdits() {
+    sponsorsAdminData = sponsorsAdminData.map(s => ({
+      ...s,
+      name:    document.getElementById('sname-'+ s.id)?.value.trim()  || s.name,
+      tier:    document.getElementById('stier-'+ s.id)?.value         || s.tier,
+      url:     document.getElementById('surl-' + s.id)?.value.trim()  || '#',
+      visible: document.getElementById('svis-' + s.id)?.classList.contains('on') ?? s.visible,
+    }));
+  }
+
+  function saveSponsorsAdmin() {
+    collectSponsorEdits();
+    localStorage.setItem('marsai_sponsors_data', JSON.stringify(sponsorsAdminData));
+    showToast('✓ Sponsors mis à jour sur la page d\'accueil', 'ok');
+    renderSponsorsAdmin();
   }
 
   function handleHeroVideo(input) {

@@ -825,6 +825,109 @@
     .toast.ok  { background: rgba(78,255,206,0.1); border-color: rgba(78,255,206,0.3); color: var(--aurora); }
     .toast.warn{ background: rgba(245,230,66,0.08); border-color: rgba(245,230,66,0.25); color: var(--solar); }
     .toast.err { background: rgba(255,107,107,0.1); border-color: rgba(255,107,107,0.25); color: var(--coral); }
+
+    /* ══════════════════════════════════════════
+       MODALS DÉCISION
+    ══════════════════════════════════════════ */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s var(--ease);
+    }
+    .modal-overlay.open {
+      opacity: 1; pointer-events: all;
+    }
+    .modal-box {
+      width: 100%; max-width: 480px; margin: 0 20px;
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 22px;
+      padding: 36px 36px 28px;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+      transform: translateY(10px) scale(0.98);
+      transition: transform 0.22s var(--ease);
+    }
+    .modal-overlay.open .modal-box { transform: translateY(0) scale(1); }
+
+    .modal-icon { font-size: 2rem; margin-bottom: 14px; display: block; }
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem; font-weight: 800;
+      color: var(--white-soft); margin-bottom: 7px;
+    }
+    .modal-subtitle {
+      font-size: 0.8rem; color: var(--mist);
+      line-height: 1.6; margin-bottom: 18px;
+    }
+    .modal-film-chip {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-family: var(--font-mono); font-size: 0.72rem;
+      color: var(--aurora);
+      background: rgba(78,255,206,0.07);
+      border: 1px solid rgba(78,255,206,0.18);
+      border-radius: 8px; padding: 6px 12px;
+      margin-bottom: 18px;
+      max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .modal-textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-family: var(--font-body); font-size: 0.84rem;
+      color: var(--white-soft);
+      resize: vertical; min-height: 110px;
+      outline: none; transition: border-color 0.2s;
+      margin-bottom: 18px; display: block;
+    }
+    .modal-textarea:focus { border-color: rgba(78,255,206,0.35); }
+    .modal-textarea.error { border-color: rgba(255,107,107,0.5) !important; }
+    .modal-hint {
+      font-size: 0.72rem; color: rgba(255,107,107,0.7);
+      margin-top: -14px; margin-bottom: 14px;
+      display: none;
+    }
+    .modal-hint.show { display: block; }
+    .modal-actions { display: flex; gap: 8px; }
+    .modal-btn-cancel {
+      flex: 1; padding: 11px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 9px;
+      font-family: var(--font-body); font-size: 0.84rem;
+      color: var(--mist); cursor: pointer; transition: all 0.15s;
+    }
+    .modal-btn-cancel:hover { border-color: rgba(255,255,255,0.2); color: var(--white-soft); }
+    .modal-btn-arevoir {
+      flex: 2; padding: 11px;
+      background: rgba(245,230,66,0.1);
+      border: 1px solid rgba(245,230,66,0.35);
+      border-radius: 9px;
+      font-family: var(--font-display); font-size: 0.84rem; font-weight: 800;
+      color: var(--solar); cursor: pointer; transition: all 0.15s;
+    }
+    .modal-btn-arevoir:hover { background: rgba(245,230,66,0.22); box-shadow: 0 4px 16px rgba(245,230,66,0.2); }
+    .modal-btn-refuse {
+      flex: 2; padding: 11px;
+      background: rgba(255,107,107,0.1);
+      border: 1px solid rgba(255,107,107,0.35);
+      border-radius: 9px;
+      font-family: var(--font-display); font-size: 0.84rem; font-weight: 800;
+      color: var(--coral); cursor: pointer; transition: all 0.15s;
+    }
+    .modal-btn-refuse:hover { background: rgba(255,107,107,0.22); box-shadow: 0 4px 16px rgba(255,107,107,0.2); }
+    .modal-separator {
+      border: none; border-top: 1px solid rgba(255,255,255,0.06);
+      margin: 16px 0;
+    }
+    .modal-label {
+      font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--mist); margin-bottom: 6px;
+    }
   </style>
 </head>
 <body>
@@ -1030,8 +1133,8 @@
           <!-- 3 boutons de décision -->
           <div class="decision-main">
             <button class="dbtn-main dbtn-valide"  id="btn-valide"  onclick="decide('valide')">✓ Valider</button>
-            <button class="dbtn-main dbtn-arevoir" id="btn-arevoir" onclick="decide('aRevoir')">↩ À revoir</button>
-            <button class="dbtn-main dbtn-refuse"  id="btn-refuse"  onclick="decide('refuse')">✕ Refuser</button>
+            <button class="dbtn-main dbtn-arevoir" id="btn-arevoir" onclick="openModalARevoir()">↩ À revoir</button>
+            <button class="dbtn-main dbtn-refuse"  id="btn-refuse"  onclick="openModalRefuse()">✕ Refuser</button>
           </div>
           <!-- Commentaire -->
           <div class="notation-bottom">
@@ -1068,6 +1171,45 @@
     </div>
 
   </div><!-- /main -->
+
+  <!-- ══ MODAL : À REVOIR ══ -->
+  <div class="modal-overlay" id="modal-arevoir" onclick="closeModalOutside(event,'modal-arevoir')">
+    <div class="modal-box">
+      <span class="modal-icon">↩</span>
+      <div class="modal-title">Demande de révision</div>
+      <div class="modal-subtitle">
+        Précisez pourquoi ce film mérite une attention particulière. Ce message sera visible par les autres membres du jury.
+      </div>
+      <div class="modal-film-chip" id="arevoir-chip">—</div>
+      <div class="modal-label">Votre message</div>
+      <textarea class="modal-textarea" id="arevoir-message"
+        placeholder="Ex : Le traitement sonore est inhabituel, mérite une seconde écoute attentive. Les premiers plans sont visuellement forts…"></textarea>
+      <div class="modal-hint" id="arevoir-hint">⚠ Veuillez écrire un message avant de continuer.</div>
+      <div class="modal-actions">
+        <button class="modal-btn-cancel" onclick="closeModal('modal-arevoir')">Annuler</button>
+        <button class="modal-btn-arevoir" onclick="confirmARevoir()">↩ Marquer à revoir →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ MODAL : REFUS ══ -->
+  <div class="modal-overlay" id="modal-refuse" onclick="closeModalOutside(event,'modal-refuse')">
+    <div class="modal-box">
+      <span class="modal-icon">✕</span>
+      <div class="modal-title">Notification de refus</div>
+      <div class="modal-subtitle">
+        Ce message sera envoyé au réalisateur. Vous pouvez le personnaliser avant l'envoi.
+      </div>
+      <div class="modal-film-chip" id="refuse-chip">—</div>
+      <div class="modal-label">Message au réalisateur</div>
+      <textarea class="modal-textarea" id="refuse-message" style="min-height:180px;"></textarea>
+      <hr class="modal-separator">
+      <div class="modal-actions">
+        <button class="modal-btn-cancel" onclick="closeModal('modal-refuse')">Annuler</button>
+        <button class="modal-btn-refuse" onclick="confirmRefuse()">✕ Confirmer le refus →</button>
+      </div>
+    </div>
+  </div>
 
   <div class="toast" id="toast"></div>
 
@@ -1228,6 +1370,58 @@
       }, 150);
     }
     function stopPlayer() { if (playInterval) clearInterval(playInterval); isPlaying = false; }
+
+    /* ── MODALS DÉCISION ── */
+    function openModalARevoir() {
+      const f = films.find(x => x.id === activeFilm);
+      if (!f) return;
+      document.getElementById('arevoir-chip').textContent = '🎬 ' + f.title;
+      document.getElementById('arevoir-message').value = f.comments?.['ML'] || '';
+      document.getElementById('arevoir-message').classList.remove('error');
+      document.getElementById('arevoir-hint').classList.remove('show');
+      document.getElementById('modal-arevoir').classList.add('open');
+      setTimeout(() => document.getElementById('arevoir-message').focus(), 180);
+    }
+
+    function openModalRefuse() {
+      const f = films.find(x => x.id === activeFilm);
+      if (!f) return;
+      document.getElementById('refuse-chip').textContent = '🎬 ' + f.title;
+      const defaultMsg =
+        `Madame, Monsieur,\n\n` +
+        `Nous avons visionné votre film « ${f.title} » dans le cadre de la sélection marsAI 2026.\n\n` +
+        `Après délibération, nous avons le regret de vous informer que votre œuvre n'a pas été retenue pour la sélection officielle cette année.\n\n` +
+        `Nous vous remercions de l'intérêt que vous portez au festival et vous encourageons à soumettre vos prochains travaux lors des éditions futures.\n\n` +
+        `Cordialement,\nL'équipe marsAI 2026`;
+      document.getElementById('refuse-message').value = defaultMsg;
+      document.getElementById('modal-refuse').classList.add('open');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('open');
+    }
+
+    function closeModalOutside(e, id) {
+      if (e.target.id === id) closeModal(id);
+    }
+
+    function confirmARevoir() {
+      const msg = document.getElementById('arevoir-message').value.trim();
+      if (!msg) {
+        document.getElementById('arevoir-message').classList.add('error');
+        document.getElementById('arevoir-hint').classList.add('show');
+        return;
+      }
+      const f = films.find(x => x.id === activeFilm);
+      if (f) f.comments['ML'] = msg;
+      closeModal('modal-arevoir');
+      decide('aRevoir');
+    }
+
+    function confirmRefuse() {
+      closeModal('modal-refuse');
+      decide('refuse');
+    }
 
     /* ── DÉCISION ── */
     function decide(type) {
