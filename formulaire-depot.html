@@ -235,110 +235,6 @@
       margin-bottom: 16px; margin-top: 4px;
     }
 
-    /* ─── CESSION DE DROITS ─── */
-    .rights-gate {
-      background: rgba(245,230,66,0.03);
-      border: 1px solid rgba(245,230,66,0.18);
-      border-radius: 16px;
-      padding: 26px;
-      margin-bottom: 20px;
-    }
-    .rights-gate-header {
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      margin-bottom: 20px;
-      padding-bottom: 18px;
-      border-bottom: 1px solid rgba(245,230,66,0.1);
-    }
-    .rights-gate-icon {
-      width: 40px; height: 40px;
-      border-radius: 10px;
-      background: rgba(245,230,66,0.08);
-      border: 1px solid rgba(245,230,66,0.15);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.1rem; flex-shrink: 0;
-    }
-    .rights-gate-title {
-      font-family: var(--font-display);
-      font-size: 0.92rem; font-weight: 800;
-      color: var(--solar); margin-bottom: 4px;
-    }
-    .rights-gate-sub { font-size: 0.73rem; color: var(--mist); line-height: 1.55; }
-
-    .rights-items { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
-    .rights-item {
-      display: flex; align-items: flex-start; gap: 14px;
-      padding: 14px 16px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.06);
-      background: rgba(255,255,255,0.02);
-      cursor: pointer;
-      transition: background 0.2s, border-color 0.2s;
-      user-select: none;
-    }
-    .rights-item:hover { background: rgba(255,255,255,0.04); }
-    .rights-item.accepted { border-color: rgba(78,255,206,0.25); background: rgba(78,255,206,0.04); }
-
-    .rights-box {
-      width: 20px; height: 20px; border-radius: 5px;
-      border: 1.5px solid rgba(255,255,255,0.2);
-      flex-shrink: 0; margin-top: 2px;
-      position: relative; transition: all 0.2s;
-    }
-    .rights-item.accepted .rights-box { background: var(--aurora); border-color: var(--aurora); }
-    .rights-item.accepted .rights-box::after {
-      content: "";
-      position: absolute; top: 3px; left: 6px;
-      width: 5px; height: 9px;
-      border: 2px solid var(--deep-sky);
-      border-top: none; border-left: none;
-      transform: rotate(45deg);
-    }
-    .rights-title { font-size: 0.8rem; font-weight: 700; color: var(--white-soft); margin-bottom: 5px; }
-    .rights-detail { font-size: 0.72rem; color: var(--mist); line-height: 1.65; }
-    .rights-detail strong { color: var(--white-soft); font-weight: 600; }
-
-    .rights-legal-note {
-      font-size: 0.7rem; color: var(--mist);
-      background: rgba(255,255,255,0.025);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 8px;
-      padding: 10px 14px;
-      margin-bottom: 14px;
-      line-height: 1.6;
-    }
-    .rights-legal-note a { color: var(--aurora); text-decoration: none; }
-
-    .rights-warn { display: none; font-size: 0.74rem; color: var(--coral); margin-bottom: 10px; }
-    .rights-warn.show { display: block; }
-
-    .btn-accept-rights {
-      width: 100%; padding: 12px;
-      background: rgba(78,255,206,0.07);
-      border: 1px solid rgba(78,255,206,0.22);
-      border-radius: 10px;
-      font-family: var(--font-body);
-      font-size: 0.84rem; font-weight: 600;
-      color: var(--aurora); cursor: pointer;
-      transition: all 0.2s;
-    }
-    .btn-accept-rights:hover { background: rgba(78,255,206,0.14); }
-
-    .rights-confirmed {
-      display: none;
-      align-items: center; gap: 10px;
-      font-size: 0.78rem; font-weight: 600;
-      color: var(--aurora);
-      background: rgba(78,255,206,0.05);
-      border: 1px solid rgba(78,255,206,0.15);
-      border-radius: 10px;
-      padding: 10px 16px;
-      margin-bottom: 16px;
-    }
-    .rights-confirmed.show { display: flex; }
-    .rights-confirmed-date { margin-left: auto; font-family: var(--font-mono); font-size: 0.66rem; color: var(--mist); }
-
     /* ─── UPLOAD ZONE ─── */
     @keyframes uz-float {
       0%, 100% { transform: translateY(0px); }
@@ -954,18 +850,10 @@
           </div>
 
           <div class="field">
-            <label class="field-label">Synopsis — Français <span class="req">● requis</span></label>
+            <label class="field-label">Synopsis <span class="req">● requis</span></label>
             <textarea id="f-synopsis" rows="4" placeholder="Décrivez brièvement votre film en 2-3 phrases…" maxlength="500" oninput="countChars(this,'cc-synopsis',500)"></textarea>
             <div class="char-counter" id="cc-synopsis">0 / 500</div>
             <div class="field-error" id="err-synopsis">Champ requis</div>
-          </div>
-
-          <div class="field">
-            <label class="field-label">Synopsis — English <span class="req">● requis</span></label>
-            <textarea id="f-synopsis-en" rows="4" placeholder="Briefly describe your film in 2-3 sentences…" maxlength="500" oninput="countChars(this,'cc-synopsis-en',500)"></textarea>
-            <div class="char-counter" id="cc-synopsis-en">0 / 500</div>
-            <div class="field-hint">International audiences and jury members need the English version</div>
-            <div class="field-error" id="err-synopsis-en">English synopsis is required</div>
           </div>
 
         </div>
@@ -973,65 +861,10 @@
         <hr class="section-sep">
         <div class="section-title-inline">Fichier vidéo</div>
 
-        <!-- ── Cession de droits — bloquant avant upload ── -->
-        <div class="rights-gate" id="rights-gate">
-          <div class="rights-gate-header">
-            <div class="rights-gate-icon">📋</div>
-            <div>
-              <div class="rights-gate-title">Cession de droits — clause obligatoire pour participer</div>
-              <div class="rights-gate-sub">Conformément au droit d'auteur français (L.131-3 CPI) et au RGPD (UE 2016/679), vous devez accepter les trois points ci-dessous avant de déposer votre film. Cette cession est <strong style="color:var(--white-soft)">non-exclusive et limitée à la durée du festival</strong> : vous conservez l'intégralité de vos droits d'auteur.</div>
-            </div>
-          </div>
-
-          <div class="rights-items">
-
-            <div class="rights-item" id="ri-1" onclick="toggleRight('ri-1')">
-              <div class="rights-box"></div>
-              <div>
-                <div class="rights-title">Cession de droits pour la durée du festival <span class="req">● obligatoire</span></div>
-                <div class="rights-detail">J'autorise <strong>marsAI, La Plateforme et le Mobile Film Festival</strong> à diffuser, projeter, streamer et archiver mon film dans le cadre du festival marsAI 2026, <strong>pour toute la durée du festival</strong> (de l'ouverture des candidatures à la cérémonie de clôture incluse), à titre <strong>gratuit</strong>, sur <strong>tout territoire</strong> et tout support (salle, web, TV partenaires, archives officielles de l'édition). Je conserve mes droits d'auteur et reste libre de diffuser mon film par ailleurs. <strong style="color:var(--white-soft);">Cette cession prend fin à la clôture du festival marsAI 2026.</strong></div>
-              </div>
-            </div>
-
-            <div class="rights-item" id="ri-2" onclick="toggleRight('ri-2')">
-              <div class="rights-box"></div>
-              <div>
-                <div class="rights-title">Droit d'utilisation à des fins de communication <span class="req">● obligatoire</span></div>
-                <div class="rights-detail">J'autorise l'utilisation d'<strong>extraits de mon film (max. 15 secondes)</strong>, d'images fixes tirées du film et de son titre pour la promotion du festival sur les supports officiels de marsAI : réseaux sociaux, presse écrite et en ligne, affichage, site officiel, bande-annonce du festival.</div>
-              </div>
-            </div>
-
-            <div class="rights-item" id="ri-3" onclick="toggleRight('ri-3')">
-              <div class="rights-box"></div>
-              <div>
-                <div class="rights-title">Déclaration sur l'honneur <span class="req">● obligatoire</span></div>
-                <div class="rights-detail">Je certifie être l'<strong>auteur ou co-auteur</strong> de ce film et détenir tous les droits nécessaires à cette cession. Je confirme que l'œuvre ne viole aucun droit de propriété intellectuelle tiers, que les outils IA déclarés ont été utilisés dans le respect de leurs conditions d'utilisation, et que le film n'est pas actuellement soumis à un festival concurrent imposant l'exclusivité.</div>
-              </div>
-            </div>
-
-          </div>
-
-          <div class="rights-legal-note">
-            🔒 Ces données de consentement sont horodatées et conservées 5 ans à des fins de preuve juridique, conformément à l'article L.131-3 du Code de la Propriété Intellectuelle.
-            Pour exercer vos droits ou poser une question : <a href="mailto:droits@marsai.fr">droits@marsai.fr</a> ·
-            <a href="#">Politique de confidentialité complète</a>
-          </div>
-
-          <div class="rights-warn" id="rights-warn">⚠ Vous devez accepter les trois points pour déverrouiller le dépôt de votre film.</div>
-
-          <button class="btn-accept-rights" onclick="acceptRights()">Accepter et déverrouiller l'upload →</button>
-        </div>
-
-        <!-- Confirmation droits acceptés -->
-        <div class="rights-confirmed" id="rights-confirmed">
-          <span>✓</span> Cession de droits acceptée et horodatée
-          <span class="rights-confirmed-date" id="rights-confirmed-date"></span>
-        </div>
-
         <!-- Upload vidéo — input caché, déclenché programmatiquement -->
         <input type="file" id="video-input" accept=".mp4,.mov,video/mp4,video/quicktime" onchange="handleVideo(this)" style="display:none;">
 
-        <div id="upload-zone-wrap" style="display:none;">
+        <div id="upload-zone-wrap">
 
           <!-- ── Zone de dépôt principale ── -->
           <div class="upload-zone" id="upload-zone"
@@ -1155,105 +988,26 @@
           </div>
         </div>
 
-        <!-- IMAGE / VIDÉO (obligatoire) -->
-        <div class="ia-category">
-          <div class="ia-cat-header" onclick="toggleCat('cat-img')">
-            <div class="ia-cat-icon">🖼️</div>
-            <div class="ia-cat-title">Image & Vidéo générée par IA</div>
-            <span class="ia-cat-badge badge-req">Requis</span>
-            <div class="ia-cat-toggle open" id="toggle-cat-img">▼</div>
-          </div>
-          <div class="ia-cat-body" id="cat-img">
-            <div class="tools-grid">
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Runway ML</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Sora</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Pika Labs</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Kling AI</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Midjourney</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Stable Diffusion</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Adobe Firefly</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Luma Dream</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Haiper</span></label>
-            </div>
-            <div class="tool-other">
-              <input type="text" id="img-other" placeholder="Autre outil image/vidéo…">
-            </div>
-            <div class="field-error" id="err-ia-img" style="margin-top:8px;">Sélectionnez au moins un outil image/vidéo</div>
-          </div>
+        <!-- OUTILS IA -->
+        <div class="field">
+          <label class="field-label">Outils IA — images ou vidéo <span class="req">● requis</span></label>
+          <input type="text" id="img-other" placeholder="ex : Runway ML, Sora, Midjourney…">
+          <div class="field-error" id="err-ia-img">Champ requis</div>
         </div>
 
-        <!-- SON (facultatif) -->
-        <div class="ia-category">
-          <div class="ia-cat-header" onclick="toggleCat('cat-son')">
-            <div class="ia-cat-icon">🎵</div>
-            <div class="ia-cat-title">Son & Musique générés par IA</div>
-            <span class="ia-cat-badge badge-opt">Facultatif</span>
-            <div class="ia-cat-toggle" id="toggle-cat-son">▼</div>
-          </div>
-          <div class="ia-cat-body" id="cat-son" style="display:none;">
-            <div class="tools-grid">
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">MusicGen</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Suno AI</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Udio</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">ElevenLabs</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Mubert</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Stable Audio</span></label>
-            </div>
-            <div class="tool-other">
-              <input type="text" id="son-other" placeholder="Autre outil son/musique…">
-            </div>
-          </div>
+        <div class="field">
+          <label class="field-label">Outils IA — son & musique <span class="opt">(facultatif)</span></label>
+          <input type="text" id="son-other" placeholder="ex : Suno AI, ElevenLabs, MusicGen…">
         </div>
 
-        <!-- SCÉNARIO (facultatif) -->
-        <div class="ia-category">
-          <div class="ia-cat-header" onclick="toggleCat('cat-sc')">
-            <div class="ia-cat-icon">✍️</div>
-            <div class="ia-cat-title">Scénario & Écriture assistée par IA</div>
-            <span class="ia-cat-badge badge-opt">Facultatif</span>
-            <div class="ia-cat-toggle" id="toggle-cat-sc">▼</div>
-          </div>
-          <div class="ia-cat-body" id="cat-sc" style="display:none;">
-            <div class="tools-grid">
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">ChatGPT</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Claude</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Gemini</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Mistral</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Llama</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Qwen</span></label>
-            </div>
-            <div class="tool-other">
-              <input type="text" id="sc-other" placeholder="Autre outil d'écriture…">
-            </div>
-          </div>
+        <div class="field">
+          <label class="field-label">Outils IA — scénario & écriture <span class="opt">(facultatif)</span></label>
+          <input type="text" id="sc-other" placeholder="ex : ChatGPT, Claude, Mistral…">
         </div>
 
-        <!-- POST-PROD (facultatif) -->
-        <div class="ia-category">
-          <div class="ia-cat-header" onclick="toggleCat('cat-post')">
-            <div class="ia-cat-icon">🎞️</div>
-            <div class="ia-cat-title">Post-production & Hybridation réel/IA</div>
-            <span class="ia-cat-badge badge-opt">Facultatif</span>
-            <div class="ia-cat-toggle" id="toggle-cat-post">▼</div>
-          </div>
-          <div class="ia-cat-body" id="cat-post" style="display:none;">
-            <div class="tools-grid">
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Adobe Premiere</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">DaVinci Resolve</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">After Effects + IA</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Topaz Video AI</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Warp Fusion</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">CapCut AI</span></label>
-            </div>
-            <div class="tool-other">
-              <input type="text" id="post-other" placeholder="Autre outil post-prod…">
-            </div>
-            <div style="margin-top:12px;">
-              <label class="field-label" style="margin-bottom:7px;">Description de l'hybridation <span class="opt">(max 300 car.)</span></label>
-              <textarea rows="2" maxlength="300" placeholder="Décrivez le mélange entre images réelles et génération IA…" oninput="countChars(this,'cc-hybrid',300)" style="background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.09);border-radius:10px;padding:10px 14px;font-family:var(--font-body);font-size:0.85rem;color:var(--white-soft);outline:none;width:100%;resize:vertical;"></textarea>
-              <div class="char-counter" id="cc-hybrid">0 / 300</div>
-            </div>
-          </div>
+        <div class="field">
+          <label class="field-label">Outils IA — post-production <span class="opt">(facultatif)</span></label>
+          <input type="text" id="post-other" placeholder="ex : Topaz Video AI, CapCut AI…">
         </div>
 
         <hr class="section-sep">
@@ -1273,22 +1027,24 @@
           <input type="file" id="sub-fr" accept=".srt,.vtt" onchange="handleSubtitle(this,'sub-fr-status')">
           <div class="sub-icon">💬</div>
           <div class="sub-text">
-            <div class="sub-title">Sous-titres Français <span style="color:var(--mist);font-weight:400;font-size:0.72rem;">(recommandé)</span></div>
-            <div class="sub-sub">Formats SRT ou VTT — Aperçu de synchronisation en temps réel</div>
+            <div class="sub-title">Sous-titres Français <span class="req">● requis</span></div>
+            <div class="sub-sub">Formats SRT ou VTT</div>
           </div>
           <div class="sub-status" id="sub-fr-status">+ Ajouter</div>
         </div>
+        <div class="field-error" id="err-sub-fr" style="margin-top:6px;margin-bottom:4px;">Sous-titres français requis</div>
 
         <!-- Upload sous-titres EN -->
         <div class="subtitle-upload" style="margin-top:8px;">
           <input type="file" id="sub-en" accept=".srt,.vtt" onchange="handleSubtitle(this,'sub-en-status')">
           <div class="sub-icon">🌐</div>
           <div class="sub-text">
-            <div class="sub-title">Sous-titres Anglais <span style="color:var(--mist);font-weight:400;font-size:0.72rem;">(interface bilingue FR/EN)</span></div>
+            <div class="sub-title">Sous-titres Anglais <span class="req">● requis</span></div>
             <div class="sub-sub">Formats SRT ou VTT</div>
           </div>
           <div class="sub-status" id="sub-en-status">+ Ajouter</div>
         </div>
+        <div class="field-error" id="err-sub-en" style="margin-top:6px;">Sous-titres anglais requis</div>
 
         <div class="step-nav-btns">
           <button class="btn-prev" onclick="prevStep(3)">← Retour</button>
@@ -1548,34 +1304,6 @@
     let videoValid = false;
     let uploadPct = 0;
     let uploadInterval = null;
-    let rightsAccepted = false;
-    const rightState = { 'ri-1': false, 'ri-2': false, 'ri-3': false };
-
-    /* ── CESSION DE DROITS ── */
-    function toggleRight(id) {
-      rightState[id] = !rightState[id];
-      document.getElementById(id).classList.toggle('accepted', rightState[id]);
-      document.getElementById('rights-warn').classList.remove('show');
-    }
-
-    function acceptRights() {
-      const allAccepted = Object.values(rightState).every(v => v);
-      if (!allAccepted) {
-        document.getElementById('rights-warn').classList.add('show');
-        return;
-      }
-      rightsAccepted = true;
-      // Horodatage
-      const now = new Date();
-      const ts = now.toLocaleDateString('fr-FR') + ' à ' + now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-      document.getElementById('rights-confirmed-date').textContent = ts;
-      document.getElementById('rights-gate').style.display = 'none';
-      document.getElementById('rights-confirmed').classList.add('show');
-      document.getElementById('upload-zone-wrap').style.display = 'block';
-      // Lancer la simulation upload
-      if (!videoValid) autoSimulateVideo();
-    }
-
     /* ── COMPTEUR DE CARACTÈRES ── */
     function countChars(el, counterId, max) {
       const n = el.value.length;
@@ -1608,8 +1336,8 @@
       currentStep = n;
       updateStepsNav();
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      // Auto-simuler la vidéo quand on arrive sur l'étape 2
-      // La simulation vidéo se déclenche après acceptation des droits (acceptRights())
+      // Auto-simuler la vidéo à l'arrivée sur l'étape 2
+      if (n === 2 && !videoValid) autoSimulateVideo();
     }
 
     function updateStepsNav() {
@@ -1859,20 +1587,6 @@
       el.className = 'sub-status added';
     }
 
-    /* ── OUTILS IA ── */
-    function toggleTool(label) {
-      label.classList.toggle('checked');
-      label.querySelector('input').checked = label.classList.contains('checked');
-    }
-
-    function toggleCat(id) {
-      const body = document.getElementById(id);
-      const toggle = document.getElementById('toggle-' + id);
-      const hidden = body.style.display === 'none';
-      body.style.display = hidden ? 'block' : 'none';
-      toggle.classList.toggle('open', hidden);
-    }
-
     /* ── RGPD ── */
     function toggleRgpd(id) {
       const item = document.getElementById(id);
@@ -1895,10 +1609,8 @@
       document.getElementById('rc-titre').textContent = titre;
       document.getElementById('rc-dur').textContent   = videoValid ? '✓ 0:59.8 — Durée valide' : '⚠ Non vérifié';
 
-      const checkedTools = [...document.querySelectorAll('#cat-img .tool-check.checked')].map(t => t.querySelector('.tc-label').textContent);
       const otherTool = document.getElementById('img-other').value.trim();
-      if (otherTool) checkedTools.push(otherTool);
-      document.getElementById('rc-tools').textContent = checkedTools.length ? checkedTools.join(', ') : 'Runway ML, Midjourney';
+      document.getElementById('rc-tools').textContent = otherTool || 'Non renseigné';
 
       const subFr = document.getElementById('sub-fr').files[0];
       const subEn = document.getElementById('sub-en').files[0];
