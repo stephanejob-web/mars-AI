@@ -292,7 +292,7 @@
           Ce lien est <strong style="color:var(--white-soft);">permanent</strong> — conservez-le précieusement.
         </div>
         <div style="background:rgba(78,255,206,0.06);border:1px solid rgba(78,255,206,0.18);border-radius:8px;padding:10px 14px;font-family:var(--font-mono);font-size:0.72rem;color:var(--aurora);margin-bottom:20px;" id="sent-email-display">jury@marsai.fr</div>
-        <button onclick="window.location.href='admin-jury.html'" style="width:100%;padding:12px;background:var(--aurora);color:var(--deep-sky);border:none;border-radius:10px;font-family:var(--font-display);font-size:0.9rem;font-weight:800;cursor:pointer;letter-spacing:0.02em;">
+        <button id="btn-access" onclick="goToSpace()" style="width:100%;padding:12px;background:var(--aurora);color:var(--deep-sky);border:none;border-radius:10px;font-family:var(--font-display);font-size:0.9rem;font-weight:800;cursor:pointer;letter-spacing:0.02em;">
           Accéder à l'espace jury (démo) →
         </button>
         <button onclick="document.getElementById('sent-state').style.display='none';document.getElementById('form-state').style.display='block';" style="margin-top:10px;background:none;border:none;font-size:0.78rem;color:var(--mist);cursor:pointer;text-decoration:underline;">
@@ -315,6 +315,7 @@
     <a href="formulaire-depot.html" class="dev-btn">📝 Formulaire</a>
     <a href="login-jury.html" class="dev-btn current">🔐 Connexion Jury</a>
     <a href="admin-jury.html" class="dev-btn">⚖️ Interface Jury</a>
+    <a href="admin-panel.html" class="dev-btn">🛡️ Admin Panel</a>
   </div>
 </div>
 
@@ -340,6 +341,17 @@
     document.getElementById('sent-email-display').textContent = email;
     document.getElementById('form-state').style.display = 'none';
     document.getElementById('sent-state').style.display = 'block';
+    // Mise à jour du label et destination selon le rôle (démo)
+    const btn = document.getElementById('btn-access');
+    if (currentRole === 'admin') {
+      btn.textContent = 'Accéder au panneau admin (démo) →';
+    } else {
+      btn.textContent = 'Accéder à l\'espace jury (démo) →';
+    }
+  }
+
+  function goToSpace() {
+    window.location.href = currentRole === 'admin' ? 'admin-panel.html' : 'admin-jury.html';
   }
 </script>
 
