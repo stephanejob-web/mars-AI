@@ -386,6 +386,52 @@
     }
     .btn-save-site:hover { background: rgba(78,255,206,0.16); }
 
+    /* ── JURY ADMIN EDITOR ── */
+    .jury-admin-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .jury-admin-row:last-child { border-bottom: none; }
+    .jury-admin-photo {
+      width: 52px; height: 64px;
+      border-radius: 10px; object-fit: cover; flex-shrink: 0;
+      cursor: pointer; display: block;
+      border: 1.5px solid rgba(255,255,255,0.1);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .jury-admin-photo:hover {
+      border-color: rgba(78,255,206,0.45);
+      box-shadow: 0 0 12px rgba(78,255,206,0.15);
+    }
+    .jury-admin-fields { flex: 1; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+    .jury-admin-input {
+      width: 100%; background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 7px; padding: 6px 10px;
+      font-family: var(--font-body); font-size: 0.84rem;
+      color: var(--white-soft); outline: none;
+      transition: border-color 0.2s;
+    }
+    .jury-admin-input:focus { border-color: rgba(78,255,206,0.4); }
+    .jury-admin-input.small { font-size: 0.75rem; color: var(--mist); }
+    .jury-admin-star { font-size: 0.75rem; flex-shrink: 0; opacity: 0.7; }
+    .jury-admin-del {
+      background: none; border: none; font-size: 0.95rem;
+      color: rgba(255,107,107,0.4); cursor: pointer; padding: 4px 2px;
+      transition: color 0.2s; flex-shrink: 0;
+    }
+    .jury-admin-del:hover { color: var(--coral); }
+    .btn-add-jury {
+      width: 100%; margin-top: 14px; padding: 9px;
+      background: rgba(255,255,255,0.03);
+      border: 1px dashed rgba(255,255,255,0.15);
+      border-radius: 9px; color: var(--mist);
+      font-family: var(--font-body); font-size: 0.82rem;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-add-jury:hover { border-color: rgba(78,255,206,0.3); color: var(--aurora); background: rgba(78,255,206,0.04); }
+
     /* ── MÉDIATHÈQUE FILMS ── */
     .film-card {
       background: var(--surface-2);
@@ -1180,6 +1226,27 @@
       </div>
     </div>
 
+    <!-- ── 4. Jury · Page d'accueil ── -->
+    <div class="site-section">
+      <div class="site-section-header" onclick="toggleSiteSection('sec-jury', this)">
+        <div class="site-section-icon" style="background:rgba(78,255,206,0.08);border-color:rgba(78,255,206,0.18);">⚖️</div>
+        <div>
+          <div class="site-section-title">Jury · Page d'accueil</div>
+          <div class="site-section-sub">Membres du jury visibles sur la page d'accueil du site</div>
+        </div>
+        <span class="site-chevron">▼</span>
+      </div>
+      <div class="site-section-body" id="sec-jury" style="display:none;">
+        <p style="font-size:0.8rem;color:var(--mist);margin-bottom:6px;line-height:1.55;">
+          ⭐ <strong style="color:var(--white-soft);">Premier membre = carte vedette</strong> (Présidence du jury) sur la page d'accueil.<br>
+          Modifiez le nom, le rôle, la photo · Activez/désactivez la visibilité · Réorganisez l'ordre.
+        </p>
+        <div id="jury-admin-list" style="margin-top:14px;"></div>
+        <button class="btn-add-jury" onclick="addJuryMember()">+ Ajouter un membre du jury</button>
+        <button class="btn-save-site" onclick="saveJuryAdmin()">Enregistrer les modifications →</button>
+      </div>
+    </div>
+
   </div>
 
 </div>
@@ -1652,6 +1719,7 @@
     document.getElementById('topbar-title').textContent = titles[name][0];
     document.getElementById('topbar-info').textContent  = titles[name][1];
     if (name === 'assign') renderAssignView();
+    if (name === 'site')   renderJuryAdmin();
   }
 
   /* ── DRAPEAUX PAYS ── */
@@ -1781,6 +1849,92 @@
     const isOpen = body.style.display !== 'none';
     body.style.display = isOpen ? 'none' : 'block';
     chevron.classList.toggle('open', !isOpen);
+  }
+
+  /* ── JURY EDITOR ── */
+  const defaultJuryData = [
+    { id:1,  name:"Marie Lefebvre", label:"Présidente · Réalisatrice", avatar:"https://i.pravatar.cc/400?img=47", visible:true,  quote:"Figure incontournable du cinéma d'auteur, trois fois primée au Festival de Cannes. Elle préside le jury marsAI 2026 avec l'ambition d'élever la création IA au rang d'art majeur." },
+    { id:2,  name:"Pierre Dubois",  label:"Directeur artistique",      avatar:"https://i.pravatar.cc/400?img=12", visible:true  },
+    { id:3,  name:"Kenji Ito",      label:"Artiste numérique",         avatar:"https://i.pravatar.cc/400?img=68", visible:true  },
+    { id:4,  name:"Sofia Eriksson", label:"Critique de cinéma",        avatar:"https://i.pravatar.cc/400?img=44", visible:true  },
+    { id:7,  name:"Amara Touré",    label:"Productrice",               avatar:"https://i.pravatar.cc/400?img=32", visible:true  },
+    { id:8,  name:"Elena Petrov",   label:"Compositrice",              avatar:"https://i.pravatar.cc/400?img=29", visible:true  },
+    { id:9,  name:"Yuki Nakamura",  label:"Réalisatrice",              avatar:"https://i.pravatar.cc/400?img=56", visible:true  },
+    { id:10, name:"Carlos Ruiz",    label:"Chef opérateur",            avatar:"https://i.pravatar.cc/400?img=18", visible:true  },
+    { id:11, name:"Priya Mehta",    label:"Scénariste",                avatar:"https://i.pravatar.cc/400?img=36", visible:true  },
+    { id:12, name:"Omar Diallo",    label:"Directeur photo",           avatar:"https://i.pravatar.cc/400?img=11", visible:true  },
+  ];
+
+  let juryAdminData = [];
+
+  function loadJuryAdminData() {
+    const saved = localStorage.getItem('marsai_jury_data');
+    juryAdminData = saved ? JSON.parse(saved) : defaultJuryData.map(j => ({ ...j }));
+  }
+
+  function renderJuryAdmin() {
+    loadJuryAdminData();
+    const list = document.getElementById('jury-admin-list');
+    if (!list) return;
+    list.innerHTML = juryAdminData.map((j, idx) => `
+      <div class="jury-admin-row" id="jar-${j.id}">
+        <img class="jury-admin-photo" src="${j.avatar}" alt="${j.name}"
+          onclick="editJuryPhoto(${j.id})" title="Cliquer pour changer la photo">
+        <span class="jury-admin-star">${idx === 0 ? '⭐' : ''}</span>
+        <div class="jury-admin-fields">
+          <input class="jury-admin-input" id="jname-${j.id}" value="${j.name}" placeholder="Nom complet">
+          <input class="jury-admin-input small" id="jlabel-${j.id}" value="${j.label}" placeholder="Rôle · Titre">
+        </div>
+        <div class="cal-toggle ${j.visible ? 'on' : ''}" id="jvis-${j.id}"
+          onclick="this.classList.toggle('on')" title="Visible sur la page d'accueil"></div>
+        <button class="jury-admin-del" onclick="deleteJuryMember(${j.id})" title="Supprimer">🗑️</button>
+      </div>`).join('');
+  }
+
+  // Alias pour la compatibilité avec showView
+  function renderJuryVisibility() { renderJuryAdmin(); }
+
+  function addJuryMember() {
+    // Flush current edits before adding
+    collectJuryEdits();
+    const newId = Date.now();
+    const imgs = [3,5,6,7,8,9,10,13,14,15,16,17,19,20,21,22,23,24,26,27,28,30,31,33,34,35,37,38,39,40,41,42,43,45,46,48,49,50,51,52,53,54,55,57,58,59,60,61,62,63,64,65,66,67,69,70];
+    const rnd = imgs[Math.floor(Math.random() * imgs.length)];
+    juryAdminData.push({ id: newId, name: '', label: '', avatar: `https://i.pravatar.cc/400?img=${rnd}`, visible: true });
+    renderJuryAdmin();
+    setTimeout(() => document.getElementById('jname-' + newId)?.focus(), 40);
+  }
+
+  function deleteJuryMember(id) {
+    if (juryAdminData.length <= 1) { showToast('Le jury doit avoir au moins un membre.', 'err'); return; }
+    juryAdminData = juryAdminData.filter(j => j.id !== id);
+    renderJuryAdmin();
+  }
+
+  function editJuryPhoto(id) {
+    const member = juryAdminData.find(j => j.id === id);
+    if (!member) return;
+    const url = window.prompt('URL de la photo (format portrait recommandé) :', member.avatar);
+    if (url !== null && url.trim()) {
+      member.avatar = url.trim();
+      renderJuryAdmin();
+    }
+  }
+
+  function collectJuryEdits() {
+    juryAdminData = juryAdminData.map(j => ({
+      ...j,
+      name:    document.getElementById('jname-' + j.id)?.value.trim()  || j.name,
+      label:   document.getElementById('jlabel-' + j.id)?.value.trim() || j.label,
+      visible: document.getElementById('jvis-' + j.id)?.classList.contains('on') ?? j.visible,
+    }));
+  }
+
+  function saveJuryAdmin() {
+    collectJuryEdits();
+    localStorage.setItem('marsai_jury_data', JSON.stringify(juryAdminData));
+    showToast('✓ Jury mis à jour sur la page d\'accueil', 'ok');
+    renderJuryAdmin(); // refresh pour afficher ⭐ correctement
   }
 
   function handleHeroVideo(input) {
