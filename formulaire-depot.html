@@ -1261,38 +1261,59 @@
         <hr class="section-sep">
         <div class="section-title-inline">Sous-titres</div>
 
-        <!-- Avertissement sous-titres -->
-        <div style="display:flex;align-items:flex-start;gap:12px;background:rgba(245,230,66,0.04);border:1px solid rgba(245,230,66,0.18);border-radius:10px;padding:12px 16px;margin-bottom:16px;">
-          <span style="font-size:1.1rem;flex-shrink:0;">⚠️</span>
-          <div style="font-size:0.8rem;color:var(--mist);line-height:1.6;">
-            <strong style="color:var(--solar);display:block;margin-bottom:3px;">Ne pas incruster les sous-titres dans la vidéo</strong>
-            Fournissez-les en fichier séparé (SRT ou VTT). Le festival les applique dynamiquement sur la plateforme de diffusion, permettant au spectateur de les activer ou désactiver.
+        <!-- Question dialogues / sous-titrage -->
+        <div class="field" style="margin-bottom:20px;">
+          <label class="field-label">Votre film comporte-t-il des dialogues nécessitant un sous-titrage ? <span class="req">● requis</span></label>
+          <div class="radio-group">
+            <label class="radio-card">
+              <input type="radio" name="dialogue-sub" value="oui" onchange="toggleSubtitleFields()">
+              <span class="radio-card-dot"></span>Oui
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="dialogue-sub" value="non" onchange="toggleSubtitleFields()">
+              <span class="radio-card-dot"></span>Non
+            </label>
           </div>
+          <div class="field-error" id="err-dialogue-sub">Veuillez indiquer si votre film nécessite un sous-titrage</div>
         </div>
 
-        <!-- Upload sous-titres FR -->
-        <div class="subtitle-upload" id="sub-fr-zone" onclick="">
-          <input type="file" id="sub-fr" accept=".srt,.vtt" onchange="handleSubtitle(this,'sub-fr-status')">
-          <div class="sub-icon">💬</div>
-          <div class="sub-text">
-            <div class="sub-title">Sous-titres Français <span class="req">● requis</span></div>
-            <div class="sub-sub">Formats SRT ou VTT</div>
-          </div>
-          <div class="sub-status" id="sub-fr-status">+ Ajouter</div>
-        </div>
-        <div class="field-error" id="err-sub-fr" style="margin-top:6px;margin-bottom:4px;">Sous-titres français requis</div>
+        <!-- Bloc sous-titres (affiché uniquement si "Oui") -->
+        <div id="subtitle-fields" style="display:none;animation:fadeUp 0.35s var(--ease);">
 
-        <!-- Upload sous-titres EN -->
-        <div class="subtitle-upload" style="margin-top:8px;">
-          <input type="file" id="sub-en" accept=".srt,.vtt" onchange="handleSubtitle(this,'sub-en-status')">
-          <div class="sub-icon">🌐</div>
-          <div class="sub-text">
-            <div class="sub-title">Sous-titres Anglais <span class="req">● requis</span></div>
-            <div class="sub-sub">Formats SRT ou VTT</div>
+          <!-- Avertissement sous-titres -->
+          <div style="display:flex;align-items:flex-start;gap:12px;background:rgba(245,230,66,0.04);border:1px solid rgba(245,230,66,0.18);border-radius:10px;padding:12px 16px;margin-bottom:16px;">
+            <span style="font-size:1.1rem;flex-shrink:0;">⚠️</span>
+            <div style="font-size:0.8rem;color:var(--mist);line-height:1.6;">
+              <strong style="color:var(--solar);display:block;margin-bottom:3px;">Ne pas incruster les sous-titres dans la vidéo</strong>
+              Fournissez-les en fichier séparé (SRT ou VTT). Le festival les applique dynamiquement sur la plateforme de diffusion, permettant au spectateur de les activer ou désactiver.
+            </div>
           </div>
-          <div class="sub-status" id="sub-en-status">+ Ajouter</div>
-        </div>
-        <div class="field-error" id="err-sub-en" style="margin-top:6px;">Sous-titres anglais requis</div>
+
+          <!-- Upload sous-titres FR -->
+          <div class="subtitle-upload" id="sub-fr-zone" onclick="">
+            <input type="file" id="sub-fr" accept=".srt,.vtt" onchange="handleSubtitle(this,'sub-fr-status')">
+            <div class="sub-icon">💬</div>
+            <div class="sub-text">
+              <div class="sub-title">Sous-titres Français <span class="req">● requis</span></div>
+              <div class="sub-sub">Formats SRT ou VTT</div>
+            </div>
+            <div class="sub-status" id="sub-fr-status">+ Ajouter</div>
+          </div>
+          <div class="field-error" id="err-sub-fr" style="margin-top:6px;margin-bottom:4px;">Sous-titres français requis</div>
+
+          <!-- Upload sous-titres EN -->
+          <div class="subtitle-upload" style="margin-top:8px;">
+            <input type="file" id="sub-en" accept=".srt,.vtt" onchange="handleSubtitle(this,'sub-en-status')">
+            <div class="sub-icon">🌐</div>
+            <div class="sub-text">
+              <div class="sub-title">Sous-titres Anglais <span class="req">● requis</span></div>
+              <div class="sub-sub">Formats SRT ou VTT</div>
+            </div>
+            <div class="sub-status" id="sub-en-status">+ Ajouter</div>
+          </div>
+          <div class="field-error" id="err-sub-en" style="margin-top:6px;">Sous-titres anglais requis</div>
+
+        </div><!-- /subtitle-fields -->
 
         <div class="step-nav-btns">
           <button class="btn-prev" onclick="prevStep(3)">← Retour</button>
@@ -1770,7 +1791,7 @@
         val.className = 'dur-value ok';
         ico.textContent = '✓';
         val.textContent = display;
-        lbl.textContent = 'Durée valide — 60 secondes pile ✓';
+        lbl.textContent = 'Durée valide — 1 minute ✓';
       } else if (sec < 58) {
         el.className = 'duration-result show warn';
         val.className = 'dur-value warn';
@@ -1856,6 +1877,27 @@
       el.className = 'sub-status added';
     }
 
+    /* ── TOGGLE SOUS-TITRES (Oui/Non dialogues) ── */
+    function toggleSubtitleFields() {
+      const selected = document.querySelector('input[name="dialogue-sub"]:checked');
+      const subtitleFields = document.getElementById('subtitle-fields');
+      const errDialogue = document.getElementById('err-dialogue-sub');
+
+      // Masquer le message d'erreur quand un choix est fait
+      errDialogue.classList.remove('show');
+
+      if (selected && selected.value === 'oui') {
+        subtitleFields.style.display = 'block';
+      } else {
+        subtitleFields.style.display = 'none';
+        // Réinitialiser les fichiers sous-titres si on passe à "Non"
+        const subFr = document.getElementById('sub-fr');
+        const subEn = document.getElementById('sub-en');
+        if (subFr) { subFr.value = ''; document.getElementById('sub-fr-status').textContent = '+ Ajouter'; document.getElementById('sub-fr-status').className = 'sub-status'; }
+        if (subEn) { subEn.value = ''; document.getElementById('sub-en-status').textContent = '+ Ajouter'; document.getElementById('sub-en-status').className = 'sub-status'; }
+      }
+    }
+
     /* ── RGPD ── */
     function toggleRgpd(id) {
       const item = document.getElementById(id);
@@ -1913,12 +1955,17 @@
       const otherTool = document.getElementById('img-other').value.trim();
       document.getElementById('rc-tools').textContent = otherTool || 'Non renseigné';
 
-      const subFr = document.getElementById('sub-fr').files[0];
-      const subEn = document.getElementById('sub-en').files[0];
-      const subs = [];
-      if (subFr) subs.push('FR');
-      if (subEn) subs.push('EN');
-      document.getElementById('rc-subs').textContent = subs.length ? subs.join(', ') : 'Aucun';
+      const dialogueSub = document.querySelector('input[name="dialogue-sub"]:checked');
+      if (dialogueSub && dialogueSub.value === 'oui') {
+        const subFr = document.getElementById('sub-fr').files[0];
+        const subEn = document.getElementById('sub-en').files[0];
+        const subs = [];
+        if (subFr) subs.push('FR');
+        if (subEn) subs.push('EN');
+        document.getElementById('rc-subs').textContent = subs.length ? subs.join(', ') : 'Aucun';
+      } else {
+        document.getElementById('rc-subs').textContent = 'Pas de dialogues — sans sous-titres';
+      }
     }
 
     /* ── SOUMISSION ── */
