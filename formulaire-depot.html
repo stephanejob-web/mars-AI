@@ -494,6 +494,40 @@
     }
     .rgpd-text .rgpd-title { font-size: 0.85rem; font-weight: 600; margin-bottom: 3px; }
     .rgpd-text .rgpd-sub { font-size: 0.75rem; color: var(--mist); line-height: 1.55; }
+
+    /* ─── TOOLTIP INFO "?" ─── */
+    .info-trigger {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: rgba(78,255,206,0.1); border: 1.5px solid rgba(78,255,206,0.35);
+      color: var(--aurora); font-size: 0.7rem; font-weight: 800;
+      cursor: pointer; margin-left: 6px; vertical-align: middle;
+      transition: all 0.25s var(--ease); position: relative; z-index: 2;
+      line-height: 1; font-family: var(--font-body);
+    }
+    .info-trigger:hover {
+      background: rgba(78,255,206,0.2); border-color: rgba(78,255,206,0.5);
+      transform: scale(1.1); box-shadow: 0 0 12px rgba(78,255,206,0.25);
+    }
+    .info-tooltip {
+      display: none; position: relative;
+      margin-top: 10px; padding: 14px 18px;
+      background: rgba(15,20,40,0.95); border: 1px solid rgba(78,255,206,0.2);
+      border-radius: 12px; font-size: 0.78rem; color: var(--mist);
+      line-height: 1.65; box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      animation: fadeUp 0.3s var(--ease);
+    }
+    .info-tooltip.open { display: block; }
+    .info-tooltip::before {
+      content: ''; position: absolute; top: -6px; left: 20px;
+      width: 12px; height: 12px; background: rgba(15,20,40,0.95);
+      border-left: 1px solid rgba(78,255,206,0.2);
+      border-top: 1px solid rgba(78,255,206,0.2);
+      transform: rotate(45deg);
+    }
+    .info-tooltip .info-highlight {
+      color: var(--aurora); font-weight: 600;
+    }
     .rgpd-req-note { font-size: 0.72rem; color: var(--coral); margin-top: 6px; display: none; }
     .rgpd-req-note.show { display: block; }
 
@@ -799,7 +833,7 @@
 
       <div class="rules-block">
         <h4>Règles essentielles</h4>
-        <div class="rule-item"><div class="rule-dot"></div><span>Durée : <strong>60 secondes</strong> pile</span></div>
+        <div class="rule-item"><div class="rule-dot"></div><span>Durée : <strong>1 minute - 1 minute 59 secondes</strong></span></div>
         <div class="rule-item"><div class="rule-dot"></div><span>Formats : <strong>MP4, MOV</strong></span></div>
         <div class="rule-item"><div class="rule-dot"></div><span>Résolution min. : <strong>1920×1080</strong> · Ratio <strong>16:9</strong></span></div>
         <div class="rule-item"><div class="rule-dot"></div><span>Taille : <strong>200 à 300 Mo</strong></span></div>
@@ -1391,7 +1425,11 @@
             <div class="rgpd-box"></div>
             <div class="rgpd-text">
               <div class="rgpd-title">Cession de droits de diffusion <span class="req">● obligatoire</span></div>
-              <div class="rgpd-sub">J'accorde à marsAI et à ses partenaires (La Plateforme, Mobile Film Festival) le droit de diffuser, projeter et archiver mon film dans le cadre du festival et de sa plateforme en ligne, pour une durée de 5 ans.</div>
+              <div class="rgpd-sub">J'accorde à marsAI et à ses partenaires (La Plateforme, Mobile Film Festival) le droit de diffuser, projeter, <span style="text-decoration:underline;text-decoration-color:rgba(78,255,206,0.5);text-underline-offset:2px;">modifier</span><span class="info-trigger" id="info-modify-btn" onclick="toggleInfoTooltip(event)" title="En savoir plus">?</span> et archiver mon film dans le cadre du festival et de sa plateforme en ligne, pour une durée de 5 ans.</div>
+              <div class="info-tooltip" id="info-modify-tooltip">
+                <span class="info-highlight">ℹ️ Pourquoi « modifier » ?</span><br>
+                Modification de votre film dans le but d'y ajouter une intro relative au festival ainsi qu'une outro avec le nom des auteurs. <strong style="color:var(--solar);">Cela n'entre pas en compte dans le calcul de durée de votre film.</strong>
+              </div>
             </div>
           </div>
 
@@ -1797,14 +1835,14 @@
         val.className = 'dur-value warn';
         ico.textContent = '⚠';
         val.textContent = display;
-        lbl.textContent = 'Film trop court — durée exacte requise : 60 secondes';
+        lbl.textContent = 'Film trop court — durée exacte requise  1 minute minimum';
         videoValid = false;
       } else {
         el.className = 'duration-result show err';
         val.className = 'dur-value err';
         ico.textContent = '✗';
         val.textContent = display;
-        lbl.textContent = 'Film trop long — durée exacte requise : 60 secondes';
+        lbl.textContent = 'Film trop long — durée exacte requise : 1 minute 59 secondes maximum';
         videoValid = false;
       }
     }
@@ -1904,6 +1942,23 @@
       item.classList.toggle('checked');
       document.getElementById('rgpd-warn').classList.remove('show');
     }
+
+    /* ── TOOLTIP INFO "?" ── */
+    function toggleInfoTooltip(e) {
+      e.stopPropagation();          // ne pas toggler la checkbox RGPD
+      e.preventDefault();
+      const tooltip = document.getElementById('info-modify-tooltip');
+      tooltip.classList.toggle('open');
+    }
+
+    // Fermer la tooltip si clic en dehors
+    document.addEventListener('click', function(e) {
+      const tooltip = document.getElementById('info-modify-tooltip');
+      const trigger = document.getElementById('info-modify-btn');
+      if (tooltip && trigger && !tooltip.contains(e.target) && !trigger.contains(e.target)) {
+        tooltip.classList.remove('open');
+      }
+    });
 
     /* ── VALIDATION ÂGE (≥ 18 ans) ── */
     function validateAge(input) {
