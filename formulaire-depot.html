@@ -494,6 +494,40 @@
     }
     .rgpd-text .rgpd-title { font-size: 0.85rem; font-weight: 600; margin-bottom: 3px; }
     .rgpd-text .rgpd-sub { font-size: 0.75rem; color: var(--mist); line-height: 1.55; }
+
+    /* ─── TOOLTIP INFO "?" ─── */
+    .info-trigger {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: rgba(78,255,206,0.1); border: 1.5px solid rgba(78,255,206,0.35);
+      color: var(--aurora); font-size: 0.7rem; font-weight: 800;
+      cursor: pointer; margin-left: 6px; vertical-align: middle;
+      transition: all 0.25s var(--ease); position: relative; z-index: 2;
+      line-height: 1; font-family: var(--font-body);
+    }
+    .info-trigger:hover {
+      background: rgba(78,255,206,0.2); border-color: rgba(78,255,206,0.5);
+      transform: scale(1.1); box-shadow: 0 0 12px rgba(78,255,206,0.25);
+    }
+    .info-tooltip {
+      display: none; position: relative;
+      margin-top: 10px; padding: 14px 18px;
+      background: rgba(15,20,40,0.95); border: 1px solid rgba(78,255,206,0.2);
+      border-radius: 12px; font-size: 0.78rem; color: var(--mist);
+      line-height: 1.65; box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      animation: fadeUp 0.3s var(--ease);
+    }
+    .info-tooltip.open { display: block; }
+    .info-tooltip::before {
+      content: ''; position: absolute; top: -6px; left: 20px;
+      width: 12px; height: 12px; background: rgba(15,20,40,0.95);
+      border-left: 1px solid rgba(78,255,206,0.2);
+      border-top: 1px solid rgba(78,255,206,0.2);
+      transform: rotate(45deg);
+    }
+    .info-tooltip .info-highlight {
+      color: var(--aurora); font-weight: 600;
+    }
     .rgpd-req-note { font-size: 0.72rem; color: var(--coral); margin-top: 6px; display: none; }
     .rgpd-req-note.show { display: block; }
 
@@ -799,7 +833,7 @@
 
       <div class="rules-block">
         <h4>Règles essentielles</h4>
-        <div class="rule-item"><div class="rule-dot"></div><span>Durée : <strong>60 secondes</strong> pile</span></div>
+        <div class="rule-item"><div class="rule-dot"></div><span>Durée : <strong>1 minute maximum</strong></span></div>
         <div class="rule-item"><div class="rule-dot"></div><span>Formats : <strong>MP4, MOV</strong></span></div>
         <div class="rule-item"><div class="rule-dot"></div><span>Résolution min. : <strong>1920×1080</strong> · Ratio <strong>16:9</strong></span></div>
         <div class="rule-item"><div class="rule-dot"></div><span>Taille : <strong>200 à 300 Mo</strong></span></div>
@@ -817,7 +851,7 @@
           <div class="step-icon si-1">👤</div>
           <div>
             <h2>Profil réalisateur</h2>
-            <p>Informations d'identité et de contact — conservées 3 ans (RGPD)</p>
+            <p> Les informations personnelles saisies dans le formulaire sont uniquement stockées sur votre appareil, à l’exception de votre nom, prénom, pays et email qui seront conservés en base de données lors de la validation du formulaire. Vous serez informé de cette conservation au moment de la validation. Vous pouvez supprimer les autres données locales à tout moment depuis votre navigateur</p>
           </div>
         </div>
 
@@ -871,7 +905,7 @@
           </div>
 
           <div class="field">
-            <label class="field-label">Téléphone <span class="opt">(facultatif)</span></label>
+            <label class="field-label">Téléphone <span class="req">● requis</span></label>
             <input type="tel" id="f-tel" placeholder="+33 1 00 00 00 00" autocomplete="tel-national">
           </div>
 
@@ -963,7 +997,7 @@
 
         <div class="fields-grid col2" style="margin-bottom:16px;">
           <div class="field">
-            <label class="field-label">Comment avez-vous connu marsAI ? <span class="opt">(facultatif)</span></label>
+            <label class="field-label">Comment avez-vous connu marsAI ? span class="req">● requis</span></label>
             <select id="f-discovery">
               <option value="">— Sélectionnez —</option>
               <option value="rs">Réseaux sociaux</option>
@@ -1103,7 +1137,7 @@
                 <span class="uz-spec">MOV</span>
                 <span class="uz-spec">200–300 Mo</span>
                 <span class="uz-spec">16:9</span>
-                <span class="uz-spec">60 sec pile</span>
+                <span class="uz-spec">1 minute</span>
               </div>
             </div>
 
@@ -1167,13 +1201,27 @@
 
         <div class="fields-grid">
           <div class="field">
-            <label class="field-label">Note d'intention <span class="req">● requis</span></label>
+            <label class="field-label">Stack technologique <span class="req">● requis</span></label>
             <textarea id="f-intention" rows="5"
               placeholder="Comment votre film s'inscrit-il dans le thème "Imaginez des futurs souhaitables" ? Décrivez votre démarche artistique et votre rapport à l'IA…"
               maxlength="1000" oninput="countChars(this,'cc-intention',1000)"></textarea>
             <div class="char-counter" id="cc-intention">0 / 1000</div>
-            <div class="field-hint">Cette note est lue par le jury lors de la présélection</div>
-            <div class="field-error" id="err-intention">La note d'intention est requise</div>
+            <div class="field-hint">Décrivz les outils IA que vous avez utilisés pour créer votre film</div>
+            <div class="field-error" id="err-intention">La stach techno est requise</div>
+          </div>
+        </div>
+
+        <br>
+
+        <div class="fields-grid">
+          <div class="field">
+            <label class="field-label">Méthodologie Créative  <span class="req">● requis</span></label>
+            <textarea id="f-intention" rows="5"
+              placeholder="Comment votre film s'inscrit-il dans le thème "Imaginez des futurs souhaitables" ? Décrivez votre démarche artistique et votre rapport à l'IA…"
+              maxlength="1000" oninput="countChars(this,'cc-intention',1000)"></textarea>
+            <div class="char-counter" id="cc-intention">0 / 1000</div>
+            <div class="field-hint">Décrivez votre méthode de travail, l'interaction entre l'Homme et la machine</div>
+            <div class="field-error" id="err-intention">La méthodologie créative est requise</div>
           </div>
         </div>
 
@@ -1247,38 +1295,59 @@
         <hr class="section-sep">
         <div class="section-title-inline">Sous-titres</div>
 
-        <!-- Avertissement sous-titres -->
-        <div style="display:flex;align-items:flex-start;gap:12px;background:rgba(245,230,66,0.04);border:1px solid rgba(245,230,66,0.18);border-radius:10px;padding:12px 16px;margin-bottom:16px;">
-          <span style="font-size:1.1rem;flex-shrink:0;">⚠️</span>
-          <div style="font-size:0.8rem;color:var(--mist);line-height:1.6;">
-            <strong style="color:var(--solar);display:block;margin-bottom:3px;">Ne pas incruster les sous-titres dans la vidéo</strong>
-            Fournissez-les en fichier séparé (SRT ou VTT). Le festival les applique dynamiquement sur la plateforme de diffusion, permettant au spectateur de les activer ou désactiver.
+        <!-- Question dialogues / sous-titrage -->
+        <div class="field" style="margin-bottom:20px;">
+          <label class="field-label">Votre film comporte-t-il des dialogues nécessitant un sous-titrage ? <span class="req">● requis</span></label>
+          <div class="radio-group">
+            <label class="radio-card">
+              <input type="radio" name="dialogue-sub" value="oui" onchange="toggleSubtitleFields()">
+              <span class="radio-card-dot"></span>Oui
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="dialogue-sub" value="non" onchange="toggleSubtitleFields()">
+              <span class="radio-card-dot"></span>Non
+            </label>
           </div>
+          <div class="field-error" id="err-dialogue-sub">Veuillez indiquer si votre film nécessite un sous-titrage</div>
         </div>
 
-        <!-- Upload sous-titres FR -->
-        <div class="subtitle-upload" id="sub-fr-zone" onclick="">
-          <input type="file" id="sub-fr" accept=".srt,.vtt" onchange="handleSubtitle(this,'sub-fr-status')">
-          <div class="sub-icon">💬</div>
-          <div class="sub-text">
-            <div class="sub-title">Sous-titres Français <span class="req">● requis</span></div>
-            <div class="sub-sub">Formats SRT ou VTT</div>
-          </div>
-          <div class="sub-status" id="sub-fr-status">+ Ajouter</div>
-        </div>
-        <div class="field-error" id="err-sub-fr" style="margin-top:6px;margin-bottom:4px;">Sous-titres français requis</div>
+        <!-- Bloc sous-titres (affiché uniquement si "Oui") -->
+        <div id="subtitle-fields" style="display:none;animation:fadeUp 0.35s var(--ease);">
 
-        <!-- Upload sous-titres EN -->
-        <div class="subtitle-upload" style="margin-top:8px;">
-          <input type="file" id="sub-en" accept=".srt,.vtt" onchange="handleSubtitle(this,'sub-en-status')">
-          <div class="sub-icon">🌐</div>
-          <div class="sub-text">
-            <div class="sub-title">Sous-titres Anglais <span class="req">● requis</span></div>
-            <div class="sub-sub">Formats SRT ou VTT</div>
+          <!-- Avertissement sous-titres -->
+          <div style="display:flex;align-items:flex-start;gap:12px;background:rgba(245,230,66,0.04);border:1px solid rgba(245,230,66,0.18);border-radius:10px;padding:12px 16px;margin-bottom:16px;">
+            <span style="font-size:1.1rem;flex-shrink:0;">⚠️</span>
+            <div style="font-size:0.8rem;color:var(--mist);line-height:1.6;">
+              <strong style="color:var(--solar);display:block;margin-bottom:3px;">Ne pas incruster les sous-titres dans la vidéo</strong>
+              Fournissez-les en fichier séparé (SRT ou VTT). Le festival les applique dynamiquement sur la plateforme de diffusion, permettant au spectateur de les activer ou désactiver.
+            </div>
           </div>
-          <div class="sub-status" id="sub-en-status">+ Ajouter</div>
-        </div>
-        <div class="field-error" id="err-sub-en" style="margin-top:6px;">Sous-titres anglais requis</div>
+
+          <!-- Upload sous-titres FR -->
+          <div class="subtitle-upload" id="sub-fr-zone" onclick="">
+            <input type="file" id="sub-fr" accept=".srt,.vtt" onchange="handleSubtitle(this,'sub-fr-status')">
+            <div class="sub-icon">💬</div>
+            <div class="sub-text">
+              <div class="sub-title">Sous-titres Français <span class="req">● requis</span></div>
+              <div class="sub-sub">Formats SRT ou VTT</div>
+            </div>
+            <div class="sub-status" id="sub-fr-status">+ Ajouter</div>
+          </div>
+          <div class="field-error" id="err-sub-fr" style="margin-top:6px;margin-bottom:4px;">Sous-titres français requis</div>
+
+          <!-- Upload sous-titres EN -->
+          <div class="subtitle-upload" style="margin-top:8px;">
+            <input type="file" id="sub-en" accept=".srt,.vtt" onchange="handleSubtitle(this,'sub-en-status')">
+            <div class="sub-icon">🌐</div>
+            <div class="sub-text">
+              <div class="sub-title">Sous-titres Anglais <span class="req">● requis</span></div>
+              <div class="sub-sub">Formats SRT ou VTT</div>
+            </div>
+            <div class="sub-status" id="sub-en-status">+ Ajouter</div>
+          </div>
+          <div class="field-error" id="err-sub-en" style="margin-top:6px;">Sous-titres anglais requis</div>
+
+        </div><!-- /subtitle-fields -->
 
         <div class="step-nav-btns">
           <button class="btn-prev" onclick="prevStep(3)">← Retour</button>
@@ -1356,7 +1425,11 @@
             <div class="rgpd-box"></div>
             <div class="rgpd-text">
               <div class="rgpd-title">Cession de droits de diffusion <span class="req">● obligatoire</span></div>
-              <div class="rgpd-sub">J'accorde à marsAI et à ses partenaires (La Plateforme, Mobile Film Festival) le droit de diffuser, projeter et archiver mon film dans le cadre du festival et de sa plateforme en ligne, pour une durée de 5 ans.</div>
+              <div class="rgpd-sub">J'accorde à marsAI et à ses partenaires (La Plateforme, Mobile Film Festival) le droit de diffuser, projeter, <span style="text-decoration:underline;text-decoration-color:rgba(78,255,206,0.5);text-underline-offset:2px;">modifier</span><span class="info-trigger" id="info-modify-btn" onclick="toggleInfoTooltip(event)" title="En savoir plus">?</span> et archiver mon film dans le cadre du festival et de sa plateforme en ligne, pour une durée de 5 ans.</div>
+              <div class="info-tooltip" id="info-modify-tooltip">
+                <span class="info-highlight">ℹ️ Pourquoi « modifier » ?</span><br>
+                Modification de votre film dans le but d'y ajouter une intro relative au festival ainsi qu'une outro avec le nom des auteurs. <strong style="color:var(--solar);">Cela n'entre pas en compte dans le calcul de durée de votre film.</strong>
+              </div>
             </div>
           </div>
 
@@ -1756,20 +1829,20 @@
         val.className = 'dur-value ok';
         ico.textContent = '✓';
         val.textContent = display;
-        lbl.textContent = 'Durée valide — 60 secondes pile ✓';
+        lbl.textContent = 'Durée valide — 1 minute ✓';
       } else if (sec < 58) {
         el.className = 'duration-result show warn';
         val.className = 'dur-value warn';
         ico.textContent = '⚠';
         val.textContent = display;
-        lbl.textContent = 'Film trop court — durée exacte requise : 60 secondes';
+        lbl.textContent = 'Film trop court — Aucune durée minimum requise';
         videoValid = false;
       } else {
         el.className = 'duration-result show err';
         val.className = 'dur-value err';
         ico.textContent = '✗';
         val.textContent = display;
-        lbl.textContent = 'Film trop long — durée exacte requise : 60 secondes';
+        lbl.textContent = 'Film trop long — durée maximum requise : 1 minute, si trop long il vous sera demandé de le raccourcir';
         videoValid = false;
       }
     }
@@ -1842,12 +1915,50 @@
       el.className = 'sub-status added';
     }
 
+    /* ── TOGGLE SOUS-TITRES (Oui/Non dialogues) ── */
+    function toggleSubtitleFields() {
+      const selected = document.querySelector('input[name="dialogue-sub"]:checked');
+      const subtitleFields = document.getElementById('subtitle-fields');
+      const errDialogue = document.getElementById('err-dialogue-sub');
+
+      // Masquer le message d'erreur quand un choix est fait
+      errDialogue.classList.remove('show');
+
+      if (selected && selected.value === 'oui') {
+        subtitleFields.style.display = 'block';
+      } else {
+        subtitleFields.style.display = 'none';
+        // Réinitialiser les fichiers sous-titres si on passe à "Non"
+        const subFr = document.getElementById('sub-fr');
+        const subEn = document.getElementById('sub-en');
+        if (subFr) { subFr.value = ''; document.getElementById('sub-fr-status').textContent = '+ Ajouter'; document.getElementById('sub-fr-status').className = 'sub-status'; }
+        if (subEn) { subEn.value = ''; document.getElementById('sub-en-status').textContent = '+ Ajouter'; document.getElementById('sub-en-status').className = 'sub-status'; }
+      }
+    }
+
     /* ── RGPD ── */
     function toggleRgpd(id) {
       const item = document.getElementById(id);
       item.classList.toggle('checked');
       document.getElementById('rgpd-warn').classList.remove('show');
     }
+
+    /* ── TOOLTIP INFO "?" ── */
+    function toggleInfoTooltip(e) {
+      e.stopPropagation();          // ne pas toggler la checkbox RGPD
+      e.preventDefault();
+      const tooltip = document.getElementById('info-modify-tooltip');
+      tooltip.classList.toggle('open');
+    }
+
+    // Fermer la tooltip si clic en dehors
+    document.addEventListener('click', function(e) {
+      const tooltip = document.getElementById('info-modify-tooltip');
+      const trigger = document.getElementById('info-modify-btn');
+      if (tooltip && trigger && !tooltip.contains(e.target) && !trigger.contains(e.target)) {
+        tooltip.classList.remove('open');
+      }
+    });
 
     /* ── VALIDATION ÂGE (≥ 18 ans) ── */
     function validateAge(input) {
@@ -1899,12 +2010,17 @@
       const otherTool = document.getElementById('img-other').value.trim();
       document.getElementById('rc-tools').textContent = otherTool || 'Non renseigné';
 
-      const subFr = document.getElementById('sub-fr').files[0];
-      const subEn = document.getElementById('sub-en').files[0];
-      const subs = [];
-      if (subFr) subs.push('FR');
-      if (subEn) subs.push('EN');
-      document.getElementById('rc-subs').textContent = subs.length ? subs.join(', ') : 'Aucun';
+      const dialogueSub = document.querySelector('input[name="dialogue-sub"]:checked');
+      if (dialogueSub && dialogueSub.value === 'oui') {
+        const subFr = document.getElementById('sub-fr').files[0];
+        const subEn = document.getElementById('sub-en').files[0];
+        const subs = [];
+        if (subFr) subs.push('FR');
+        if (subEn) subs.push('EN');
+        document.getElementById('rc-subs').textContent = subs.length ? subs.join(', ') : 'Aucun';
+      } else {
+        document.getElementById('rc-subs').textContent = 'Pas de dialogues — sans sous-titres';
+      }
     }
 
     /* ── SOUMISSION ── */
