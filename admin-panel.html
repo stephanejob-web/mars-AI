@@ -231,6 +231,39 @@
     .modal-close:hover { color: var(--white-soft); }
 
     .form-field { margin-bottom: 16px; }
+
+    /* Zone upload photo modal */
+    .photo-upload-zone {
+      display: flex; align-items: center; gap: 16px;
+      margin-bottom: 16px;
+    }
+    .photo-preview {
+      width: 64px; height: 64px; border-radius: 12px;
+      object-fit: cover; flex-shrink: 0;
+      border: 2px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; overflow: hidden;
+    }
+    .photo-preview img { width: 100%; height: 100%; object-fit: cover; display: none; border-radius: 10px; }
+    .photo-preview.has-photo { border-color: rgba(78,255,206,0.4); }
+    .photo-preview.has-photo .photo-placeholder { display: none; }
+    .photo-preview.has-photo img { display: block; }
+    .photo-upload-right { flex: 1; }
+    .btn-upload-photo {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 8px 14px; border-radius: 8px;
+      border: 1.5px dashed rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.03);
+      color: var(--mist); font-size: 0.8rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s; width: 100%;
+      justify-content: center; margin-bottom: 6px;
+    }
+    .btn-upload-photo:hover { border-color: rgba(78,255,206,0.45); color: var(--aurora); background: rgba(78,255,206,0.05); }
+    .btn-upload-photo.uploaded { border-style: solid; border-color: rgba(78,255,206,0.4); color: var(--aurora); background: rgba(78,255,206,0.06); }
+    .photo-upload-hint { font-size: 0.68rem; color: var(--mist); opacity: 0.6; text-align: center; }
+    .photo-required-err { font-size: 0.72rem; color: var(--coral); margin-top: 5px; display: none; }
+    .photo-required-err.show { display: block; }
     .form-field label { display: block; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mist); margin-bottom: 7px; }
     .form-field input, .form-field select {
       width: 100%; background: rgba(255,255,255,0.04);
@@ -393,17 +426,34 @@
       border-bottom: 1px solid rgba(255,255,255,0.05);
     }
     .jury-admin-row:last-child { border-bottom: none; }
-    .jury-admin-photo {
-      width: 52px; height: 64px;
-      border-radius: 10px; object-fit: cover; flex-shrink: 0;
-      cursor: pointer; display: block;
+    .jury-photo-wrap {
+      position: relative; flex-shrink: 0;
+      width: 52px; height: 64px; border-radius: 10px;
+      cursor: pointer; overflow: hidden;
       border: 1.5px solid rgba(255,255,255,0.1);
       transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .jury-admin-photo:hover {
-      border-color: rgba(78,255,206,0.45);
-      box-shadow: 0 0 12px rgba(78,255,206,0.15);
+    .jury-photo-wrap:hover {
+      border-color: rgba(78,255,206,0.5);
+      box-shadow: 0 0 14px rgba(78,255,206,0.2);
     }
+    .jury-admin-photo {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+    }
+    .jury-photo-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.55);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 2px;
+      opacity: 0; transition: opacity 0.2s;
+      font-size: 0.6rem; color: var(--aurora);
+      font-weight: 700; text-align: center;
+      line-height: 1.3;
+    }
+    .jury-photo-wrap:hover .jury-photo-overlay { opacity: 1; }
+    .jury-photo-overlay-icon { font-size: 1rem; }
     .jury-admin-fields { flex: 1; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
     .jury-admin-input {
       width: 100%; background: rgba(255,255,255,0.04);
@@ -1369,6 +1419,26 @@
       <label>Adresse email</label>
       <input type="email" id="new-email" placeholder="sophie.martin@email.com">
     </div>
+
+    <!-- Photo obligatoire -->
+    <div class="form-field">
+      <label>Photo <span style="color:var(--coral);">*</span></label>
+      <div class="photo-upload-zone">
+        <div class="photo-preview" id="new-photo-preview">
+          <span class="photo-placeholder">👤</span>
+          <img id="new-photo-img" src="" alt="">
+        </div>
+        <div class="photo-upload-right">
+          <input type="file" id="new-photo-file" accept="image/*" style="display:none" onchange="onNewPhotoSelected(this)">
+          <button type="button" class="btn-upload-photo" id="btn-upload-photo" onclick="document.getElementById('new-photo-file').click()">
+            📷 Choisir une photo
+          </button>
+          <div class="photo-upload-hint">JPG, PNG — format portrait recommandé</div>
+          <div class="photo-required-err" id="photo-err">Photo obligatoire</div>
+        </div>
+      </div>
+    </div>
+
     <div class="form-field">
       <label>Rôle</label>
       <div class="role-picker">
@@ -1618,23 +1688,51 @@
     document.getElementById('opt-modo').classList.toggle('selected', role === 'moderateur');
   }
 
+  let newUserPhoto = null;
+
+  function onNewPhotoSelected(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      newUserPhoto = e.target.result;
+      document.getElementById('new-photo-img').src = e.target.result;
+      document.getElementById('new-photo-preview').classList.add('has-photo');
+      document.getElementById('btn-upload-photo').classList.add('uploaded');
+      document.getElementById('btn-upload-photo').innerHTML = '✓ Photo sélectionnée';
+      document.getElementById('photo-err').classList.remove('show');
+    };
+    reader.readAsDataURL(file);
+  }
+
   function createUser() {
     const name  = document.getElementById('new-name').value.trim();
     const email = document.getElementById('new-email').value.trim();
-    if (!name || !email) { showToast('Nom et email requis', 'err'); return; }
+    if (!name || !email) { showToast('Champs manquants', 'Nom et email sont requis.', 'err'); return; }
+    if (!newUserPhoto) {
+      document.getElementById('photo-err').classList.add('show');
+      showToast('Photo manquante', 'Une photo est obligatoire.', 'err');
+      return;
+    }
     const initials = name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
     const token = initials + '-' + Math.random().toString(36).slice(2,6).toUpperCase() + '-' + Math.random().toString(36).slice(2,5).toUpperCase();
-    const clsList = ['ua-1','ua-2','ua-3','ua-4','ua-5','ua-6'];
     const newUser = {
       id: Date.now(), name, email, role: newUserRole,
       active: true, token, assigned: [],
-      cls: clsList[users.length % clsList.length]
+      avatar: newUserPhoto
     };
     users.push(newUser);
     closeModal('create');
+    // Reset formulaire
     document.getElementById('new-name').value = '';
     document.getElementById('new-email').value = '';
-    showToast(`✓ Compte créé · Lien envoyé à ${email}`, 'ok');
+    document.getElementById('new-photo-file').value = '';
+    document.getElementById('new-photo-img').src = '';
+    document.getElementById('new-photo-preview').classList.remove('has-photo');
+    document.getElementById('btn-upload-photo').classList.remove('uploaded');
+    document.getElementById('btn-upload-photo').innerHTML = '📷 Choisir une photo';
+    newUserPhoto = null;
+    showToast('Compte créé', `Lien envoyé à ${email}`, 'ok');
     renderUsers();
   }
 
@@ -1969,8 +2067,15 @@
     if (!list) return;
     list.innerHTML = juryAdminData.map((j, idx) => `
       <div class="jury-admin-row" id="jar-${j.id}">
-        <img class="jury-admin-photo" src="${j.avatar}" alt="${j.name}"
-          onclick="editJuryPhoto(${j.id})" title="Cliquer pour changer la photo">
+        <div class="jury-photo-wrap" onclick="triggerPhotoUpload(${j.id})" title="Changer la photo">
+          <img class="jury-admin-photo" id="jphoto-${j.id}" src="${j.avatar}" alt="${j.name}">
+          <div class="jury-photo-overlay">
+            <span class="jury-photo-overlay-icon">📷</span>
+            <span>Modifier</span>
+          </div>
+        </div>
+        <input type="file" id="jfile-${j.id}" accept="image/*" style="display:none"
+          onchange="onPhotoSelected(${j.id}, this)">
         <span class="jury-admin-star">${idx === 0 ? '⭐' : ''}</span>
         <div class="jury-admin-fields">
           <input class="jury-admin-input" id="jname-${j.id}" value="${j.name}" placeholder="Nom complet">
@@ -1989,9 +2094,7 @@
     // Flush current edits before adding
     collectJuryEdits();
     const newId = Date.now();
-    const imgs = [3,5,6,7,8,9,10,13,14,15,16,17,19,20,21,22,23,24,26,27,28,30,31,33,34,35,37,38,39,40,41,42,43,45,46,48,49,50,51,52,53,54,55,57,58,59,60,61,62,63,64,65,66,67,69,70];
-    const rnd = imgs[Math.floor(Math.random() * imgs.length)];
-    juryAdminData.push({ id: newId, name: '', label: '', avatar: `https://i.pravatar.cc/400?img=${rnd}`, visible: true });
+    juryAdminData.push({ id: newId, name: '', label: '', avatar: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='52' height='64' viewBox='0 0 52 64'%3E%3Crect width='52' height='64' fill='%231a1f4e'/%3E%3Ctext x='26' y='36' font-size='22' text-anchor='middle' fill='%234effce' opacity='.4'%3E📷%3C/text%3E%3C/svg%3E`, visible: true });
     renderJuryAdmin();
     setTimeout(() => document.getElementById('jname-' + newId)?.focus(), 40);
   }
@@ -2002,14 +2105,24 @@
     renderJuryAdmin();
   }
 
-  function editJuryPhoto(id) {
-    const member = juryAdminData.find(j => j.id === id);
-    if (!member) return;
-    const url = window.prompt('URL de la photo (format portrait recommandé) :', member.avatar);
-    if (url !== null && url.trim()) {
-      member.avatar = url.trim();
-      renderJuryAdmin();
-    }
+  function triggerPhotoUpload(id) {
+    const input = document.getElementById('jfile-' + id);
+    if (input) input.click();
+  }
+
+  function onPhotoSelected(id, input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const member = juryAdminData.find(j => j.id === id);
+      if (!member) return;
+      member.avatar = e.target.result;
+      const img = document.getElementById('jphoto-' + id);
+      if (img) img.src = e.target.result;
+      showToast('Photo mise à jour', 'Pensez à enregistrer les modifications.', 'ok');
+    };
+    reader.readAsDataURL(file);
   }
 
   function collectJuryEdits() {
