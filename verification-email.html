@@ -1039,6 +1039,7 @@
         btn.classList.remove('loading');
 
         if (code === '123456') {
+          if (fromDepot) { goToSubmission(); return; }
           showView(3);
         } else {
           // Shake + error state
@@ -1084,20 +1085,49 @@
 
     function goBack() {
       if (resendInterval) clearInterval(resendInterval);
-      showView(1);
-      setTimeout(() => emailInput.focus(), 80);
+      if (fromDepot) {
+        window.location.href = 'formulaire-depot.html';
+      } else {
+        showView(1);
+        setTimeout(() => emailInput.focus(), 80);
+      }
     }
 
     function goToSubmission() {
-      window.location.href = 'formulaire-depot.html';
+      window.location.href = fromDepot ? 'confirmation-depot.html' : 'formulaire-depot.html';
     }
 
     /* ─── INIT ─── */
-    setStep(1);
-    setTimeout(() => {
-      emailInput.focus();
-      emailInput.classList.add('valid');
-    }, 200);
+    const _urlParams = new URLSearchParams(window.location.search);
+    const fromDepot  = _urlParams.get('from') === 'depot';
+    const preEmail   = _urlParams.get('email');
+
+    if (fromDepot && preEmail) {
+      // Adapter les labels des étapes au contexte dépôt
+      document.getElementById('sl-1').textContent = 'Formulaire';
+      document.getElementById('sl-2').textContent = 'Vérification';
+      document.getElementById('sl-3').textContent = 'Confirmation';
+
+      // Marquer step 1 comme terminé et aller directement au code OTP
+      userEmail = decodeURIComponent(preEmail);
+      emailInput.value = userEmail;
+      document.getElementById('display-email').textContent = userEmail;
+      setTimeout(() => {
+        showView(2);
+        // Marquer step 1 visuellement comme "fait"
+        document.getElementById('sc-1').className = 'step-circle done';
+        document.getElementById('sc-1').textContent = '✓';
+        document.getElementById('sl-1').className = 'step-label dim';
+        initOTP();
+        startResendTimer();
+      }, 300);
+    } else {
+      setStep(1);
+      setTimeout(() => {
+        emailInput.focus();
+        emailInput.classList.add('valid');
+      }, 200);
+    }
   </script>
 
   <style>

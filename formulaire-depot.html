@@ -1595,8 +1595,6 @@
       currentStep = n;
       updateStepsNav();
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      // Auto-simuler la vidéo à l'arrivée sur l'étape 2
-      if (n === 2 && !videoValid) autoSimulateVideo();
     }
 
     function updateStepsNav() {
@@ -1917,25 +1915,35 @@
 
       const btn = document.getElementById('btn-submit');
       btn.disabled = true;
-      btn.innerHTML = '⏳ Envoi en cours…';
+      btn.innerHTML = '⏳ Vérification de votre email…';
 
-      const num   = 'MAI-2026-' + String(Math.floor(Math.random() * 90000) + 10000);
-      const email = document.getElementById('f-email').value.trim()  || 'marie.dupont@example.com';
-      const prenom = document.getElementById('f-prenom').value.trim() || 'Marie';
-      const titre  = document.getElementById('f-titre').value.trim()  || 'Mon film marsAI';
+      const num    = 'MAI-2026-' + String(Math.floor(Math.random() * 90000) + 10000);
+      const email  = document.getElementById('f-email').value.trim()   || 'marie.dupont@example.com';
+      const prenom = document.getElementById('f-prenom').value.trim()  || 'Marie';
+      const titre  = document.getElementById('f-titre').value.trim()   || 'Mon film marsAI';
 
-      // Stocker pour réutilisation dans les écrans rejet
-      window._formData = { num, email, prenom, titre };
+      // Sauvegarder pour récupération après vérification OTP
+      sessionStorage.setItem('depot_data', JSON.stringify({ num, email, prenom, titre }));
 
       setTimeout(() => {
-        document.getElementById('dossier-num').textContent  = num;
-        document.getElementById('confirm-email').textContent = email;
-        document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
-        document.getElementById('success-screen').classList.add('show');
-        document.querySelector('.form-sidebar').style.display = 'none';
-        // Lancer la simulation de validation YouTube
-        runYouTubeValidation();
-      }, 1800);
+        window.location.href = 'verification-email.html?from=depot&email=' + encodeURIComponent(email);
+      }, 1200);
+    }
+
+    /* ── RETOUR APRÈS VÉRIFICATION OTP ── */
+    function showSuccessAfterVerif() {
+      const saved = JSON.parse(sessionStorage.getItem('depot_data') || '{}');
+      const num    = saved.num    || 'MAI-2026-12345';
+      const email  = saved.email  || 'marie.dupont@example.com';
+      const prenom = saved.prenom || 'Marie';
+      const titre  = saved.titre  || 'Mon film marsAI';
+      window._formData = { num, email, prenom, titre };
+      document.getElementById('dossier-num').textContent   = num;
+      document.getElementById('confirm-email').textContent = email;
+      document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('success-screen').classList.add('show');
+      document.querySelector('.form-sidebar').style.display = 'none';
+      runYouTubeValidation();
     }
 
     /* ── SIMULATION VALIDATION YOUTUBE ── */
@@ -2030,6 +2038,7 @@
 
     /* ── INIT ── */
     updateStepsNav();
+
   </script>
 
 </body>
