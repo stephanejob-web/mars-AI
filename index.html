@@ -6,6 +6,15 @@
   <title>marsAI — Concours International de Courts-Métrages IA</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
   <style>
     /* ─── DESIGN TOKENS ─────────────────────────────────── */
     :root {
@@ -45,7 +54,7 @@
       position: fixed;
       inset: 0;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-      opacity: 0.025;
+      opacity: 0.015;
       pointer-events: none;
       z-index: 9999;
     }
@@ -221,8 +230,8 @@
     .dev-btn:hover { border-color: rgba(78,255,206,0.4); color: var(--aurora); }
     .dev-btn.current { border-color: rgba(78,255,206,0.4); color: var(--aurora); background: rgba(78,255,206,0.08); }
 
-    /* ─── CANVAS MARS ────────────────────────────────────── */
-    #mars-canvas {
+    /* ─── CANVAS THREE.JS 3D BACKGROUND ─────────────────── */
+    #webgl-canvas {
       position: fixed;
       inset: 0;
       width: 100%;
@@ -245,7 +254,7 @@
       left: -10%;
       width: 70%;
       height: 70%;
-      background: radial-gradient(ellipse, rgba(78,255,206,0.12) 0%, transparent 65%);
+      background: radial-gradient(ellipse, rgba(78,255,206,0.06) 0%, transparent 65%);
       animation: float1 10s ease-in-out infinite alternate;
     }
     .aurora-bg::after {
@@ -255,7 +264,7 @@
       right: -10%;
       width: 60%;
       height: 60%;
-      background: radial-gradient(ellipse, rgba(192,132,252,0.1) 0%, transparent 65%);
+      background: radial-gradient(ellipse, rgba(192,132,252,0.05) 0%, transparent 65%);
       animation: float2 13s ease-in-out infinite alternate;
     }
     @keyframes float1 {
@@ -285,19 +294,14 @@
       z-index: 0;
       overflow: hidden;
     }
-    .hero-canvas-bg canvas {
-      width: 100% !important;
-      height: 100% !important;
-      display: block;
-    }
     .hero-canvas-bg::after {
       content: "";
       position: absolute;
       inset: 0;
       background:
-        linear-gradient(to right,  rgba(10,15,46,0.82) 30%, rgba(10,15,46,0.20) 100%),
-        linear-gradient(to top,    rgba(10,15,46,0.90) 0%,  transparent 40%),
-        linear-gradient(to bottom, rgba(10,15,46,0.60) 0%,  transparent 25%);
+        linear-gradient(to right,  rgba(10,15,46,0.45) 20%, transparent 60%),
+        linear-gradient(to top,    rgba(10,15,46,0.50) 0%,  transparent 30%),
+        linear-gradient(to bottom, rgba(10,15,46,0.30) 0%,  transparent 20%);
       pointer-events: none;
     }
     /* Badge IA généré */
@@ -2467,7 +2471,7 @@
 </head>
 <body>
 
-  <canvas id="mars-canvas" aria-hidden="true"></canvas>
+  <canvas id="webgl-canvas" aria-hidden="true"></canvas>
 
   <!-- ─── NAVIGATION ──────────────────────────────────── -->
   <nav>
@@ -2525,9 +2529,7 @@
   <!-- ─── HERO ────────────────────────────────────────── -->
   <section class="hero" id="home">
     <div class="aurora-bg"></div>
-    <div class="hero-canvas-bg">
-      <canvas id="shader-canvas"></canvas>
-    </div>
+    <div class="hero-canvas-bg"></div>
 
     <div class="hero-content">
 
@@ -3716,161 +3718,287 @@
     renderSponsors();
   </script>
 
-  <!-- ── AURORA MORPHING ───────────────────────────────────── -->
-  <script>
-  (function() {
-    const canvas = document.getElementById('mars-canvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    let W, H;
+  <!-- ── THREE.JS 3D BACKGROUND ───────────────────────────── -->
+  <script type="module">
+    import * as THREE from 'three';
+    import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+    import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+    import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 
-    /*
-     * 6 blobs de couleur fluides — chacun se déplace lentement sur
-     * une trajectoire sinusoïdale indépendante. Les gradients se
-     * superposent pour créer un effet aurora liquide premium.
-     *
-     * bx / by  : position de base (fraction de l'écran)
-     * ox / oy  : amplitude du mouvement (fraction de l'écran)
-     * fx / fy  : fréquence angulaire (rad/s) — lent = ~20-30s de cycle
-     * px / py  : phase initiale (rad) — décale les blobs dans le temps
-     * r        : rayon = fraction de la diagonale de l'écran
-     * c        : [R, G, B]
-     */
-    const blobs = [
-      { bx:0.18, by:0.25, ox:0.10, oy:0.08, fx:0.27, fy:0.21, px:0.0,  py:1.2,  r:0.50, c:[78,255,206]  }, // aurora — haut gauche
-      { bx:0.82, by:0.72, ox:0.09, oy:0.11, fx:0.20, fy:0.32, px:2.1,  py:0.7,  r:0.54, c:[245,230,66]  }, // solar  — bas droite
-      { bx:0.50, by:0.42, ox:0.08, oy:0.09, fx:0.34, fy:0.24, px:1.5,  py:3.8,  r:0.44, c:[192,132,252] }, // lavande — centre
-      { bx:0.10, by:0.78, ox:0.07, oy:0.08, fx:0.29, fy:0.37, px:4.3,  py:2.0,  r:0.38, c:[78,255,206]  }, // aurora — bas gauche
-      { bx:0.88, by:0.20, ox:0.08, oy:0.07, fx:0.23, fy:0.28, px:0.9,  py:5.1,  r:0.40, c:[245,230,66]  }, // solar  — haut droite
-      { bx:0.62, by:0.80, ox:0.11, oy:0.07, fx:0.31, fy:0.19, px:3.3,  py:1.8,  r:0.36, c:[192,132,252] }, // lavande — bas centre
-    ];
+    const config = {
+      colors: {
+        bg: 0x0A0F2E,       // deep-sky to match marsAI theme
+        primary: 0x4EFFCE,   // aurora
+        secondary: 0xC084FC, // lavande
+        wireframe: 0x1A1F4E  // horizon
+      }
+    };
 
-    function resize() {
-      W = window.innerWidth;
-      H = window.innerHeight;
-      canvas.width  = W;
-      canvas.height = H;
+    const canvas = document.querySelector('#webgl-canvas');
+    if (!canvas) throw new Error('Canvas not found');
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(config.colors.bg);
+    scene.fog = new THREE.FogExp2(config.colors.bg, 0.035);
+
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.z = 6;
+
+    const renderer = new THREE.WebGLRenderer({
+      canvas: canvas,
+      antialias: false,
+      powerPreference: "high-performance",
+      alpha: false
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.2;
+
+    const mainGroup = new THREE.Group();
+    scene.add(mainGroup);
+
+    // Core sphere
+    const geometryCore = new THREE.IcosahedronGeometry(2, 10);
+    const materialCore = new THREE.MeshPhysicalMaterial({
+      color: 0x000000,
+      metalness: 0.9,
+      roughness: 0.1,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.1,
+      emissive: config.colors.primary,
+      emissiveIntensity: 0.05
+    });
+    const sphereCore = new THREE.Mesh(geometryCore, materialCore);
+    mainGroup.add(sphereCore);
+
+    // Wireframe
+    const geometryWire = new THREE.IcosahedronGeometry(2.2, 2);
+    const materialWire = new THREE.MeshBasicMaterial({
+      color: config.colors.primary,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.15,
+      side: THREE.DoubleSide
+    });
+    const sphereWire = new THREE.Mesh(geometryWire, materialWire);
+    mainGroup.add(sphereWire);
+
+    // Ambient particles
+    const particlesGeometry = new THREE.BufferGeometry();
+    const particlesCount = 200;
+    const posArray = new Float32Array(particlesCount * 3);
+    for (let i = 0; i < particlesCount * 3; i++) {
+      posArray[i] = (Math.random() - 0.5) * 10;
+    }
+    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+    const particlesMaterial = new THREE.PointsMaterial({
+      size: 0.03,
+      color: config.colors.primary,
+      transparent: true,
+      opacity: 0.8,
+      blending: THREE.AdditiveBlending
+    });
+    const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+    scene.add(particlesMesh);
+
+    // Explosion system
+    const explosionCount = 5000;
+    const explosionGeo = new THREE.BufferGeometry();
+    const initialPos = new Float32Array(explosionCount * 3);
+    const targetPos = new Float32Array(explosionCount * 3);
+    const currentPos = new Float32Array(explosionCount * 3);
+
+    for (let i = 0; i < explosionCount; i++) {
+      const phi = Math.acos(-1 + (2 * i) / explosionCount);
+      const theta = Math.sqrt(explosionCount * Math.PI) * phi;
+      const r = 2.0;
+      const x = r * Math.cos(theta) * Math.sin(phi);
+      const y = r * Math.sin(theta) * Math.sin(phi);
+      const z = r * Math.cos(phi);
+
+      initialPos[i * 3] = x;
+      initialPos[i * 3 + 1] = y;
+      initialPos[i * 3 + 2] = z;
+      currentPos[i * 3] = x;
+      currentPos[i * 3 + 1] = y;
+      currentPos[i * 3 + 2] = z;
+
+      const dir = new THREE.Vector3(x, y, z).normalize();
+      const dist = 2.0 + Math.random() * 6.0;
+      targetPos[i * 3] = dir.x * dist;
+      targetPos[i * 3 + 1] = dir.y * dist;
+      targetPos[i * 3 + 2] = dir.z * dist;
     }
 
-    let lastFrame = 0;
-    function draw(ts) {
-      requestAnimationFrame(draw);
-      if (ts - lastFrame < 33) return; // ~30 fps
-      lastFrame = ts;
-      const t = ts * 0.001;
+    explosionGeo.setAttribute('position', new THREE.BufferAttribute(currentPos, 3));
+    const explosionMaterial = new THREE.PointsMaterial({
+      size: 0.04,
+      color: config.colors.primary,
+      transparent: true,
+      opacity: 0,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+    const explosionSystem = new THREE.Points(explosionGeo, explosionMaterial);
+    explosionSystem.visible = false;
+    mainGroup.add(explosionSystem);
 
-      ctx.clearRect(0, 0, W, H);
+    // Lighting
+    scene.add(new THREE.AmbientLight(0xffffff, 0.1));
+    const light1 = new THREE.PointLight(config.colors.primary, 400);
+    light1.position.set(4, 2, 4);
+    scene.add(light1);
+    const light2 = new THREE.PointLight(config.colors.secondary, 400);
+    light2.position.set(-4, -2, 2);
+    scene.add(light2);
 
-      blobs.forEach(b => {
-        const cx  = (b.bx + Math.sin(t * b.fx + b.px) * b.ox) * W;
-        const cy  = (b.by + Math.cos(t * b.fy + b.py) * b.oy) * H;
-        const rad = Math.hypot(W, H) * b.r;
+    // Post-processing
+    const renderScene = new RenderPass(scene, camera);
+    const bloomPass = new UnrealBloomPass(
+      new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85
+    );
+    bloomPass.strength = 1.2;
+    bloomPass.radius = 0.5;
+    bloomPass.threshold = 0.1;
+    const composer = new EffectComposer(renderer);
+    composer.addPass(renderScene);
+    composer.addPass(bloomPass);
 
-        const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, rad);
-        const [r, gv, bv] = b.c;
-        g.addColorStop(0,    `rgba(${r},${gv},${bv},0.14)`);
-        g.addColorStop(0.35, `rgba(${r},${gv},${bv},0.07)`);
-        g.addColorStop(0.70, `rgba(${r},${gv},${bv},0.02)`);
-        g.addColorStop(1,    `rgba(${r},${gv},${bv},0)`);
+    // Interaction state
+    let mouseX = 0, mouseY = 0;
+    let targetX = 0, targetY = 0;
+    const raycaster = new THREE.Raycaster();
+    const pointer = new THREE.Vector2();
+    let isHovered = false;
+    let isAnimating = false;
+    const animState = { progress: 0 };
 
-        ctx.fillStyle = g;
-        ctx.fillRect(0, 0, W, H);
-      });
+    function updateExplosion() {
+      const positions = explosionGeo.attributes.position.array;
+      for (let i = 0; i < explosionCount; i++) {
+        const ix = i * 3, iy = i * 3 + 1, iz = i * 3 + 2;
+        positions[ix] = initialPos[ix] + (targetPos[ix] - initialPos[ix]) * animState.progress;
+        positions[iy] = initialPos[iy] + (targetPos[iy] - initialPos[iy]) * animState.progress;
+        positions[iz] = initialPos[iz] + (targetPos[iz] - initialPos[iz]) * animState.progress;
+        if (animState.progress > 0.01) {
+          const angle = animState.progress * 0.5;
+          const x = positions[ix], z = positions[iz];
+          positions[ix] = x * Math.cos(angle) - z * Math.sin(angle);
+          positions[iz] = x * Math.sin(angle) + z * Math.cos(angle);
+        }
+      }
+      explosionGeo.attributes.position.needsUpdate = true;
     }
 
-    resize();
-    window.addEventListener('resize', resize);
-    requestAnimationFrame(draw);
-  })();
-  </script>
-  <!-- ─── WEBGL SHADER HERO BACKGROUND ─── -->
-  <script>
-    window.addEventListener('load', function() {
-      const canvas = document.getElementById('shader-canvas');
-      const gl = canvas.getContext('webgl');
-      const section = canvas.closest('.hero-canvas-bg').parentElement;
+    // Mouse tracking + raycaster hover detection
+    document.addEventListener('mousemove', (event) => {
+      mouseX = event.clientX - window.innerWidth / 2;
+      mouseY = event.clientY - window.innerHeight / 2;
 
-      function resize() {
-        canvas.width  = section.offsetWidth;
-        canvas.height = section.offsetHeight;
-        gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+      pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+      pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      raycaster.setFromCamera(pointer, camera);
+      const intersects = raycaster.intersectObject(sphereCore);
+
+      if (intersects.length > 0) {
+        if (!isHovered) {
+          document.body.style.cursor = 'pointer';
+          gsap.to(sphereWire.scale, { x: 1.1, y: 1.1, z: 1.1, duration: 0.5 });
+          gsap.to(sphereCore.material, { emissiveIntensity: 0.2, duration: 0.3 });
+          isHovered = true;
+        }
+      } else {
+        if (isHovered) {
+          document.body.style.cursor = 'default';
+          gsap.to(sphereWire.scale, { x: 1, y: 1, z: 1, duration: 0.5 });
+          gsap.to(sphereCore.material, { emissiveIntensity: 0.05, duration: 0.3 });
+          isHovered = false;
+        }
       }
-      resize();
-      window.addEventListener('resize', resize);
+    });
 
-      const vertSrc = `
-        attribute vec2 aPosition;
-        void main() { gl_Position = vec4(aPosition, 0.0, 1.0); }
-      `;
-      const fragSrc = `
-        precision highp float;
-        uniform float iTime;
-        uniform vec2 iResolution;
-        mat2 rotate2d(float angle){
-          float c = cos(angle), s = sin(angle);
-          return mat2(c, -s, s, c);
-        }
-        float variation(vec2 v1, vec2 v2, float strength, float speed) {
-          return sin(dot(normalize(v1), normalize(v2)) * strength + iTime * speed) / 100.0;
-        }
-        vec3 paintCircle(vec2 uv, vec2 center, float rad, float width) {
-          vec2 diff = center - uv;
-          float len = length(diff);
-          len += variation(diff, vec2(0.0, 1.0), 5.0, 2.0);
-          len -= variation(diff, vec2(1.0, 0.0), 5.0, 2.0);
-          float circle = smoothstep(rad-width, rad, len) - smoothstep(rad, rad+width, len);
-          return vec3(circle);
-        }
-        void main() {
-          vec2 uv = gl_FragCoord.xy / iResolution.xy;
-          uv.x *= 1.5;
-          uv.x -= 0.25;
-          vec3 color = vec3(0.0);
-          float radius = 0.35;
-          vec2 center = vec2(0.5);
-          color += paintCircle(uv, center, radius, 0.035);
-          color += paintCircle(uv, center, radius - 0.018, 0.01);
-          color += paintCircle(uv, center, radius + 0.018, 0.005);
-          vec2 v = rotate2d(iTime) * uv;
-          color *= vec3(v.x, v.y, 0.7 - v.y * v.x);
-          color += paintCircle(uv, center, radius, 0.003);
-          gl_FragColor = vec4(color, 1.0);
-        }
-      `;
+    // Click — explosion + reform
+    window.addEventListener('click', () => {
+      if (isHovered && !isAnimating) {
+        isAnimating = true;
 
-      function compileShader(type, source) {
-        const shader = gl.createShader(type);
-        gl.shaderSource(shader, source);
-        gl.compileShader(shader);
-        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS))
-          throw new Error(gl.getShaderInfoLog(shader));
-        return shader;
+        // Hide solid mesh
+        gsap.to([sphereCore.material, sphereWire.material], {
+          opacity: 0, duration: 0.2,
+          onComplete: () => { sphereCore.visible = false; sphereWire.visible = false; }
+        });
+
+        // Show particles & explode
+        explosionSystem.visible = true;
+        gsap.to(explosionMaterial, { opacity: 1, duration: 0.1 });
+
+        gsap.to(animState, {
+          progress: 1, duration: 1.5, ease: "power4.out",
+          onUpdate: updateExplosion,
+          onComplete: () => {
+            // Reform
+            gsap.to(animState, {
+              progress: 0, duration: 2, delay: 0.2, ease: "elastic.out(1, 0.5)",
+              onUpdate: updateExplosion,
+              onComplete: () => {
+                sphereCore.visible = true;
+                sphereWire.visible = true;
+                gsap.to(explosionMaterial, { opacity: 0, duration: 0.3 });
+                gsap.to([sphereCore.material, sphereWire.material], { opacity: 1, duration: 0.5 });
+                sphereWire.material.opacity = 0.15;
+                explosionSystem.visible = false;
+                isAnimating = false;
+              }
+            });
+          }
+        });
+      }
+    });
+
+    // Animation loop
+    const clock = new THREE.Clock();
+    function animate() {
+      const elapsedTime = clock.getElapsedTime();
+      targetX = mouseX * 0.001;
+      targetY = mouseY * 0.001;
+
+      mainGroup.rotation.y += 0.002;
+      mainGroup.rotation.x += 0.001;
+      mainGroup.rotation.y += 0.05 * (targetX - mainGroup.rotation.y);
+      mainGroup.rotation.x += 0.05 * (targetY - mainGroup.rotation.x);
+
+      if (!isAnimating) {
+        const scale = 1 + Math.sin(elapsedTime * 2) * 0.02;
+        sphereWire.scale.set(scale, scale, scale);
       }
 
-      const program = gl.createProgram();
-      gl.attachShader(program, compileShader(gl.VERTEX_SHADER,   vertSrc));
-      gl.attachShader(program, compileShader(gl.FRAGMENT_SHADER, fragSrc));
-      gl.linkProgram(program);
-      gl.useProgram(program);
+      light1.position.x = Math.sin(elapsedTime * 0.7) * 4;
+      light1.position.y = Math.cos(elapsedTime * 0.5) * 4;
+      light2.position.x = Math.cos(elapsedTime * 0.3) * 5;
+      light2.position.z = Math.sin(elapsedTime * 0.5) * 5;
 
-      const buf = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, -1,1, 1,-1, 1,1]), gl.STATIC_DRAW);
+      particlesMesh.rotation.y = elapsedTime * 0.05;
+      particlesMesh.rotation.x = -mouseY * 0.0002;
 
-      const aPos = gl.getAttribLocation(program, 'aPosition');
-      gl.enableVertexAttribArray(aPos);
-      gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+      composer.render();
+      requestAnimationFrame(animate);
+    }
 
-      const iTimeLoc = gl.getUniformLocation(program, 'iTime');
-      const iResLoc  = gl.getUniformLocation(program, 'iResolution');
+    // Resize
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      composer.setSize(window.innerWidth, window.innerHeight);
+    });
 
-      function render(time) {
-        gl.uniform1f(iTimeLoc, time * 0.001);
-        gl.uniform2f(iResLoc, canvas.width, canvas.height);
-        gl.drawArrays(gl.TRIANGLES, 0, 6);
-        requestAnimationFrame(render);
-      }
-      requestAnimationFrame(render);
+    // Init with entrance animation
+    window.addEventListener('load', () => {
+      animate();
+      gsap.from(sphereCore.scale, { x: 0, y: 0, z: 0, duration: 1.5, ease: "elastic.out(1, 0.7)" });
+      gsap.from(sphereWire.scale, { x: 0, y: 0, z: 0, duration: 1.5, ease: "elastic.out(1, 0.7)", delay: 0.1 });
     });
   </script>
 
