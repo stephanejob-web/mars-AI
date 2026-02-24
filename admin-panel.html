@@ -1,0 +1,2430 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administration — marsAI 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --solar:      #F5E642;
+      --aurora:     #4EFFCE;
+      --deep-sky:   #0A0F2E;
+      --horizon:    #1A1F4E;
+      --surface:    #0F1535;
+      --surface-2:  #141B3E;
+      --coral:      #FF6B6B;
+      --lavande:    #C084FC;
+      --white-soft: #F0F4FF;
+      --mist:       #8892B0;
+      --font-display: 'Syne', sans-serif;
+      --font-body:    'Inter', sans-serif;
+      --font-mono:    'JetBrains Mono', monospace;
+      --ease: cubic-bezier(0.4, 0, 0.2, 1);
+      --sidebar-w: 240px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body { background: var(--deep-sky); color: var(--white-soft); font-family: var(--font-body); font-size: 14px; display: flex; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: var(--sidebar-w); min-width: var(--sidebar-w);
+      background: var(--surface);
+      border-right: 1px solid rgba(255,255,255,0.06);
+      display: flex; flex-direction: column; height: 100vh;
+    }
+    .sidebar-header { padding: 20px 18px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .logo { font-family: var(--font-display); font-size: 1rem; font-weight: 800; letter-spacing: -0.02em; }
+    .logo .ai { color: var(--aurora); }
+    .logo-sub { font-size: 0.65rem; color: var(--mist); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 2px; }
+
+    .admin-identity {
+      padding: 12px 18px; border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .admin-avatar {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--solar), var(--aurora));
+      color: var(--deep-sky); font-weight: 800; font-size: 0.75rem;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .admin-info .name { font-size: 0.82rem; font-weight: 600; }
+    .admin-info .role { font-size: 0.67rem; color: var(--aurora); margin-top: 1px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+
+    .sidebar-nav { padding: 12px 10px; flex: 1; }
+    .nav-label { font-size: 0.6rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--mist); padding: 8px 8px 5px; opacity: 0.55; }
+    .nav-item {
+      display: flex; align-items: center; gap: 9px;
+      padding: 8px 10px; border-radius: 8px;
+      font-size: 0.82rem; color: var(--mist); cursor: pointer;
+      transition: all 0.15s; margin-bottom: 1px; user-select: none;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.04); color: var(--white-soft); }
+    .nav-item.active { background: rgba(78,255,206,0.1); color: var(--aurora); }
+    .nav-item .icon { width: 17px; text-align: center; flex-shrink: 0; }
+    .nav-count {
+      margin-left: auto; font-family: var(--font-mono);
+      font-size: 0.65rem; font-weight: 600;
+      padding: 2px 7px; border-radius: 9999px;
+      background: rgba(255,255,255,0.06); color: var(--mist);
+    }
+    .nc-aurora { background: rgba(78,255,206,0.12); color: var(--aurora); }
+    .nc-coral  { background: rgba(255,107,107,0.12); color: var(--coral); }
+
+    /* ── MAIN ── */
+    .main { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+    .topbar {
+      height: 50px; min-height: 50px;
+      background: var(--surface); border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex; align-items: center; padding: 0 20px; gap: 12px;
+    }
+    .topbar-title { font-family: var(--font-display); font-size: 0.88rem; font-weight: 800; }
+    .topbar-sep { width: 1px; height: 18px; background: rgba(255,255,255,0.08); }
+    .topbar-info { font-size: 0.75rem; color: var(--mist); }
+    .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+
+    .content { flex: 1; overflow-y: auto; padding: 24px; }
+
+    /* ── STATS ROW ── */
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+    .stat-card {
+      background: var(--surface-2);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 12px; padding: 16px 18px;
+    }
+    .stat-card-label { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mist); margin-bottom: 6px; }
+    .stat-card-val { font-family: var(--font-mono); font-size: 1.7rem; font-weight: 500; line-height: 1; }
+    .stat-card-sub { font-size: 0.7rem; color: var(--mist); margin-top: 4px; }
+    .sv-aurora { color: var(--aurora); }
+    .sv-solar  { color: var(--solar); }
+    .sv-coral  { color: var(--coral); }
+    .sv-lavande{ color: var(--lavande); }
+
+    /* ── SECTION HEADER ── */
+    .section-head {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .section-head h2 { font-family: var(--font-display); font-size: 0.95rem; font-weight: 800; }
+    .section-head p { font-size: 0.72rem; color: var(--mist); margin-top: 2px; }
+
+    /* ── BOUTON CRÉER ── */
+    .btn-create {
+      display: flex; align-items: center; gap: 7px;
+      background: var(--aurora); color: var(--deep-sky);
+      border: none; border-radius: 9px; padding: 9px 18px;
+      font-family: var(--font-display); font-size: 0.82rem; font-weight: 800;
+      cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;
+      letter-spacing: 0.01em; white-space: nowrap;
+    }
+    .btn-create:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(78,255,206,0.35); }
+
+    /* ── TABLE UTILISATEURS ── */
+    .user-table-wrap {
+      background: var(--surface-2);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 14px; overflow: hidden; margin-bottom: 24px;
+    }
+    .user-table { width: 100%; border-collapse: collapse; }
+    .user-table th {
+      text-align: left; padding: 10px 16px;
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--mist);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      background: rgba(255,255,255,0.02);
+    }
+    .user-table td { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
+    .user-table tr:last-child td { border-bottom: none; }
+    .user-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .u-avatar {
+      width: 30px; height: 30px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; font-weight: 800; flex-shrink: 0;
+    }
+    .ua-1 { background: linear-gradient(135deg, var(--aurora), var(--lavande)); color: var(--deep-sky); }
+    .ua-2 { background: linear-gradient(135deg, var(--coral), var(--lavande)); color: white; }
+    .ua-3 { background: linear-gradient(135deg, var(--solar), var(--aurora)); color: var(--deep-sky); }
+    .ua-4 { background: rgba(255,255,255,0.08); color: var(--white-soft); }
+    .ua-5 { background: linear-gradient(135deg, var(--lavande), var(--coral)); color: white; }
+    .ua-6 { background: linear-gradient(135deg, var(--aurora), var(--solar)); color: var(--deep-sky); }
+
+    .u-name { font-size: 0.84rem; font-weight: 600; }
+    .u-email { font-family: var(--font-mono); font-size: 0.72rem; color: var(--mist); margin-top: 2px; }
+
+    .role-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 10px; border-radius: 9999px;
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+    }
+    .rp-jury { background: rgba(78,255,206,0.1); color: var(--aurora); border: 1px solid rgba(78,255,206,0.2); }
+    .rp-modo { background: rgba(192,132,252,0.1); color: var(--lavande); border: 1px solid rgba(192,132,252,0.2); }
+
+    .status-toggle {
+      display: inline-flex; align-items: center; gap: 7px;
+      cursor: pointer; user-select: none;
+    }
+    .toggle-track {
+      width: 34px; height: 18px; border-radius: 9px;
+      background: rgba(255,255,255,0.08); position: relative;
+      transition: background 0.2s;
+    }
+    .toggle-track.on { background: rgba(78,255,206,0.35); }
+    .toggle-thumb {
+      position: absolute; top: 2px; left: 2px;
+      width: 14px; height: 14px; border-radius: 50%;
+      background: var(--mist); transition: transform 0.2s, background 0.2s;
+    }
+    .toggle-track.on .toggle-thumb { transform: translateX(16px); background: var(--aurora); }
+    .toggle-label { font-size: 0.75rem; color: var(--mist); }
+    .toggle-track.on + .toggle-label { color: var(--aurora); }
+
+    .token-col { display: flex; align-items: center; gap: 6px; }
+    .token-val {
+      font-family: var(--font-mono); font-size: 0.68rem; color: var(--mist);
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 5px; padding: 3px 8px; letter-spacing: 0.04em;
+    }
+    .btn-icon {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 4px 8px;
+      font-size: 0.72rem; color: var(--mist); cursor: pointer; transition: all 0.15s;
+    }
+    .btn-icon:hover { color: var(--aurora); border-color: rgba(78,255,206,0.3); background: rgba(78,255,206,0.06); }
+    .btn-icon.danger:hover { color: var(--coral); border-color: rgba(255,107,107,0.3); background: rgba(255,107,107,0.06); }
+
+    .assign-count {
+      font-family: var(--font-mono); font-size: 0.72rem;
+      background: rgba(245,230,66,0.08); border: 1px solid rgba(245,230,66,0.2);
+      color: var(--solar); border-radius: 5px; padding: 3px 9px;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .assign-count:hover { background: rgba(245,230,66,0.15); }
+    .assign-count.none { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.08); color: var(--mist); }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(5,8,24,0.82); backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 18px; padding: 28px;
+      width: 100%; max-width: 480px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+      transform: translateY(16px); transition: transform 0.2s var(--ease);
+    }
+    .modal-overlay.open .modal { transform: translateY(0); }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+    .modal-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 800; }
+    .modal-close { background: none; border: none; color: var(--mist); font-size: 1.1rem; cursor: pointer; padding: 4px; transition: color 0.15s; }
+    .modal-close:hover { color: var(--white-soft); }
+
+    .form-field { margin-bottom: 16px; }
+
+    /* Zone upload photo modal */
+    .photo-upload-zone {
+      display: flex; align-items: center; gap: 16px;
+      margin-bottom: 16px;
+    }
+    .photo-preview {
+      width: 64px; height: 64px; border-radius: 12px;
+      object-fit: cover; flex-shrink: 0;
+      border: 2px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; overflow: hidden;
+    }
+    .photo-preview img { width: 100%; height: 100%; object-fit: cover; display: none; border-radius: 10px; }
+    .photo-preview.has-photo { border-color: rgba(78,255,206,0.4); }
+    .photo-preview.has-photo .photo-placeholder { display: none; }
+    .photo-preview.has-photo img { display: block; }
+    .photo-upload-right { flex: 1; }
+    .btn-upload-photo {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 8px 14px; border-radius: 8px;
+      border: 1.5px dashed rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.03);
+      color: var(--mist); font-size: 0.8rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s; width: 100%;
+      justify-content: center; margin-bottom: 6px;
+    }
+    .btn-upload-photo:hover { border-color: rgba(78,255,206,0.45); color: var(--aurora); background: rgba(78,255,206,0.05); }
+    .btn-upload-photo.uploaded { border-style: solid; border-color: rgba(78,255,206,0.4); color: var(--aurora); background: rgba(78,255,206,0.06); }
+    .photo-upload-hint { font-size: 0.68rem; color: var(--mist); opacity: 0.6; text-align: center; }
+    .photo-required-err { font-size: 0.72rem; color: var(--coral); margin-top: 5px; display: none; }
+    .photo-required-err.show { display: block; }
+    .form-field label { display: block; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mist); margin-bottom: 7px; }
+    .form-field input, .form-field select {
+      width: 100%; background: rgba(255,255,255,0.04);
+      border: 1.5px solid rgba(255,255,255,0.09); border-radius: 9px;
+      padding: 10px 13px; font-family: var(--font-body);
+      font-size: 0.88rem; color: var(--white-soft); outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-field input:focus, .form-field select:focus { border-color: rgba(78,255,206,0.4); }
+    .form-field input::placeholder { color: var(--mist); opacity: 0.5; }
+    .form-field select option { background: var(--horizon); }
+
+    .role-picker { display: flex; gap: 8px; }
+    .role-opt {
+      flex: 1; padding: 10px 12px; border-radius: 9px;
+      border: 1.5px solid rgba(255,255,255,0.09);
+      background: rgba(255,255,255,0.03);
+      cursor: pointer; text-align: center; transition: all 0.15s;
+      user-select: none;
+    }
+    .role-opt .ro-icon { font-size: 1.3rem; display: block; margin-bottom: 5px; }
+    .role-opt .ro-label { font-size: 0.78rem; font-weight: 700; color: var(--mist); }
+    .role-opt.selected { background: rgba(78,255,206,0.08); border-color: rgba(78,255,206,0.35); }
+    .role-opt.selected .ro-label { color: var(--aurora); }
+    .role-opt.modo.selected { background: rgba(192,132,252,0.08); border-color: rgba(192,132,252,0.35); }
+    .role-opt.modo.selected .ro-label { color: var(--lavande); }
+
+    .modal-info {
+      background: rgba(78,255,206,0.05); border: 1px solid rgba(78,255,206,0.15);
+      border-radius: 9px; padding: 11px 14px;
+      font-size: 0.75rem; color: var(--mist); line-height: 1.6; margin-bottom: 18px;
+    }
+    .modal-info strong { color: var(--aurora); }
+
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+    .btn-cancel {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 9px; padding: 10px 20px; font-family: var(--font-body);
+      font-size: 0.84rem; font-weight: 600; color: var(--mist); cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-cancel:hover { color: var(--white-soft); }
+    .btn-confirm {
+      background: var(--aurora); border: none; border-radius: 9px;
+      padding: 10px 24px; font-family: var(--font-display);
+      font-size: 0.84rem; font-weight: 800; color: var(--deep-sky);
+      cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn-confirm:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(78,255,206,0.35); }
+
+    /* ── ADMINISTRATION SITE ── */
+    .site-section {
+      background: var(--surface-2);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 14px; margin-bottom: 16px; overflow: hidden;
+    }
+    .site-section-header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 16px 20px; cursor: pointer; user-select: none;
+      transition: background 0.15s;
+    }
+    .site-section-header:hover { background: rgba(255,255,255,0.03); }
+    .site-section-icon {
+      width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 1rem;
+    }
+    .ssi-video  { background: rgba(78,255,206,0.1);  border: 1px solid rgba(78,255,206,0.2); }
+    .ssi-info   { background: rgba(192,132,252,0.1); border: 1px solid rgba(192,132,252,0.2); }
+    .ssi-cal    { background: rgba(245,230,66,0.08); border: 1px solid rgba(245,230,66,0.2); }
+    .site-section-title { font-family: var(--font-display); font-size: 0.9rem; font-weight: 800; flex: 1; }
+    .site-section-sub   { font-size: 0.72rem; color: var(--mist); margin-top: 2px; }
+    .site-chevron { color: var(--mist); font-size: 0.75rem; transition: transform 0.2s; }
+    .site-chevron.open { transform: rotate(180deg); }
+    .site-section-body  { padding: 0 20px 20px; border-top: 1px solid rgba(255,255,255,0.05); }
+
+    .site-field { margin-bottom: 14px; }
+    .site-field:last-child { margin-bottom: 0; }
+    .site-label {
+      display: block; font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--mist); margin-bottom: 7px; margin-top: 16px;
+    }
+    .site-input {
+      width: 100%; background: rgba(255,255,255,0.04);
+      border: 1.5px solid rgba(255,255,255,0.09); border-radius: 9px;
+      padding: 10px 13px; font-family: var(--font-body);
+      font-size: 0.88rem; color: var(--white-soft); outline: none;
+      transition: border-color 0.2s;
+    }
+    .site-input:focus { border-color: rgba(78,255,206,0.4); }
+    .site-input::placeholder { color: var(--mist); opacity: 0.5; }
+    .site-textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+
+    .video-drop {
+      border: 2px dashed rgba(78,255,206,0.25);
+      border-radius: 12px; padding: 28px 20px;
+      text-align: center; cursor: pointer; position: relative;
+      transition: all 0.2s; margin-top: 16px;
+    }
+    .video-drop:hover { border-color: rgba(78,255,206,0.5); background: rgba(78,255,206,0.04); }
+    .video-drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .video-drop-icon  { font-size: 2rem; margin-bottom: 10px; }
+    .video-drop-title { font-size: 0.88rem; font-weight: 700; color: var(--white-soft); margin-bottom: 5px; }
+    .video-drop-sub   { font-size: 0.75rem; color: var(--mist); }
+
+    .video-preview {
+      position: relative; border-radius: 10px; overflow: hidden;
+      margin-top: 16px; aspect-ratio: 16/9; background: #000;
+    }
+    .video-preview video { width: 100%; height: 100%; object-fit: cover; }
+    .video-preview-label {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 8px 12px; background: rgba(5,8,24,0.8);
+      font-size: 0.72rem; color: var(--aurora);
+      backdrop-filter: blur(6px);
+    }
+
+    .cal-item {
+      display: grid; grid-template-columns: 1fr auto auto;
+      align-items: center; gap: 12px;
+      padding: 12px 14px; border-radius: 9px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.06);
+      margin-top: 10px;
+    }
+    .cal-name  { font-size: 0.82rem; font-weight: 600; }
+    .cal-sub   { font-size: 0.68rem; color: var(--mist); margin-top: 2px; }
+    .cal-date  {
+      font-family: var(--font-mono); font-size: 0.78rem;
+      background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.09);
+      border-radius: 7px; padding: 6px 10px; color: var(--white-soft);
+      outline: none; color-scheme: dark;
+    }
+    .cal-toggle {
+      width: 34px; height: 18px; border-radius: 9px;
+      background: rgba(255,255,255,0.08); position: relative;
+      cursor: pointer; transition: background 0.2s; flex-shrink: 0;
+    }
+    .cal-toggle.on { background: rgba(78,255,206,0.35); }
+    .cal-toggle::after {
+      content: ''; position: absolute; top: 2px; left: 2px;
+      width: 14px; height: 14px; border-radius: 50%;
+      background: var(--mist); transition: transform 0.2s, background 0.2s;
+    }
+    .cal-toggle.on::after { transform: translateX(16px); background: var(--aurora); }
+
+    .btn-save-site {
+      width: 100%; padding: 10px; margin-top: 16px;
+      background: rgba(78,255,206,0.08); border: 1px solid rgba(78,255,206,0.25);
+      border-radius: 9px; font-family: var(--font-display);
+      font-size: 0.82rem; font-weight: 800; color: var(--aurora);
+      cursor: pointer; transition: all 0.15s;
+    }
+    .btn-save-site:hover { background: rgba(78,255,206,0.16); }
+
+    /* ── JURY ADMIN EDITOR ── */
+    .jury-admin-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .jury-admin-row:last-child { border-bottom: none; }
+    .jury-photo-wrap {
+      position: relative; flex-shrink: 0;
+      width: 52px; height: 64px; border-radius: 10px;
+      cursor: pointer; overflow: hidden;
+      border: 1.5px solid rgba(255,255,255,0.1);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .jury-photo-wrap:hover {
+      border-color: rgba(78,255,206,0.5);
+      box-shadow: 0 0 14px rgba(78,255,206,0.2);
+    }
+    .jury-admin-photo {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+    }
+    .jury-photo-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.55);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 2px;
+      opacity: 0; transition: opacity 0.2s;
+      font-size: 0.6rem; color: var(--aurora);
+      font-weight: 700; text-align: center;
+      line-height: 1.3;
+    }
+    .jury-photo-wrap:hover .jury-photo-overlay { opacity: 1; }
+    .jury-photo-overlay-icon { font-size: 1rem; }
+    .jury-admin-fields { flex: 1; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+    .jury-admin-input {
+      width: 100%; background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 7px; padding: 6px 10px;
+      font-family: var(--font-body); font-size: 0.84rem;
+      color: var(--white-soft); outline: none;
+      transition: border-color 0.2s;
+    }
+    .jury-admin-input:focus { border-color: rgba(78,255,206,0.4); }
+    .jury-admin-input.small { font-size: 0.75rem; color: var(--mist); }
+    .jury-admin-star { font-size: 0.75rem; flex-shrink: 0; opacity: 0.7; }
+    .jury-admin-del {
+      background: none; border: none; font-size: 0.95rem;
+      color: rgba(255,107,107,0.4); cursor: pointer; padding: 4px 2px;
+      transition: color 0.2s; flex-shrink: 0;
+    }
+    .jury-admin-del:hover { color: var(--coral); }
+    .btn-add-jury {
+      width: 100%; margin-top: 14px; padding: 9px;
+      background: rgba(255,255,255,0.03);
+      border: 1px dashed rgba(255,255,255,0.15);
+      border-radius: 9px; color: var(--mist);
+      font-family: var(--font-body); font-size: 0.82rem;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-add-jury:hover { border-color: rgba(78,255,206,0.3); color: var(--aurora); background: rgba(78,255,206,0.04); }
+
+    /* ── SPONSOR ADMIN EDITOR ── */
+    .sponsor-admin-row {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .sponsor-admin-row:last-child { border-bottom: none; }
+    .sponsor-admin-preview {
+      width: 56px; height: 44px; flex-shrink: 0;
+      border-radius: 9px; overflow: hidden;
+      background: rgba(255,255,255,0.04);
+      border: 1.5px solid rgba(255,255,255,0.09);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.6rem; color: var(--mist); text-align: center;
+      transition: border-color 0.2s;
+    }
+    .sponsor-admin-preview:hover { border-color: rgba(245,230,66,0.4); }
+    .sponsor-admin-preview img { width: 100%; height: 100%; object-fit: contain; }
+    .sponsor-admin-fields { flex: 1; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+    .sponsor-admin-top { display: flex; gap: 6px; align-items: center; }
+    .sponsor-admin-select {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 7px; padding: 6px 8px;
+      font-family: var(--font-body); font-size: 0.73rem;
+      color: var(--mist); outline: none; cursor: pointer; flex-shrink: 0;
+    }
+    .sponsor-admin-select:focus { border-color: rgba(78,255,206,0.4); }
+    .btn-add-sponsor {
+      width: 100%; margin-top: 14px; padding: 9px;
+      background: rgba(255,255,255,0.03);
+      border: 1px dashed rgba(255,255,255,0.15); border-radius: 9px;
+      color: var(--mist); font-family: var(--font-body); font-size: 0.82rem;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-add-sponsor:hover { border-color: rgba(245,230,66,0.3); color: var(--solar); background: rgba(245,230,66,0.03); }
+
+    /* ── MÉDIATHÈQUE FILMS ── */
+    .film-card {
+      background: var(--surface-2);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 14px; overflow: hidden;
+      transition: border-color 0.2s, transform 0.15s;
+    }
+    .film-card:hover { border-color: rgba(255,255,255,0.1); transform: translateY(-2px); }
+
+    .film-thumb {
+      position: relative; width: 100%; aspect-ratio: 16/9;
+      background: #000; overflow: hidden; cursor: pointer;
+    }
+    .film-thumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .film-thumb-overlay {
+      position: absolute; inset: 0;
+      background: rgba(5,8,24,0.45);
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .film-thumb:hover .film-thumb-overlay { background: rgba(5,8,24,0.2); }
+    .play-btn {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: rgba(78,255,206,0.15);
+      border: 2px solid rgba(78,255,206,0.5);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; transition: transform 0.15s, background 0.15s;
+    }
+    .film-thumb:hover .play-btn { transform: scale(1.1); background: rgba(78,255,206,0.25); }
+
+    .film-num-badge {
+      position: absolute; top: 8px; left: 8px;
+      font-family: var(--font-mono); font-size: 0.6rem; font-weight: 700;
+      background: rgba(5,8,24,0.75); color: var(--mist);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 5px; padding: 2px 7px; backdrop-filter: blur(6px);
+    }
+    .assigned-badge {
+      position: absolute; top: 8px; right: 8px;
+      font-size: 0.6rem; font-weight: 700;
+      border-radius: 9999px; padding: 2px 8px;
+      backdrop-filter: blur(6px);
+    }
+    .ab-none { background: rgba(255,107,107,0.2); color: var(--coral); border: 1px solid rgba(255,107,107,0.3); }
+    .ab-ok   { background: rgba(78,255,206,0.15); color: var(--aurora); border: 1px solid rgba(78,255,206,0.3); }
+
+    .film-body { padding: 14px 16px; }
+    .film-title { font-size: 0.88rem; font-weight: 700; margin-bottom: 3px; }
+    .film-meta  { font-size: 0.7rem; color: var(--mist); margin-bottom: 12px; }
+
+    .film-assigned-row {
+      display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; min-height: 22px;
+    }
+    .jp-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 8px 3px 4px; border-radius: 9999px;
+      font-size: 0.65rem; font-weight: 600;
+      background: rgba(78,255,206,0.08); color: var(--aurora);
+      border: 1px solid rgba(78,255,206,0.2);
+    }
+    .jp-pill-av {
+      width: 16px; height: 16px; border-radius: 50%;
+      font-size: 0.5rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .no-jury { font-size: 0.72rem; color: var(--coral); font-style: italic; }
+
+    .btn-assign-film {
+      width: 100%; padding: 9px;
+      background: rgba(78,255,206,0.07);
+      border: 1px solid rgba(78,255,206,0.22);
+      border-radius: 9px; font-family: var(--font-display);
+      font-size: 0.78rem; font-weight: 800; color: var(--aurora);
+      cursor: pointer; transition: all 0.15s; letter-spacing: 0.01em;
+    }
+    .btn-assign-film:hover { background: rgba(78,255,206,0.15); border-color: rgba(78,255,206,0.4); }
+
+    /* ── ONGLETS FILMS ── */
+    .film-tabs {
+      display: flex; gap: 8px; margin-bottom: 20px;
+    }
+    .film-tab {
+      flex: 1; padding: 12px 16px; border-radius: 10px;
+      border: 2px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      font-family: var(--font-body); font-size: 0.84rem; font-weight: 600;
+      color: var(--mist); cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .film-tab:hover {
+      border-color: rgba(255,255,255,0.18);
+      color: var(--white-soft);
+      background: rgba(255,255,255,0.06);
+    }
+    .film-tab.active.pending-tab {
+      background: rgba(255,107,107,0.12);
+      border-color: rgba(255,107,107,0.5);
+      color: var(--coral);
+      box-shadow: 0 0 0 1px rgba(255,107,107,0.2), 0 4px 16px rgba(255,107,107,0.1);
+    }
+    .film-tab.active.assigned-tab {
+      background: rgba(78,255,206,0.1);
+      border-color: rgba(78,255,206,0.5);
+      color: var(--aurora);
+      box-shadow: 0 0 0 1px rgba(78,255,206,0.2), 0 4px 16px rgba(78,255,206,0.08);
+    }
+    .tab-count {
+      font-family: var(--font-mono); font-size: 0.72rem; font-weight: 800;
+      padding: 3px 9px; border-radius: 9999px;
+    }
+    .pending-tab .tab-count { background: rgba(255,107,107,0.15); color: var(--coral); }
+    .assigned-tab .tab-count { background: rgba(78,255,206,0.12); color: var(--aurora); }
+    .film-tab:not(.active) .tab-count { background: rgba(255,255,255,0.06); color: var(--mist); }
+
+    /* ── PAGINATION ── */
+    .page-btn {
+      min-width: 34px; height: 34px; padding: 0 10px;
+      border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04); color: var(--mist);
+      font-family: var(--font-mono); font-size: 0.78rem; font-weight: 600;
+      cursor: pointer; transition: all 0.15s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .page-btn:hover { border-color: rgba(78,255,206,0.3); color: var(--aurora); background: rgba(78,255,206,0.06); }
+    .page-btn.active { background: rgba(78,255,206,0.12); border-color: rgba(78,255,206,0.4); color: var(--aurora); }
+    .page-btn:disabled { opacity: 0.3; cursor: default; pointer-events: none; }
+
+    /* ── FILTRE PAYS DROPDOWN ── */
+    #country-btn {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1.5px solid rgba(255,255,255,0.09);
+      border-radius: 10px;
+      font-family: var(--font-body); font-size: 0.84rem;
+      color: var(--mist); cursor: pointer; transition: all 0.2s;
+    }
+    #country-btn:hover, #country-btn.open {
+      border-color: rgba(78,255,206,0.35);
+      color: var(--white-soft);
+      background: rgba(78,255,206,0.05);
+    }
+    #country-btn.has-filter {
+      border-color: rgba(78,255,206,0.5);
+      color: var(--aurora);
+      background: rgba(78,255,206,0.1);
+    }
+    .country-check-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 7px 10px; border-radius: 8px;
+      font-size: 0.82rem; color: var(--mist);
+      cursor: pointer; transition: background 0.12s; user-select: none;
+    }
+    .country-check-item:hover { background: rgba(255,255,255,0.05); color: var(--white-soft); }
+    .country-check-item.checked { color: var(--white-soft); }
+    .ccheck {
+      width: 16px; height: 16px; flex-shrink: 0;
+      border-radius: 4px; border: 1.5px solid rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.55rem; font-weight: 900; color: var(--deep-sky);
+      transition: all 0.15s;
+    }
+    .ccheck.on { background: var(--aurora); border-color: var(--aurora); }
+
+    /* ── MODAL ASSIGNATION ── */
+    .assign-list { display: flex; flex-direction: column; gap: 6px; max-height: 320px; overflow-y: auto; }
+    .assign-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border-radius: 9px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      cursor: pointer; transition: all 0.15s; user-select: none;
+    }
+    .assign-item:hover { background: rgba(255,255,255,0.06); }
+    .assign-item.checked { background: rgba(78,255,206,0.07); border-color: rgba(78,255,206,0.25); }
+    .ai-cb {
+      width: 18px; height: 18px; border-radius: 5px;
+      border: 1.5px solid rgba(255,255,255,0.2); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.6rem; font-weight: 900; color: var(--deep-sky);
+      background: transparent; transition: all 0.15s;
+    }
+    .assign-item.checked .ai-cb { background: var(--aurora); border-color: var(--aurora); }
+    .ai-title { font-size: 0.82rem; font-weight: 600; flex: 1; }
+    .ai-author { font-size: 0.7rem; color: var(--mist); }
+    .ai-badge {
+      font-size: 0.62rem; font-weight: 700;
+      padding: 2px 7px; border-radius: 9999px;
+      background: rgba(255,255,255,0.05); color: var(--mist);
+    }
+
+    /* ── MODALE COMMENTAIRES ── */
+    .modal-overlay-comments {
+      position: fixed; inset: 0; z-index: 800;
+      background: rgba(5,8,24,0.75); backdrop-filter: blur(6px);
+      display: none; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay-comments.open { display: flex; }
+    .modal-comments {
+      width: 100%; max-width: 500px;
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+      max-height: 85vh;
+      display: flex; flex-direction: column;
+    }
+    .mc-header {
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .mc-title {
+      font-family: var(--font-display);
+      font-size: 1rem; font-weight: 800;
+      color: var(--white-soft); flex: 1;
+    }
+    .mc-sub { font-size: 0.75rem; color: var(--mist); margin-top: 2px; }
+    .mc-body { flex: 1; overflow-y: auto; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+    .mc-item {
+      display: flex; gap: 10px;
+      padding: 12px 14px;
+      background: var(--surface-2);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 10px;
+    }
+    .mc-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      object-fit: cover; flex-shrink: 0;
+    }
+    .mc-content { flex: 1; min-width: 0; }
+    .mc-name-row {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 5px;
+    }
+    .mc-name { font-size: 0.82rem; font-weight: 600; }
+    .mc-dec {
+      font-size: 0.65rem; font-weight: 700;
+      padding: 2px 8px; border-radius: 9999px;
+      letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .mcd-valide  { background: rgba(78,255,206,0.12);  color: var(--aurora); }
+    .mcd-aRevoir { background: rgba(245,230,66,0.1);   color: var(--solar); }
+    .mcd-refuse  { background: rgba(255,107,107,0.1);  color: var(--coral); }
+    .mc-text {
+      font-size: 0.82rem;
+      color: rgba(240,244,255,0.75);
+      line-height: 1.58;
+    }
+    .mc-empty {
+      text-align: center; padding: 32px 16px;
+      font-size: 0.82rem; color: var(--mist); font-style: italic;
+    }
+
+    /* Badge commentaires sur la carte film */
+    .film-comments-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      margin-top: 8px;
+      padding: 5px 11px; border-radius: 7px;
+      background: rgba(192,132,252,0.08);
+      border: 1px solid rgba(192,132,252,0.2);
+      font-size: 0.74rem; font-weight: 600;
+      color: var(--lavande); cursor: pointer;
+      transition: all 0.15s;
+    }
+    .film-comments-btn:hover {
+      background: rgba(192,132,252,0.16);
+      border-color: rgba(192,132,252,0.4);
+    }
+    .film-comments-btn.no-comments {
+      background: rgba(255,255,255,0.03);
+      border-color: rgba(255,255,255,0.07);
+      color: var(--mist); cursor: default;
+    }
+    .film-comments-btn.no-comments:hover {
+      background: rgba(255,255,255,0.03);
+      border-color: rgba(255,255,255,0.07);
+    }
+
+    /* ── BADGE CHARGE JURY ── */
+    .av-load-wrap {
+      position: relative;
+      display: inline-block;
+      cursor: pointer; flex-shrink: 0;
+    }
+    .av-load-wrap img {
+      width: 52px; height: 52px; border-radius: 50%; object-fit: cover; display: block;
+      transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+    }
+    .av-load-wrap:hover img { transform: scale(1.08); }
+    .av-load-badge {
+      position: absolute; bottom: -4px; right: -4px;
+      min-width: 22px; height: 22px; border-radius: 9999px;
+      font-family: var(--font-body); font-size: 0.75rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 5px; border: 2.5px solid var(--surface-2);
+      line-height: 1;
+    }
+    .alb-green  { background: #1a9e78; color: #fff; }
+    .alb-orange { background: #c49a00; color: #fff; }
+    .alb-red    { background: #d94040; color: #fff; }
+
+    /* ── DRAWER ASSIGNATION ── */
+    .drawer-overlay {
+      position: fixed; inset: 0; z-index: 700;
+      background: rgba(5,8,24,0.55); backdrop-filter: blur(4px);
+      opacity: 0; pointer-events: none; transition: opacity 0.28s;
+    }
+    .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+    .drawer {
+      position: fixed; top: 0; right: 0; bottom: 0; z-index: 710;
+      width: 380px;
+      background: var(--surface);
+      border-left: 1px solid rgba(255,255,255,0.08);
+      display: flex; flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: -32px 0 80px rgba(0,0,0,0.5);
+    }
+    .drawer.open { transform: translateX(0); }
+    .drawer-header {
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex; align-items: flex-start; gap: 10px; flex-shrink: 0;
+    }
+    .drawer-film-title {
+      font-family: var(--font-display); font-size: 0.95rem; font-weight: 800;
+      color: var(--white-soft); line-height: 1.2;
+    }
+    .drawer-film-sub { font-size: 0.72rem; color: var(--mist); margin-top: 3px; }
+    .drawer-close {
+      background: none; border: none; cursor: pointer;
+      color: var(--mist); font-size: 1rem; padding: 2px; margin-top: 2px;
+      transition: color 0.15s; flex-shrink: 0;
+    }
+    .drawer-close:hover { color: var(--white-soft); }
+    .drawer-player {
+      flex-shrink: 0; background: #000;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .drawer-player video { width: 100%; display: block; max-height: 190px; object-fit: cover; }
+    .drawer-jury-section {
+      flex: 1; overflow: hidden;
+      display: flex; flex-direction: column;
+      padding: 14px 14px 0;
+    }
+    .drawer-jury-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--mist);
+    }
+    .drawer-count {
+      font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700;
+      padding: 2px 9px; border-radius: 9999px;
+      background: rgba(78,255,206,0.1); color: var(--aurora);
+    }
+    .drawer-search {
+      width: 100%; background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09); border-radius: 9px;
+      padding: 8px 12px; font-family: var(--font-body); font-size: 0.82rem;
+      color: var(--white-soft); outline: none; margin-bottom: 8px;
+      transition: border-color 0.2s;
+    }
+    .drawer-search:focus { border-color: rgba(78,255,206,0.35); }
+    .drawer-jury-list {
+      flex: 1; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 3px;
+      padding-bottom: 14px;
+    }
+    .dj-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 10px; border-radius: 9px;
+      cursor: pointer; transition: background 0.12s;
+      border: 1px solid transparent; user-select: none;
+    }
+    .dj-item:hover { background: rgba(255,255,255,0.04); }
+    .dj-item.assigned {
+      background: rgba(78,255,206,0.06);
+      border-color: rgba(78,255,206,0.18);
+    }
+    .dj-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      object-fit: cover; flex-shrink: 0;
+      transition: box-shadow 0.15s;
+    }
+    .dj-item.assigned .dj-avatar { box-shadow: 0 0 0 2px var(--aurora); }
+    .dj-info { flex: 1; min-width: 0; }
+    .dj-name { font-size: 0.82rem; font-weight: 600; }
+    .dj-role { font-size: 0.68rem; color: var(--mist); margin-top: 1px; }
+    .dj-check {
+      width: 18px; height: 18px; border-radius: 5px;
+      border: 1.5px solid rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.55rem; font-weight: 900; color: var(--deep-sky);
+      flex-shrink: 0; transition: all 0.15s;
+    }
+    .dj-item.assigned .dj-check { background: var(--aurora); border-color: var(--aurora); }
+
+    /* Compact avatar stack sous les cartes */
+    .av-stack { display: flex; align-items: center; }
+    .av-stack img {
+      width: 26px; height: 26px; border-radius: 50%; object-fit: cover;
+      border: 2px solid var(--surface-2); margin-left: -7px; flex-shrink: 0;
+    }
+    .av-stack img:first-child { margin-left: 0; }
+    .av-extra {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: rgba(255,255,255,0.08); border: 2px solid var(--surface-2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.55rem; font-weight: 700; color: var(--mist);
+      margin-left: -7px; flex-shrink: 0;
+    }
+    .btn-manage-jury {
+      padding: 5px 12px; border-radius: 7px;
+      background: rgba(78,255,206,0.07);
+      border: 1px solid rgba(78,255,206,0.2);
+      font-family: var(--font-body); font-size: 0.74rem; font-weight: 600;
+      color: var(--aurora); cursor: pointer; transition: all 0.15s;
+    }
+    .btn-manage-jury:hover { background: rgba(78,255,206,0.16); border-color: rgba(78,255,206,0.4); }
+
+    /* ── TOAST ── */
+    #toast-container {
+      position: fixed; bottom: 72px; right: 20px; z-index: 99999;
+      display: flex; flex-direction: column-reverse; gap: 10px;
+      pointer-events: none;
+    }
+    .toast {
+      display: flex; align-items: flex-start; gap: 12px;
+      min-width: 300px; max-width: 380px;
+      background: #1a1f3e;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 14px 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3);
+      font-size: 0.85rem; font-weight: 500;
+      color: var(--white-soft);
+      pointer-events: all;
+      position: relative; overflow: hidden;
+      transform: translateX(120%);
+      opacity: 0;
+      transition: transform 0.35s cubic-bezier(0.21,1.02,0.73,1), opacity 0.35s ease;
+    }
+    .toast.show { transform: translateX(0); opacity: 1; }
+    .toast.hide { transform: translateX(120%); opacity: 0; }
+
+    .toast-icon {
+      font-size: 1.1rem; flex-shrink: 0; margin-top: 1px;
+    }
+    .toast-body { flex: 1; line-height: 1.4; }
+    .toast-title { font-weight: 700; font-size: 0.82rem; margin-bottom: 3px; }
+    .toast-msg   { font-size: 0.8rem; color: rgba(240,244,255,0.7); }
+
+    .toast-close {
+      flex-shrink: 0; background: none; border: none; cursor: pointer;
+      color: rgba(255,255,255,0.35); font-size: 1rem; padding: 0; line-height: 1;
+      transition: color 0.15s; margin-top: -2px;
+    }
+    .toast-close:hover { color: rgba(255,255,255,0.8); }
+
+    .toast-progress {
+      position: absolute; bottom: 0; left: 0; height: 3px; border-radius: 0 0 0 12px;
+      animation: toast-progress-shrink linear forwards;
+    }
+    @keyframes toast-progress-shrink {
+      from { width: 100%; } to { width: 0%; }
+    }
+
+    .toast.ok   { border-left: 3px solid var(--aurora); }
+    .toast.ok   .toast-title { color: var(--aurora); }
+    .toast.ok   .toast-progress { background: var(--aurora); }
+
+    .toast.warn { border-left: 3px solid var(--solar); }
+    .toast.warn .toast-title { color: var(--solar); }
+    .toast.warn .toast-progress { background: var(--solar); }
+
+    .toast.err  { border-left: 3px solid var(--coral); }
+    .toast.err  .toast-title { color: var(--coral); }
+    .toast.err  .toast-progress { background: var(--coral); }
+
+    /* ── DEV NAV ── */
+    .dev-nav {
+      position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+      background: rgba(0,0,0,.85); backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,.1); border-radius: 50px;
+      padding: 7px 14px; display: flex; align-items: center; gap: 10px; z-index: 9999;
+      font-size: 12px;
+    }
+    .dev-label { color: rgba(255,255,255,.4); letter-spacing: .05em; text-transform: uppercase; font-size: 11px; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════ SIDEBAR ══════════ -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">mars<span class="ai">AI</span></div>
+    <div class="logo-sub">Panneau d'administration</div>
+  </div>
+
+  <div class="admin-identity">
+    <div class="admin-avatar">AD</div>
+    <div class="admin-info">
+      <div class="name">Admin marsAI</div>
+      <div class="role">Administrateur</div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-label">Gestion</div>
+
+    <div class="nav-item active" onclick="showView('users', this)">
+      <span class="icon">👥</span>
+      Utilisateurs
+      <span class="nav-count nc-aurora" id="count-users">6</span>
+    </div>
+
+    <div class="nav-item" onclick="showView('assign', this)">
+      <span class="icon">🎬</span>
+      Assignation films
+      <span class="nav-count" id="count-assign">50</span>
+    </div>
+
+    <div class="nav-label" style="margin-top:8px;">Concours</div>
+
+    <div class="nav-item" onclick="showView('phases', this)">
+      <span class="icon">📅</span>
+      Phases & Dates
+    </div>
+
+    <div class="nav-label" style="margin-top:8px;">Site</div>
+
+    <div class="nav-item" onclick="showView('site', this)">
+      <span class="icon">🌐</span>
+      Administration site
+    </div>
+
+    <div class="nav-label" style="margin-top:8px;">Compte</div>
+
+    <div class="nav-item" onclick="window.location.href='index.html'" style="color:var(--coral);">
+      <span class="icon">🔒</span>
+      Déconnexion
+    </div>
+  </nav>
+</aside>
+
+<!-- ══════════ MAIN ══════════ -->
+<div class="main">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <span class="topbar-title" id="topbar-title">Gestion des utilisateurs</span>
+    <div class="topbar-sep"></div>
+    <span class="topbar-info" id="topbar-info">Jurys et modérateurs — accès par token permanent</span>
+    <div class="topbar-right">
+      <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--mist);background:rgba(245,230,66,0.07);border:1px solid rgba(245,230,66,0.2);border-radius:6px;padding:4px 10px;">🛡️ Admin</span>
+    </div>
+  </div>
+
+  <!-- ══════ VUE UTILISATEURS ══════ -->
+  <div class="content" id="view-users">
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-card-label">Jurys</div>
+        <div class="stat-card-val sv-aurora">4</div>
+        <div class="stat-card-sub">membres actifs</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Modérateurs</div>
+        <div class="stat-card-val sv-lavande">2</div>
+        <div class="stat-card-sub">comptes actifs</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Comptes désactivés</div>
+        <div class="stat-card-val sv-coral">1</div>
+        <div class="stat-card-sub">accès révoqué</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Tokens envoyés</div>
+        <div class="stat-card-val sv-solar">6</div>
+        <div class="stat-card-sub">liens permanents</div>
+      </div>
+    </div>
+
+    <!-- Tableau utilisateurs -->
+    <div class="section-head">
+      <div>
+        <h2>Comptes jury & modérateurs</h2>
+        <p>L'administrateur est le seul habilité à créer et gérer les accès.</p>
+      </div>
+      <button class="btn-create" onclick="openModal('create')">+ Créer un compte</button>
+    </div>
+
+    <!-- Barre de recherche -->
+    <div style="position:relative;margin-bottom:14px;">
+      <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:0.85rem;opacity:0.4;pointer-events:none;">🔍</span>
+      <input
+        id="user-search"
+        type="text"
+        placeholder="Rechercher par nom, email ou rôle…"
+        oninput="filterUsers(this.value)"
+        style="width:100%;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.09);border-radius:10px;padding:9px 14px 9px 36px;font-family:var(--font-body);font-size:0.85rem;color:var(--white-soft);outline:none;transition:border-color 0.2s;"
+        onfocus="this.style.borderColor='rgba(78,255,206,0.4)'"
+        onblur="this.style.borderColor='rgba(255,255,255,0.09)'"
+      >
+    </div>
+
+    <div class="user-table-wrap">
+      <table class="user-table" id="user-table">
+        <thead>
+          <tr>
+            <th>Utilisateur</th>
+            <th>Rôle</th>
+            <th>Films assignés</th>
+            <th>Token d'accès</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="user-tbody"></tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- ══════ VUE ASSIGNATION ══════ -->
+  <div class="content" id="view-assign" style="display:none;">
+    <div class="section-head" style="margin-bottom:16px;">
+      <div>
+        <h2>Films soumis</h2>
+        <p>Visionnez chaque film et assignez-le au jury de votre choix.</p>
+      </div>
+    </div>
+
+    <!-- Barre de recherche films -->
+    <div style="position:relative;margin-bottom:16px;">
+      <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:0.85rem;opacity:0.4;pointer-events:none;">🔍</span>
+      <input
+        id="film-search"
+        type="text"
+        placeholder="Rechercher par titre, réalisateur ou pays…"
+        oninput="filterFilms(this.value)"
+        style="width:100%;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.09);border-radius:10px;padding:9px 14px 9px 36px;font-family:var(--font-body);font-size:0.85rem;color:var(--white-soft);outline:none;transition:border-color 0.2s;"
+        onfocus="this.style.borderColor='rgba(78,255,206,0.4)'"
+        onblur="this.style.borderColor='rgba(255,255,255,0.09)'"
+      >
+    </div>
+
+    <!-- Filtre par pays -->
+    <div style="position:relative;margin-bottom:16px;" id="country-filter-wrap">
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button id="country-btn" onclick="toggleCountryDropdown()">
+          <span id="country-btn-icon">🌍</span>
+          <span id="country-btn-label">Tous les pays</span>
+          <span id="country-btn-arrow" style="font-size:0.7rem;opacity:0.6;margin-left:2px;">▾</span>
+        </button>
+        <button id="country-reset-btn" onclick="resetCountryFilter()" style="display:none;align-items:center;gap:5px;padding:7px 12px;background:rgba(255,107,107,0.08);border:1px solid rgba(255,107,107,0.22);border-radius:10px;font-family:var(--font-body);font-size:0.78rem;color:var(--coral);cursor:pointer;transition:all 0.2s;">
+          × Réinitialiser
+        </button>
+      </div>
+      <div id="country-dropdown" style="display:none;position:absolute;top:calc(100% + 6px);left:0;z-index:200;background:var(--surface-2);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:8px;min-width:230px;max-height:340px;box-shadow:0 16px 48px rgba(0,0,0,0.5);">
+        <input type="text" id="country-search" placeholder="Filtrer les pays…" oninput="renderCountryDropdown(this.value)" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:7px 10px;font-family:var(--font-body);font-size:0.8rem;color:var(--white-soft);outline:none;margin-bottom:6px;" autocomplete="off">
+        <div id="country-list" style="overflow-y:auto;max-height:260px;"></div>
+      </div>
+    </div>
+
+    <!-- Onglets -->
+    <div class="film-tabs">
+      <button class="film-tab pending-tab active" id="tab-pending" onclick="switchFilmTab('pending')">
+        🎬 À assigner
+        <span class="tab-count" id="count-pending">—</span>
+      </button>
+      <button class="film-tab assigned-tab" id="tab-assigned" onclick="switchFilmTab('assigned')">
+        ✓ Assignés
+        <span class="tab-count" id="count-assigned">—</span>
+      </button>
+    </div>
+
+    <div id="assign-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;"></div>
+
+    <!-- État vide -->
+    <div id="assign-empty" style="display:none;text-align:center;padding:60px 20px;">
+      <div style="font-size:3rem;margin-bottom:16px;">🎉</div>
+      <div style="font-family:var(--font-display);font-size:1.1rem;font-weight:800;color:var(--white-soft);margin-bottom:8px;">Tous les films sont assignés !</div>
+      <div style="font-size:0.8rem;color:var(--mist);">Retrouvez-les dans l'onglet "Assignés".</div>
+    </div>
+
+    <!-- Pagination -->
+    <div id="pagination" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:24px;"></div>
+  </div>
+
+  <!-- ══════ VUE PHASES ══════ -->
+  <div class="content" id="view-phases" style="display:none;">
+    <div class="section-head" style="margin-bottom:20px;">
+      <div><h2>Gestion des phases d'évaluation</h2><p>Définissez les dates d'ouverture de chaque session du jury.</p></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:760px;">
+      <!-- Phase 1 -->
+      <div style="background:var(--surface-2);border:1px solid rgba(78,255,206,0.2);border-radius:14px;padding:22px;">
+        <div style="font-family:var(--font-mono);font-size:0.65rem;color:var(--aurora);font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">Phase 1</div>
+        <div style="font-family:var(--font-display);font-size:1.1rem;font-weight:800;margin-bottom:4px;">Présélection Top 50</div>
+        <div style="font-size:0.75rem;color:var(--mist);margin-bottom:18px;line-height:1.5;">Évaluation des 50 premières vidéos. Chaque jury évalue ses films assignés.</div>
+        <div style="margin-bottom:12px;">
+          <label style="font-size:0.65rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--mist);display:block;margin-bottom:6px;">Date d'ouverture</label>
+          <input type="date" value="2026-12-12" style="width:100%;background:rgba(255,255,255,0.04);border:1.5px solid rgba(78,255,206,0.25);border-radius:8px;padding:9px 12px;font-family:var(--font-mono);font-size:0.85rem;color:var(--white-soft);outline:none;color-scheme:dark;">
+        </div>
+        <div style="margin-bottom:16px;">
+          <label style="font-size:0.65rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--mist);display:block;margin-bottom:6px;">Date de clôture</label>
+          <input type="date" value="2026-12-19" style="width:100%;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.09);border-radius:8px;padding:9px 12px;font-family:var(--font-mono);font-size:0.85rem;color:var(--white-soft);outline:none;color-scheme:dark;">
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(78,255,206,0.06);border-radius:8px;font-size:0.75rem;color:var(--aurora);">
+          ✓ 50 films en compétition · 4 jurys assignés
+        </div>
+        <button onclick="showToast('Phase 1 sauvegardée', 'ok')" style="margin-top:14px;width:100%;padding:9px;background:rgba(78,255,206,0.1);border:1px solid rgba(78,255,206,0.3);border-radius:8px;font-family:var(--font-body);font-size:0.82rem;font-weight:600;color:var(--aurora);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='rgba(78,255,206,0.18)'" onmouseout="this.style.background='rgba(78,255,206,0.1)'">Enregistrer les dates</button>
+      </div>
+
+      <!-- Phase 2 -->
+      <div style="background:var(--surface-2);border:1px solid rgba(192,132,252,0.2);border-radius:14px;padding:22px;">
+        <div style="font-family:var(--font-mono);font-size:0.65rem;color:var(--lavande);font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">Phase 2</div>
+        <div style="font-family:var(--font-display);font-size:1.1rem;font-weight:800;margin-bottom:4px;">Finale Top 5</div>
+        <div style="font-size:0.75rem;color:var(--mist);margin-bottom:18px;line-height:1.5;">Évaluation des 5 films finalistes. Session supplémentaire après délibération Phase 1.</div>
+        <div style="margin-bottom:12px;">
+          <label style="font-size:0.65rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--mist);display:block;margin-bottom:6px;">Date d'ouverture</label>
+          <input type="date" value="2026-12-22" style="width:100%;background:rgba(255,255,255,0.04);border:1.5px solid rgba(192,132,252,0.25);border-radius:8px;padding:9px 12px;font-family:var(--font-mono);font-size:0.85rem;color:var(--white-soft);outline:none;color-scheme:dark;">
+        </div>
+        <div style="margin-bottom:16px;">
+          <label style="font-size:0.65rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--mist);display:block;margin-bottom:6px;">Date de clôture</label>
+          <input type="date" value="2026-12-28" style="width:100%;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.09);border-radius:8px;padding:9px 12px;font-family:var(--font-mono);font-size:0.85rem;color:var(--white-soft);outline:none;color-scheme:dark;">
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(192,132,252,0.06);border-radius:8px;font-size:0.75rem;color:var(--lavande);">
+          ⏳ 5 finalistes · À confirmer après Phase 1
+        </div>
+        <button onclick="showToast('Phase 2 sauvegardée', 'ok')" style="margin-top:14px;width:100%;padding:9px;background:rgba(192,132,252,0.1);border:1px solid rgba(192,132,252,0.3);border-radius:8px;font-family:var(--font-body);font-size:0.82rem;font-weight:600;color:var(--lavande);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='rgba(192,132,252,0.18)'" onmouseout="this.style.background='rgba(192,132,252,0.1)'">Enregistrer les dates</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ VUE SITE ══════ -->
+  <div class="content" id="view-site" style="display:none;max-width:720px;">
+
+    <!-- ── 1. Vidéo Hero ── -->
+    <div class="site-section">
+      <div class="site-section-header" onclick="toggleSiteSection('sec-video', this)">
+        <div class="site-section-icon ssi-video">🎬</div>
+        <div>
+          <div class="site-section-title">Vidéo Hero</div>
+          <div class="site-section-sub">Vidéo de fond affichée en plein écran sur la page d'accueil</div>
+        </div>
+        <span class="site-chevron open">▼</span>
+      </div>
+      <div class="site-section-body" id="sec-video">
+        <div class="video-preview">
+          <video src="assets/ia3.mp4" autoplay muted loop playsinline></video>
+          <div class="video-preview-label">✓ Vidéo actuelle — ia1.mp4</div>
+        </div>
+        <div class="video-drop" onclick="document.getElementById('hero-video-input').click()">
+          <input type="file" id="hero-video-input" accept="video/mp4,video/quicktime" onchange="handleHeroVideo(this)">
+          <div class="video-drop-icon">📁</div>
+          <div class="video-drop-title">Remplacer la vidéo</div>
+          <div class="video-drop-sub">Glissez un fichier MP4 ou MOV · Recommandé : 1920×1080, max 200 Mo</div>
+        </div>
+        <button class="btn-save-site" onclick="showToast('✓ Vidéo hero mise à jour', 'ok')">Enregistrer la vidéo →</button>
+      </div>
+    </div>
+
+    <!-- ── 2. Informations du site ── -->
+    <div class="site-section">
+      <div class="site-section-header" onclick="toggleSiteSection('sec-info', this)">
+        <div class="site-section-icon ssi-info">ℹ️</div>
+        <div>
+          <div class="site-section-title">Informations du site</div>
+          <div class="site-section-sub">Titre, description, contact et réseaux sociaux</div>
+        </div>
+        <span class="site-chevron">▼</span>
+      </div>
+      <div class="site-section-body" id="sec-info" style="display:none;">
+        <label class="site-label">Nom du festival</label>
+        <input class="site-input" type="text" value="marsAI 2026" placeholder="Nom du festival">
+        <label class="site-label">Sous-titre / accroche</label>
+        <input class="site-input" type="text" value="Le premier festival mondial du film d'intelligence artificielle" placeholder="Accroche">
+        <label class="site-label">Description courte</label>
+        <textarea class="site-input site-textarea" placeholder="Présentation du festival…">Marseille accueille la première édition de marsAI, festival international dédié aux films créés par ou avec l'intelligence artificielle.</textarea>
+        <label class="site-label">Email de contact</label>
+        <input class="site-input" type="email" value="contact@marsai.fr" placeholder="contact@festival.fr">
+        <label class="site-label">Instagram</label>
+        <input class="site-input" type="text" value="@marsai.festival" placeholder="@compte">
+        <label class="site-label">Site web</label>
+        <input class="site-input" type="url" value="https://marsai.fr" placeholder="https://…">
+        <button class="btn-save-site" onclick="showToast('✓ Informations sauvegardées', 'ok')">Enregistrer les informations →</button>
+      </div>
+    </div>
+
+    <!-- ── 3. Calendrier ── -->
+    <div class="site-section">
+      <div class="site-section-header" onclick="toggleSiteSection('sec-cal', this)">
+        <div class="site-section-icon ssi-cal">📅</div>
+        <div>
+          <div class="site-section-title">Calendrier</div>
+          <div class="site-section-sub">Dates clés affichées publiquement sur le site</div>
+        </div>
+        <span class="site-chevron">▼</span>
+      </div>
+      <div class="site-section-body" id="sec-cal" style="display:none;">
+        <div class="cal-item">
+          <div><div class="cal-name">Ouverture des candidatures</div><div class="cal-sub">Formulaire de dépôt accessible</div></div>
+          <input type="date" class="cal-date" value="2026-03-01">
+          <div class="cal-toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="cal-item">
+          <div><div class="cal-name">Clôture des candidatures</div><div class="cal-sub">Fermeture du formulaire</div></div>
+          <input type="date" class="cal-date" value="2026-10-31">
+          <div class="cal-toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="cal-item">
+          <div><div class="cal-name">Phase 1 — Jury Top 50</div><div class="cal-sub">Évaluation première sélection</div></div>
+          <input type="date" class="cal-date" value="2026-12-12">
+          <div class="cal-toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="cal-item">
+          <div><div class="cal-name">Phase 2 — Jury Top 5</div><div class="cal-sub">Délibération finale</div></div>
+          <input type="date" class="cal-date" value="2026-12-22">
+          <div class="cal-toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="cal-item">
+          <div><div class="cal-name">Cérémonie de clôture</div><div class="cal-sub">Remise des prix — Marseille</div></div>
+          <input type="date" class="cal-date" value="2027-01-15">
+          <div class="cal-toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <button class="btn-save-site" onclick="showToast('✓ Calendrier mis à jour', 'ok')">Enregistrer le calendrier →</button>
+      </div>
+    </div>
+
+    <!-- ── 4. Jury · Page d'accueil ── -->
+    <div class="site-section">
+      <div class="site-section-header" onclick="toggleSiteSection('sec-jury', this)">
+        <div class="site-section-icon" style="background:rgba(78,255,206,0.08);border-color:rgba(78,255,206,0.18);">⚖️</div>
+        <div>
+          <div class="site-section-title">Jury · Page d'accueil</div>
+          <div class="site-section-sub">Membres du jury visibles sur la page d'accueil du site</div>
+        </div>
+        <span class="site-chevron">▼</span>
+      </div>
+      <div class="site-section-body" id="sec-jury" style="display:none;">
+        <p style="font-size:0.8rem;color:var(--mist);margin-bottom:6px;line-height:1.55;">
+          ⭐ <strong style="color:var(--white-soft);">Premier membre = carte vedette</strong> (Présidence du jury) sur la page d'accueil.<br>
+          Modifiez le nom, le rôle, la photo · Activez/désactivez la visibilité · Réorganisez l'ordre.
+        </p>
+        <div id="jury-admin-list" style="margin-top:14px;"></div>
+        <button class="btn-add-jury" onclick="addJuryMember()">+ Ajouter un membre du jury</button>
+        <button class="btn-save-site" onclick="saveJuryAdmin()">Enregistrer les modifications →</button>
+      </div>
+    </div>
+
+    <!-- ── 5. Partenaires & Sponsors ── -->
+    <div class="site-section">
+      <div class="site-section-header" onclick="toggleSiteSection('sec-sponsors', this)">
+        <div class="site-section-icon" style="background:rgba(245,230,66,0.07);border-color:rgba(245,230,66,0.2);">🤝</div>
+        <div>
+          <div class="site-section-title">Partenaires & Sponsors</div>
+          <div class="site-section-sub">Logos et liens affichés sur la page d'accueil</div>
+        </div>
+        <span class="site-chevron">▼</span>
+      </div>
+      <div class="site-section-body" id="sec-sponsors" style="display:none;">
+        <p style="font-size:0.8rem;color:var(--mist);margin-bottom:14px;line-height:1.55;">
+          3 niveaux disponibles : <strong style="color:var(--solar);">Sponsor Principal</strong> · <strong style="color:var(--white-soft);">Partenaire</strong> · Institutionnel.<br>
+          Cliquez sur l'icône logo pour changer l'image. Laissez le logo vide pour afficher le nom en texte.
+        </p>
+        <div id="sponsors-admin-list"></div>
+        <button class="btn-add-sponsor" onclick="addSponsor()">+ Ajouter un partenaire</button>
+        <button class="btn-save-site" onclick="saveSponsorsAdmin()">Enregistrer les modifications →</button>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ══════ MODAL CRÉER COMPTE ══════ -->
+<div class="modal-overlay" id="modal-create">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Créer un compte</div>
+      <button class="modal-close" onclick="closeModal('create')">✕</button>
+    </div>
+
+    <div class="form-field">
+      <label>Prénom & Nom</label>
+      <input type="text" id="new-name" placeholder="ex: Sophie Martin">
+    </div>
+    <div class="form-field">
+      <label>Adresse email</label>
+      <input type="email" id="new-email" placeholder="sophie.martin@email.com">
+    </div>
+
+    <!-- Photo obligatoire -->
+    <div class="form-field">
+      <label>Photo <span style="color:var(--coral);">*</span></label>
+      <div class="photo-upload-zone">
+        <div class="photo-preview" id="new-photo-preview">
+          <span class="photo-placeholder">👤</span>
+          <img id="new-photo-img" src="" alt="">
+        </div>
+        <div class="photo-upload-right">
+          <input type="file" id="new-photo-file" accept="image/*" style="display:none" onchange="onNewPhotoSelected(this)">
+          <button type="button" class="btn-upload-photo" id="btn-upload-photo" onclick="document.getElementById('new-photo-file').click()">
+            📷 Choisir une photo
+          </button>
+          <div class="photo-upload-hint">JPG, PNG — format portrait recommandé</div>
+          <div class="photo-required-err" id="photo-err">Photo obligatoire</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-field">
+      <label>Rôle</label>
+      <div class="role-picker">
+        <div class="role-opt selected" id="opt-jury" onclick="selectRole('jury')">
+          <span class="ro-icon">⚖️</span>
+          <span class="ro-label">Jury</span>
+        </div>
+        <div class="role-opt modo" id="opt-modo" onclick="selectRole('moderateur')">
+          <span class="ro-icon">🛡️</span>
+          <span class="ro-label">Modérateur</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-info">
+      <strong>Lien de connexion permanent</strong> généré automatiquement à la création.<br>
+      Il sera envoyé à l'adresse email renseignée. Aucun mot de passe requis.
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('create')">Annuler</button>
+      <button class="btn-confirm" onclick="createUser()">Créer & envoyer le lien →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ MODAL ASSIGNATION ══════ -->
+<div class="modal-overlay" id="modal-assign">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="assign-modal-title">Assigner des films</div>
+        <div style="font-size:0.75rem;color:var(--mist);margin-top:3px;" id="assign-modal-sub">Sélectionnez les films à assigner</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('assign')">✕</button>
+    </div>
+    <div class="assign-list" id="assign-film-list"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('assign')">Annuler</button>
+      <button class="btn-confirm" onclick="saveAssign()">Enregistrer l'assignation →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DRAWER ASSIGNATION ══ -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="film-drawer">
+  <div class="drawer-header">
+    <div style="flex:1;">
+      <div class="drawer-film-title" id="drawer-title">—</div>
+      <div class="drawer-film-sub" id="drawer-sub">—</div>
+    </div>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="drawer-player">
+    <video id="drawer-video" src="assets/video.mp4" muted controls preload="none" style="width:100%;display:block;max-height:190px;object-fit:cover;"></video>
+  </div>
+  <div class="drawer-jury-section">
+    <div class="drawer-jury-header">
+      <span>Jury assigné</span>
+      <span class="drawer-count" id="drawer-count">0 / 0</span>
+    </div>
+    <input class="drawer-search" id="drawer-search" type="text" placeholder="🔍 Rechercher un juré…" oninput="filterDrawerJury(this.value)" autocomplete="off">
+    <div class="drawer-jury-list" id="drawer-jury-list"></div>
+  </div>
+</div>
+
+<!-- ══ MODALE COMMENTAIRES ══ -->
+<div class="modal-overlay-comments" id="modal-comments" onclick="if(event.target===this)closeCommentsModal()">
+  <div class="modal-comments">
+    <div class="mc-header">
+      <div style="flex:1;">
+        <div class="mc-title" id="mc-film-title">—</div>
+        <div class="mc-sub" id="mc-film-sub">—</div>
+      </div>
+      <button class="modal-close" onclick="closeCommentsModal()">✕</button>
+    </div>
+    <div class="mc-body" id="mc-body"></div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+</div>
+
+<script>
+  /* ── DONNÉES MAQUETTE ── */
+  const films = [
+    { id:1,  title:"Rêves de Silicium",   author:"Léa Fontaine",   country:"France",
+      juryDec:{ 1:'valide', 2:'aRevoir', 3:'valide', 4:null },
+      comments:{ 1:"Narration percutante, maîtrise formelle remarquable.", 2:"Fin un peu abrupte, à retravailler.", 3:"Très forte proposition artistique." } },
+    { id:2,  title:"L'Enfant-Pixel",      author:"Amira Ben Said", country:"Tunisie",
+      juryDec:{ 1:'valide', 2:'valide', 3:'valide', 4:null },
+      comments:{ 1:"Direction visuelle exceptionnelle.", 2:"Très forte.", 3:"Bravo." } },
+    { id:3,  title:"Archipel 2048",       author:"Kenji Ito",      country:"Japon",
+      juryDec:{ 1:'aRevoir', 2:'valide', 3:null, 4:'aRevoir' },
+      comments:{ 1:"Réflexion intéressante, manque de rythme.", 2:"Belle esthétique." } },
+    { id:4,  title:"Mémoire Vive",        author:"Carlos Ruiz",    country:"Espagne",
+      juryDec:{ 1:null, 2:null, 3:null, 4:null }, comments:{} },
+    { id:5,  title:"Nouveaux Soleils",    author:"Priya Mehta",    country:"Inde",
+      juryDec:{ 1:'valide', 2:'valide', 3:'valide', 4:'valide' },
+      comments:{ 1:"Chef-d'œuvre, unanime.", 2:"Absolument.", 3:"Sublime.", 4:"Coup de cœur." } },
+    { id:6,  title:"Frontières Douces",   author:"Omar Diallo",    country:"Sénégal",
+      juryDec:{ 1:'refuse', 2:'aRevoir', 3:null, 4:'refuse' },
+      comments:{ 1:"Trop sonore, peu de visuel.", 4:"Ne correspond pas au cahier des charges." } },
+    { id:7,  title:"Vague Numérique",     author:"Sofia Ek",       country:"Suède",
+      juryDec:{ 1:'valide', 2:null, 3:'valide', 4:'aRevoir' },
+      comments:{ 1:"Travail visuel très soigné.", 3:"Bonne proposition." } },
+    { id:8,  title:"Jardin des Codes",    author:"Lin Wei",        country:"Chine",
+      juryDec:{ 1:'valide', 2:null, 3:'aRevoir', 4:'valide' },
+      comments:{ 1:"Poésie numérique rare.", 4:"Beau." } },
+    { id:9,  title:"Signal Perdu",        author:"Aya Tanaka",     country:"Japon",
+      juryDec:{ 1:null, 2:null, 3:null, 4:null }, comments:{} },
+    { id:10, title:"Horizon Zéro",        author:"Mia Schultz",    country:"Allemagne",
+      juryDec:{ 1:'valide', 2:'valide', 3:'valide', 4:'valide' },
+      comments:{ 1:"Incontournable.", 2:"Unanime.", 3:"Parfait.", 4:"À sélectionner absolument." } },
+    { id:11, title:"Corps Électrique",        author:"Nadia Okonkwo",      country:"Nigeria" },
+    { id:12, title:"Le Miroir Bruité",        author:"Thomas Vidal",       country:"France" },
+    { id:13, title:"Synthèse Éternelle",      author:"Park Ji-won",        country:"Corée du Sud" },
+    { id:14, title:"Désert de Données",       author:"Yasmine Alaoui",     country:"Maroc" },
+    { id:15, title:"Pulse",                   author:"Elena Petrov",       country:"Russie" },
+    { id:16, title:"La Dernière Fréquence",   author:"Marco Ferretti",     country:"Italie" },
+    { id:17, title:"Matière Grise",           author:"Chidi Osei",         country:"Ghana" },
+    { id:18, title:"Lumière Froide",          author:"Ingrid Larsen",      country:"Norvège" },
+    { id:19, title:"Algorithme du Cœur",      author:"Fatima Zahra",       country:"Algérie" },
+    { id:20, title:"Neurones d'Acier",        author:"Viktor Novak",       country:"Tchéquie" },
+    { id:21, title:"L'Œil Augmenté",          author:"Rania Hassan",       country:"Égypte" },
+    { id:22, title:"Boucle Infinie",          author:"Diego Castillo",     country:"Mexique" },
+    { id:23, title:"Écho d'Humanité",         author:"Yuki Nakamura",      country:"Japon" },
+    { id:24, title:"Partition Invisible",     author:"Selin Yıldız",       country:"Turquie" },
+    { id:25, title:"Terra Incognita",         author:"Ana Rodrigues",      country:"Portugal" },
+    { id:26, title:"Conscience Liquide",      author:"Samuel Oduya",       country:"Kenya" },
+    { id:27, title:"Émergence",               author:"Claire Morin",       country:"France" },
+    { id:28, title:"Le Temps Fracturé",       author:"Hana Kim",           country:"Corée du Sud" },
+    { id:29, title:"Biomécanique",            author:"Rafael Santos",      country:"Brésil" },
+    { id:30, title:"Flux",                    author:"Amara Touré",        country:"Mali" },
+    { id:31, title:"Phosphène",              author:"Giulia Romano",       country:"Italie" },
+    { id:32, title:"L'Arbre Numérique",       author:"Mehdi Karimi",       country:"Iran" },
+    { id:33, title:"Strates",                 author:"Olga Sorokina",      country:"Ukraine" },
+    { id:34, title:"Hyperréel",               author:"James Okafor",       country:"Nigeria" },
+    { id:35, title:"Protocole Zéro",          author:"Sven Eriksson",      country:"Suède" },
+    { id:36, title:"Mutation Douce",          author:"Layla Al-Rashid",    country:"Irak" },
+    { id:37, title:"Zéro Latence",            author:"Chen Mingzhi",       country:"Chine" },
+    { id:38, title:"Le Chant des Machines",   author:"Idrissa Coulibaly",  country:"Burkina Faso" },
+    { id:39, title:"Fractale",                author:"Nina Kovač",         country:"Croatie" },
+    { id:40, title:"Résonance",               author:"Pablo Herrera",      country:"Colombie" },
+    { id:41, title:"Interface",               author:"Mele Tupou",         country:"Tonga" },
+    { id:42, title:"Continuum",               author:"Aiko Suzuki",        country:"Japon" },
+    { id:43, title:"L'Ère du Vide",           author:"Camille Perret",     country:"Belgique" },
+    { id:44, title:"Données Sensibles",       author:"Kofi Mensah",        country:"Ghana" },
+    { id:45, title:"Synthétique",             author:"Lucía Fernández",    country:"Argentine" },
+    { id:46, title:"Grille",                  author:"Dmitri Volkov",      country:"Russie" },
+    { id:47, title:"Post-Humain",             author:"Leila Nasser",       country:"Liban" },
+    { id:48, title:"Code Source",             author:"Étienne Blanchard",  country:"Canada" },
+    { id:49, title:"Éveil",                   author:"Sunita Rao",         country:"Inde" },
+    { id:50, title:"La Mémoire des Pixels",   author:"Zara Ahmed",         country:"Pakistan" },
+  ];
+
+  let users = [
+    { id:1,  name:"Marie Lefebvre",  email:"m.lefebvre@marsai.fr",  role:"jury",       active:true,  token:"MLF-7A2K-X9P", assigned:[1,2,3,5],        cls:"ua-1", label:"Présidente · Réalisatrice", avatar:"https://i.pravatar.cc/150?img=47" },
+    { id:2,  name:"Pierre Dubois",   email:"p.dubois@marsai.fr",    role:"jury",       active:true,  token:"PDB-3R8M-Q1T", assigned:[1,4,6,7],        cls:"ua-2", label:"Directeur artistique",      avatar:"https://i.pravatar.cc/150?img=12" },
+    { id:3,  name:"Kenji Ito",       email:"k.ito@marsai.jp",       role:"jury",       active:true,  token:"KIT-9S4N-W2V", assigned:[2,3,8,9],        cls:"ua-3", label:"Artiste numérique",         avatar:"https://i.pravatar.cc/150?img=68" },
+    { id:4,  name:"Sofia Eriksson",  email:"s.eriksson@marsai.se",  role:"jury",       active:true,  token:"SEK-5H1B-R4C", assigned:[5,6,7,10],       cls:"ua-4", label:"Critique de cinéma",        avatar:"https://i.pravatar.cc/150?img=44" },
+    { id:5,  name:"Camille Moreau",  email:"c.moreau@marsai.fr",    role:"moderateur", active:true,  token:"CMR-2J6D-L8Z", assigned:[],               cls:"ua-5", label:"Modératrice",               avatar:"https://i.pravatar.cc/150?img=25" },
+    { id:6,  name:"Thomas Leroy",    email:"t.leroy@marsai.fr",     role:"moderateur", active:false, token:"TLR-8K3F-P7Y", assigned:[],               cls:"ua-6", label:"Modérateur",                avatar:"https://i.pravatar.cc/150?img=15" },
+    { id:7,  name:"Amara Touré",     email:"a.toure@marsai.ml",     role:"jury",       active:true,  token:"ATR-4L9G-H3N", assigned:[1,3,5,7,9,11,13],cls:"ua-1", label:"Productrice",               avatar:"https://i.pravatar.cc/150?img=32" },
+    { id:8,  name:"Elena Petrov",    email:"e.petrov@marsai.ru",    role:"jury",       active:true,  token:"EPV-7K2R-J6M", assigned:[2,4],            cls:"ua-2", label:"Compositrice",              avatar:"https://i.pravatar.cc/150?img=29" },
+    { id:9,  name:"Yuki Nakamura",   email:"y.nakamura@marsai.jp",  role:"jury",       active:true,  token:"YNK-1P8T-V5B", assigned:[3,6,9],          cls:"ua-3", label:"Réalisatrice",              avatar:"https://i.pravatar.cc/150?img=56" },
+    { id:10, name:"Carlos Ruiz",     email:"c.ruiz@marsai.es",      role:"jury",       active:true,  token:"CRZ-9D3C-W7Q", assigned:[],               cls:"ua-4", label:"Chef opérateur",            avatar:"https://i.pravatar.cc/150?img=18" },
+    { id:11, name:"Priya Mehta",     email:"p.mehta@marsai.in",     role:"jury",       active:true,  token:"PMT-6A1N-X2V", assigned:[4,8],            cls:"ua-1", label:"Scénariste",                avatar:"https://i.pravatar.cc/150?img=36" },
+    { id:12, name:"Omar Diallo",     email:"o.diallo@marsai.sn",    role:"jury",       active:true,  token:"ODL-3S7F-L9Z", assigned:[],               cls:"ua-2", label:"Directeur photo",           avatar:"https://i.pravatar.cc/150?img=11" },
+  ];
+
+  let newUserRole = 'jury';
+  let currentAssignUserId = null;
+  let tempAssigned = [];
+
+  /* ── RENDU TABLE UTILISATEURS ── */
+  function renderUsers() {
+    const tbody = document.getElementById('user-tbody');
+    tbody.innerHTML = users.map(u => {
+      const rolePill = u.role === 'jury'
+        ? `<span class="role-pill rp-jury">⚖️ Jury</span>`
+        : `<span class="role-pill rp-modo">🛡️ Modérateur</span>`;
+      const assignTxt = u.role === 'jury'
+        ? `<span class="assign-count ${u.assigned.length===0?'none':''}" onclick="openAssign(${u.id})">${u.assigned.length} film${u.assigned.length!==1?'s':''} ✎</span>`
+        : `<span style="color:var(--mist);font-size:0.75rem;">—</span>`;
+      const tokenDisplay = u.active
+        ? `<div class="token-col"><span class="token-val">${u.token}</span><button class="btn-icon" title="Copier le lien" onclick="showToast('Lien copié : https://jury.marsai.fr/access/${u.token}', 'ok')">📋</button><button class="btn-icon" title="Renvoyer par email" onclick="showToast('Email renvoyé à ${u.email}', 'ok')">📧</button></div>`
+        : `<span style="color:var(--mist);font-size:0.72rem;opacity:0.5;">—</span>`;
+      const statusHtml = `
+        <div class="status-toggle" onclick="toggleUser(${u.id})">
+          <div class="toggle-track ${u.active?'on':''}">
+            <div class="toggle-thumb"></div>
+          </div>
+          <span class="toggle-label">${u.active?'Actif':'Désactivé'}</span>
+        </div>`;
+      return `<tr>
+        <td>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <img src="${u.avatar}" alt="${u.name}" style="width:32px;height:32px;border-radius:8px;object-fit:cover;flex-shrink:0;${!u.active?'opacity:0.4;filter:grayscale(1);':''}">
+            <div>
+              <div class="u-name" style="${!u.active?'opacity:0.45;':''}">${u.name}</div>
+              <div class="u-email">${u.email}</div>
+            </div>
+          </div>
+        </td>
+        <td>${rolePill}</td>
+        <td>${assignTxt}</td>
+        <td>${tokenDisplay}</td>
+        <td>${statusHtml}</td>
+        <td>
+          <div style="display:flex;gap:6px;">
+            <button class="btn-icon" title="Modifier" onclick="showToast('Modification de ${u.name}', 'warn')">✎</button>
+            <button class="btn-icon danger" title="Supprimer" onclick="deleteUser(${u.id})">✕</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+    document.getElementById('count-users').textContent = users.filter(u=>u.active).length;
+  }
+
+  function toggleUser(id) {
+    const u = users.find(x=>x.id===id);
+    if (!u) return;
+    u.active = !u.active;
+    showToast(u.active ? `✓ ${u.name} réactivé` : `🔒 ${u.name} désactivé`, u.active ? 'ok' : 'warn');
+    renderUsers();
+  }
+
+  function deleteUser(id) {
+    const u = users.find(x=>x.id===id);
+    if (!u) return;
+    if (!confirm(`Supprimer le compte de ${u.name} ?`)) return;
+    users = users.filter(x=>x.id!==id);
+    showToast(`Compte de ${u.name} supprimé`, 'err');
+    renderUsers();
+  }
+
+  /* ── MODAL CRÉER ── */
+  function openModal(name) { document.getElementById('modal-'+name).classList.add('open'); }
+  function closeModal(name) { document.getElementById('modal-'+name).classList.remove('open'); }
+
+  function selectRole(role) {
+    newUserRole = role;
+    document.getElementById('opt-jury').classList.toggle('selected', role === 'jury');
+    document.getElementById('opt-modo').classList.toggle('selected', role === 'moderateur');
+  }
+
+  let newUserPhoto = null;
+
+  function onNewPhotoSelected(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      newUserPhoto = e.target.result;
+      document.getElementById('new-photo-img').src = e.target.result;
+      document.getElementById('new-photo-preview').classList.add('has-photo');
+      document.getElementById('btn-upload-photo').classList.add('uploaded');
+      document.getElementById('btn-upload-photo').innerHTML = '✓ Photo sélectionnée';
+      document.getElementById('photo-err').classList.remove('show');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function createUser() {
+    const name  = document.getElementById('new-name').value.trim();
+    const email = document.getElementById('new-email').value.trim();
+    if (!name || !email) { showToast('Champs manquants', 'Nom et email sont requis.', 'err'); return; }
+    if (!newUserPhoto) {
+      document.getElementById('photo-err').classList.add('show');
+      showToast('Photo manquante', 'Une photo est obligatoire.', 'err');
+      return;
+    }
+    const initials = name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+    const token = initials + '-' + Math.random().toString(36).slice(2,6).toUpperCase() + '-' + Math.random().toString(36).slice(2,5).toUpperCase();
+    const newUser = {
+      id: Date.now(), name, email, role: newUserRole,
+      active: true, token, assigned: [],
+      avatar: newUserPhoto
+    };
+    users.push(newUser);
+    closeModal('create');
+    // Reset formulaire
+    document.getElementById('new-name').value = '';
+    document.getElementById('new-email').value = '';
+    document.getElementById('new-photo-file').value = '';
+    document.getElementById('new-photo-img').src = '';
+    document.getElementById('new-photo-preview').classList.remove('has-photo');
+    document.getElementById('btn-upload-photo').classList.remove('uploaded');
+    document.getElementById('btn-upload-photo').innerHTML = '📷 Choisir une photo';
+    newUserPhoto = null;
+    showToast('Compte créé', `Lien envoyé à ${email}`, 'ok');
+    renderUsers();
+  }
+
+  /* ── ASSIGNATION DIRECTE (clic avatar) ── */
+  function toggleFilmJury(filmId, userId) {
+    const u = users.find(x => x.id === userId);
+    const f = films.find(x => x.id === filmId);
+    if (!u || !f) return;
+    const idx = u.assigned.indexOf(filmId);
+    if (idx > -1) {
+      u.assigned.splice(idx, 1);
+      showToast(`${u.name.split(' ')[0]} retiré de "${f.title}"`, 'warn');
+    } else {
+      u.assigned.push(filmId);
+      showToast(`✓ ${u.name.split(' ')[0]} assigné à "${f.title}"`, 'ok');
+    }
+    renderAssignView();
+    renderUsers();
+  }
+
+  /* ── VUE ASSIGNATION (médiathèque) ── */
+  const FILMS_PER_PAGE = 6;
+  let currentPage = 1;
+  let currentFilmTab = 'pending';
+
+  function switchFilmTab(tab) {
+    currentFilmTab = tab;
+    currentPage = 1;
+    filmSearchQuery = '';
+    filmCountryFilters = [];
+    updateCountryBtn();
+    const searchEl = document.getElementById('film-search');
+    if (searchEl) searchEl.value = '';
+    document.getElementById('tab-pending').classList.toggle('active', tab === 'pending');
+    document.getElementById('tab-assigned').classList.toggle('active', tab === 'assigned');
+    renderAssignView();
+    // Scroll en haut de la grille
+    document.getElementById('assign-grid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function renderAssignView(page) {
+    if (page !== undefined) currentPage = page;
+    const grid = document.getElementById('assign-grid');
+    const juryUsers = users.filter(u => u.role === 'jury' && u.active);
+
+    // Filtrer par recherche + pays
+    const filteredFilms = films.filter(f => {
+      const matchSearch = !filmSearchQuery || (f.title + f.author + f.country).toLowerCase().includes(filmSearchQuery);
+      const matchCountry = !filmCountryFilters.length || filmCountryFilters.includes(f.country);
+      return matchSearch && matchCountry;
+    });
+
+    // Rafraîchir les pills pays
+    renderCountryFilters();
+
+    // Séparer films selon l'onglet
+    const pending  = filteredFilms.filter(f => !juryUsers.some(u => u.assigned.includes(f.id)));
+    const assigned = filteredFilms.filter(f =>  juryUsers.some(u => u.assigned.includes(f.id)));
+
+    // Mettre à jour les compteurs des onglets
+    document.getElementById('count-pending').textContent  = pending.length;
+    document.getElementById('count-assigned').textContent = assigned.length;
+    document.getElementById('count-assign').textContent   = pending.length;
+
+    const filmList = currentFilmTab === 'pending' ? pending : assigned;
+    const totalPages = Math.ceil(filmList.length / FILMS_PER_PAGE);
+    if (currentPage > totalPages) currentPage = Math.max(1, totalPages);
+    const pageFilms = filmList.slice((currentPage - 1) * FILMS_PER_PAGE, currentPage * FILMS_PER_PAGE);
+
+    // État vide
+    const emptyEl = document.getElementById('assign-empty');
+    if (filmList.length === 0) {
+      grid.innerHTML = '';
+      emptyEl.querySelector
+        ? null : null;
+      emptyEl.innerHTML = filmSearchQuery
+        ? `<div style="font-size:2rem;margin-bottom:12px;">🔍</div><div style="font-family:var(--font-display);font-size:1rem;font-weight:800;color:var(--white-soft);margin-bottom:6px;">Aucun résultat pour "${filmSearchQuery}"</div><div style="font-size:0.78rem;color:var(--mist);">Essayez un autre titre, réalisateur ou pays.</div>`
+        : `<div style="font-size:3rem;margin-bottom:16px;">🎉</div><div style="font-family:var(--font-display);font-size:1.1rem;font-weight:800;color:var(--white-soft);margin-bottom:8px;">Tous les films sont assignés !</div><div style="font-size:0.8rem;color:var(--mist);">Retrouvez-les dans l'onglet "Assignés".</div>`;
+      emptyEl.style.display = 'block';
+      document.getElementById('pagination').innerHTML = '';
+      return;
+    }
+    emptyEl.style.display = 'none';
+
+    grid.innerHTML = pageFilms.map(f => {
+      const assignedJury = juryUsers.filter(u => u.assigned.includes(f.id));
+      const nAssigned = assignedJury.length;
+      const isAssigned = nAssigned > 0;
+      const nComments = f.comments ? Object.keys(f.comments).length : 0;
+
+      const assignedBadge = isAssigned
+        ? `<div class="assigned-badge ab-ok">✓ ${nAssigned} juré${nAssigned > 1 ? 's' : ''}</div>`
+        : `<div class="assigned-badge ab-none">Non assigné</div>`;
+
+      const avatars = juryUsers.map(u => {
+        const assigned = u.assigned.includes(f.id);
+        const total = u.assigned.length;
+        const badgeCls = total <= 5 ? 'alb-green' : total <= 10 ? 'alb-orange' : 'alb-red';
+        const shadow = assigned
+          ? '0 0 0 2.5px var(--aurora),0 0 10px rgba(78,255,206,0.3)'
+          : '0 0 0 2px rgba(255,255,255,0.12)';
+        const opacity = assigned ? '1' : '0.3';
+        return `<div class="av-load-wrap" onclick="toggleFilmJury(${f.id}, ${u.id})" title="${u.name} — ${total} film${total !== 1 ? 's' : ''} assignés">
+          <img src="${u.avatar}" alt="${u.name}"
+            style="box-shadow:${shadow};opacity:${opacity};"
+            onmouseover="this.style.opacity='1'"
+            onmouseout="this.style.opacity='${opacity}'">
+          <span class="av-load-badge ${badgeCls}">${total}</span>
+        </div>`;
+      }).join('');
+      const juryRow = `<div style="display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap;">${avatars}</div>`;
+
+      return `<div class="film-card">
+        <div class="film-thumb" onclick="playFilm(${f.id})">
+          <video src="assets/video.mp4" muted preload="none" id="vid-${f.id}"></video>
+          <div class="film-thumb-overlay">
+            <div class="play-btn">▶</div>
+          </div>
+          <div class="film-num-badge">#${String(f.id).padStart(2,'0')}</div>
+          ${assignedBadge}
+        </div>
+        <div class="film-body">
+          <div class="film-title">${f.title}</div>
+          <div class="film-meta">${f.author} · ${flags[f.country] || ''} ${f.country}</div>
+          ${juryRow}
+          ${nComments > 0
+            ? `<button class="film-comments-btn" onclick="openCommentsModal(${f.id})">💬 ${nComments} commentaire${nComments > 1 ? 's' : ''}</button>`
+            : `<button class="film-comments-btn no-comments" disabled>💬 Aucun commentaire</button>`}
+        </div>
+      </div>`;
+    }).join('');
+
+    // Pagination
+    const pag = document.getElementById('pagination');
+    if (!pag) return;
+    if (totalPages <= 1) { pag.innerHTML = ''; return; }
+    let html = `<button class="page-btn" onclick="renderAssignView(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>←</button>`;
+    for (let i = 1; i <= totalPages; i++) {
+      html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="renderAssignView(${i})">${i}</button>`;
+    }
+    html += `<button class="page-btn" onclick="renderAssignView(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>→</button>`;
+    html += `<span style="font-size:0.7rem;color:var(--mist);margin-left:6px;">${(currentPage-1)*FILMS_PER_PAGE+1}–${Math.min(currentPage*FILMS_PER_PAGE, filmList.length)} / ${filmList.length} films</span>`;
+    pag.innerHTML = html;
+  }
+
+  function playFilm(filmId) {
+    const vid = document.getElementById('vid-' + filmId);
+    if (!vid) return;
+    if (vid.paused) {
+      document.querySelectorAll('.film-thumb video').forEach(v => { if (v !== vid) v.pause(); });
+      vid.play();
+      vid.closest('.film-thumb').querySelector('.film-thumb-overlay').style.opacity = '0';
+    } else {
+      vid.pause();
+      vid.closest('.film-thumb').querySelector('.film-thumb-overlay').style.opacity = '1';
+    }
+  }
+
+  /* ── VUES ── */
+  const views = ['users','assign','phases','site'];
+  const titles = {
+    users:  ['Gestion des utilisateurs',  'Jurys et modérateurs — accès par token permanent'],
+    assign: ['Films soumis',              'Visionnez et assignez chaque film au jury'],
+    phases: ['Phases & Dates',            'Définissez les dates des sessions jury'],
+    site:   ['Administration du site',    'Vidéo hero, informations et calendrier public'],
+  };
+
+  function showView(name, el) {
+    views.forEach(v => document.getElementById('view-'+v).style.display = 'none');
+    document.getElementById('view-'+name).style.display = 'block';
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    if (el) el.classList.add('active');
+    document.getElementById('topbar-title').textContent = titles[name][0];
+    document.getElementById('topbar-info').textContent  = titles[name][1];
+    if (name === 'assign') renderAssignView();
+    if (name === 'site')   { renderJuryAdmin(); renderSponsorsAdmin(); }
+  }
+
+  /* ── DRAPEAUX PAYS ── */
+  const flags = {
+    'France':'🇫🇷','Tunisie':'🇹🇳','Japon':'🇯🇵','Espagne':'🇪🇸','Inde':'🇮🇳',
+    'Sénégal':'🇸🇳','Suède':'🇸🇪','Chine':'🇨🇳','Allemagne':'🇩🇪','Nigeria':'🇳🇬',
+    'Corée du Sud':'🇰🇷','Maroc':'🇲🇦','Russie':'🇷🇺','Italie':'🇮🇹','Ghana':'🇬🇭',
+    'Norvège':'🇳🇴','Algérie':'🇩🇿','Tchéquie':'🇨🇿','Égypte':'🇪🇬','Mexique':'🇲🇽',
+    'Turquie':'🇹🇷','Portugal':'🇵🇹','Kenya':'🇰🇪','Belgique':'🇧🇪','Brésil':'🇧🇷',
+    'Mali':'🇲🇱','Iran':'🇮🇷','Ukraine':'🇺🇦','Burkina Faso':'🇧🇫','Croatie':'🇭🇷',
+    'Colombie':'🇨🇴','Tonga':'🇹🇴','Liban':'🇱🇧','Canada':'🇨🇦','Pakistan':'🇵🇰','Argentine':'🇦🇷',
+  };
+
+  /* ── RECHERCHE & FILTRE FILMS ── */
+  let filmSearchQuery = '';
+  let filmCountryFilters = []; // multi-sélection
+
+  function filterFilms(query) {
+    filmSearchQuery = query.toLowerCase().trim();
+    currentPage = 1;
+    renderAssignView();
+  }
+
+  function toggleCountryDropdown() {
+    const dd = document.getElementById('country-dropdown');
+    const btn = document.getElementById('country-btn');
+    const isOpen = dd.style.display !== 'none';
+    if (isOpen) {
+      dd.style.display = 'none';
+      btn.classList.remove('open');
+    } else {
+      dd.style.display = 'block';
+      btn.classList.add('open');
+      renderCountryDropdown('');
+      const si = document.getElementById('country-search');
+      si.value = '';
+      setTimeout(() => si.focus(), 50);
+    }
+  }
+
+  function renderCountryDropdown(query) {
+    const q = (query || '').toLowerCase().trim();
+    const countries = [...new Set(films.map(f => f.country))].sort();
+    const filtered = q ? countries.filter(c => c.toLowerCase().includes(q)) : countries;
+    const list = document.getElementById('country-list');
+    if (!filtered.length) {
+      list.innerHTML = '<div style="padding:12px;text-align:center;font-size:0.78rem;color:var(--mist);">Aucun pays trouvé</div>';
+      return;
+    }
+    list.innerHTML = filtered.map(c => {
+      const checked = filmCountryFilters.includes(c);
+      return `<div class="country-check-item ${checked ? 'checked' : ''}" onclick="toggleCountry('${c}')">
+        <span class="ccheck ${checked ? 'on' : ''}">✓</span>
+        <span>${flags[c] || ''} ${c}</span>
+      </div>`;
+    }).join('');
+  }
+
+  function toggleCountry(country) {
+    const idx = filmCountryFilters.indexOf(country);
+    if (idx === -1) filmCountryFilters.push(country);
+    else filmCountryFilters.splice(idx, 1);
+    updateCountryBtn();
+    renderCountryDropdown(document.getElementById('country-search').value);
+    currentPage = 1;
+    renderAssignView();
+  }
+
+  function resetCountryFilter() {
+    filmCountryFilters = [];
+    updateCountryBtn();
+    currentPage = 1;
+    renderAssignView();
+  }
+
+  function updateCountryBtn() {
+    const btn = document.getElementById('country-btn');
+    const label = document.getElementById('country-btn-label');
+    const icon = document.getElementById('country-btn-icon');
+    const resetBtn = document.getElementById('country-reset-btn');
+    const n = filmCountryFilters.length;
+    if (n === 0) {
+      label.textContent = 'Tous les pays';
+      icon.textContent = '🌍';
+      btn.classList.remove('has-filter');
+      resetBtn.style.display = 'none';
+    } else if (n === 1) {
+      label.textContent = filmCountryFilters[0];
+      icon.textContent = flags[filmCountryFilters[0]] || '🌍';
+      btn.classList.add('has-filter');
+      resetBtn.style.display = 'flex';
+    } else {
+      label.textContent = `${n} pays`;
+      icon.textContent = '🌍';
+      btn.classList.add('has-filter');
+      resetBtn.style.display = 'flex';
+    }
+  }
+
+  function renderCountryFilters() { /* remplacé par dropdown */ }
+
+  /* ── RECHERCHE UTILISATEURS ── */
+  function filterUsers(query) {
+    const q = query.toLowerCase().trim();
+    const rows = document.querySelectorAll('#user-tbody tr');
+    let visible = 0;
+    rows.forEach(row => {
+      const match = !q || row.textContent.toLowerCase().includes(q);
+      row.style.display = match ? '' : 'none';
+      if (match) visible++;
+    });
+    let empty = document.getElementById('user-search-empty');
+    if (!empty) {
+      empty = document.createElement('div');
+      empty.id = 'user-search-empty';
+      empty.style.cssText = 'text-align:center;padding:24px;font-size:0.8rem;color:var(--mist);display:none;';
+      empty.textContent = 'Aucun utilisateur trouvé.';
+      document.querySelector('.user-table-wrap').after(empty);
+    }
+    empty.style.display = visible === 0 && q ? 'block' : 'none';
+  }
+
+  /* ── ADMINISTRATION SITE ── */
+  function toggleSiteSection(id, header) {
+    const body = document.getElementById(id);
+    const chevron = header.querySelector('.site-chevron');
+    const isOpen = body.style.display !== 'none';
+    body.style.display = isOpen ? 'none' : 'block';
+    chevron.classList.toggle('open', !isOpen);
+  }
+
+  /* ── JURY EDITOR ── */
+  const defaultJuryData = [
+    { id:1,  name:"Marie Lefebvre", label:"Présidente · Réalisatrice", avatar:"https://i.pravatar.cc/400?img=47", visible:true,  quote:"Figure incontournable du cinéma d'auteur, trois fois primée au Festival de Cannes. Elle préside le jury marsAI 2026 avec l'ambition d'élever la création IA au rang d'art majeur." },
+    { id:2,  name:"Pierre Dubois",  label:"Directeur artistique",      avatar:"https://i.pravatar.cc/400?img=12", visible:true  },
+    { id:3,  name:"Kenji Ito",      label:"Artiste numérique",         avatar:"https://i.pravatar.cc/400?img=68", visible:true  },
+    { id:4,  name:"Sofia Eriksson", label:"Critique de cinéma",        avatar:"https://i.pravatar.cc/400?img=44", visible:true  },
+    { id:7,  name:"Amara Touré",    label:"Productrice",               avatar:"https://i.pravatar.cc/400?img=32", visible:true  },
+    { id:8,  name:"Elena Petrov",   label:"Compositrice",              avatar:"https://i.pravatar.cc/400?img=29", visible:true  },
+    { id:9,  name:"Yuki Nakamura",  label:"Réalisatrice",              avatar:"https://i.pravatar.cc/400?img=56", visible:true  },
+    { id:10, name:"Carlos Ruiz",    label:"Chef opérateur",            avatar:"https://i.pravatar.cc/400?img=18", visible:true  },
+    { id:11, name:"Priya Mehta",    label:"Scénariste",                avatar:"https://i.pravatar.cc/400?img=36", visible:true  },
+    { id:12, name:"Omar Diallo",    label:"Directeur photo",           avatar:"https://i.pravatar.cc/400?img=11", visible:true  },
+  ];
+
+  let juryAdminData = [];
+
+  function loadJuryAdminData() {
+    const saved = localStorage.getItem('marsai_jury_data');
+    juryAdminData = saved ? JSON.parse(saved) : defaultJuryData.map(j => ({ ...j }));
+  }
+
+  function renderJuryAdmin() {
+    loadJuryAdminData();
+    const list = document.getElementById('jury-admin-list');
+    if (!list) return;
+    list.innerHTML = juryAdminData.map((j, idx) => `
+      <div class="jury-admin-row" id="jar-${j.id}">
+        <div class="jury-photo-wrap" onclick="triggerPhotoUpload(${j.id})" title="Changer la photo">
+          <img class="jury-admin-photo" id="jphoto-${j.id}" src="${j.avatar}" alt="${j.name}">
+          <div class="jury-photo-overlay">
+            <span class="jury-photo-overlay-icon">📷</span>
+            <span>Modifier</span>
+          </div>
+        </div>
+        <input type="file" id="jfile-${j.id}" accept="image/*" style="display:none"
+          onchange="onPhotoSelected(${j.id}, this)">
+        <span class="jury-admin-star">${idx === 0 ? '⭐' : ''}</span>
+        <div class="jury-admin-fields">
+          <input class="jury-admin-input" id="jname-${j.id}" value="${j.name}" placeholder="Nom complet">
+          <input class="jury-admin-input small" id="jlabel-${j.id}" value="${j.label}" placeholder="Rôle · Titre">
+        </div>
+        <div class="cal-toggle ${j.visible ? 'on' : ''}" id="jvis-${j.id}"
+          onclick="this.classList.toggle('on')" title="Visible sur la page d'accueil"></div>
+        <button class="jury-admin-del" onclick="deleteJuryMember(${j.id})" title="Supprimer">🗑️</button>
+      </div>`).join('');
+  }
+
+  // Alias pour la compatibilité avec showView
+  function renderJuryVisibility() { renderJuryAdmin(); }
+
+  function addJuryMember() {
+    // Flush current edits before adding
+    collectJuryEdits();
+    const newId = Date.now();
+    juryAdminData.push({ id: newId, name: '', label: '', avatar: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='52' height='64' viewBox='0 0 52 64'%3E%3Crect width='52' height='64' fill='%231a1f4e'/%3E%3Ctext x='26' y='36' font-size='22' text-anchor='middle' fill='%234effce' opacity='.4'%3E📷%3C/text%3E%3C/svg%3E`, visible: true });
+    renderJuryAdmin();
+    setTimeout(() => document.getElementById('jname-' + newId)?.focus(), 40);
+  }
+
+  function deleteJuryMember(id) {
+    if (juryAdminData.length <= 1) { showToast('Le jury doit avoir au moins un membre.', 'err'); return; }
+    juryAdminData = juryAdminData.filter(j => j.id !== id);
+    renderJuryAdmin();
+  }
+
+  function triggerPhotoUpload(id) {
+    const input = document.getElementById('jfile-' + id);
+    if (input) input.click();
+  }
+
+  function onPhotoSelected(id, input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const member = juryAdminData.find(j => j.id === id);
+      if (!member) return;
+      member.avatar = e.target.result;
+      const img = document.getElementById('jphoto-' + id);
+      if (img) img.src = e.target.result;
+      showToast('Photo mise à jour', 'Pensez à enregistrer les modifications.', 'ok');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function collectJuryEdits() {
+    juryAdminData = juryAdminData.map(j => ({
+      ...j,
+      name:    document.getElementById('jname-' + j.id)?.value.trim()  || j.name,
+      label:   document.getElementById('jlabel-' + j.id)?.value.trim() || j.label,
+      visible: document.getElementById('jvis-' + j.id)?.classList.contains('on') ?? j.visible,
+    }));
+  }
+
+  function saveJuryAdmin() {
+    collectJuryEdits();
+    localStorage.setItem('marsai_jury_data', JSON.stringify(juryAdminData));
+    showToast('✓ Jury mis à jour sur la page d\'accueil', 'ok');
+    renderJuryAdmin(); // refresh pour afficher ⭐ correctement
+  }
+
+  /* ── SPONSORS EDITOR ── */
+  const defaultSponsorsData = [
+    { id:1, name:"TechVision AI",           tier:"principal",      logo:"", url:"#", visible:true },
+    { id:2, name:"Studio Lumière",           tier:"partenaire",     logo:"", url:"#", visible:true },
+    { id:3, name:"CinéLab",                 tier:"partenaire",     logo:"", url:"#", visible:true },
+    { id:4, name:"DigitalCreators Hub",     tier:"partenaire",     logo:"", url:"#", visible:true },
+    { id:5, name:"Région PACA",             tier:"institutionnel", logo:"", url:"#", visible:true },
+    { id:6, name:"Ville de Marseille",      tier:"institutionnel", logo:"", url:"#", visible:true },
+    { id:7, name:"Ministère de la Culture", tier:"institutionnel", logo:"", url:"#", visible:true },
+  ];
+
+  let sponsorsAdminData = [];
+
+  function loadSponsorsData() {
+    const saved = localStorage.getItem('marsai_sponsors_data');
+    sponsorsAdminData = saved ? JSON.parse(saved) : defaultSponsorsData.map(s => ({ ...s }));
+  }
+
+  function renderSponsorsAdmin() {
+    loadSponsorsData();
+    const list = document.getElementById('sponsors-admin-list');
+    if (!list) return;
+    const tierLabels = { principal:'Principal', partenaire:'Partenaire', institutionnel:'Institutionnel' };
+    list.innerHTML = sponsorsAdminData.map(s => `
+      <div class="sponsor-admin-row" id="sar-${s.id}">
+        <div class="sponsor-admin-preview" onclick="editSponsorLogo(${s.id})" title="Cliquer pour changer le logo">
+          ${s.logo ? `<img src="${s.logo}" alt="${s.name}">` : '<span>Logo</span>'}
+        </div>
+        <div class="sponsor-admin-fields">
+          <div class="sponsor-admin-top">
+            <input class="jury-admin-input" id="sname-${s.id}" value="${s.name}" placeholder="Nom du sponsor" style="flex:1;">
+            <select class="sponsor-admin-select" id="stier-${s.id}">
+              <option value="principal"      ${s.tier==='principal'      ? 'selected':''}>Principal</option>
+              <option value="partenaire"     ${s.tier==='partenaire'     ? 'selected':''}>Partenaire</option>
+              <option value="institutionnel" ${s.tier==='institutionnel' ? 'selected':''}>Institutionnel</option>
+            </select>
+          </div>
+          <input class="jury-admin-input small" id="surl-${s.id}" value="${s.url === '#' ? '' : s.url}" placeholder="https://site-du-sponsor.fr">
+        </div>
+        <div class="cal-toggle ${s.visible ? 'on' : ''}" id="svis-${s.id}"
+          onclick="this.classList.toggle('on')" title="Visible sur la page d'accueil"></div>
+        <button class="jury-admin-del" onclick="deleteSponsor(${s.id})" title="Supprimer">🗑️</button>
+      </div>`).join('');
+  }
+
+  function addSponsor() {
+    collectSponsorEdits();
+    const newId = Date.now();
+    sponsorsAdminData.push({ id: newId, name:'', tier:'partenaire', logo:'', url:'', visible:true });
+    renderSponsorsAdmin();
+    setTimeout(() => document.getElementById('sname-' + newId)?.focus(), 40);
+  }
+
+  function deleteSponsor(id) {
+    sponsorsAdminData = sponsorsAdminData.filter(s => s.id !== id);
+    renderSponsorsAdmin();
+  }
+
+  function editSponsorLogo(id) {
+    const s = sponsorsAdminData.find(x => x.id === id);
+    if (!s) return;
+    const url = window.prompt('URL du logo (PNG/SVG transparent recommandé) :', s.logo);
+    if (url !== null) {
+      s.logo = url.trim();
+      renderSponsorsAdmin();
+    }
+  }
+
+  function collectSponsorEdits() {
+    sponsorsAdminData = sponsorsAdminData.map(s => ({
+      ...s,
+      name:    document.getElementById('sname-'+ s.id)?.value.trim()  || s.name,
+      tier:    document.getElementById('stier-'+ s.id)?.value         || s.tier,
+      url:     document.getElementById('surl-' + s.id)?.value.trim()  || '#',
+      visible: document.getElementById('svis-' + s.id)?.classList.contains('on') ?? s.visible,
+    }));
+  }
+
+  function saveSponsorsAdmin() {
+    collectSponsorEdits();
+    localStorage.setItem('marsai_sponsors_data', JSON.stringify(sponsorsAdminData));
+    showToast('✓ Sponsors mis à jour sur la page d\'accueil', 'ok');
+    renderSponsorsAdmin();
+  }
+
+  function handleHeroVideo(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    const preview = document.querySelector('.video-preview video');
+    const label   = document.querySelector('.video-preview-label');
+    preview.src = url;
+    label.textContent = '⏳ Nouvelle vidéo — ' + file.name;
+    showToast('Vidéo chargée — cliquez sur Enregistrer', 'warn');
+  }
+
+  /* ── TOAST ── */
+  const TOAST_ICONS = { ok: '✅', warn: '⚠️', err: '❌' };
+  const TOAST_TITLES = { ok: 'Succès', warn: 'Attention', err: 'Erreur' };
+  const TOAST_DURATION = 4000;
+
+  function showToast(msg, type = 'ok') {
+    const container = document.getElementById('toast-container');
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.innerHTML = `
+      <div class="toast-icon">${TOAST_ICONS[type] || '💬'}</div>
+      <div class="toast-body">
+        <div class="toast-title">${TOAST_TITLES[type] || ''}</div>
+        <div class="toast-msg">${msg}</div>
+      </div>
+      <button class="toast-close" onclick="dismissToast(this.closest('.toast'))">✕</button>
+      <div class="toast-progress" style="animation-duration:${TOAST_DURATION}ms"></div>
+    `;
+    container.prepend(t);
+    requestAnimationFrame(() => requestAnimationFrame(() => t.classList.add('show')));
+    const timer = setTimeout(() => dismissToast(t), TOAST_DURATION);
+    t._timer = timer;
+  }
+
+  function dismissToast(t) {
+    if (!t) return;
+    clearTimeout(t._timer);
+    t.classList.add('hide');
+    t.classList.remove('show');
+    setTimeout(() => t.remove(), 380);
+  }
+
+  /* ── FERMETURE DROPDOWN PAYS AU CLIC EXTÉRIEUR ── */
+  document.addEventListener('click', function(e) {
+    const wrap = document.getElementById('country-filter-wrap');
+    const dd = document.getElementById('country-dropdown');
+    if (wrap && dd && !wrap.contains(e.target)) {
+      dd.style.display = 'none';
+      document.getElementById('country-btn').classList.remove('open');
+    }
+  });
+
+  /* ── DRAWER ASSIGNATION ── */
+  let drawerFilmId = null;
+  let drawerSearchQuery = '';
+
+  function openDrawer(filmId) {
+    const f = films.find(x => x.id === filmId);
+    if (!f) return;
+    drawerFilmId = filmId;
+    drawerSearchQuery = '';
+    document.getElementById('drawer-title').textContent = f.title;
+    document.getElementById('drawer-sub').textContent   = `${f.author} · ${flags[f.country] || ''} ${f.country}`;
+    document.getElementById('drawer-search').value = '';
+    const vid = document.getElementById('drawer-video');
+    vid.pause(); vid.currentTime = 0; vid.load();
+    renderDrawerJury('');
+    document.getElementById('film-drawer').classList.add('open');
+    document.getElementById('drawer-overlay').classList.add('open');
+  }
+
+  function closeDrawer() {
+    document.getElementById('film-drawer').classList.remove('open');
+    document.getElementById('drawer-overlay').classList.remove('open');
+    document.getElementById('drawer-video').pause();
+  }
+
+  function filterDrawerJury(query) {
+    drawerSearchQuery = query.toLowerCase().trim();
+    renderDrawerJury(drawerSearchQuery);
+  }
+
+  function renderDrawerJury(query) {
+    const juryUsers = users.filter(u => u.role === 'jury' && u.active);
+    const filtered = query
+      ? juryUsers.filter(u => (u.name + ' ' + u.label).toLowerCase().includes(query))
+      : juryUsers;
+    const nAssigned = juryUsers.filter(u => u.assigned.includes(drawerFilmId)).length;
+    document.getElementById('drawer-count').textContent = `${nAssigned} / ${juryUsers.length}`;
+    const list = document.getElementById('drawer-jury-list');
+    if (!filtered.length) {
+      list.innerHTML = '<div style="text-align:center;padding:20px;font-size:0.8rem;color:var(--mist);">Aucun résultat</div>';
+      return;
+    }
+    // Trier : assignés en premier
+    const sorted = [...filtered].sort((a, b) => {
+      const aA = a.assigned.includes(drawerFilmId) ? 0 : 1;
+      const bA = b.assigned.includes(drawerFilmId) ? 0 : 1;
+      return aA - bA;
+    });
+    list.innerHTML = sorted.map(u => {
+      const assigned = u.assigned.includes(drawerFilmId);
+      return `<div class="dj-item ${assigned ? 'assigned' : ''}" onclick="toggleDrawerJury(${u.id})">
+        <img class="dj-avatar" src="${u.avatar}" alt="${u.name}">
+        <div class="dj-info">
+          <div class="dj-name">${u.name}</div>
+          <div class="dj-role">${u.label}</div>
+        </div>
+        <div class="dj-check">${assigned ? '✓' : ''}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function toggleDrawerJury(userId) {
+    const u = users.find(x => x.id === userId);
+    const f = films.find(x => x.id === drawerFilmId);
+    if (!u || !f) return;
+    const idx = u.assigned.indexOf(drawerFilmId);
+    if (idx > -1) {
+      u.assigned.splice(idx, 1);
+      showToast(`${u.name.split(' ')[0]} retiré de "${f.title}"`, 'warn');
+    } else {
+      u.assigned.push(drawerFilmId);
+      showToast(`✓ ${u.name.split(' ')[0]} assigné à "${f.title}"`, 'ok');
+    }
+    renderDrawerJury(drawerSearchQuery);
+    renderAssignView();
+    renderUsers();
+  }
+
+  /* ── MODALE COMMENTAIRES ── */
+  const decLabelAdmin  = { valide:'Validé', aRevoir:'À revoir', refuse:'Refusé' };
+  const decClsAdmin    = { valide:'mcd-valide', aRevoir:'mcd-aRevoir', refuse:'mcd-refuse' };
+
+  function openCommentsModal(filmId) {
+    const f = films.find(x => x.id === filmId);
+    if (!f) return;
+    const juryUsers = users.filter(u => u.role === 'jury' && u.active);
+
+    document.getElementById('mc-film-title').textContent = f.title;
+    document.getElementById('mc-film-sub').textContent   = `${f.author} · ${flags[f.country] || ''} ${f.country}`;
+
+    const comments = f.comments || {};
+    const body = document.getElementById('mc-body');
+    const entries = juryUsers.filter(u => comments[u.id]);
+
+    if (!entries.length) {
+      body.innerHTML = '<div class="mc-empty">Aucun commentaire pour ce film.</div>';
+    } else {
+      body.innerHTML = entries.map(u => {
+        const dec = f.juryDec?.[u.id];
+        const decHtml = dec
+          ? `<span class="mc-dec ${decClsAdmin[dec]}">${decLabelAdmin[dec]}</span>`
+          : '';
+        return `<div class="mc-item">
+          <img class="mc-avatar" src="${u.avatar}" alt="${u.name}">
+          <div class="mc-content">
+            <div class="mc-name-row">
+              <span class="mc-name">${u.name}</span>
+              ${decHtml}
+            </div>
+            <div class="mc-text">"${comments[u.id]}"</div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    document.getElementById('modal-comments').classList.add('open');
+  }
+
+  function closeCommentsModal() {
+    document.getElementById('modal-comments').classList.remove('open');
+  }
+
+  /* ── INIT ── */
+  renderUsers();
+</script>
+  <!-- ─── NAV MAQUETTE ─── -->
+  <style>
+    #dev-nav{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:rgba(4,7,22,.95);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);border-radius:50px;padding:6px 8px;display:flex;align-items:center;gap:4px;z-index:99999;font-family:Inter,sans-serif;white-space:nowrap;box-shadow:0 8px 40px rgba(0,0,0,.5);}
+    #dev-nav .dn-label{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.2);padding:0 10px 0 6px;border-right:1px solid rgba(255,255,255,.08);margin-right:4px;}
+    #dev-nav .dn-sep{width:1px;height:14px;background:rgba(255,255,255,.1);margin:0 4px;flex-shrink:0;}
+    #dev-nav .dn-btn{color:rgba(255,255,255,.45);text-decoration:none;padding:5px 13px;border-radius:30px;transition:all .18s;font-size:11.5px;border:1px solid transparent;font-weight:500;display:inline-flex;align-items:center;gap:5px;}
+    #dev-nav .dn-btn:hover{background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);border-color:rgba(255,255,255,.1);}
+    #dev-nav .dn-btn.active{background:rgba(78,255,206,.1);color:#4effce;border-color:rgba(78,255,206,.25);font-weight:600;}
+    #dev-nav .dn-btn.espace-admin{color:rgba(192,132,252,.65);}
+    #dev-nav .dn-btn.espace-admin:hover{background:rgba(192,132,252,.1);color:#c084fc;border-color:rgba(192,132,252,.3);}
+    #dev-nav .dn-btn.espace-admin.active{background:rgba(192,132,252,.12);color:#c084fc;border-color:rgba(192,132,252,.35);font-weight:700;}
+    #dev-nav .dn-btn.espace-jury{color:rgba(245,230,66,.55);}
+    #dev-nav .dn-btn.espace-jury:hover{background:rgba(245,230,66,.08);color:#f5e642;border-color:rgba(245,230,66,.25);}
+    #dev-nav .dn-btn.espace-jury.active{background:rgba(245,230,66,.08);color:#f5e642;border-color:rgba(245,230,66,.3);font-weight:700;}
+  </style>
+  <div id="dev-nav">
+    <span class="dn-label">Maquette</span>
+    <a href="index.html" class="dn-btn">🏠 Accueil</a>
+    <div class="dn-sep"></div>
+    <a href="admin-panel.html" class="dn-btn espace-admin active">🛡️ Espace Admin</a>
+    <a href="admin-jury.html"  class="dn-btn espace-jury">⚖️ Espace Jury</a>
+  </div>
+</body>
+</html>

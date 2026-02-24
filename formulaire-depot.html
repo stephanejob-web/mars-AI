@@ -235,110 +235,6 @@
       margin-bottom: 16px; margin-top: 4px;
     }
 
-    /* ─── CESSION DE DROITS ─── */
-    .rights-gate {
-      background: rgba(245,230,66,0.03);
-      border: 1px solid rgba(245,230,66,0.18);
-      border-radius: 16px;
-      padding: 26px;
-      margin-bottom: 20px;
-    }
-    .rights-gate-header {
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      margin-bottom: 20px;
-      padding-bottom: 18px;
-      border-bottom: 1px solid rgba(245,230,66,0.1);
-    }
-    .rights-gate-icon {
-      width: 40px; height: 40px;
-      border-radius: 10px;
-      background: rgba(245,230,66,0.08);
-      border: 1px solid rgba(245,230,66,0.15);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.1rem; flex-shrink: 0;
-    }
-    .rights-gate-title {
-      font-family: var(--font-display);
-      font-size: 0.92rem; font-weight: 800;
-      color: var(--solar); margin-bottom: 4px;
-    }
-    .rights-gate-sub { font-size: 0.73rem; color: var(--mist); line-height: 1.55; }
-
-    .rights-items { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
-    .rights-item {
-      display: flex; align-items: flex-start; gap: 14px;
-      padding: 14px 16px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.06);
-      background: rgba(255,255,255,0.02);
-      cursor: pointer;
-      transition: background 0.2s, border-color 0.2s;
-      user-select: none;
-    }
-    .rights-item:hover { background: rgba(255,255,255,0.04); }
-    .rights-item.accepted { border-color: rgba(78,255,206,0.25); background: rgba(78,255,206,0.04); }
-
-    .rights-box {
-      width: 20px; height: 20px; border-radius: 5px;
-      border: 1.5px solid rgba(255,255,255,0.2);
-      flex-shrink: 0; margin-top: 2px;
-      position: relative; transition: all 0.2s;
-    }
-    .rights-item.accepted .rights-box { background: var(--aurora); border-color: var(--aurora); }
-    .rights-item.accepted .rights-box::after {
-      content: "";
-      position: absolute; top: 3px; left: 6px;
-      width: 5px; height: 9px;
-      border: 2px solid var(--deep-sky);
-      border-top: none; border-left: none;
-      transform: rotate(45deg);
-    }
-    .rights-title { font-size: 0.8rem; font-weight: 700; color: var(--white-soft); margin-bottom: 5px; }
-    .rights-detail { font-size: 0.72rem; color: var(--mist); line-height: 1.65; }
-    .rights-detail strong { color: var(--white-soft); font-weight: 600; }
-
-    .rights-legal-note {
-      font-size: 0.7rem; color: var(--mist);
-      background: rgba(255,255,255,0.025);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 8px;
-      padding: 10px 14px;
-      margin-bottom: 14px;
-      line-height: 1.6;
-    }
-    .rights-legal-note a { color: var(--aurora); text-decoration: none; }
-
-    .rights-warn { display: none; font-size: 0.74rem; color: var(--coral); margin-bottom: 10px; }
-    .rights-warn.show { display: block; }
-
-    .btn-accept-rights {
-      width: 100%; padding: 12px;
-      background: rgba(78,255,206,0.07);
-      border: 1px solid rgba(78,255,206,0.22);
-      border-radius: 10px;
-      font-family: var(--font-body);
-      font-size: 0.84rem; font-weight: 600;
-      color: var(--aurora); cursor: pointer;
-      transition: all 0.2s;
-    }
-    .btn-accept-rights:hover { background: rgba(78,255,206,0.14); }
-
-    .rights-confirmed {
-      display: none;
-      align-items: center; gap: 10px;
-      font-size: 0.78rem; font-weight: 600;
-      color: var(--aurora);
-      background: rgba(78,255,206,0.05);
-      border: 1px solid rgba(78,255,206,0.15);
-      border-radius: 10px;
-      padding: 10px 16px;
-      margin-bottom: 16px;
-    }
-    .rights-confirmed.show { display: flex; }
-    .rights-confirmed-date { margin-left: auto; font-family: var(--font-mono); font-size: 0.66rem; color: var(--mist); }
-
     /* ─── UPLOAD ZONE ─── */
     @keyframes uz-float {
       0%, 100% { transform: translateY(0px); }
@@ -761,7 +657,88 @@
       .fields-grid.col2, .fields-grid.col3 { grid-template-columns: 1fr; }
       .field.span2 { grid-column: span 1; }
       .tools-grid { grid-template-columns: 1fr 1fr; }
+      .social-grid { grid-template-columns: 1fr; }
     }
+
+    /* ── RADIO CARDS (civilité, classification IA) ── */
+    .radio-group { display: flex; gap: 10px; flex-wrap: wrap; }
+    .radio-card {
+      display: flex; align-items: center; gap: 8px;
+      padding: 9px 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 10px; cursor: pointer;
+      font-size: 0.84rem; color: var(--mist);
+      transition: all 0.15s; user-select: none;
+    }
+    .radio-card input[type="radio"] { display: none; }
+    .radio-card:has(input:checked) {
+      background: rgba(78,255,206,0.08);
+      border-color: rgba(78,255,206,0.35);
+      color: var(--aurora);
+    }
+    .radio-card-dot {
+      width: 13px; height: 13px; border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.25);
+      flex-shrink: 0; transition: all 0.15s;
+    }
+    .radio-card:has(input:checked) .radio-card-dot {
+      border-color: var(--aurora);
+      background: var(--aurora);
+      box-shadow: 0 0 0 3px rgba(78,255,206,0.15);
+    }
+
+    /* Classification IA — grandes cartes */
+    .ia-class-cards { display: flex; flex-direction: column; gap: 10px; }
+    .ia-class-card {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 18px 20px;
+      background: rgba(255,255,255,0.03);
+      border: 1.5px solid rgba(255,255,255,0.08);
+      border-radius: 14px; cursor: pointer;
+      transition: all 0.2s; user-select: none;
+    }
+    .ia-class-card input[type="radio"] { display: none; }
+    .ia-class-card:has(input:checked) {
+      background: rgba(78,255,206,0.05);
+      border-color: rgba(78,255,206,0.3);
+    }
+    .ia-class-card:has(input:checked) .ia-class-dot {
+      border-color: var(--aurora); background: var(--aurora);
+      box-shadow: 0 0 0 4px rgba(78,255,206,0.12);
+    }
+    .ia-class-dot {
+      width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0; margin-top: 2px;
+      border: 2px solid rgba(255,255,255,0.2); transition: all 0.15s;
+    }
+    .ia-class-title { font-size: 0.9rem; font-weight: 700; color: var(--white-soft); margin-bottom: 3px; }
+    .ia-class-desc  { font-size: 0.76rem; color: var(--mist); line-height: 1.5; }
+    .ia-class-badge {
+      display: inline-flex; align-items: center;
+      font-size: 0.63rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 2px 9px;
+      border-radius: 20px; margin-top: 5px;
+    }
+    .badge-full { background: rgba(78,255,206,0.1); color: var(--aurora); border: 1px solid rgba(78,255,206,0.25); }
+    .badge-hybrid { background: rgba(192,132,252,0.1); color: var(--lavande); border: 1px solid rgba(192,132,252,0.25); }
+
+    /* Champs réseaux sociaux icônés */
+    .social-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .social-input-wrap { position: relative; }
+    .social-icon {
+      position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+      font-size: 0.85rem; pointer-events: none; opacity: 0.5;
+    }
+    .social-input {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1.5px solid rgba(255,255,255,0.09);
+      border-radius: 10px; padding: 10px 14px 10px 34px;
+      font-family: var(--font-body); font-size: 0.84rem;
+      color: var(--white-soft); outline: none; transition: border-color 0.2s;
+    }
+    .social-input:focus { border-color: rgba(78,255,206,0.4); }
+    .social-input::placeholder { color: rgba(136,146,176,0.45); }
   </style>
 </head>
 <body>
@@ -801,14 +778,14 @@
           <div class="sni-circle pending" id="snc-2">2</div>
           <div class="sni-text">
             <div class="sni-title">Le Film</div>
-            <div class="sni-sub">Titre, synopsis, vidéo</div>
+            <div class="sni-sub">Titre FR/EN, synopsis, vidéo</div>
           </div>
         </div>
         <div class="step-nav-item locked" data-step="3" onclick="goStep(3)">
           <div class="sni-circle pending" id="snc-3">3</div>
           <div class="sni-text">
-            <div class="sni-title">Fiche IA</div>
-            <div class="sni-sub">Outils & sous-titres</div>
+            <div class="sni-title">Déclaration IA</div>
+            <div class="sni-sub">Type de prod. & outils</div>
           </div>
         </div>
         <div class="step-nav-item locked" data-step="4" onclick="goStep(4)">
@@ -844,6 +821,21 @@
           </div>
         </div>
 
+        <!-- Civilité -->
+        <div class="field" style="margin-bottom:20px;">
+          <label class="field-label">Civilité <span class="req">● requis</span></label>
+          <div class="radio-group">
+            <label class="radio-card">
+              <input type="radio" name="civilite" value="M" checked>
+              <span class="radio-card-dot"></span>M.
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="civilite" value="Mme">
+              <span class="radio-card-dot"></span>Mme
+            </label>
+          </div>
+        </div>
+
         <div class="fields-grid col2">
 
           <div class="field">
@@ -858,23 +850,65 @@
             <div class="field-error" id="err-nom">Champ requis</div>
           </div>
 
-          <div class="field span2">
-            <label class="field-label">Nom du groupe / équipe <span class="opt">(si plusieurs réalisateurs)</span></label>
-            <input type="text" id="f-groupe" placeholder="ex: Collectif Aurora, Studio XYZ…" maxlength="200">
-            <div class="field-hint">Un seul réalisateur référent doit être inscrit pour les droits d'auteur. Les autres membres sont détaillés ici.</div>
+          <div class="field">
+            <label class="field-label">Date de naissance <span class="req">● requis</span></label>
+            <input type="date" id="f-dob" autocomplete="bday" onchange="validateAge(this)">
+            <div class="field-hint">Vous devez avoir au moins 18 ans pour candidater</div>
+            <div class="field-error" id="err-dob">Vous devez avoir 18 ans révolus à la date de dépôt</div>
+          </div>
+
+          <div class="field">
+            <label class="field-label">Métier actuel <span class="req">● requis</span></label>
+            <input type="text" id="f-metier" placeholder="ex : Réalisateur, Étudiant, Designer…" autocomplete="organization-title">
+            <div class="field-error" id="err-metier">Champ requis</div>
           </div>
 
           <div class="field span2">
             <label class="field-label">Email de contact <span class="req">● requis</span></label>
-            <input type="email" id="f-email" placeholder="vous@exemple.com" autocomplete="email">
+            <input type="email" id="f-email" placeholder="vous@exemple.com" autocomplete="email" value="marie.dupont@" class="err">
             <div class="field-hint">Utilisé pour les notifications de sélection et la gestion de votre dossier</div>
-            <div class="field-error" id="err-email">Adresse email invalide</div>
+            <div class="field-error show" id="err-email">Adresse email invalide — vérifiez le format (ex : vous@domaine.com)</div>
           </div>
 
           <div class="field">
-            <label class="field-label">Pays de résidence <span class="req">● requis</span></label>
-            <select id="f-pays">
-              <option value="">— Sélectionnez votre pays —</option>
+            <label class="field-label">Téléphone <span class="opt">(facultatif)</span></label>
+            <input type="tel" id="f-tel" placeholder="+33 1 00 00 00 00" autocomplete="tel-national">
+          </div>
+
+          <div class="field">
+            <label class="field-label">Mobile <span class="req">● requis</span></label>
+            <input type="tel" id="f-mobile" placeholder="+33 6 00 00 00 00" autocomplete="tel">
+            <div class="field-error" id="err-mobile">Numéro de mobile requis</div>
+          </div>
+
+        </div>
+
+        <hr class="section-sep">
+        <div class="section-title-inline">Adresse postale</div>
+
+        <div class="fields-grid" style="margin-bottom:12px;">
+          <div class="field">
+            <label class="field-label">Rue / Numéro <span class="req">● requis</span></label>
+            <input type="text" id="f-rue" placeholder="12 rue de la République" autocomplete="street-address">
+            <div class="field-error" id="err-rue">Champ requis</div>
+          </div>
+        </div>
+
+        <div class="fields-grid col3">
+          <div class="field">
+            <label class="field-label">Code postal <span class="req">● requis</span></label>
+            <input type="text" id="f-cp" placeholder="13001" autocomplete="postal-code" maxlength="10">
+            <div class="field-error" id="err-cp">Champ requis</div>
+          </div>
+          <div class="field">
+            <label class="field-label">Ville <span class="req">● requis</span></label>
+            <input type="text" id="f-ville" placeholder="Marseille" autocomplete="address-level2">
+            <div class="field-error" id="err-ville">Champ requis</div>
+          </div>
+          <div class="field">
+            <label class="field-label">Pays <span class="req">● requis</span></label>
+            <select id="f-pays" autocomplete="country">
+              <option value="">— Pays —</option>
               <option value="FR">🇫🇷 France</option>
               <option value="BE">🇧🇪 Belgique</option>
               <option value="CH">🇨🇭 Suisse</option>
@@ -893,40 +927,64 @@
               <option value="IN">🇮🇳 Inde</option>
               <option value="CN">🇨🇳 Chine</option>
               <option value="AU">🇦🇺 Australie</option>
-              <option value="other">🌍 Autre pays (120+ pays acceptés)</option>
+              <option value="other">🌍 Autre pays</option>
             </select>
             <div class="field-error" id="err-pays">Sélectionnez votre pays</div>
           </div>
-
-          <div class="field">
-            <label class="field-label">École / Institution <span class="opt">(facultatif)</span></label>
-            <input type="text" id="f-ecole" placeholder="ex: La Fémis, ESRA, Gobelins…">
-          </div>
-
-          <div class="field span2">
-            <label class="field-label">Site / Portfolio <span class="opt">(facultatif)</span></label>
-            <input type="url" id="f-portfolio" placeholder="https://votresite.com ou lien Vimeo…">
-          </div>
-
-          <!-- Réseaux sociaux -->
-          <div class="field span2">
-            <label class="field-label">Réseaux sociaux <span class="opt">(facultatif — utilisés pour promouvoir votre film si sélectionné)</span></label>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-              <input type="text" id="f-instagram" placeholder="Instagram  @votre_compte" style="background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.09);border-radius:10px;padding:10px 14px;font-family:var(--font-body);font-size:0.88rem;color:var(--white-soft);outline:none;transition:border-color 0.2s;" onfocus="this.style.borderColor='rgba(78,255,206,0.45)'" onblur="this.style.borderColor='rgba(255,255,255,0.09)'">
-              <input type="text" id="f-tiktok" placeholder="TikTok  @votre_compte" style="background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.09);border-radius:10px;padding:10px 14px;font-family:var(--font-body);font-size:0.88rem;color:var(--white-soft);outline:none;transition:border-color 0.2s;" onfocus="this.style.borderColor='rgba(78,255,206,0.45)'" onblur="this.style.borderColor='rgba(255,255,255,0.09)'">
-              <input type="text" id="f-youtube" placeholder="YouTube  @chaîne ou URL" style="background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.09);border-radius:10px;padding:10px 14px;font-family:var(--font-body);font-size:0.88rem;color:var(--white-soft);outline:none;transition:border-color 0.2s;" onfocus="this.style.borderColor='rgba(78,255,206,0.45)'" onblur="this.style.borderColor='rgba(255,255,255,0.09)'">
-              <input type="text" id="f-xtwitter" placeholder="X / Twitter  @votre_compte" style="background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.09);border-radius:10px;padding:10px 14px;font-family:var(--font-body);font-size:0.88rem;color:var(--white-soft);outline:none;transition:border-color 0.2s;" onfocus="this.style.borderColor='rgba(78,255,206,0.45)'" onblur="this.style.borderColor='rgba(255,255,255,0.09)'">
-            </div>
-          </div>
-
-          <!-- Tags -->
-          <div class="field span2">
-            <label class="field-label">Tags / mots-clés <span class="opt">(facultatif · max 5, séparés par des virgules)</span></label>
-            <input type="text" id="f-tags" placeholder="ex: dystopie, nature, espoir, technologie, famille…" maxlength="150">
-            <div class="field-hint">Utilisés pour la découverte de votre film dans la galerie</div>
-          </div>
-
         </div>
+
+        <hr class="section-sep">
+        <div class="section-title-inline">Réseaux sociaux <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.7rem;color:var(--mist);opacity:0.8;">(facultatif — utilisés pour promouvoir votre film si sélectionné)</span></div>
+
+        <div class="social-grid">
+          <div class="social-input-wrap">
+            <span class="social-icon">▶</span>
+            <input type="text" class="social-input" id="f-youtube" placeholder="YouTube — @chaîne ou URL">
+          </div>
+          <div class="social-input-wrap">
+            <span class="social-icon">📸</span>
+            <input type="text" class="social-input" id="f-instagram" placeholder="Instagram — @votre_compte">
+          </div>
+          <div class="social-input-wrap">
+            <span class="social-icon" style="font-family:serif;font-weight:700;font-size:0.75rem;">in</span>
+            <input type="text" class="social-input" id="f-linkedin" placeholder="LinkedIn — profil ou URL">
+          </div>
+          <div class="social-input-wrap">
+            <span class="social-icon" style="font-weight:700;font-size:0.8rem;">f</span>
+            <input type="text" class="social-input" id="f-facebook" placeholder="Facebook — page ou URL">
+          </div>
+          <div class="social-input-wrap">
+            <span class="social-icon" style="font-weight:700;">𝕏</span>
+            <input type="text" class="social-input" id="f-xtwitter" placeholder="X / Twitter — @votre_compte">
+          </div>
+        </div>
+
+        <hr class="section-sep">
+
+        <div class="fields-grid col2" style="margin-bottom:16px;">
+          <div class="field">
+            <label class="field-label">Comment avez-vous connu marsAI ? <span class="opt">(facultatif)</span></label>
+            <select id="f-discovery">
+              <option value="">— Sélectionnez —</option>
+              <option value="rs">Réseaux sociaux</option>
+              <option value="presse">Presse / Média</option>
+              <option value="bouche">Bouche à oreille</option>
+              <option value="ecole">École / Université</option>
+              <option value="partenaire">Partenaire / Festival</option>
+              <option value="newsletter">Newsletter</option>
+              <option value="autre">Autre</option>
+            </select>
+          </div>
+        </div>
+
+        <label class="rgpd-item" id="newsletter-item" onclick="this.classList.toggle('checked');document.getElementById('chk-newsletter').checked=this.classList.contains('checked');" style="cursor:pointer;">
+          <input type="checkbox" id="chk-newsletter" style="display:none;">
+          <div class="rgpd-box"></div>
+          <div class="rgpd-text">
+            <div class="rgpd-title">Newsletter marsAI <span class="opt">(facultatif)</span></div>
+            <div class="rgpd-sub">Je souhaite recevoir les actualités du festival, les annonces de résultats et les informations sur les prochaines éditions.</div>
+          </div>
+        </label>
 
         <div class="step-nav-btns">
           <div></div>
@@ -944,28 +1002,63 @@
           </div>
         </div>
 
-        <div class="fields-grid">
+        <div class="fields-grid col2">
 
           <div class="field">
-            <label class="field-label">Titre du film <span class="req">● requis</span></label>
-            <input type="text" id="f-titre" placeholder="Titre de votre court-métrage" maxlength="100" oninput="countChars(this, 'cc-titre', 100)">
+            <label class="field-label">Titre original <span class="req">● requis</span></label>
+            <input type="text" id="f-titre" placeholder="Titre en français" maxlength="100" oninput="countChars(this,'cc-titre',100)">
             <div class="char-counter" id="cc-titre">0 / 100</div>
             <div class="field-error" id="err-titre">Champ requis</div>
           </div>
 
           <div class="field">
-            <label class="field-label">Synopsis — Français <span class="req">● requis</span></label>
-            <textarea id="f-synopsis" rows="4" placeholder="Décrivez brièvement votre film en 2-3 phrases…" maxlength="500" oninput="countChars(this,'cc-synopsis',500)"></textarea>
-            <div class="char-counter" id="cc-synopsis">0 / 500</div>
+            <label class="field-label">Titre traduit en anglais <span class="req">● requis</span></label>
+            <input type="text" id="f-titre-en" placeholder="English title" maxlength="100" oninput="countChars(this,'cc-titre-en',100)">
+            <div class="char-counter" id="cc-titre-en">0 / 100</div>
+            <div class="field-error" id="err-titre-en">Champ requis</div>
+          </div>
+
+          <div class="field">
+            <label class="field-label">Langue parlée du film <span class="req">● requis</span></label>
+            <select id="f-langue">
+              <option value="">— Sélectionnez —</option>
+              <option value="fr">🇫🇷 Français</option>
+              <option value="en">🇬🇧 Anglais</option>
+              <option value="es">🇪🇸 Espagnol</option>
+              <option value="ar">🌍 Arabe</option>
+              <option value="de">🇩🇪 Allemand</option>
+              <option value="it">🇮🇹 Italien</option>
+              <option value="pt">🇧🇷 Portugais</option>
+              <option value="zh">🇨🇳 Mandarin</option>
+              <option value="ja">🇯🇵 Japonais</option>
+              <option value="sans">🔇 Sans dialogue (film muet)</option>
+              <option value="autre">Autre langue</option>
+            </select>
+            <div class="field-error" id="err-langue">Sélectionnez la langue du film</div>
+          </div>
+
+          <div class="field">
+            <label class="field-label">Tags thématiques <span class="opt">(max 5, séparés par des virgules)</span></label>
+            <input type="text" id="f-tags" placeholder="ex: espoir, nature, technologie, solidarité…" maxlength="150">
+            <div class="field-hint">En lien avec le thème "Futurs souhaitables"</div>
+          </div>
+
+        </div>
+
+        <div class="fields-grid" style="margin-top:4px;">
+
+          <div class="field">
+            <label class="field-label">Synopsis en français <span class="req">● requis</span></label>
+            <textarea id="f-synopsis" rows="4" placeholder="Décrivez brièvement votre film en 2-3 phrases…" maxlength="300" oninput="countChars(this,'cc-synopsis',300)"></textarea>
+            <div class="char-counter" id="cc-synopsis">0 / 300</div>
             <div class="field-error" id="err-synopsis">Champ requis</div>
           </div>
 
           <div class="field">
-            <label class="field-label">Synopsis — English <span class="req">● requis</span></label>
-            <textarea id="f-synopsis-en" rows="4" placeholder="Briefly describe your film in 2-3 sentences…" maxlength="500" oninput="countChars(this,'cc-synopsis-en',500)"></textarea>
-            <div class="char-counter" id="cc-synopsis-en">0 / 500</div>
-            <div class="field-hint">International audiences and jury members need the English version</div>
-            <div class="field-error" id="err-synopsis-en">English synopsis is required</div>
+            <label class="field-label">Synopsis en anglais <span class="req">● requis</span></label>
+            <textarea id="f-synopsis-en" rows="4" placeholder="Briefly describe your film in 2-3 sentences…" maxlength="300" oninput="countChars(this,'cc-synopsis-en',300)"></textarea>
+            <div class="char-counter" id="cc-synopsis-en">0 / 300</div>
+            <div class="field-error" id="err-synopsis-en">English synopsis required</div>
           </div>
 
         </div>
@@ -973,65 +1066,10 @@
         <hr class="section-sep">
         <div class="section-title-inline">Fichier vidéo</div>
 
-        <!-- ── Cession de droits — bloquant avant upload ── -->
-        <div class="rights-gate" id="rights-gate">
-          <div class="rights-gate-header">
-            <div class="rights-gate-icon">📋</div>
-            <div>
-              <div class="rights-gate-title">Cession de droits — requis avant l'envoi du fichier</div>
-              <div class="rights-gate-sub">Conformément au droit d'auteur français (L.131-3 CPI) et au RGPD (UE 2016/679), vous devez accepter les trois points ci-dessous avant de déposer votre film. Cette cession est <strong style="color:var(--white-soft)">non-exclusive</strong> : vous conservez l'intégralité de vos droits d'auteur.</div>
-            </div>
-          </div>
-
-          <div class="rights-items">
-
-            <div class="rights-item" id="ri-1" onclick="toggleRight('ri-1')">
-              <div class="rights-box"></div>
-              <div>
-                <div class="rights-title">Licence de diffusion non-exclusive <span class="req">● obligatoire</span></div>
-                <div class="rights-detail">J'autorise <strong>marsAI, La Plateforme et le Mobile Film Festival</strong> à diffuser, projeter, streamer et archiver mon film dans le cadre du festival marsAI 2026 et de ses archives officielles, pour une durée de <strong>5 ans</strong>, à titre <strong>gratuit</strong>, sur <strong>tout territoire</strong> et tout support (salle, web, TV partenaires). Je conserve mes droits d'auteur et reste libre de diffuser mon film par ailleurs.</div>
-              </div>
-            </div>
-
-            <div class="rights-item" id="ri-2" onclick="toggleRight('ri-2')">
-              <div class="rights-box"></div>
-              <div>
-                <div class="rights-title">Droit d'utilisation à des fins de communication <span class="req">● obligatoire</span></div>
-                <div class="rights-detail">J'autorise l'utilisation d'<strong>extraits de mon film (max. 15 secondes)</strong>, d'images fixes tirées du film et de son titre pour la promotion du festival sur les supports officiels de marsAI : réseaux sociaux, presse écrite et en ligne, affichage, site officiel, bande-annonce du festival.</div>
-              </div>
-            </div>
-
-            <div class="rights-item" id="ri-3" onclick="toggleRight('ri-3')">
-              <div class="rights-box"></div>
-              <div>
-                <div class="rights-title">Déclaration sur l'honneur <span class="req">● obligatoire</span></div>
-                <div class="rights-detail">Je certifie être l'<strong>auteur ou co-auteur</strong> de ce film et détenir tous les droits nécessaires à cette cession. Je confirme que l'œuvre ne viole aucun droit de propriété intellectuelle tiers, que les outils IA déclarés ont été utilisés dans le respect de leurs conditions d'utilisation, et que le film n'est pas actuellement soumis à un festival concurrent imposant l'exclusivité.</div>
-              </div>
-            </div>
-
-          </div>
-
-          <div class="rights-legal-note">
-            🔒 Ces données de consentement sont horodatées et conservées 5 ans à des fins de preuve juridique, conformément à l'article L.131-3 du Code de la Propriété Intellectuelle.
-            Pour exercer vos droits ou poser une question : <a href="mailto:droits@marsai.fr">droits@marsai.fr</a> ·
-            <a href="#">Politique de confidentialité complète</a>
-          </div>
-
-          <div class="rights-warn" id="rights-warn">⚠ Vous devez accepter les trois points pour déverrouiller le dépôt de votre film.</div>
-
-          <button class="btn-accept-rights" onclick="acceptRights()">Accepter et déverrouiller l'upload →</button>
-        </div>
-
-        <!-- Confirmation droits acceptés -->
-        <div class="rights-confirmed" id="rights-confirmed">
-          <span>✓</span> Cession de droits acceptée et horodatée
-          <span class="rights-confirmed-date" id="rights-confirmed-date"></span>
-        </div>
-
         <!-- Upload vidéo — input caché, déclenché programmatiquement -->
         <input type="file" id="video-input" accept=".mp4,.mov,video/mp4,video/quicktime" onchange="handleVideo(this)" style="display:none;">
 
-        <div id="upload-zone-wrap" style="display:none;">
+        <div id="upload-zone-wrap">
 
           <!-- ── Zone de dépôt principale ── -->
           <div class="upload-zone" id="upload-zone"
@@ -1150,110 +1188,60 @@
         <div class="step-panel-header">
           <div class="step-icon si-3">🤖</div>
           <div>
-            <h2>Fiche IA</h2>
-            <p>Outils utilisés (obligatoire pour image/vidéo) et sous-titres</p>
+            <h2>Déclaration d'Usage de l'IA</h2>
+            <p>Type de production, outils utilisés et sous-titres</p>
           </div>
         </div>
 
-        <!-- IMAGE / VIDÉO (obligatoire) -->
-        <div class="ia-category">
-          <div class="ia-cat-header" onclick="toggleCat('cat-img')">
-            <div class="ia-cat-icon">🖼️</div>
-            <div class="ia-cat-title">Image & Vidéo générée par IA</div>
-            <span class="ia-cat-badge badge-req">Requis</span>
-            <div class="ia-cat-toggle open" id="toggle-cat-img">▼</div>
+        <!-- Classification IA -->
+        <div class="field" style="margin-bottom:24px;">
+          <label class="field-label">Type de production IA <span class="req">● requis</span></label>
+          <div class="ia-class-cards">
+            <label class="ia-class-card">
+              <input type="radio" name="ia-class" value="full" checked>
+              <div class="ia-class-dot"></div>
+              <div>
+                <div class="ia-class-title">Génération intégrale</div>
+                <div class="ia-class-desc">Le film a été entièrement généré par IA, sans éléments filmés, dessinés ou enregistrés par un humain. Textes, images, sons et montage sont tous issus d'outils IA.</div>
+                <span class="ia-class-badge badge-full">100% IA</span>
+              </div>
+            </label>
+            <label class="ia-class-card">
+              <input type="radio" name="ia-class" value="hybrid">
+              <div class="ia-class-dot"></div>
+              <div>
+                <div class="ia-class-title">Production hybride</div>
+                <div class="ia-class-desc">Le film combine des éléments humains (tournage, dessin, voix, musique composée) et des outils IA utilisés en post-production ou en complément créatif.</div>
+                <span class="ia-class-badge badge-hybrid">Hybride IA + Humain</span>
+              </div>
+            </label>
           </div>
-          <div class="ia-cat-body" id="cat-img">
-            <div class="tools-grid">
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Runway ML</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Sora</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Pika Labs</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Kling AI</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Midjourney</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Stable Diffusion</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Adobe Firefly</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Luma Dream</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Haiper</span></label>
-            </div>
-            <div class="tool-other">
-              <input type="text" id="img-other" placeholder="Autre outil image/vidéo…">
-            </div>
-            <div class="field-error" id="err-ia-img" style="margin-top:8px;">Sélectionnez au moins un outil image/vidéo</div>
-          </div>
+          <div class="field-error" id="err-ia-class">Sélectionnez le type de production</div>
         </div>
 
-        <!-- SON (facultatif) -->
-        <div class="ia-category">
-          <div class="ia-cat-header" onclick="toggleCat('cat-son')">
-            <div class="ia-cat-icon">🎵</div>
-            <div class="ia-cat-title">Son & Musique générés par IA</div>
-            <span class="ia-cat-badge badge-opt">Facultatif</span>
-            <div class="ia-cat-toggle" id="toggle-cat-son">▼</div>
-          </div>
-          <div class="ia-cat-body" id="cat-son" style="display:none;">
-            <div class="tools-grid">
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">MusicGen</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Suno AI</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Udio</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">ElevenLabs</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Mubert</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Stable Audio</span></label>
-            </div>
-            <div class="tool-other">
-              <input type="text" id="son-other" placeholder="Autre outil son/musique…">
-            </div>
-          </div>
+        <hr class="section-sep">
+        <div class="section-title-inline">Outils utilisés</div>
+
+        <!-- OUTILS IA -->
+        <div class="field">
+          <label class="field-label">Outils IA — images ou vidéo <span class="req">● requis</span></label>
+          <input type="text" id="img-other" placeholder="ex : Runway ML, Sora, Midjourney…">
+          <div class="field-error" id="err-ia-img">Champ requis</div>
         </div>
 
-        <!-- SCÉNARIO (facultatif) -->
-        <div class="ia-category">
-          <div class="ia-cat-header" onclick="toggleCat('cat-sc')">
-            <div class="ia-cat-icon">✍️</div>
-            <div class="ia-cat-title">Scénario & Écriture assistée par IA</div>
-            <span class="ia-cat-badge badge-opt">Facultatif</span>
-            <div class="ia-cat-toggle" id="toggle-cat-sc">▼</div>
-          </div>
-          <div class="ia-cat-body" id="cat-sc" style="display:none;">
-            <div class="tools-grid">
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">ChatGPT</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Claude</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Gemini</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Mistral</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Llama</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Qwen</span></label>
-            </div>
-            <div class="tool-other">
-              <input type="text" id="sc-other" placeholder="Autre outil d'écriture…">
-            </div>
-          </div>
+        <div class="field">
+          <label class="field-label">Outils IA — son & musique <span class="opt">(facultatif)</span></label>
+          <input type="text" id="son-other" placeholder="ex : Suno AI, ElevenLabs, MusicGen…">
         </div>
 
-        <!-- POST-PROD (facultatif) -->
-        <div class="ia-category">
-          <div class="ia-cat-header" onclick="toggleCat('cat-post')">
-            <div class="ia-cat-icon">🎞️</div>
-            <div class="ia-cat-title">Post-production & Hybridation réel/IA</div>
-            <span class="ia-cat-badge badge-opt">Facultatif</span>
-            <div class="ia-cat-toggle" id="toggle-cat-post">▼</div>
-          </div>
-          <div class="ia-cat-body" id="cat-post" style="display:none;">
-            <div class="tools-grid">
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Adobe Premiere</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">DaVinci Resolve</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">After Effects + IA</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Topaz Video AI</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">Warp Fusion</span></label>
-              <label class="tool-check" onclick="toggleTool(this)"><input type="checkbox"><div class="tc-box"></div><span class="tc-label">CapCut AI</span></label>
-            </div>
-            <div class="tool-other">
-              <input type="text" id="post-other" placeholder="Autre outil post-prod…">
-            </div>
-            <div style="margin-top:12px;">
-              <label class="field-label" style="margin-bottom:7px;">Description de l'hybridation <span class="opt">(max 300 car.)</span></label>
-              <textarea rows="2" maxlength="300" placeholder="Décrivez le mélange entre images réelles et génération IA…" oninput="countChars(this,'cc-hybrid',300)" style="background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.09);border-radius:10px;padding:10px 14px;font-family:var(--font-body);font-size:0.85rem;color:var(--white-soft);outline:none;width:100%;resize:vertical;"></textarea>
-              <div class="char-counter" id="cc-hybrid">0 / 300</div>
-            </div>
-          </div>
+        <div class="field">
+          <label class="field-label">Outils IA — scénario & écriture <span class="opt">(facultatif)</span></label>
+          <input type="text" id="sc-other" placeholder="ex : ChatGPT, Claude, Mistral…">
+        </div>
+
+        <div class="field">
+          <label class="field-label">Outils IA — post-production <span class="opt">(facultatif)</span></label>
+          <input type="text" id="post-other" placeholder="ex : Topaz Video AI, CapCut AI…">
         </div>
 
         <hr class="section-sep">
@@ -1273,22 +1261,24 @@
           <input type="file" id="sub-fr" accept=".srt,.vtt" onchange="handleSubtitle(this,'sub-fr-status')">
           <div class="sub-icon">💬</div>
           <div class="sub-text">
-            <div class="sub-title">Sous-titres Français <span style="color:var(--mist);font-weight:400;font-size:0.72rem;">(recommandé)</span></div>
-            <div class="sub-sub">Formats SRT ou VTT — Aperçu de synchronisation en temps réel</div>
+            <div class="sub-title">Sous-titres Français <span class="req">● requis</span></div>
+            <div class="sub-sub">Formats SRT ou VTT</div>
           </div>
           <div class="sub-status" id="sub-fr-status">+ Ajouter</div>
         </div>
+        <div class="field-error" id="err-sub-fr" style="margin-top:6px;margin-bottom:4px;">Sous-titres français requis</div>
 
         <!-- Upload sous-titres EN -->
         <div class="subtitle-upload" style="margin-top:8px;">
           <input type="file" id="sub-en" accept=".srt,.vtt" onchange="handleSubtitle(this,'sub-en-status')">
           <div class="sub-icon">🌐</div>
           <div class="sub-text">
-            <div class="sub-title">Sous-titres Anglais <span style="color:var(--mist);font-weight:400;font-size:0.72rem;">(interface bilingue FR/EN)</span></div>
+            <div class="sub-title">Sous-titres Anglais <span class="req">● requis</span></div>
             <div class="sub-sub">Formats SRT ou VTT</div>
           </div>
           <div class="sub-status" id="sub-en-status">+ Ajouter</div>
         </div>
+        <div class="field-error" id="err-sub-en" style="margin-top:6px;">Sous-titres anglais requis</div>
 
         <div class="step-nav-btns">
           <button class="btn-prev" onclick="prevStep(3)">← Retour</button>
@@ -1315,20 +1305,36 @@
               <span class="recap-val" id="rc-nom">—</span>
             </div>
             <div class="recap-row">
+              <span class="recap-key">Date de naissance</span>
+              <span class="recap-val" id="rc-dob">—</span>
+            </div>
+            <div class="recap-row">
               <span class="recap-key">Email</span>
               <span class="recap-val mono" id="rc-email">—</span>
             </div>
             <div class="recap-row">
-              <span class="recap-key">Pays</span>
+              <span class="recap-key">Mobile</span>
+              <span class="recap-val mono" id="rc-mobile">—</span>
+            </div>
+            <div class="recap-row">
+              <span class="recap-key">Ville / Pays</span>
               <span class="recap-val" id="rc-pays">—</span>
             </div>
             <div class="recap-row">
-              <span class="recap-key">Titre du film</span>
+              <span class="recap-key">Titre du film (FR)</span>
               <span class="recap-val" id="rc-titre">—</span>
+            </div>
+            <div class="recap-row">
+              <span class="recap-key">Titre (EN)</span>
+              <span class="recap-val" id="rc-titre-en">—</span>
             </div>
             <div class="recap-row">
               <span class="recap-key">Durée</span>
               <span class="recap-val ok" id="rc-dur">—</span>
+            </div>
+            <div class="recap-row">
+              <span class="recap-key">Type de production</span>
+              <span class="recap-val" id="rc-ia-class">—</span>
             </div>
             <div class="recap-row">
               <span class="recap-key">Outils IA image</span>
@@ -1531,8 +1537,6 @@
   </div><!-- /page-wrap -->
 
   <!-- DEV NAV -->
-  <div class="dev-nav">
-    <div class="dev-label">Prototype</div>
     <div class="dev-links">
       <a href="index.html" class="dev-btn">🏠</a>
       <a href="verification-email.html" class="dev-btn">✉️</a>
@@ -1548,34 +1552,15 @@
     let videoValid = false;
     let uploadPct = 0;
     let uploadInterval = null;
-    let rightsAccepted = false;
-    const rightState = { 'ri-1': false, 'ri-2': false, 'ri-3': false };
 
-    /* ── CESSION DE DROITS ── */
-    function toggleRight(id) {
-      rightState[id] = !rightState[id];
-      document.getElementById(id).classList.toggle('accepted', rightState[id]);
-      document.getElementById('rights-warn').classList.remove('show');
-    }
-
-    function acceptRights() {
-      const allAccepted = Object.values(rightState).every(v => v);
-      if (!allAccepted) {
-        document.getElementById('rights-warn').classList.add('show');
-        return;
-      }
-      rightsAccepted = true;
-      // Horodatage
-      const now = new Date();
-      const ts = now.toLocaleDateString('fr-FR') + ' à ' + now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-      document.getElementById('rights-confirmed-date').textContent = ts;
-      document.getElementById('rights-gate').style.display = 'none';
-      document.getElementById('rights-confirmed').classList.add('show');
-      document.getElementById('upload-zone-wrap').style.display = 'block';
-      // Lancer la simulation upload
-      if (!videoValid) autoSimulateVideo();
-    }
-
+    /* Initialisation — limiter la date de naissance à 18 ans avant aujourd'hui */
+    (function initDobMax() {
+      const dob = document.getElementById('f-dob');
+      if (!dob) return;
+      const d = new Date();
+      d.setFullYear(d.getFullYear() - 18);
+      dob.max = d.toISOString().split('T')[0];
+    })();
     /* ── COMPTEUR DE CARACTÈRES ── */
     function countChars(el, counterId, max) {
       const n = el.value.length;
@@ -1608,8 +1593,6 @@
       currentStep = n;
       updateStepsNav();
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      // Auto-simuler la vidéo quand on arrive sur l'étape 2
-      // La simulation vidéo se déclenche après acceptation des droits (acceptRights())
     }
 
     function updateStepsNav() {
@@ -1859,20 +1842,6 @@
       el.className = 'sub-status added';
     }
 
-    /* ── OUTILS IA ── */
-    function toggleTool(label) {
-      label.classList.toggle('checked');
-      label.querySelector('input').checked = label.classList.contains('checked');
-    }
-
-    function toggleCat(id) {
-      const body = document.getElementById(id);
-      const toggle = document.getElementById('toggle-' + id);
-      const hidden = body.style.display === 'none';
-      body.style.display = hidden ? 'block' : 'none';
-      toggle.classList.toggle('open', hidden);
-    }
-
     /* ── RGPD ── */
     function toggleRgpd(id) {
       const item = document.getElementById(id);
@@ -1880,25 +1849,55 @@
       document.getElementById('rgpd-warn').classList.remove('show');
     }
 
+    /* ── VALIDATION ÂGE (≥ 18 ans) ── */
+    function validateAge(input) {
+      const dob = new Date(input.value);
+      if (!input.value) return;
+      const today = new Date();
+      let age = today.getFullYear() - dob.getFullYear();
+      const m = today.getMonth() - dob.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+      const errEl = document.getElementById('err-dob');
+      if (age < 18) {
+        input.classList.add('err');
+        errEl.classList.add('show');
+      } else {
+        input.classList.remove('err');
+        input.classList.add('valid');
+        errEl.classList.remove('show');
+      }
+    }
+
     /* ── RÉCAP ── */
     function fillRecap() {
-      const prenom = document.getElementById('f-prenom').value.trim() || 'Marie';
-      const nom    = document.getElementById('f-nom').value.trim()    || 'Dupont';
-      const email  = document.getElementById('f-email').value.trim()  || 'marie.dupont@example.com';
-      const pays   = document.getElementById('f-pays');
-      const titre  = document.getElementById('f-titre').value.trim()  || 'Mon film marsAI';
+      const prenom  = document.getElementById('f-prenom').value.trim()  || 'Marie';
+      const nom     = document.getElementById('f-nom').value.trim()      || 'Dupont';
+      const dob     = document.getElementById('f-dob').value;
+      const email   = document.getElementById('f-email').value.trim()    || 'marie.dupont@example.com';
+      const mobile  = document.getElementById('f-mobile').value.trim()   || '—';
+      const pays    = document.getElementById('f-pays');
+      const ville   = document.getElementById('f-ville').value.trim()    || '';
+      const titre   = document.getElementById('f-titre').value.trim()    || 'Mon film marsAI';
+      const titreEn = document.getElementById('f-titre-en').value.trim() || '—';
+      const civEl   = document.querySelector('input[name="civilite"]:checked');
+      const civ     = civEl ? civEl.value + ' ' : '';
+      const iaEl    = document.querySelector('input[name="ia-class"]:checked');
+      const iaClass = iaEl ? (iaEl.value === 'full' ? '🤖 100% IA — Génération intégrale' : '🎬 Production hybride (IA + Humain)') : '—';
 
-      document.getElementById('rc-nom').textContent   = prenom + ' ' + nom;
-      document.getElementById('rc-email').textContent = email;
+      document.getElementById('rc-nom').textContent    = civ + prenom + ' ' + nom;
+      document.getElementById('rc-dob').textContent    = dob ? new Date(dob).toLocaleDateString('fr-FR') : '—';
+      document.getElementById('rc-email').textContent  = email;
+      document.getElementById('rc-mobile').textContent = mobile;
       const paysText = pays.options[pays.selectedIndex]?.text;
-      document.getElementById('rc-pays').textContent  = (paysText && pays.value) ? paysText : '🇫🇷 France';
-      document.getElementById('rc-titre').textContent = titre;
-      document.getElementById('rc-dur').textContent   = videoValid ? '✓ 0:59.8 — Durée valide' : '⚠ Non vérifié';
+      const paysVal  = (paysText && pays.value) ? paysText.replace(/^.{1,2}\s/, '') : 'France';
+      document.getElementById('rc-pays').textContent   = (ville ? ville + ', ' : '') + paysVal;
+      document.getElementById('rc-titre').textContent  = titre;
+      document.getElementById('rc-titre-en').textContent = titreEn;
+      document.getElementById('rc-dur').textContent    = videoValid ? '✓ 0:59.8 — Durée valide' : '⚠ Non vérifié';
+      document.getElementById('rc-ia-class').textContent = iaClass;
 
-      const checkedTools = [...document.querySelectorAll('#cat-img .tool-check.checked')].map(t => t.querySelector('.tc-label').textContent);
       const otherTool = document.getElementById('img-other').value.trim();
-      if (otherTool) checkedTools.push(otherTool);
-      document.getElementById('rc-tools').textContent = checkedTools.length ? checkedTools.join(', ') : 'Runway ML, Midjourney';
+      document.getElementById('rc-tools').textContent = otherTool || 'Non renseigné';
 
       const subFr = document.getElementById('sub-fr').files[0];
       const subEn = document.getElementById('sub-en').files[0];
@@ -1914,25 +1913,35 @@
 
       const btn = document.getElementById('btn-submit');
       btn.disabled = true;
-      btn.innerHTML = '⏳ Envoi en cours…';
+      btn.innerHTML = '⏳ Vérification de votre email…';
 
-      const num   = 'MAI-2026-' + String(Math.floor(Math.random() * 90000) + 10000);
-      const email = document.getElementById('f-email').value.trim()  || 'marie.dupont@example.com';
-      const prenom = document.getElementById('f-prenom').value.trim() || 'Marie';
-      const titre  = document.getElementById('f-titre').value.trim()  || 'Mon film marsAI';
+      const num    = 'MAI-2026-' + String(Math.floor(Math.random() * 90000) + 10000);
+      const email  = document.getElementById('f-email').value.trim()   || 'marie.dupont@example.com';
+      const prenom = document.getElementById('f-prenom').value.trim()  || 'Marie';
+      const titre  = document.getElementById('f-titre').value.trim()   || 'Mon film marsAI';
 
-      // Stocker pour réutilisation dans les écrans rejet
-      window._formData = { num, email, prenom, titre };
+      // Sauvegarder pour récupération après vérification OTP
+      sessionStorage.setItem('depot_data', JSON.stringify({ num, email, prenom, titre }));
 
       setTimeout(() => {
-        document.getElementById('dossier-num').textContent  = num;
-        document.getElementById('confirm-email').textContent = email;
-        document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
-        document.getElementById('success-screen').classList.add('show');
-        document.querySelector('.form-sidebar').style.display = 'none';
-        // Lancer la simulation de validation YouTube
-        runYouTubeValidation();
-      }, 1800);
+        window.location.href = 'verification-email.html?from=depot&email=' + encodeURIComponent(email);
+      }, 1200);
+    }
+
+    /* ── RETOUR APRÈS VÉRIFICATION OTP ── */
+    function showSuccessAfterVerif() {
+      const saved = JSON.parse(sessionStorage.getItem('depot_data') || '{}');
+      const num    = saved.num    || 'MAI-2026-12345';
+      const email  = saved.email  || 'marie.dupont@example.com';
+      const prenom = saved.prenom || 'Marie';
+      const titre  = saved.titre  || 'Mon film marsAI';
+      window._formData = { num, email, prenom, titre };
+      document.getElementById('dossier-num').textContent   = num;
+      document.getElementById('confirm-email').textContent = email;
+      document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('success-screen').classList.add('show');
+      document.querySelector('.form-sidebar').style.display = 'none';
+      runYouTubeValidation();
     }
 
     /* ── SIMULATION VALIDATION YOUTUBE ── */
@@ -2027,7 +2036,29 @@
 
     /* ── INIT ── */
     updateStepsNav();
-  </script>
 
+  </script>
+  <!-- ─── NAV MAQUETTE ─── -->
+  <style>
+    #dev-nav{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:rgba(4,7,22,.95);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);border-radius:50px;padding:6px 8px;display:flex;align-items:center;gap:4px;z-index:99999;font-family:Inter,sans-serif;white-space:nowrap;box-shadow:0 8px 40px rgba(0,0,0,.5);}
+    #dev-nav .dn-label{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.2);padding:0 10px 0 6px;border-right:1px solid rgba(255,255,255,.08);margin-right:4px;}
+    #dev-nav .dn-sep{width:1px;height:14px;background:rgba(255,255,255,.1);margin:0 4px;flex-shrink:0;}
+    #dev-nav .dn-btn{color:rgba(255,255,255,.45);text-decoration:none;padding:5px 13px;border-radius:30px;transition:all .18s;font-size:11.5px;border:1px solid transparent;font-weight:500;display:inline-flex;align-items:center;gap:5px;}
+    #dev-nav .dn-btn:hover{background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);border-color:rgba(255,255,255,.1);}
+    #dev-nav .dn-btn.active{background:rgba(78,255,206,.1);color:#4effce;border-color:rgba(78,255,206,.25);font-weight:600;}
+    #dev-nav .dn-btn.espace-admin{color:rgba(192,132,252,.65);}
+    #dev-nav .dn-btn.espace-admin:hover{background:rgba(192,132,252,.1);color:#c084fc;border-color:rgba(192,132,252,.3);}
+    #dev-nav .dn-btn.espace-admin.active{background:rgba(192,132,252,.12);color:#c084fc;border-color:rgba(192,132,252,.35);font-weight:700;}
+    #dev-nav .dn-btn.espace-jury{color:rgba(245,230,66,.55);}
+    #dev-nav .dn-btn.espace-jury:hover{background:rgba(245,230,66,.08);color:#f5e642;border-color:rgba(245,230,66,.25);}
+    #dev-nav .dn-btn.espace-jury.active{background:rgba(245,230,66,.08);color:#f5e642;border-color:rgba(245,230,66,.3);font-weight:700;}
+  </style>
+  <div id="dev-nav">
+    <span class="dn-label">Maquette</span>
+    <a href="index.html" class="dn-btn">🏠 Accueil</a>
+    <div class="dn-sep"></div>
+    <a href="admin-panel.html" class="dn-btn espace-admin">🛡️ Espace Admin</a>
+    <a href="admin-jury.html"  class="dn-btn espace-jury">⚖️ Espace Jury</a>
+  </div>
 </body>
 </html>
