@@ -2480,7 +2480,6 @@
         <li><a href="#jury"      class="nav-item" data-section="jury">Le Jury</a></li>
         <li><a href="#palmares"  class="nav-item" data-section="palmares">Les Prix</a></li>
         <li><a href="#presse"    class="nav-item" data-section="presse">Contact</a></li>
-        <li><a href="login-jury.html" class="nav-jury"><span class="nav-jury-dot"></span>Espace Jury</a></li>
         <li><a class="btn-nav" href="formulaire-depot.html">Soumettre un film</a></li>
         <li>
           <div class="lang-switch">
@@ -3609,16 +3608,16 @@
 
     // ─── JURY SECTION ──────────────────────────────────────
     const defaultJury = [
-      { id:1,  name:"Marie Lefebvre", label:"Présidente · Réalisatrice",  quote:"Figure incontournable du cinéma d'auteur, trois fois primée au Festival de Cannes. Elle préside le jury marsAI 2026 avec l'ambition d'élever la création IA au rang d'art majeur.", avatar:"https://i.pravatar.cc/400?img=47", featured:true },
-      { id:2,  name:"Pierre Dubois",  label:"Directeur artistique",       avatar:"https://i.pravatar.cc/400?img=12"  },
-      { id:3,  name:"Kenji Ito",      label:"Artiste numérique",          avatar:"https://i.pravatar.cc/400?img=68"  },
-      { id:4,  name:"Sofia Eriksson", label:"Critique de cinéma",         avatar:"https://i.pravatar.cc/400?img=44"  },
-      { id:7,  name:"Amara Touré",    label:"Productrice",                avatar:"https://i.pravatar.cc/400?img=32"  },
-      { id:8,  name:"Elena Petrov",   label:"Compositrice",               avatar:"https://i.pravatar.cc/400?img=29"  },
-      { id:9,  name:"Yuki Nakamura",  label:"Réalisatrice",               avatar:"https://i.pravatar.cc/400?img=56"  },
-      { id:10, name:"Carlos Ruiz",    label:"Chef opérateur",             avatar:"https://i.pravatar.cc/400?img=18"  },
-      { id:11, name:"Priya Mehta",    label:"Scénariste",                 avatar:"https://i.pravatar.cc/400?img=36"  },
-      { id:12, name:"Omar Diallo",    label:"Directeur photo",            avatar:"https://i.pravatar.cc/400?img=11"  },
+      { id:1,  name:"Marie Lefebvre", label:"Présidente · Réalisatrice",  quote:"Figure incontournable du cinéma d'auteur, trois fois primée au Festival de Cannes. Elle préside le jury marsAI 2026 avec l'ambition d'élever la création IA au rang d'art majeur.", avatar:"https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=crop&q=85", featured:true },
+      { id:2,  name:"Pierre Dubois",  label:"Directeur artistique",       avatar:"https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=500&fit=crop&q=85" },
+      { id:3,  name:"Kenji Ito",      label:"Artiste numérique",          avatar:"https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=500&fit=crop&q=85" },
+      { id:4,  name:"Sofia Eriksson", label:"Critique de cinéma",         avatar:"https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=500&fit=crop&q=85" },
+      { id:7,  name:"Amara Touré",    label:"Productrice",                avatar:"https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=400&h=500&fit=crop&q=85" },
+      { id:8,  name:"Elena Petrov",   label:"Compositrice",               avatar:"https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=500&fit=crop&q=85" },
+      { id:9,  name:"Yuki Nakamura",  label:"Réalisatrice",               avatar:"https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=500&fit=crop&q=85" },
+      { id:10, name:"Carlos Ruiz",    label:"Chef opérateur",             avatar:"https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=500&fit=crop&q=85" },
+      { id:11, name:"Priya Mehta",    label:"Scénariste",                 avatar:"https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=500&fit=crop&q=85" },
+      { id:12, name:"Omar Diallo",    label:"Directeur photo",            avatar:"https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=400&h=500&fit=crop&q=85" },
     ];
 
     function renderJury() {
