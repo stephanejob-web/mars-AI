@@ -833,7 +833,7 @@
 
       <div class="rules-block">
         <h4>Règles essentielles</h4>
-        <div class="rule-item"><div class="rule-dot"></div><span>Durée : <strong>1 minute - 1 minute 59 secondes</strong></span></div>
+        <div class="rule-item"><div class="rule-dot"></div><span>Durée : <strong>1 minute maximum</strong></span></div>
         <div class="rule-item"><div class="rule-dot"></div><span>Formats : <strong>MP4, MOV</strong></span></div>
         <div class="rule-item"><div class="rule-dot"></div><span>Résolution min. : <strong>1920×1080</strong> · Ratio <strong>16:9</strong></span></div>
         <div class="rule-item"><div class="rule-dot"></div><span>Taille : <strong>200 à 300 Mo</strong></span></div>
@@ -1835,14 +1835,14 @@
         val.className = 'dur-value warn';
         ico.textContent = '⚠';
         val.textContent = display;
-        lbl.textContent = 'Film trop court — durée exacte requise  1 minute minimum';
+        lbl.textContent = 'Film trop court — Aucune durée minimum requise';
         videoValid = false;
       } else {
         el.className = 'duration-result show err';
         val.className = 'dur-value err';
         ico.textContent = '✗';
         val.textContent = display;
-        lbl.textContent = 'Film trop long — durée exacte requise : 1 minute 59 secondes maximum';
+        lbl.textContent = 'Film trop long — durée maximum requise : 1 minute, si trop long il vous sera demandé de le raccourcir';
         videoValid = false;
       }
     }
