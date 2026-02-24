@@ -281,11 +281,16 @@
     .fi-info { flex: 1; min-width: 0; }
     .fi-title { font-size: 0.82rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .fi-sub   { font-size: 0.7rem; color: var(--mist); margin-top: 2px; }
-    .fi-score { font-family: var(--font-mono); font-size: 0.85rem; font-weight: 500; flex-shrink: 0; }
-    .fs-high { color: var(--aurora); }
-    .fs-mid  { color: var(--solar); }
-    .fs-low  { color: var(--coral); }
-    .fs-none { color: rgba(136,146,176,0.4); font-size: 0.7rem; }
+    .fi-dec {
+      font-size: 0.62rem; font-weight: 700;
+      padding: 2px 8px; border-radius: 9999px;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      flex-shrink: 0; white-space: nowrap;
+    }
+    .fd-valide  { background: rgba(78,255,206,0.1);  color: var(--aurora); }
+    .fd-arevoir { background: rgba(245,230,66,0.1);  color: var(--solar); }
+    .fd-refuse  { background: rgba(255,107,107,0.1); color: var(--coral); }
+    .fd-none    { color: rgba(136,146,176,0.35); font-size: 0.7rem; font-weight: 400; }
 
     /* ══════════════════════════════════════════
        PANNEAU DÉTAIL
@@ -313,53 +318,74 @@
     }
     .player-screen {
       aspect-ratio: 16/9;
-      background: linear-gradient(135deg, #0d1b3e 0%, #1a0a3e 60%, #0a2e2e 100%);
+      background: #000;
       display: flex;
       align-items: center;
       justify-content: center;
       position: relative;
+      overflow: hidden;
     }
-    .yt-badge {
+    .play-overlay {
       position: absolute;
-      top: 12px; right: 12px;
-      background: rgba(255,0,0,0.85);
-      border-radius: 5px;
-      padding: 3px 8px;
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      color: white;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .yt-badge::before {
-      content: "▶";
-      font-size: 0.5rem;
-    }
-    .play-center {
-      width: 56px; height: 56px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.1);
-      border: 2px solid rgba(255,255,255,0.2);
+      inset: 0;
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.1rem;
-      cursor: pointer;
-      padding-left: 4px;
+      font-size: 1.2rem;
+      background: rgba(0,0,0,0.3);
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
+    .play-overlay .play-circle {
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+      border: 2px solid rgba(255,255,255,0.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; padding-left: 4px;
+      backdrop-filter: blur(6px);
       transition: all 0.2s;
-      backdrop-filter: blur(4px);
     }
-    .play-center:hover { background: rgba(78,255,206,0.2); border-color: var(--aurora); transform: scale(1.05); }
-    .player-sub-bar {
-      position: absolute;
-      bottom: 42px; left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0,0,0,0.75);
-      border-radius: 4px;
-      padding: 5px 14px;
-      font-size: 0.85rem;
-      white-space: nowrap;
+    .player-screen:hover .play-circle { background: rgba(78,255,206,0.2); border-color: var(--aurora); transform: scale(1.06); }
+    .play-overlay.hidden { opacity: 0; }
+    /* ── Carte candidat ── */
+    .submitter-card {
+      display: flex; align-items: center; gap: 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-bottom: 14px;
     }
+    .submitter-avatar {
+      width: 40px; height: 40px; flex-shrink: 0;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--aurora), var(--lavande));
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display);
+      font-size: 0.78rem; font-weight: 800;
+      color: var(--deep-sky);
+      letter-spacing: 0;
+    }
+    .submitter-info { flex: 1; min-width: 0; }
+    .submitter-name {
+      font-weight: 700; font-size: 0.9rem;
+      color: var(--white-soft); margin-bottom: 4px;
+    }
+    .submitter-meta {
+      font-size: 0.75rem; color: var(--mist);
+      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    }
+    .submitter-sep { opacity: 0.4; }
+    .submitter-email {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.78rem; font-weight: 500;
+      color: var(--aurora);
+      text-decoration: none;
+      margin-bottom: 4px;
+      transition: opacity 0.15s;
+    }
+    .submitter-email:hover { opacity: 0.75; }
+    .submitter-email-icon { font-size: 0.7rem; opacity: 0.8; }
+
     /* Barre de contrôle */
     .player-ctrl {
       padding: 10px 16px 12px;
@@ -456,10 +482,17 @@
     .ftag-hyb { background: rgba(245,230,66,0.08); color: var(--solar); }
     .ftag-tool { background: rgba(255,255,255,0.06); color: var(--mist); font-weight: 500; text-transform: none; }
 
-    /* Score moyen */
-    .avg-block { text-align: right; flex-shrink: 0; }
-    .avg-num { font-family: var(--font-mono); font-size: 2rem; line-height: 1; }
-    .avg-label { font-size: 0.65rem; color: var(--mist); margin-top: 2px; }
+    /* Décision actuelle du film */
+    .film-decision-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; border-radius: 9999px;
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em;
+      text-transform: uppercase; flex-shrink: 0;
+    }
+    .fdb-valide  { background: rgba(78,255,206,0.1);  border: 1px solid rgba(78,255,206,0.3);  color: var(--aurora); }
+    .fdb-arevoir { background: rgba(245,230,66,0.1);  border: 1px solid rgba(245,230,66,0.3);  color: var(--solar); }
+    .fdb-refuse  { background: rgba(255,107,107,0.1); border: 1px solid rgba(255,107,107,0.25); color: var(--coral); }
+    .fdb-none    { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); color: var(--mist); }
 
     /* Meta grid */
     .meta-row {
@@ -555,56 +588,77 @@
     .va-4 { background: rgba(255,255,255,0.08); color: var(--mist); }
     .vote-name { font-size: 0.8rem; font-weight: 600; flex: 1; }
     .vote-role { font-size: 0.68rem; color: var(--mist); }
-    .vote-score { font-family: var(--font-mono); font-size: 1rem; font-weight: 500; min-width: 28px; text-align: right; }
-    .vote-score.high { color: var(--aurora); }
-    .vote-score.mid  { color: var(--solar); }
-    .vote-score.none { color: var(--mist); font-size: 0.75rem; }
+    /* Décision sous forme de pill */
+    .vote-dec {
+      font-size: 0.68rem; font-weight: 700;
+      padding: 3px 9px; border-radius: 9999px;
+      letter-spacing: 0.05em; text-transform: uppercase;
+    }
+    .vd-valide  { background: rgba(78,255,206,0.1);  color: var(--aurora); }
+    .vd-arevoir { background: rgba(245,230,66,0.1);  color: var(--solar); }
+    .vd-refuse  { background: rgba(255,107,107,0.1); color: var(--coral); }
+    .vd-none    { background: rgba(255,255,255,0.05); color: rgba(136,146,176,0.5); font-style: italic; }
     .vote-comment { font-size: 0.72rem; color: var(--mist); font-style: italic; margin-left: 38px; margin-top: -2px; }
 
     /* ══════════════════════════════════════════
-       PANNEAU NOTATION (bottom sticky)
-       CDC : noter 1 à 10 + commentaires
+       PANNEAU DÉCISION (bottom sticky)
+       3 statuts : Validé / À revoir / Refusé
     ══════════════════════════════════════════ */
     .notation-panel {
       background: var(--surface);
       border-top: 1px solid rgba(255,255,255,0.07);
-      padding: 14px 20px;
+      padding: 12px 20px 14px;
     }
-    .notation-top {
+    /* Boutons décision principaux */
+    .decision-main {
       display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 12px;
+      gap: 8px;
+      margin-bottom: 10px;
     }
-    .notation-label {
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--mist);
-      white-space: nowrap;
-    }
-    /* Score 1-10 */
-    .score-btns {
-      display: flex;
-      gap: 4px;
-    }
-    .sbtn {
-      width: 34px; height: 34px;
-      border-radius: 7px;
-      border: 1px solid rgba(255,255,255,0.09);
-      background: rgba(255,255,255,0.04);
-      color: var(--mist);
-      font-size: 0.8rem;
-      font-weight: 600;
+    .dbtn-main {
+      flex: 1;
+      height: 40px;
+      border-radius: 9px;
+      font-family: var(--font-display);
+      font-size: 0.82rem;
+      font-weight: 800;
       cursor: pointer;
-      transition: all 0.15s;
-      display: flex; align-items: center; justify-content: center;
-      font-family: var(--font-mono);
+      border: 1px solid;
+      white-space: nowrap;
+      transition: all 0.18s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      letter-spacing: 0.02em;
     }
-    .sbtn:hover { background: rgba(78,255,206,0.1); color: var(--aurora); border-color: rgba(78,255,206,0.3); }
-    .sbtn.active { background: var(--aurora); color: var(--deep-sky); border-color: var(--aurora); box-shadow: 0 0 12px rgba(78,255,206,0.3); }
-
+    .dbtn-valide {
+      background: rgba(78,255,206,0.1);
+      border-color: rgba(78,255,206,0.35);
+      color: var(--aurora);
+    }
+    .dbtn-valide:hover, .dbtn-valide.active {
+      background: var(--aurora); color: var(--deep-sky);
+      box-shadow: 0 4px 20px rgba(78,255,206,0.35);
+      transform: translateY(-1px);
+    }
+    .dbtn-arevoir {
+      background: rgba(245,230,66,0.08);
+      border-color: rgba(245,230,66,0.3);
+      color: var(--solar);
+    }
+    .dbtn-arevoir:hover, .dbtn-arevoir.active {
+      background: rgba(245,230,66,0.2);
+      box-shadow: 0 4px 16px rgba(245,230,66,0.25);
+      transform: translateY(-1px);
+    }
+    .dbtn-refuse {
+      background: rgba(255,107,107,0.08);
+      border-color: rgba(255,107,107,0.28);
+      color: var(--coral);
+    }
+    .dbtn-refuse:hover, .dbtn-refuse.active {
+      background: rgba(255,107,107,0.2);
+      box-shadow: 0 4px 16px rgba(255,107,107,0.25);
+      transform: translateY(-1px);
+    }
     .notation-bottom {
       display: flex;
       gap: 10px;
@@ -623,48 +677,12 @@
       color: var(--white-soft);
       outline: none;
       resize: none;
-      height: 52px;
+      height: 46px;
       transition: border-color 0.2s;
       line-height: 1.5;
     }
     .comment-input:focus { border-color: rgba(78,255,206,0.35); }
     .comment-input::placeholder { color: var(--mist); opacity: 0.5; }
-    /* Boutons décision */
-    .decision-btns {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .dbtn {
-      padding: 0 18px;
-      height: 34px;
-      border-radius: 7px;
-      font-size: 0.78rem;
-      font-weight: 700;
-      cursor: pointer;
-      border: none;
-      white-space: nowrap;
-      transition: all 0.2s;
-      display: flex; align-items: center; gap: 6px;
-    }
-    .dbtn-select {
-      background: var(--aurora);
-      color: var(--deep-sky);
-    }
-    .dbtn-select:hover { box-shadow: 0 4px 20px rgba(78,255,206,0.35); transform: translateY(-1px); }
-    .dbtn-row { display: flex; gap: 6px; }
-    .dbtn-pending {
-      flex: 1;
-      background: rgba(245,230,66,0.1);
-      border: 1px solid rgba(245,230,66,0.25);
-      color: var(--solar);
-    }
-    .dbtn-reject {
-      flex: 1;
-      background: rgba(255,107,107,0.1);
-      border: 1px solid rgba(255,107,107,0.2);
-      color: var(--coral);
-    }
 
     /* ══════════════════════════════════════════
        VUE DÉLIBÉRATION
@@ -737,18 +755,15 @@
     .delib-table tr:hover td { background: rgba(255,255,255,0.02); cursor: pointer; }
     .rank { font-family: var(--font-mono); font-size: 0.85rem; color: var(--mist); min-width: 28px; }
     .rank.gold { color: var(--solar); }
-    .avg { font-family: var(--font-mono); font-size: 0.95rem; font-weight: 500; }
-    .avg.high { color: var(--aurora); }
-    .avg.mid  { color: var(--solar); }
-    .avg.low  { color: var(--coral); }
     .status-pill {
       padding: 3px 10px; border-radius: 9999px;
       font-size: 0.65rem; font-weight: 700;
       letter-spacing: 0.05em; text-transform: uppercase;
     }
-    .sp-sel { background: rgba(78,255,206,0.1); color: var(--aurora); }
-    .sp-pen { background: rgba(245,230,66,0.08); color: var(--solar); }
-    .sp-rej { background: rgba(255,107,107,0.08); color: var(--coral); }
+    .sp-valide  { background: rgba(78,255,206,0.1);  color: var(--aurora); }
+    .sp-arevoir { background: rgba(245,230,66,0.08); color: var(--solar); }
+    .sp-refuse  { background: rgba(255,107,107,0.08); color: var(--coral); }
+    .sp-none    { background: rgba(255,255,255,0.04); color: var(--mist); }
     /* Export */
     .export-btn {
       background: rgba(255,255,255,0.04);
@@ -764,26 +779,212 @@
     }
     .export-btn:hover { color: var(--white-soft); border-color: rgba(255,255,255,0.2); }
 
-    /* Toast */
-    .toast {
-      position: fixed;
-      bottom: 90px; right: 20px;
-      padding: 10px 16px;
-      border-radius: 8px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      border: 1px solid;
-      backdrop-filter: blur(12px);
-      opacity: 0;
-      transform: translateY(8px);
-      transition: all 0.25s var(--ease);
-      pointer-events: none;
-      z-index: 100;
+    /* ══════════════════════════════════════════
+       COMMENTAIRES THREAD
+    ══════════════════════════════════════════ */
+    .comments-thread { display: flex; flex-direction: column; gap: 8px; }
+    .ct-item {
+      display: flex; gap: 10px;
+      padding: 11px 13px;
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 10px;
     }
-    .toast.show { opacity: 1; transform: translateY(0); }
-    .toast.ok  { background: rgba(78,255,206,0.1); border-color: rgba(78,255,206,0.3); color: var(--aurora); }
-    .toast.warn{ background: rgba(245,230,66,0.08); border-color: rgba(245,230,66,0.25); color: var(--solar); }
-    .toast.err { background: rgba(255,107,107,0.1); border-color: rgba(255,107,107,0.25); color: var(--coral); }
+    .ct-body { flex: 1; min-width: 0; }
+    .ct-header {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 5px;
+    }
+    .ct-name { font-size: 0.8rem; font-weight: 600; }
+    .ct-role { font-size: 0.7rem; color: var(--mist); }
+    .ct-text {
+      font-size: 0.82rem;
+      color: rgba(240,244,255,0.78);
+      line-height: 1.6;
+    }
+    .ct-empty {
+      text-align: center; padding: 20px;
+      font-size: 0.8rem; color: var(--mist); font-style: italic;
+    }
+    .ct-mine { border-color: rgba(78,255,206,0.15); background: rgba(78,255,206,0.04); }
+
+    /* Bouton publier commentaire */
+    .btn-publish {
+      flex-shrink: 0; align-self: flex-end;
+      padding: 9px 18px;
+      background: rgba(78,255,206,0.1);
+      border: 1px solid rgba(78,255,206,0.3);
+      border-radius: 9px;
+      font-family: var(--font-display);
+      font-size: 0.82rem; font-weight: 800;
+      color: var(--aurora); cursor: pointer;
+      transition: all 0.18s; white-space: nowrap;
+      height: 46px;
+    }
+    .btn-publish:hover {
+      background: var(--aurora); color: var(--deep-sky);
+      box-shadow: 0 4px 16px rgba(78,255,206,0.3);
+    }
+
+    /* ── TOAST ── */
+    #toast-container {
+      position: fixed; bottom: 80px; right: 20px; z-index: 99999;
+      display: flex; flex-direction: column-reverse; gap: 10px;
+      pointer-events: none;
+    }
+    .toast {
+      display: flex; align-items: flex-start; gap: 12px;
+      min-width: 300px; max-width: 380px;
+      background: #1a1f3e;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 14px 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3);
+      font-size: 0.85rem; font-weight: 500;
+      color: var(--white-soft);
+      pointer-events: all;
+      position: relative; overflow: hidden;
+      transform: translateX(120%);
+      opacity: 0;
+      transition: transform 0.35s cubic-bezier(0.21,1.02,0.73,1), opacity 0.35s ease;
+    }
+    .toast.show { transform: translateX(0); opacity: 1; }
+    .toast.hide { transform: translateX(120%); opacity: 0; }
+
+    .toast-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+    .toast-body { flex: 1; line-height: 1.4; }
+    .toast-title { font-weight: 700; font-size: 0.82rem; margin-bottom: 3px; }
+    .toast-msg   { font-size: 0.8rem; color: rgba(240,244,255,0.7); }
+
+    .toast-close {
+      flex-shrink: 0; background: none; border: none; cursor: pointer;
+      color: rgba(255,255,255,0.35); font-size: 1rem; padding: 0; line-height: 1;
+      transition: color 0.15s; margin-top: -2px;
+    }
+    .toast-close:hover { color: rgba(255,255,255,0.8); }
+
+    .toast-progress {
+      position: absolute; bottom: 0; left: 0; height: 3px; border-radius: 0 0 0 12px;
+      animation: toast-progress-shrink linear forwards;
+    }
+    @keyframes toast-progress-shrink {
+      from { width: 100%; } to { width: 0%; }
+    }
+
+    .toast.ok   { border-left: 3px solid var(--aurora); }
+    .toast.ok   .toast-title { color: var(--aurora); }
+    .toast.ok   .toast-progress { background: var(--aurora); }
+
+    .toast.warn { border-left: 3px solid var(--solar); }
+    .toast.warn .toast-title { color: var(--solar); }
+    .toast.warn .toast-progress { background: var(--solar); }
+
+    .toast.err  { border-left: 3px solid var(--coral); }
+    .toast.err  .toast-title { color: var(--coral); }
+    .toast.err  .toast-progress { background: var(--coral); }
+
+    /* ══════════════════════════════════════════
+       MODALS DÉCISION
+    ══════════════════════════════════════════ */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s var(--ease);
+    }
+    .modal-overlay.open {
+      opacity: 1; pointer-events: all;
+    }
+    .modal-box {
+      width: 100%; max-width: 480px; margin: 0 20px;
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 22px;
+      padding: 36px 36px 28px;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+      transform: translateY(10px) scale(0.98);
+      transition: transform 0.22s var(--ease);
+    }
+    .modal-overlay.open .modal-box { transform: translateY(0) scale(1); }
+
+    .modal-icon { font-size: 2rem; margin-bottom: 14px; display: block; }
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem; font-weight: 800;
+      color: var(--white-soft); margin-bottom: 7px;
+    }
+    .modal-subtitle {
+      font-size: 0.8rem; color: var(--mist);
+      line-height: 1.6; margin-bottom: 18px;
+    }
+    .modal-film-chip {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-family: var(--font-mono); font-size: 0.72rem;
+      color: var(--aurora);
+      background: rgba(78,255,206,0.07);
+      border: 1px solid rgba(78,255,206,0.18);
+      border-radius: 8px; padding: 6px 12px;
+      margin-bottom: 18px;
+      max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .modal-textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-family: var(--font-body); font-size: 0.84rem;
+      color: var(--white-soft);
+      resize: vertical; min-height: 110px;
+      outline: none; transition: border-color 0.2s;
+      margin-bottom: 18px; display: block;
+    }
+    .modal-textarea:focus { border-color: rgba(78,255,206,0.35); }
+    .modal-textarea.error { border-color: rgba(255,107,107,0.5) !important; }
+    .modal-hint {
+      font-size: 0.72rem; color: rgba(255,107,107,0.7);
+      margin-top: -14px; margin-bottom: 14px;
+      display: none;
+    }
+    .modal-hint.show { display: block; }
+    .modal-actions { display: flex; gap: 8px; }
+    .modal-btn-cancel {
+      flex: 1; padding: 11px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 9px;
+      font-family: var(--font-body); font-size: 0.84rem;
+      color: var(--mist); cursor: pointer; transition: all 0.15s;
+    }
+    .modal-btn-cancel:hover { border-color: rgba(255,255,255,0.2); color: var(--white-soft); }
+    .modal-btn-arevoir {
+      flex: 2; padding: 11px;
+      background: rgba(245,230,66,0.1);
+      border: 1px solid rgba(245,230,66,0.35);
+      border-radius: 9px;
+      font-family: var(--font-display); font-size: 0.84rem; font-weight: 800;
+      color: var(--solar); cursor: pointer; transition: all 0.15s;
+    }
+    .modal-btn-arevoir:hover { background: rgba(245,230,66,0.22); box-shadow: 0 4px 16px rgba(245,230,66,0.2); }
+    .modal-btn-refuse {
+      flex: 2; padding: 11px;
+      background: rgba(255,107,107,0.1);
+      border: 1px solid rgba(255,107,107,0.35);
+      border-radius: 9px;
+      font-family: var(--font-display); font-size: 0.84rem; font-weight: 800;
+      color: var(--coral); cursor: pointer; transition: all 0.15s;
+    }
+    .modal-btn-refuse:hover { background: rgba(255,107,107,0.22); box-shadow: 0 4px 16px rgba(255,107,107,0.2); }
+    .modal-separator {
+      border: none; border-top: 1px solid rgba(255,255,255,0.06);
+      margin: 16px 0;
+    }
+    .modal-label {
+      font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--mist); margin-bottom: 6px;
+    }
   </style>
 </head>
 <body>
@@ -809,22 +1010,22 @@
 
       <div class="nav-item active" onclick="switchView('eval', this)">
         <span class="icon">🎬</span>
-        Films à évaluer
-        <span class="nav-count count-pending" id="nav-pending">23</span>
+        Films assignés
+        <span class="nav-count count-pending" id="nav-pending">7</span>
       </div>
 
       <div class="nav-item" onclick="switchView('eval', this)">
         <span class="icon">✅</span>
-        Sélectionnés
-        <span class="nav-count count-selected" id="nav-selected">18</span>
+        Évalués
+        <span class="nav-count count-selected" id="nav-selected">3</span>
       </div>
 
       <div class="nav-label" style="margin-top:8px;">Sélection</div>
 
       <div class="nav-item" onclick="switchView('delib', this)">
         <span class="icon">⚖️</span>
-        Délibération finale
-        <span class="nav-count count-neutral">50</span>
+        Délibération
+        <span class="nav-count count-neutral">10</span>
       </div>
 
       <div class="nav-label" style="margin-top:8px;">Compte</div>
@@ -836,11 +1037,11 @@
     </nav>
 
     <div class="sidebar-progress">
-      <div class="prog-label">Ma progression</div>
+      <div class="prog-label">Ma progression · Films assignés</div>
       <div class="prog-track">
-        <div class="prog-fill" style="width:54%;"></div>
+        <div class="prog-fill" style="width:30%;"></div>
       </div>
-      <div class="prog-val">27 / 50 films notés</div>
+      <div class="prog-val">3 / 10 films évalués</div>
     </div>
   </aside>
 
@@ -851,9 +1052,9 @@
     <div class="topbar">
       <span class="topbar-title" id="topbar-title">Films à évaluer</span>
       <div class="topbar-sep"></div>
-      <span class="topbar-info" id="topbar-info">Présélection Phase 1 — tous thèmes</span>
+      <span class="topbar-info" id="topbar-info">Films assignés par l'administrateur — évaluation individuelle</span>
       <div class="topbar-right">
-        <span class="phase-badge phase-1" id="phase-badge">Phase 1 — Présélection générale</span>
+        <span class="phase-badge phase-1" id="phase-badge">Phase 1 · Top 50 · 12/12/26</span>
         <button onclick="window.location.href='index.html'" style="display:flex;align-items:center;gap:6px;background:rgba(255,107,107,0.08);border:1px solid rgba(255,107,107,0.25);border-radius:8px;padding:6px 13px;font-family:var(--font-body);font-size:0.78rem;font-weight:600;color:var(--coral);cursor:pointer;transition:all 0.2s;margin-left:12px;" onmouseover="this.style.background='rgba(255,107,107,0.16)'" onmouseout="this.style.background='rgba(255,107,107,0.08)'">
           🔒 Déconnexion
         </button>
@@ -867,9 +1068,9 @@
       <div class="film-list">
         <div class="list-header">
           <div class="list-tabs">
-            <div class="ltab active" onclick="setTab(this,'À noter')">À noter (23)</div>
-            <div class="ltab" onclick="setTab(this,'Notés')">Notés (27)</div>
-            <div class="ltab" onclick="setTab(this,'Tous')">Tous (50)</div>
+            <div class="ltab active" onclick="setTab(this,'À évaluer')">À évaluer (7)</div>
+            <div class="ltab" onclick="setTab(this,'Évalués')">Évalués (3)</div>
+            <div class="ltab" onclick="setTab(this,'Tous')">Tous (10)</div>
           </div>
         </div>
         <div class="list-scroll" id="film-list-scroll"></div>
@@ -879,50 +1080,66 @@
       <div class="detail">
         <div class="detail-scroll">
 
-          <!-- Player (YouTube embed simulé) -->
-          <div class="player-wrap">
-            <div class="player-screen">
-              <div class="play-center" onclick="togglePlay(this)">▶</div>
-              <div class="player-sub-bar">"Les machines apprennent à rêver."</div>
-              <div class="yt-badge">YouTube</div>
+          <!-- Player vidéo réel -->
+          <div class="player-wrap" id="player-wrap">
+            <div class="player-screen" style="background:#000;cursor:pointer;" onclick="togglePlay()">
+              <video id="main-video" src="assets/video.mp4" preload="metadata"
+                style="width:100%;height:100%;object-fit:cover;display:block;"
+                onclick="event.stopPropagation()"></video>
+              <div class="play-overlay" id="play-overlay"><div class="play-circle">▶</div></div>
             </div>
             <div class="player-ctrl">
               <div class="ctrl-progress">
-                <div class="ctrl-bar">
-                  <div class="ctrl-bar-fill" id="pbar" style="width:42%;"></div>
+                <div class="ctrl-bar" id="ctrl-bar" onclick="seekVideo(event)">
+                  <div class="ctrl-bar-fill" id="pbar" style="width:0%"></div>
                 </div>
-                <span class="ctrl-time" id="ptime">0:25 / 1:00</span>
+                <span class="ctrl-time" id="ptime">0:00 / 0:00</span>
               </div>
               <div class="ctrl-buttons">
                 <div class="ctrl-left">
-                  <button class="cbtn">⏮</button>
-                  <button class="cbtn play-btn" onclick="togglePlay2(this)">▶</button>
-                  <button class="cbtn">⏭</button>
-                  <button class="cbtn">🔊</button>
+                  <button class="cbtn" onclick="skipVideo(-10)" title="−10s">⏮</button>
+                  <button class="cbtn play-btn" id="play-btn" onclick="togglePlay()">▶</button>
+                  <button class="cbtn" onclick="skipVideo(10)" title="+10s">⏭</button>
+                  <button class="cbtn" id="mute-btn" onclick="toggleMute()">🔊</button>
                   <span style="font-size:0.75rem;color:var(--mist);" id="player-film-name">Rêves de Silicium</span>
                 </div>
                 <div style="display:flex;gap:8px;align-items:center;">
-                  <span class="yt-info"><span class="yt-check">✓</span> Copyright OK · YouTube API</span>
-                  <span class="cc-btn">CC FR</span>
-                  <button class="cbtn">⛶</button>
+                  <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="1"
+                    oninput="setVolume(this.value)"
+                    style="width:70px;accent-color:var(--aurora);cursor:pointer;">
+                  <button class="cbtn" onclick="toggleFullscreen()" title="Plein écran">⛶</button>
                 </div>
               </div>
             </div>
+          </div>
+
+          <!-- Candidat -->
+          <div class="submitter-card">
+            <div class="submitter-avatar" id="d-avatar">LF</div>
+            <div class="submitter-info">
+              <div class="submitter-name" id="d-name">Léa Fontaine</div>
+              <a class="submitter-email" id="d-email-link" href="mailto:lea.fontaine@studio-lr.fr">
+                <span class="submitter-email-icon">✉</span>
+                <span id="d-email">lea.fontaine@studio-lr.fr</span>
+              </a>
+              <div class="submitter-meta">
+                <span id="d-country-flag">🇫🇷</span>
+                <span id="d-country-name">France</span>
+                <span class="submitter-sep">·</span>
+                <span>Dépôt le <span id="d-submitted">03/01/2026</span></span>
+              </div>
+            </div>
+            <div class="film-decision-badge fdb-none" id="d-decision-badge">— En attente</div>
           </div>
 
           <!-- Infos film -->
           <div class="film-header">
             <div>
               <div class="film-title-main" id="d-title">Rêves de Silicium</div>
-              <div class="film-author-main" id="d-author">Léa Fontaine · France · 2026</div>
               <div class="film-tags">
                 <span class="ftag ftag-img">Image IA</span>
                 <span class="ftag ftag-tool" id="d-tools">Runway ML · Sora · MusicGen</span>
               </div>
-            </div>
-            <div class="avg-block">
-              <div class="avg-num" id="d-avg" style="color:var(--aurora);">8.2</div>
-              <div class="avg-label">moy. jury /10</div>
             </div>
           </div>
 
@@ -971,43 +1188,37 @@
             <p id="d-note">"J'ai travaillé avec Runway ML pour générer des séquences oniriques, puis dirigé les mouvements de caméra image par image. Le son est composé via MusicGen. Ce film explore la porosité entre mémoire humaine et apprentissage machine."</p>
           </div>
 
-          <!-- Votes des autres jurés -->
+          <!-- Décisions du jury -->
           <div class="section-card">
-            <h4>Notes du jury</h4>
+            <h4>Décisions du jury</h4>
             <div class="votes-list" id="votes-list"></div>
+          </div>
+
+          <!-- Commentaires du jury -->
+          <div class="section-card">
+            <h4>Commentaires du jury</h4>
+            <div class="comments-thread" id="comments-thread">
+              <div class="ct-empty">Aucun commentaire pour ce film.</div>
+            </div>
           </div>
 
         </div><!-- /detail-scroll -->
 
-        <!-- ══ PANNEAU NOTATION — CDC : 1 à 10 + commentaires ══ -->
+        <!-- ══ PANNEAU DÉCISION — Validé / À revoir / Refusé ══ -->
         <div class="notation-panel">
-          <div class="notation-top">
-            <span class="notation-label">Votre note</span>
-            <div class="score-btns" id="score-btns">
-              <button class="sbtn" onclick="pickScore(this,1)">1</button>
-              <button class="sbtn" onclick="pickScore(this,2)">2</button>
-              <button class="sbtn" onclick="pickScore(this,3)">3</button>
-              <button class="sbtn" onclick="pickScore(this,4)">4</button>
-              <button class="sbtn" onclick="pickScore(this,5)">5</button>
-              <button class="sbtn" onclick="pickScore(this,6)">6</button>
-              <button class="sbtn" onclick="pickScore(this,7)">7</button>
-              <button class="sbtn active" onclick="pickScore(this,8)">8</button>
-              <button class="sbtn" onclick="pickScore(this,9)">9</button>
-              <button class="sbtn" onclick="pickScore(this,10)">10</button>
-            </div>
+          <!-- 3 boutons de décision -->
+          <div class="decision-main">
+            <button class="dbtn-main dbtn-valide"  id="btn-valide"  onclick="decide('valide')">✓ Valider</button>
+            <button class="dbtn-main dbtn-arevoir" id="btn-arevoir" onclick="openModalARevoir()">↩ À revoir</button>
+            <button class="dbtn-main dbtn-refuse"  id="btn-refuse"  onclick="openModalRefuse()">✕ Refuser</button>
           </div>
+          <!-- Commentaire -->
           <div class="notation-bottom">
             <div class="comment-wrap">
-              <div class="comment-label">Commentaire (visible par le jury)</div>
-              <textarea class="comment-input" placeholder="Ajoutez un commentaire pour les délibérations...">Maîtrise de la durée exceptionnelle, narration très forte.</textarea>
+              <div class="comment-label">Mon commentaire (visible par tout le jury)</div>
+              <textarea class="comment-input" id="comment-input" placeholder="Ajoutez un commentaire sur ce film…"></textarea>
             </div>
-            <div class="decision-btns">
-              <button class="dbtn dbtn-select" onclick="decide('select')">✓ Sélectionner</button>
-              <div class="dbtn-row">
-                <button class="dbtn dbtn-pending" onclick="decide('pending')">⏸ Attente</button>
-                <button class="dbtn dbtn-reject"  onclick="decide('reject')">✕ Rejeter</button>
-              </div>
-            </div>
+            <button class="btn-publish" onclick="postComment()">💬 Publier</button>
           </div>
         </div>
 
@@ -1024,12 +1235,12 @@
           📤 Exporter palmarès CSV
         </button>
       </div>
-      <div class="delib-sub">Classement par score moyen · 4 membres du jury · 50 films en compétition officielle</div>
+      <div class="delib-sub">Décisions du jury · 4 membres · Films assignés par l'administrateur</div>
 
-      <!-- Phases de présélection (CDC : 2 phases) -->
+      <!-- 2 phases de sélection -->
       <div class="phase-tabs">
-        <div class="ptab active" onclick="setPhaseTab(this,1)">Phase 1 — Présélection générale (20 000 → 50)</div>
-        <div class="ptab ptab-2" onclick="setPhaseTab(this,2)">Phase 2 — Par thématique (50 → Palmarès)</div>
+        <div class="ptab active" onclick="setPhaseTab(this,1)">Phase 1 · Présélection Top 50 · 12/12/26</div>
+        <div class="ptab ptab-2" onclick="setPhaseTab(this,2)">Phase 2 · Finale Top 5 · Date à confirmer</div>
       </div>
 
       <table class="delib-table" id="delib-table"></table>
@@ -1037,72 +1248,137 @@
 
   </div><!-- /main -->
 
-  <div class="toast" id="toast"></div>
+  <!-- ══ MODAL : À REVOIR ══ -->
+  <div class="modal-overlay" id="modal-arevoir" onclick="closeModalOutside(event,'modal-arevoir')">
+    <div class="modal-box">
+      <span class="modal-icon">↩</span>
+      <div class="modal-title">Demande de révision</div>
+      <div class="modal-subtitle">
+        Précisez pourquoi ce film mérite une attention particulière. Ce message sera visible par les autres membres du jury.
+      </div>
+      <div class="modal-film-chip" id="arevoir-chip">—</div>
+      <div class="modal-label">Votre message</div>
+      <textarea class="modal-textarea" id="arevoir-message"
+        placeholder="Ex : Le traitement sonore est inhabituel, mérite une seconde écoute attentive. Les premiers plans sont visuellement forts…"></textarea>
+      <div class="modal-hint" id="arevoir-hint">⚠ Veuillez écrire un message avant de continuer.</div>
+      <div class="modal-actions">
+        <button class="modal-btn-cancel" onclick="closeModal('modal-arevoir')">Annuler</button>
+        <button class="modal-btn-arevoir" onclick="confirmARevoir()">↩ Marquer à revoir →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ MODAL : REFUS ══ -->
+  <div class="modal-overlay" id="modal-refuse" onclick="closeModalOutside(event,'modal-refuse')">
+    <div class="modal-box">
+      <span class="modal-icon">✕</span>
+      <div class="modal-title">Notification de refus</div>
+      <div class="modal-subtitle">
+        Ce message sera envoyé au réalisateur. Vous pouvez le personnaliser avant l'envoi.
+      </div>
+      <div class="modal-film-chip" id="refuse-chip">—</div>
+      <div class="modal-label">Message au réalisateur</div>
+      <textarea class="modal-textarea" id="refuse-message" style="min-height:180px;"></textarea>
+      <hr class="modal-separator">
+      <div class="modal-actions">
+        <button class="modal-btn-cancel" onclick="closeModal('modal-refuse')">Annuler</button>
+        <button class="modal-btn-refuse" onclick="confirmRefuse()">✕ Confirmer le refus →</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
 
   <script>
-    /* ── DONNÉES ── */
+    /* ── DONNÉES (maquette) ── */
+    // decisions: null = pas encore évalué, 'valide', 'aRevoir', 'refuse'
     const films = [
-      { id:1,  title:"Rêves de Silicium",    author:"Léa Fontaine",    country:"France",    type:"img", scores:[9,7.5,8,null], status:"selected",
+      { id:1,  title:"Rêves de Silicium",  author:"Léa Fontaine",   country:"France",   flag:"🇫🇷", email:"lea.fontaine@studio-lr.fr",       submitted:"03/01/2026", type:"img",
+        myDecision: 'valide',
+        juryDec: { ML:'valide', PD:'aRevoir', KI:'valide',   SE: null },
+        comments: { ML:'Narration percutante, maîtrise formelle remarquable.', PD:'Fin un peu abrupte, à retravailler.', KI:'Très forte proposition artistique.' },
         tools:"Runway ML · Sora · MusicGen", iasc:"ChatGPT-4o · Claude", iaimg:"Runway ML Gen-3 · Sora", iapost:"MusicGen · ElevenLabs",
         note:"J'ai travaillé avec Runway ML pour générer des séquences oniriques, puis dirigé les mouvements de caméra image par image.", dur:"00:59.8", bg:"#0d1b3e" },
-      { id:2,  title:"L'Enfant-Pixel",       author:"Amira Ben Said",  country:"Tunisie",   type:"hyb", scores:[8.5,9,8,null],  status:"selected",
+      { id:2,  title:"L'Enfant-Pixel",     author:"Amira Ben Said", country:"Tunisie",  flag:"🇹🇳", email:"amira.bensaid@cineart.tn",          submitted:"07/01/2026", type:"hyb",
+        myDecision: 'valide',
+        juryDec: { ML:'valide', PD:'valide', KI:'valide', SE: null },
+        comments: { ML:'Direction visuelle exceptionnelle.', PD:'Très forte.', KI:'Bravo.' },
         tools:"Pika Labs · Udio", iasc:"GPT-4o", iaimg:"Pika Labs 1.5", iapost:"Udio · Premiere Pro",
         note:"Un film sur la frontière entre l'enfance et l'IA générative.", dur:"01:02.1", bg:"#0a2e1a" },
-      { id:3,  title:"Archipel 2048",        author:"Kenji Ito",       country:"Japon",     type:"img", scores:[7,8,null,7],    status:"pending",
+      { id:3,  title:"Archipel 2048",      author:"Kenji Ito",      country:"Japon",    flag:"🇯🇵", email:"k.ito@tokyofilm.jp",                submitted:"11/01/2026", type:"img",
+        myDecision: 'aRevoir',
+        juryDec: { ML:'aRevoir', PD:'valide', KI: null, SE:'aRevoir' },
+        comments: { ML:'Réflexion intéressante, manque de rythme.', PD:'Belle esthétique.' },
         tools:"Stable Diffusion · Kling", iasc:"Claude 3.5", iaimg:"Stable Diffusion XL · Kling", iapost:"Adobe Firefly",
         note:"Réflexion sur les îles artificielles et la montée des eaux.", dur:"01:00.0", bg:"#2e0a0a" },
-      { id:4,  title:"Mémoire Vive",         author:"Carlos Ruiz",     country:"Espagne",   type:"hyb", scores:[6,7,6.5,null],  status:"pending",
+      { id:4,  title:"Mémoire Vive",       author:"Carlos Ruiz",    country:"Espagne",  flag:"🇪🇸", email:"carlos.ruiz@madridvisual.es",       submitted:"15/01/2026", type:"hyb",
+        myDecision: null,
+        juryDec: { ML: null, PD: null, KI: null, SE: null },
+        comments: {},
         tools:"Midjourney · ElevenLabs", iasc:"Gemini", iaimg:"Midjourney V6", iapost:"ElevenLabs · Runway",
         note:"La mémoire d'un être humain transposée dans une machine.", dur:"01:28.0", bg:"#2e1a0a" },
-      { id:5,  title:"Nouveaux Soleils",     author:"Priya Mehta",     country:"Inde",      type:"img", scores:[9,8.5,9,8],     status:"selected",
+      { id:5,  title:"Nouveaux Soleils",   author:"Priya Mehta",    country:"Inde",     flag:"🇮🇳", email:"priya.mehta@mumbaiframes.in",       submitted:"18/01/2026", type:"img",
+        myDecision: null,
+        juryDec: { ML:'valide', PD:'valide', KI:'valide', SE:'valide' },
+        comments: { ML:'Chef-d\'œuvre.', PD:'Unanime.', KI:'Sublime.' },
         tools:"Sora · MusicGen", iasc:"Claude", iaimg:"Sora Turbo", iapost:"MusicGen · DaVinci",
         note:"Une aube nouvelle pour l'humanité guidée par l'IA.", dur:"01:00.0", bg:"#1a2e0a" },
-      { id:6,  title:"Frontières Douces",    author:"Omar Diallo",     country:"Sénégal",   type:"son", scores:[5,6,null,5.5],  status:"rejected",
+      { id:6,  title:"Frontières Douces",  author:"Omar Diallo",    country:"Sénégal",  flag:"🇸🇳", email:"omar.diallo@dakarcreative.sn",      submitted:"20/01/2026", type:"son",
+        myDecision: null,
+        juryDec: { ML:'refuse', PD:'aRevoir', KI: null, SE:'refuse' },
+        comments: { ML:'Trop sonore, peu de visuel.', SE:'Ne correspond pas au cahier des charges.' },
         tools:"ElevenLabs · Suno", iasc:"Mistral", iaimg:"Aucun", iapost:"Suno AI · ElevenLabs",
         note:"Un voyage sonore entre deux cultures.", dur:"01:30.0", bg:"#2e0a2e" },
-      { id:7,  title:"Vague Numérique",      author:"Sofia Ek",        country:"Suède",     type:"hyb", scores:[7.5,7,8,7],     status:"selected",
+      { id:7,  title:"Vague Numérique",    author:"Sofia Ek",       country:"Suède",    flag:"🇸🇪", email:"sofia.ek@nordicframes.se",          submitted:"22/01/2026", type:"hyb",
+        myDecision: null,
+        juryDec: { ML:'valide', PD: null, KI:'valide', SE:'aRevoir' },
+        comments: { ML:'Travail visuel très soigné.', KI:'Bonne proposition.' },
         tools:"Runway · Suno", iasc:"GPT-4", iaimg:"Runway ML", iapost:"Suno AI",
         note:"Le numérique comme vague déferlante sur nos sociétés.", dur:"00:58.5", bg:"#0a2e2e" },
-      { id:8,  title:"Jardin des Codes",     author:"Lin Wei",         country:"Chine",     type:"img", scores:[8,null,7.5,8],  status:"pending",
+      { id:8,  title:"Jardin des Codes",   author:"Lin Wei",        country:"Chine",    flag:"🇨🇳", email:"lin.wei@shanghaifilm.cn",           submitted:"25/01/2026", type:"img",
+        myDecision: null,
+        juryDec: { ML:'valide', PD: null, KI:'aRevoir', SE:'valide' },
+        comments: { ML:'Poésie numérique rare.', SE:'Beau.' },
         tools:"Kling · Firefly", iasc:"Qwen", iaimg:"Kling AI", iapost:"Adobe Firefly",
         note:"Un jardin zen généré entièrement par IA.", dur:"01:00.0", bg:"#1a2e2e" },
-      { id:9,  title:"Signal Perdu",         author:"Aya Tanaka",      country:"Japon",     type:"hyb", scores:[null,null,null,null], status:"pending",
+      { id:9,  title:"Signal Perdu",       author:"Aya Tanaka",     country:"Japon",    flag:"🇯🇵", email:"aya.tanaka@tokyopix.jp",           submitted:"28/01/2026", type:"hyb",
+        myDecision: null,
+        juryDec: { ML: null, PD: null, KI: null, SE: null },
+        comments: {},
         tools:"Pika · Udio", iasc:"GPT-4o", iaimg:"Pika Labs", iapost:"Udio",
         note:"Un signal dans le bruit numérique.", dur:"01:00.0", bg:"#1a0a3e" },
-      { id:10, title:"Horizon Zéro",         author:"Mia Schultz",     country:"Allemagne", type:"img", scores:[8,8.5,8,7.5],   status:"selected",
+      { id:10, title:"Horizon Zéro",       author:"Mia Schultz",    country:"Allemagne", flag:"🇩🇪", email:"mia.schultz@berlinfilm.de",        submitted:"30/01/2026", type:"img",
+        myDecision: null,
+        juryDec: { ML:'valide', PD:'valide', KI:'valide', SE:'valide' },
+        comments: { ML:'Incontournable.', PD:'Unanime.', KI:'Parfait.' },
         tools:"Sora · Adobe Firefly", iasc:"Claude", iaimg:"Sora", iapost:"Adobe Firefly",
         note:"L'horizon comme métaphore du futur possible.", dur:"01:00.0", bg:"#0a1a0a" },
     ];
 
-    function avg(scores) {
-      const v = scores.filter(s => s !== null);
-      if (!v.length) return null;
-      return (v.reduce((a,b)=>a+b,0)/v.length).toFixed(1);
-    }
+    const decLabel = { valide:'Validé', aRevoir:'À revoir', refuse:'Refusé' };
+    const decPillCls = { valide:'vd-valide', aRevoir:'vd-arevoir', refuse:'vd-refuse' };
+    const decDotCls  = { valide:'s-select',  aRevoir:'s-pending',  refuse:'s-reject'  };
+    const decFiCls   = { valide:'fd-valide', aRevoir:'fd-arevoir', refuse:'fd-refuse' };
+    const decBadge   = { valide:'fdb-valide',aRevoir:'fdb-arevoir',refuse:'fdb-refuse' };
 
-    /* ── FILM LIST ── */
+    /* ── LISTE FILMS ── */
     let activeFilm = 1;
-    let playInterval = null;
-    let isPlaying = false;
-    let progress = 42;
 
     function renderList(filterFn) {
       const el = document.getElementById('film-list-scroll');
-      const list = filterFn ? films.filter(filterFn) : films;
+      const list = (filterFn ? films.filter(filterFn) : films);
       el.innerHTML = list.map(f => {
-        const a = avg(f.scores);
-        const sc = a === null ? 'fs-none' : a >= 8 ? 'fs-high' : a >= 6 ? 'fs-mid' : 'fs-low';
-        const ds = f.status === 'selected' ? 's-select' : f.status === 'rejected' ? 's-reject' : 's-pending';
+        const dec = f.myDecision;
+        const dotCls = dec ? decDotCls[dec] : 's-pending';
+        const fiCls  = dec ? decFiCls[dec]  : 'fd-none';
+        const fiTxt  = dec ? decLabel[dec]   : '—';
         return `<div class="film-item ${f.id===activeFilm?'selected':''}" onclick="loadFilm(${f.id})">
-          <div class="fi-thumb" style="background:${f.bg};">
-            🎬
-            <div class="fi-status-dot ${ds}"></div>
-          </div>
+          <div class="fi-thumb" style="background:${f.bg};">🎬<div class="fi-status-dot ${dotCls}"></div></div>
           <div class="fi-info">
             <div class="fi-title">${f.title}</div>
             <div class="fi-sub">${f.author} · ${f.country}</div>
           </div>
-          <div class="fi-score ${sc}">${a||'—'}</div>
+          <span class="fi-dec ${fiCls}">${fiTxt}</span>
         </div>`;
       }).join('');
     }
@@ -1110,128 +1386,283 @@
     function loadFilm(id) {
       activeFilm = id;
       const f = films.find(x=>x.id===id);
-      document.getElementById('d-title').textContent = f.title;
-      document.getElementById('d-author').textContent = `${f.author} · ${f.country} · 2026`;
-      document.getElementById('d-tools').textContent = f.tools;
-      document.getElementById('d-dur').textContent = f.dur;
-      document.getElementById('d-ia-sc').textContent = f.iasc;
+      document.getElementById('d-title').textContent  = f.title;
+      document.getElementById('d-tools').textContent  = f.tools;
+      document.getElementById('d-dur').textContent    = f.dur;
+      // Carte candidat
+      const initials = f.author.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+      document.getElementById('d-avatar').textContent       = initials;
+      document.getElementById('d-name').textContent         = f.author;
+      document.getElementById('d-email').textContent        = f.email || '';
+      document.getElementById('d-email-link').href          = `mailto:${f.email || ''}`;
+      document.getElementById('d-country-flag').textContent = f.flag || '';
+      document.getElementById('d-country-name').textContent = f.country;
+      document.getElementById('d-submitted').textContent    = f.submitted || '';
+      document.getElementById('d-ia-sc').textContent  = f.iasc;
       document.getElementById('d-ia-img').textContent = f.iaimg;
-      document.getElementById('d-ia-post').textContent = f.iapost;
-      document.getElementById('d-note').textContent = `"${f.note}"`;
+      document.getElementById('d-ia-post').textContent= f.iapost;
+      document.getElementById('d-note').textContent   = `"${f.note}"`;
       document.getElementById('player-film-name').textContent = f.title;
-      const a = avg(f.scores);
-      const avgEl = document.getElementById('d-avg');
-      avgEl.textContent = a || '—';
-      avgEl.style.color = a === null ? 'var(--mist)' : a >= 8 ? 'var(--aurora)' : a >= 6 ? 'var(--solar)' : 'var(--coral)';
-      // Mettre à jour les votes jury pour ce film
+      // Badge décision courante
+      const badge = document.getElementById('d-decision-badge');
+      if (f.myDecision) {
+        badge.textContent  = decLabel[f.myDecision];
+        badge.className    = `film-decision-badge ${decBadge[f.myDecision]}`;
+      } else {
+        badge.textContent  = '— Non évalué';
+        badge.className    = 'film-decision-badge fdb-none';
+      }
+      // Boutons actifs
+      ['valide','arevoir','refuse'].forEach(k => {
+        document.getElementById('btn-'+k).classList.remove('active');
+      });
+      if (f.myDecision) {
+        const map = { valide:'valide', aRevoir:'arevoir', refuse:'refuse' };
+        document.getElementById('btn-'+map[f.myDecision])?.classList.add('active');
+      }
+      document.getElementById('comment-input').value = f.comments?.['ML'] || '';
       renderVotes(f);
-      // Reset player
+      renderComments(f);
       stopPlayer();
-      progress = 0;
-      document.getElementById('pbar').style.width = '0%';
-      document.getElementById('ptime').textContent = '0:00 / 1:00';
       renderList();
     }
 
-    /* ── PLAYER ── */
-    function togglePlay(el) {
-      isPlaying = !isPlaying;
-      el.textContent = isPlaying ? '⏸' : '▶';
-      el.style.paddingLeft = isPlaying ? '0' : '4px';
-      const btn2 = document.querySelector('.cbtn.play-btn');
-      if (btn2) { btn2.textContent = isPlaying ? '⏸' : '▶'; btn2.style.paddingLeft = isPlaying ? '0' : '2px'; }
-      if (isPlaying) startProgress(); else stopPlayer();
-    }
-    function togglePlay2(el) {
-      isPlaying = !isPlaying;
-      el.textContent = isPlaying ? '⏸' : '▶';
-      el.style.paddingLeft = isPlaying ? '0' : '2px';
-      const bigBtn = document.querySelector('.play-center');
-      if (bigBtn) { bigBtn.textContent = isPlaying ? '⏸' : '▶'; bigBtn.style.paddingLeft = isPlaying ? '0' : '4px'; }
-      if (isPlaying) startProgress(); else stopPlayer();
-    }
-    function startProgress() {
-      if (playInterval) clearInterval(playInterval);
-      playInterval = setInterval(() => {
-        progress = Math.min(100, progress + 0.4);
-        document.getElementById('pbar').style.width = progress + '%';
-        const s = Math.round(progress * 0.6);
-        document.getElementById('ptime').textContent = `0:${String(s).padStart(2,'0')} / 1:00`;
-        if (progress >= 100) { isPlaying = false; clearInterval(playInterval); }
-      }, 150);
-    }
-    function stopPlayer() { if (playInterval) clearInterval(playInterval); isPlaying = false; }
+    /* ── PLAYER RÉEL ── */
+    const vid = () => document.getElementById('main-video');
 
-    /* ── SCORE 1-10 ── */
-    let currentScore = 8;
-    function pickScore(btn, val) {
-      document.querySelectorAll('.sbtn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentScore = val;
+    function fmtTime(s) {
+      const m = Math.floor(s / 60), sec = Math.floor(s % 60);
+      return `${m}:${String(sec).padStart(2,'0')}`;
+    }
+
+    function updateUI() {
+      const v = vid(); if (!v) return;
+      const pct = v.duration ? (v.currentTime / v.duration) * 100 : 0;
+      document.getElementById('pbar').style.width = pct + '%';
+      document.getElementById('ptime').textContent = `${fmtTime(v.currentTime)} / ${fmtTime(v.duration || 0)}`;
+      const playing = !v.paused && !v.ended;
+      document.getElementById('play-btn').textContent = playing ? '⏸' : '▶';
+      document.getElementById('play-btn').style.paddingLeft = playing ? '0' : '2px';
+      document.getElementById('play-overlay').classList.toggle('hidden', playing);
+      document.querySelector('#play-overlay .play-circle').textContent = playing ? '⏸' : '▶';
+    }
+
+    function togglePlay() {
+      const v = vid(); if (!v) return;
+      v.paused ? v.play() : v.pause();
+    }
+
+    function skipVideo(sec) {
+      const v = vid(); if (!v) return;
+      v.currentTime = Math.max(0, Math.min(v.duration || 0, v.currentTime + sec));
+    }
+
+    function seekVideo(e) {
+      const v = vid(); if (!v || !v.duration) return;
+      const bar = document.getElementById('ctrl-bar');
+      const rect = bar.getBoundingClientRect();
+      const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      v.currentTime = ratio * v.duration;
+    }
+
+    function toggleMute() {
+      const v = vid(); if (!v) return;
+      v.muted = !v.muted;
+      document.getElementById('mute-btn').textContent = v.muted ? '🔇' : '🔊';
+    }
+
+    function setVolume(val) {
+      const v = vid(); if (!v) return;
+      v.volume = val;
+      v.muted = (val == 0);
+      document.getElementById('mute-btn').textContent = (val == 0) ? '🔇' : '🔊';
+    }
+
+    function toggleFullscreen() {
+      const wrap = document.getElementById('player-wrap');
+      if (!document.fullscreenElement) wrap.requestFullscreen();
+      else document.exitFullscreen();
+    }
+
+    function stopPlayer() {
+      const v = vid(); if (!v) return;
+      v.pause(); v.currentTime = 0;
+      updateUI();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const v = vid(); if (!v) return;
+      v.addEventListener('timeupdate', updateUI);
+      v.addEventListener('loadedmetadata', updateUI);
+      v.addEventListener('play', updateUI);
+      v.addEventListener('pause', updateUI);
+      v.addEventListener('ended', updateUI);
+    });
+
+    /* ── MODALS DÉCISION ── */
+    function openModalARevoir() {
+      const f = films.find(x => x.id === activeFilm);
+      if (!f) return;
+      document.getElementById('arevoir-chip').textContent = '🎬 ' + f.title;
+      document.getElementById('arevoir-message').value = f.comments?.['ML'] || '';
+      document.getElementById('arevoir-message').classList.remove('error');
+      document.getElementById('arevoir-hint').classList.remove('show');
+      document.getElementById('modal-arevoir').classList.add('open');
+      setTimeout(() => document.getElementById('arevoir-message').focus(), 180);
+    }
+
+    function openModalRefuse() {
+      const f = films.find(x => x.id === activeFilm);
+      if (!f) return;
+      document.getElementById('refuse-chip').textContent = '🎬 ' + f.title;
+      const defaultMsg =
+        `Madame, Monsieur,\n\n` +
+        `Nous avons visionné votre film « ${f.title} » dans le cadre de la sélection marsAI 2026.\n\n` +
+        `Après délibération, nous avons le regret de vous informer que votre œuvre n'a pas été retenue pour la sélection officielle cette année.\n\n` +
+        `Nous vous remercions de l'intérêt que vous portez au festival et vous encourageons à soumettre vos prochains travaux lors des éditions futures.\n\n` +
+        `Cordialement,\nL'équipe marsAI 2026`;
+      document.getElementById('refuse-message').value = defaultMsg;
+      document.getElementById('modal-refuse').classList.add('open');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('open');
+    }
+
+    function closeModalOutside(e, id) {
+      if (e.target.id === id) closeModal(id);
+    }
+
+    function confirmARevoir() {
+      const msg = document.getElementById('arevoir-message').value.trim();
+      if (!msg) {
+        document.getElementById('arevoir-message').classList.add('error');
+        document.getElementById('arevoir-hint').classList.add('show');
+        return;
+      }
+      const f = films.find(x => x.id === activeFilm);
+      if (f) f.comments['ML'] = msg;
+      closeModal('modal-arevoir');
+      decide('aRevoir');
+    }
+
+    function confirmRefuse() {
+      closeModal('modal-refuse');
+      decide('refuse');
     }
 
     /* ── DÉCISION ── */
     function decide(type) {
       const f = films.find(x=>x.id===activeFilm);
       if (!f) return;
-      f.status = type === 'select' ? 'selected' : type === 'reject' ? 'rejected' : 'pending';
-      const msgs = {
-        select: ['✓ Sélectionné : ' + f.title, 'ok'],
-        reject: ['✕ Rejeté : ' + f.title, 'err'],
-        pending: ['⏸ En attente : ' + f.title, 'warn'],
-      };
-      showToast(...msgs[type]);
-      renderList();
+      f.myDecision = type;
+      // Sauvegarder le commentaire en même temps que la décision
+      const comment = document.getElementById('comment-input').value.trim();
+      if (comment) f.comments['ML'] = comment;
+      // Feedback toast selon type
+      if (type === 'valide') {
+        showToast('Film sélectionné avec succès', f.title, 'ok');
+      } else if (type === 'aRevoir') {
+        showToast('Email envoyé au candidat', f.title + ' — une nouvelle version est demandée', 'warn');
+      } else if (type === 'refuse') {
+        showToast('Email de refus envoyé', f.title + ' — le candidat a été notifié', 'err');
+      }
+      loadFilm(activeFilm);
       updateCounts();
-      // Passer au film suivant après 600ms
-      setTimeout(() => {
-        const idx = films.findIndex(x=>x.id===activeFilm);
-        if (films[idx+1]) loadFilm(films[idx+1].id);
-      }, 700);
+      if (type !== 'aRevoir') {
+        setTimeout(() => {
+          const idx = films.findIndex(x=>x.id===activeFilm);
+          if (films[idx+1]) loadFilm(films[idx+1].id);
+        }, 800);
+      }
     }
 
     function updateCounts() {
-      document.getElementById('nav-pending').textContent = films.filter(f=>f.status==='pending').length;
-      document.getElementById('nav-selected').textContent = films.filter(f=>f.status==='selected').length;
+      const evaluated = films.filter(f => f.myDecision !== null).length;
+      const pending   = films.length - evaluated;
+      document.getElementById('nav-pending').textContent  = pending;
+      document.getElementById('nav-selected').textContent = evaluated;
     }
 
-    /* ── TABS ── */
+    /* ── PUBLIER COMMENTAIRE ── */
+    function postComment() {
+      const f = films.find(x=>x.id===activeFilm);
+      if (!f) return;
+      const comment = document.getElementById('comment-input').value.trim();
+      if (!comment) { showToast('Écrivez un commentaire avant de publier.', 'err'); return; }
+      f.comments['ML'] = comment;
+      f.juryDec['ML'] = f.juryDec['ML'] || null; // ne change pas la décision
+      renderVotes(f);
+      renderComments(f);
+      showToast('💬 Commentaire publié', 'ok');
+    }
+
+    /* ── RENDU COMMENTAIRES ── */
+    function renderComments(f) {
+      const el = document.getElementById('comments-thread');
+      if (!el) return;
+      const withComments = jurors.filter(j => f.comments?.[j.key]);
+      if (!withComments.length) {
+        el.innerHTML = '<div class="ct-empty">Aucun commentaire pour ce film.</div>';
+        return;
+      }
+      el.innerHTML = withComments.map(j => {
+        const dec = f.juryDec[j.key];
+        const isMine = j.key === 'ML';
+        const pillHtml = dec
+          ? `<span class="vote-dec ${decPillCls[dec]}">${decLabel[dec]}</span>`
+          : '';
+        return `<div class="ct-item ${isMine ? 'ct-mine' : ''}">
+          <div class="vote-avatar ${j.cls}">${j.initials}</div>
+          <div class="ct-body">
+            <div class="ct-header">
+              <span class="ct-name">${j.name}</span>
+              ${isMine ? '<span style="font-size:0.68rem;color:var(--aurora);font-weight:600;">Moi</span>' : `<span class="ct-role">${j.role}</span>`}
+              ${pillHtml}
+            </div>
+            <div class="ct-text">"${f.comments[j.key]}"</div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    /* ── VOTES JURY ── */
     const jurors = [
-      { initials:'ML', name:'Marie Lefebvre', role:'Présidente · Réalisatrice', cls:'va-1' },
-      { initials:'PD', name:'Pierre Dubois',  role:'Directeur artistique',      cls:'va-2' },
-      { initials:'KI', name:'Kenji Ito',      role:'Artiste numérique',         cls:'va-3' },
-      { initials:'SE', name:'Sofia Eriksson', role:'Critique de cinéma',        cls:'va-4' },
+      { key:'ML', initials:'ML', name:'Marie Lefebvre', role:'Présidente · Réalisatrice', cls:'va-1' },
+      { key:'PD', initials:'PD', name:'Pierre Dubois',  role:'Directeur artistique',      cls:'va-2' },
+      { key:'KI', initials:'KI', name:'Kenji Ito',      role:'Artiste numérique',         cls:'va-3' },
+      { key:'SE', initials:'SE', name:'Sofia Eriksson', role:'Critique de cinéma',        cls:'va-4' },
     ];
-    const voteComments = {
-      high: ['Narration percutante, maîtrise formelle remarquable.','Direction visuelle exceptionnelle pour 60 secondes.','Très forte proposition artistique, bravo.','Travail sonore et visuel parfaitement cohérents.'],
-      mid:  ['Esthétique cohérente, fin un peu abrupte.','Beau travail, quelques transitions à affiner.','Proposition intéressante, le propos pourrait être plus clair.','Bonne maîtrise globale, à peaufiner.'],
-      low:  ['Concept intéressant mais exécution inégale.','La narration manque de cohérence.','Travail à retravailler sur le plan visuel.','Le propos est là, la mise en forme moins.'],
-    };
+
     function renderVotes(f) {
       const el = document.getElementById('votes-list');
       if (!el) return;
-      el.innerHTML = jurors.map((j, i) => {
-        const sc = f.scores[i];
-        const pending = sc === null;
-        const scClass = pending ? 'none' : sc >= 8 ? 'high' : sc >= 6 ? 'mid' : 'low';
-        const comArr = sc >= 8 ? voteComments.high : sc >= 6 ? voteComments.mid : sc !== null ? voteComments.low : [];
-        const comment = comArr[i % (comArr.length || 1)] || '';
+      el.innerHTML = jurors.map(j => {
+        const dec     = f.juryDec[j.key];
+        const comment = f.comments?.[j.key] || '';
+        const pending = dec === null || dec === undefined;
+        const pillCls = pending ? 'vd-none' : decPillCls[dec];
+        const pillTxt = pending ? 'En attente' : decLabel[dec];
         return `<div>
-          <div class="vote-row" style="${pending ? 'opacity:0.4;border-style:dashed;' : ''}">
+          <div class="vote-row" style="${pending?'opacity:0.45;border-style:dashed;':''}">
             <div class="vote-avatar ${j.cls}">${j.initials}</div>
-            <div style="flex:1;"><div class="vote-name">${j.name}</div><div class="vote-role">${pending ? 'En attente de notation' : j.role}</div></div>
-            <div class="vote-score ${scClass}">${sc !== null ? sc : '—'}</div>
+            <div style="flex:1;">
+              <div class="vote-name">${j.name}</div>
+              <div class="vote-role">${pending ? 'Pas encore évalué' : j.role}</div>
+            </div>
+            <span class="vote-dec ${pillCls}">${pillTxt}</span>
           </div>
           ${!pending && comment ? `<div class="vote-comment">"${comment}"</div>` : ''}
         </div>`;
       }).join('');
     }
 
+    /* ── TABS ── */
     function setTab(el, label) {
       document.querySelectorAll('.ltab').forEach(t=>t.classList.remove('active'));
       el.classList.add('active');
-      if (label === 'À noter') renderList(f => avg(f.scores) === null || f.scores.some(s => s === null));
-      else if (label === 'Notés') renderList(f => avg(f.scores) !== null && f.scores.every(s => s !== null));
+      if (label === 'À évaluer') renderList(f => f.myDecision === null);
+      else if (label === 'Évalués') renderList(f => f.myDecision !== null);
       else renderList();
     }
 
@@ -1239,56 +1670,59 @@
     function switchView(view, navEl) {
       document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
       if (navEl) navEl.classList.add('active');
-
       if (view === 'eval') {
         document.getElementById('view-eval').style.display = 'flex';
         document.getElementById('view-delib').classList.remove('active');
-        document.getElementById('topbar-title').textContent = 'Films à évaluer';
-        document.getElementById('topbar-info').textContent = 'Présélection Phase 1 — tous thèmes';
-        document.getElementById('phase-badge').textContent = 'Phase 1 — Présélection générale';
-        document.getElementById('phase-badge').className = 'phase-badge phase-1';
+        document.getElementById('topbar-title').textContent = 'Films assignés';
+        document.getElementById('topbar-info').textContent  = 'Films assignés par l\'administrateur — évaluation individuelle';
+        document.getElementById('phase-badge').textContent  = 'Phase 1 · Top 50 · 12/12/26';
+        document.getElementById('phase-badge').className    = 'phase-badge phase-1';
       } else {
         document.getElementById('view-eval').style.display = 'none';
         document.getElementById('view-delib').classList.add('active');
-        document.getElementById('topbar-title').textContent = 'Délibération finale';
-        document.getElementById('topbar-info').textContent = '50 films sélectionnés · classement par score moyen';
-        document.getElementById('phase-badge').textContent = 'Phase 2 — Par thématique';
-        document.getElementById('phase-badge').className = 'phase-badge phase-2';
+        document.getElementById('topbar-title').textContent = 'Délibération';
+        document.getElementById('topbar-info').textContent  = 'Récapitulatif des décisions du jury';
+        document.getElementById('phase-badge').textContent  = 'Phase 1 · Top 50 · 12/12/26';
+        document.getElementById('phase-badge').className    = 'phase-badge phase-1';
         renderDelib();
       }
     }
 
     /* ── DÉLIBÉRATION ── */
     function renderDelib() {
-      const sorted = [...films].sort((a,b) => (avg(b.scores)||0) - (avg(a.scores)||0));
-      const tbody = sorted.map((f,i) => {
-        const a = avg(f.scores);
-        const ac = a===null?'':a>=8?'high':a>=6?'mid':'low';
-        const rk = i<3?'gold':'';
-        const sp = f.status==='selected'?'sp-sel':f.status==='rejected'?'sp-rej':'sp-pen';
-        const spTxt = f.status==='selected'?'Sélectionné':f.status==='rejected'?'Rejeté':'En attente';
-        const sc = (s) => s!==null ? `<span style="font-family:var(--font-mono);font-size:0.78rem;">${s}</span>` : `<span style="color:rgba(136,146,176,0.3)">—</span>`;
+      const table = document.getElementById('delib-table');
+      const pill = (dec) => {
+        if (!dec) return `<span style="color:rgba(136,146,176,0.35);font-size:0.72rem;">—</span>`;
+        const cls = { valide:'sp-valide', aRevoir:'sp-arevoir', refuse:'sp-refuse' }[dec];
+        const txt = decLabel[dec];
+        return `<span class="status-pill ${cls}">${txt}</span>`;
+      };
+      const tbody = films.map((f, i) => {
+        const overall = f.juryDec;
+        const vals = Object.values(overall).filter(d=>d==='valide').length;
+        const tot  = Object.values(overall).filter(d=>d!==null).length;
+        const sp = tot === 0 ? 'sp-none' :
+                   vals >= 3 ? 'sp-valide' :
+                   Object.values(overall).filter(d=>d==='refuse').length >= 2 ? 'sp-refuse' : 'sp-arevoir';
+        const spTxt = { 'sp-valide':'Validé','sp-arevoir':'À revoir','sp-refuse':'Refusé','sp-none':'En attente' }[sp];
+        const rk = i < 3 ? 'gold' : '';
         return `<tr onclick="switchView('eval');loadFilm(${f.id})">
           <td><span class="rank ${rk}">${i+1}</span></td>
           <td><strong>${f.title}</strong></td>
           <td style="color:var(--mist);font-size:0.78rem;">${f.author}</td>
-          <td>${sc(f.scores[0])}</td>
-          <td>${sc(f.scores[1])}</td>
-          <td>${sc(f.scores[2])}</td>
-          <td>${sc(f.scores[3])}</td>
-          <td><span class="avg ${ac}">${a||'—'}</span></td>
+          <td>${pill(overall.ML)}</td>
+          <td>${pill(overall.PD)}</td>
+          <td>${pill(overall.KI)}</td>
+          <td>${pill(overall.SE)}</td>
           <td><span class="status-pill ${sp}">${spTxt}</span></td>
         </tr>`;
       }).join('');
-
-      document.getElementById('delib-table').innerHTML = `
-        <thead>
-          <tr>
-            <th>#</th><th>Film</th><th>Réalisateur</th>
-            <th>ML</th><th>PD</th><th>KI</th><th>SE</th>
-            <th>Moy.</th><th>Statut</th>
-          </tr>
-        </thead>
+      table.innerHTML = `
+        <thead><tr>
+          <th>#</th><th>Film</th><th>Réalisateur</th>
+          <th>ML</th><th>PD</th><th>KI</th><th>SE</th>
+          <th>Décision</th>
+        </tr></thead>
         <tbody>${tbody}</tbody>`;
     }
 
@@ -1296,40 +1730,80 @@
       document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));
       el.classList.add('active');
       const badge = document.getElementById('phase-badge');
-      badge.textContent = phase===1 ? 'Phase 1 — Présélection générale' : 'Phase 2 — Par thématique';
-      badge.className = 'phase-badge ' + (phase===1 ? 'phase-1' : 'phase-2');
+      if (phase === 1) {
+        badge.textContent = 'Phase 1 · Top 50 · 12/12/26';
+        badge.className   = 'phase-badge phase-1';
+      } else {
+        badge.textContent = 'Phase 2 · Top 5 · Finale';
+        badge.className   = 'phase-badge phase-2';
+        // En phase 2 on ne montre que 5 films (les plus validés)
+        const t = document.getElementById('delib-table');
+        if (t && t.tBodies[0]) {
+          const rows = Array.from(t.tBodies[0].rows);
+          rows.forEach((r, i) => r.style.display = i < 5 ? '' : 'none');
+        }
+      }
     }
 
     /* ── TOAST ── */
-    function showToast(msg, type='ok') {
-      const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.className = `toast ${type} show`;
-      setTimeout(() => t.classList.remove('show'), 2500);
+    const TOAST_ICONS = { ok: '✅', warn: '📩', err: '❌' };
+    const TOAST_DURATION = 4500;
+
+    function showToast(title, msg, type = 'ok') {
+      const container = document.getElementById('toast-container');
+      const t = document.createElement('div');
+      t.className = `toast ${type}`;
+      t.innerHTML = `
+        <div class="toast-icon">${TOAST_ICONS[type] || '💬'}</div>
+        <div class="toast-body">
+          <div class="toast-title">${title}</div>
+          <div class="toast-msg">${msg}</div>
+        </div>
+        <button class="toast-close" onclick="dismissToast(this.closest('.toast'))">✕</button>
+        <div class="toast-progress" style="animation-duration:${TOAST_DURATION}ms"></div>
+      `;
+      container.prepend(t);
+      requestAnimationFrame(() => requestAnimationFrame(() => t.classList.add('show')));
+      const timer = setTimeout(() => dismissToast(t), TOAST_DURATION);
+      t._timer = timer;
+    }
+
+    function dismissToast(t) {
+      if (!t) return;
+      clearTimeout(t._timer);
+      t.classList.add('hide');
+      t.classList.remove('show');
+      setTimeout(() => t.remove(), 380);
     }
 
     /* ── INIT ── */
     renderList();
     updateCounts();
     renderVotes(films[0]);
+    renderComments(films[0]);
+    document.getElementById('comment-input').value = films[0].comments?.['ML'] || '';
   </script>
-
+  <!-- ─── NAV MAQUETTE ─── -->
   <style>
-    .dev-nav{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.85);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.1);border-radius:50px;padding:8px 16px;display:flex;align-items:center;gap:12px;z-index:9999;font-family:Inter,sans-serif;font-size:12px;}
-    .dev-label{color:rgba(255,255,255,.4);letter-spacing:.05em;text-transform:uppercase;}
-    .dev-links{display:flex;gap:6px;}
-    .dev-btn{color:rgba(255,255,255,.6);text-decoration:none;padding:4px 10px;border-radius:20px;transition:all .2s;}
-    .dev-btn:hover,.dev-btn.curr{background:rgba(255,255,255,.12);color:#fff;}
+    #dev-nav{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:rgba(4,7,22,.95);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);border-radius:50px;padding:6px 8px;display:flex;align-items:center;gap:4px;z-index:99999;font-family:Inter,sans-serif;white-space:nowrap;box-shadow:0 8px 40px rgba(0,0,0,.5);}
+    #dev-nav .dn-label{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.2);padding:0 10px 0 6px;border-right:1px solid rgba(255,255,255,.08);margin-right:4px;}
+    #dev-nav .dn-sep{width:1px;height:14px;background:rgba(255,255,255,.1);margin:0 4px;flex-shrink:0;}
+    #dev-nav .dn-btn{color:rgba(255,255,255,.45);text-decoration:none;padding:5px 13px;border-radius:30px;transition:all .18s;font-size:11.5px;border:1px solid transparent;font-weight:500;display:inline-flex;align-items:center;gap:5px;}
+    #dev-nav .dn-btn:hover{background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);border-color:rgba(255,255,255,.1);}
+    #dev-nav .dn-btn.active{background:rgba(78,255,206,.1);color:#4effce;border-color:rgba(78,255,206,.25);font-weight:600;}
+    #dev-nav .dn-btn.espace-admin{color:rgba(192,132,252,.65);}
+    #dev-nav .dn-btn.espace-admin:hover{background:rgba(192,132,252,.1);color:#c084fc;border-color:rgba(192,132,252,.3);}
+    #dev-nav .dn-btn.espace-admin.active{background:rgba(192,132,252,.12);color:#c084fc;border-color:rgba(192,132,252,.35);font-weight:700;}
+    #dev-nav .dn-btn.espace-jury{color:rgba(245,230,66,.55);}
+    #dev-nav .dn-btn.espace-jury:hover{background:rgba(245,230,66,.08);color:#f5e642;border-color:rgba(245,230,66,.25);}
+    #dev-nav .dn-btn.espace-jury.active{background:rgba(245,230,66,.08);color:#f5e642;border-color:rgba(245,230,66,.3);font-weight:700;}
   </style>
-  <div class="dev-nav">
-    <div class="dev-label">Prototype</div>
-    <div class="dev-links">
-      <a href="index.html" class="dev-btn">🏠</a>
-      <a href="verification-email.html" class="dev-btn">✉️</a>
-      <a href="formulaire-depot.html" class="dev-btn">📝</a>
-      <a href="login-jury.html" class="dev-btn">🔐</a>
-      <a href="admin-jury.html" class="dev-btn curr">⚖️</a>
-    </div>
+  <div id="dev-nav">
+    <span class="dn-label">Maquette</span>
+    <a href="index.html" class="dn-btn">🏠 Accueil</a>
+    <div class="dn-sep"></div>
+    <a href="admin-panel.html" class="dn-btn espace-admin">🛡️ Espace Admin</a>
+    <a href="admin-jury.html"  class="dn-btn espace-jury active">⚖️ Espace Jury</a>
   </div>
 </body>
 </html>
