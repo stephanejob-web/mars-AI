@@ -871,7 +871,7 @@
           </div>
 
           <div class="field">
-            <label class="field-label">Téléphone <span class="opt">(facultatif)</span></label>
+            <label class="field-label">Téléphone <span class="req">● requis</span></label>
             <input type="tel" id="f-tel" placeholder="+33 1 00 00 00 00" autocomplete="tel-national">
           </div>
 
@@ -963,7 +963,7 @@
 
         <div class="fields-grid col2" style="margin-bottom:16px;">
           <div class="field">
-            <label class="field-label">Comment avez-vous connu marsAI ? <span class="opt">(facultatif)</span></label>
+            <label class="field-label">Comment avez-vous connu marsAI ? span class="req">● requis</span></label>
             <select id="f-discovery">
               <option value="">— Sélectionnez —</option>
               <option value="rs">Réseaux sociaux</option>
@@ -1103,7 +1103,7 @@
                 <span class="uz-spec">MOV</span>
                 <span class="uz-spec">200–300 Mo</span>
                 <span class="uz-spec">16:9</span>
-                <span class="uz-spec">60 sec pile</span>
+                <span class="uz-spec">1 minute</span>
               </div>
             </div>
 
@@ -1167,13 +1167,27 @@
 
         <div class="fields-grid">
           <div class="field">
-            <label class="field-label">Note d'intention <span class="req">● requis</span></label>
+            <label class="field-label">Stack technologique <span class="req">● requis</span></label>
             <textarea id="f-intention" rows="5"
               placeholder="Comment votre film s'inscrit-il dans le thème "Imaginez des futurs souhaitables" ? Décrivez votre démarche artistique et votre rapport à l'IA…"
               maxlength="1000" oninput="countChars(this,'cc-intention',1000)"></textarea>
             <div class="char-counter" id="cc-intention">0 / 1000</div>
-            <div class="field-hint">Cette note est lue par le jury lors de la présélection</div>
-            <div class="field-error" id="err-intention">La note d'intention est requise</div>
+            <div class="field-hint">Décrivz les outils IA que vous avez utilisés pour créer votre film</div>
+            <div class="field-error" id="err-intention">La stach techno est requise</div>
+          </div>
+        </div>
+
+        <br>
+
+        <div class="fields-grid">
+          <div class="field">
+            <label class="field-label">Méthodologie Créative  <span class="req">● requis</span></label>
+            <textarea id="f-intention" rows="5"
+              placeholder="Comment votre film s'inscrit-il dans le thème "Imaginez des futurs souhaitables" ? Décrivez votre démarche artistique et votre rapport à l'IA…"
+              maxlength="1000" oninput="countChars(this,'cc-intention',1000)"></textarea>
+            <div class="char-counter" id="cc-intention">0 / 1000</div>
+            <div class="field-hint">Décrivez votre méthode de travail, l'interaction entre l'Homme et la machine</div>
+            <div class="field-error" id="err-intention">La méthodologie créative est requise</div>
           </div>
         </div>
 
