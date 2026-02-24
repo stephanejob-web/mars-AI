@@ -49,15 +49,17 @@
     }
     a { color: inherit; text-decoration: none; }
 
-    /* ─── GRAIN OVERLAY ──────────────────────────────────── */
+    /* ─── GRAIN OVERLAY (static image, GPU-friendly) ───── */
     body::before {
       content: "";
       position: fixed;
       inset: 0;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 256px 256px;
       opacity: 0.015;
       pointer-events: none;
       z-index: 9999;
+      transform: translateZ(0);
     }
 
     /* ─── NAV ────────────────────────────────────────────── */
@@ -644,8 +646,7 @@
 
     /* ─── CONCEPT SECTION ────────────────────────────────── */
     .concept {
-      background: rgba(10,15,46,0.75);
-      backdrop-filter: blur(2px);
+      background: rgba(10,15,46,0.92);
     }
     .concept::before {
       content: "";
@@ -713,8 +714,7 @@
     .about {
       position: relative;
       overflow: hidden;
-      background: rgba(10,15,46,0.75);
-      backdrop-filter: blur(2px);
+      background: rgba(10,15,46,0.92);
     }
     .about-inner {
       display: grid;
@@ -959,8 +959,7 @@
     /* ─── GALLERY SECTION ────────────────────────────────── */
     /* ─── GALERIE ─────────────────────────────────────────── */
     .gallery-section {
-      background: rgba(10,15,46,0.92);
-      backdrop-filter: blur(2px);
+      background: rgba(10,15,46,0.95);
       position: relative;
       overflow: hidden;
     }
@@ -1056,7 +1055,6 @@
       display: flex; align-items: center; justify-content: center;
       font-size: 1.4rem; padding-left: 5px;
       transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), background 0.2s;
-      backdrop-filter: blur(6px);
       z-index: 2;
     }
     .film-featured:hover .featured-play { transform: translate(-50%,-50%) scale(1.12); background: rgba(255,255,255,0.18); }
@@ -1106,10 +1104,9 @@
       overflow: hidden;
       cursor: pointer;
       transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), box-shadow 0.35s ease, border-color 0.35s ease;
-      background: rgba(255,255,255,0.03);
+      background: rgba(10,15,46,0.85);
       border: 1px solid rgba(255,255,255,0.07);
       padding-bottom: 14px;
-      backdrop-filter: blur(4px);
     }
     .film-card:hover {
       transform: translateY(-8px);
@@ -1155,7 +1152,6 @@
       font-size: 0.88rem; padding-left: 3px;
       opacity: 0;
       transition: transform 0.32s cubic-bezier(0.34,1.56,0.64,1), opacity 0.22s;
-      backdrop-filter: blur(4px);
     }
     .film-card:hover .film-thumb-play { opacity: 1; transform: translate(-50%,-50%) scale(1); }
     /* Titre en overlay */
@@ -1246,8 +1242,7 @@
     .how-section {
       position: relative;
       overflow: hidden;
-      background: rgba(10,15,46,0.75);
-      backdrop-filter: blur(2px);
+      background: rgba(10,15,46,0.92);
     }
     .how-header {
       text-align: center;
@@ -1343,8 +1338,7 @@
 
     /* ─── PLAYER SECTION ─────────────────────────────────── */
     .player-section {
-      background: rgba(6,9,30,0.82);
-      backdrop-filter: blur(2px);
+      background: rgba(6,9,30,0.95);
       padding: 80px 60px;
     }
     .player-preview {
@@ -1484,8 +1478,7 @@
       padding: 8px 16px;
       border-radius: 8px;
       border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.03);
-      backdrop-filter: blur(4px);
+      background: rgba(10,15,46,0.85);
     }
     .film-nav-btn:hover {
       color: var(--white-soft);
@@ -1502,8 +1495,7 @@
     /* ─── PALMARÈS ────────────────────────────────────────── */
     .palmares-section {
       position: relative;
-      background: rgba(10,15,46,0.88);
-      backdrop-filter: blur(2px);
+      background: rgba(10,15,46,0.95);
       padding: 100px 0;
       overflow: hidden;
     }
@@ -1649,8 +1641,7 @@
 
     /* ─── FOOTER ─────────────────────────────────────────── */
     footer {
-      background: rgba(10,15,46,0.92);
-      backdrop-filter: blur(4px);
+      background: rgba(10,15,46,0.97);
       border-top: 1px solid rgba(255,255,255,0.06);
       padding: 60px;
     }
@@ -1938,22 +1929,16 @@
       position: relative;
       overflow: hidden;
     }
-    #manifeste-us-bg {
-      pointer-events: none;
-    }
-    #manifeste-us-bg canvas {
-      width: 100% !important;
-      height: 100% !important;
-    }
-    .manifeste-overlay {
+    .manifeste-section::before {
+      content: '';
       position: absolute; inset: 0; z-index: 1;
       background:
         linear-gradient(to bottom,
-          rgba(6,10,36,0.97) 0%,
-          rgba(6,10,36,0.60) 25%,
-          rgba(6,10,36,0.45) 50%,
-          rgba(6,10,36,0.60) 75%,
-          rgba(6,10,36,0.97) 100%);
+          rgba(10,15,46,0.92) 0%,
+          rgba(10,15,46,0.55) 40%,
+          rgba(10,15,46,0.55) 60%,
+          rgba(10,15,46,0.92) 100%),
+        radial-gradient(ellipse at 50% 50%, rgba(78,255,206,0.05) 0%, transparent 65%);
       pointer-events: none;
     }
     /* Contenu au-dessus */
@@ -2018,8 +2003,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background: rgba(10,15,46,0.90);
-      backdrop-filter: blur(4px);
+      background: rgba(10,15,46,0.95);
     }
     .counters-grid {
       display: grid;
@@ -2282,7 +2266,6 @@
       border: 1px solid rgba(255,107,107,0.15);
       border-radius: 12px; padding: 11px 20px;
       font-size: 0.85rem; color: var(--white-soft); font-weight: 500;
-      backdrop-filter: blur(6px);
       transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
     }
     .marsnight-detail:hover {
@@ -2309,8 +2292,7 @@
     /* ─── JURY SECTION ───────────────────────────────── */
     .jury-section {
       position: relative;
-      background: rgba(8,12,38,0.92);
-      backdrop-filter: blur(2px);
+      background: rgba(8,12,38,0.95);
       padding: 120px 0;
       overflow: hidden;
     }
@@ -2343,7 +2325,6 @@
       margin-bottom: 36px;
       position: relative;
       overflow: hidden;
-      backdrop-filter: blur(8px);
       box-shadow: 0 4px 40px rgba(0,0,0,0.2);
     }
     .jury-featured::before {
@@ -2413,13 +2394,12 @@
       gap: 20px;
     }
     .jury-card {
-      background: rgba(255,255,255,0.04);
+      background: rgba(10,15,46,0.9);
       border: 1px solid rgba(255,255,255,0.09);
       border-radius: 20px;
       overflow: hidden;
       transition: border-color 0.3s ease, transform 0.35s cubic-bezier(0.4,0,0.2,1), box-shadow 0.3s ease;
       cursor: default;
-      backdrop-filter: blur(4px);
     }
     .jury-card:hover {
       border-color: rgba(78,255,206,0.25);
@@ -2796,11 +2776,6 @@
   <!-- ─── MANIFESTE ───────────────────────────────────── -->
   <section class="manifeste-section">
 
-    <!-- UnicornStudio WebGL Background -->
-    <div id="manifeste-us-bg" data-us-project="1bY8o6HVTI1oxJxuCJEG" style="position:absolute;inset:0;width:100%;height:100%;z-index:0;"></div>
-    <!-- Overlay for text readability -->
-    <div class="manifeste-overlay"></div>
-
     <!-- Contenu -->
     <div class="manifeste-inner">
 
@@ -2841,21 +2816,6 @@
     </div><!-- /manifeste-inner -->
 
   </section>
-
-  <!-- UnicornStudio loader for manifeste background -->
-  <script>
-  !function(){
-    if(!window.UnicornStudio){
-      window.UnicornStudio={isInitialized:!1};
-      var i=document.createElement("script");
-      i.src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.31/dist/unicornStudio.umd.js";
-      i.onload=function(){
-        window.UnicornStudio.isInitialized||(UnicornStudio.init(),window.UnicornStudio.isInitialized=!0);
-      };
-      (document.head||document.body).appendChild(i);
-    }
-  }();
-  </script>
 
   <!-- ─── COMPTEURS ANIMÉS ──────────────────────────────── -->
   <section class="counters-section">
@@ -3732,6 +3692,8 @@
       const heroHeight = heroEl.offsetHeight;
       const sphereOpacity = Math.max(0, 1 - (y / (heroHeight * 0.7)));
       document.getElementById('webgl-canvas').style.opacity = sphereOpacity;
+      // Restart Three.js loop when sphere becomes visible again
+      if (sphereOpacity > 0 && window._restartSphereAnim) window._restartSphereAnim();
 
       // scrollspy — section active = celle dont le top est la plus proche au-dessus du centre écran
       const mid = y + window.innerHeight * 0.35;
@@ -4109,15 +4071,16 @@
     // Animation loop
     const clock = new THREE.Clock();
     let sphereVisible = true;
+    let animFrameId = null;
     function animate() {
-      requestAnimationFrame(animate);
-
       // Skip render when sphere is invisible (GPU perf)
       const canvasOpacity = parseFloat(canvas.style.opacity);
       if (canvasOpacity <= 0 && !isAnimating) {
         if (sphereVisible) { clock.stop(); sphereVisible = false; }
+        animFrameId = null; // Stop the loop entirely
         return;
       }
+      animFrameId = requestAnimationFrame(animate);
       if (!sphereVisible) { clock.start(); sphereVisible = true; }
 
       const elapsedTime = clock.getElapsedTime();
@@ -4152,6 +4115,11 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
       composer.setSize(window.innerWidth, window.innerHeight);
     });
+
+    // Expose a restart function so the scroll handler can resume the loop
+    window._restartSphereAnim = function() {
+      if (!animFrameId) animate();
+    };
 
     // Init with entrance animation
     window.addEventListener('load', () => {
