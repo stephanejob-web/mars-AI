@@ -318,53 +318,74 @@
     }
     .player-screen {
       aspect-ratio: 16/9;
-      background: linear-gradient(135deg, #0d1b3e 0%, #1a0a3e 60%, #0a2e2e 100%);
+      background: #000;
       display: flex;
       align-items: center;
       justify-content: center;
       position: relative;
+      overflow: hidden;
     }
-    .yt-badge {
+    .play-overlay {
       position: absolute;
-      top: 12px; right: 12px;
-      background: rgba(255,0,0,0.85);
-      border-radius: 5px;
-      padding: 3px 8px;
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      color: white;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .yt-badge::before {
-      content: "▶";
-      font-size: 0.5rem;
-    }
-    .play-center {
-      width: 56px; height: 56px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.1);
-      border: 2px solid rgba(255,255,255,0.2);
+      inset: 0;
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.1rem;
-      cursor: pointer;
-      padding-left: 4px;
+      font-size: 1.2rem;
+      background: rgba(0,0,0,0.3);
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
+    .play-overlay .play-circle {
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+      border: 2px solid rgba(255,255,255,0.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; padding-left: 4px;
+      backdrop-filter: blur(6px);
       transition: all 0.2s;
-      backdrop-filter: blur(4px);
     }
-    .play-center:hover { background: rgba(78,255,206,0.2); border-color: var(--aurora); transform: scale(1.05); }
-    .player-sub-bar {
-      position: absolute;
-      bottom: 42px; left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0,0,0,0.75);
-      border-radius: 4px;
-      padding: 5px 14px;
-      font-size: 0.85rem;
-      white-space: nowrap;
+    .player-screen:hover .play-circle { background: rgba(78,255,206,0.2); border-color: var(--aurora); transform: scale(1.06); }
+    .play-overlay.hidden { opacity: 0; }
+    /* ── Carte candidat ── */
+    .submitter-card {
+      display: flex; align-items: center; gap: 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-bottom: 14px;
     }
+    .submitter-avatar {
+      width: 40px; height: 40px; flex-shrink: 0;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--aurora), var(--lavande));
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display);
+      font-size: 0.78rem; font-weight: 800;
+      color: var(--deep-sky);
+      letter-spacing: 0;
+    }
+    .submitter-info { flex: 1; min-width: 0; }
+    .submitter-name {
+      font-weight: 700; font-size: 0.9rem;
+      color: var(--white-soft); margin-bottom: 4px;
+    }
+    .submitter-meta {
+      font-size: 0.75rem; color: var(--mist);
+      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    }
+    .submitter-sep { opacity: 0.4; }
+    .submitter-email {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.78rem; font-weight: 500;
+      color: var(--aurora);
+      text-decoration: none;
+      margin-bottom: 4px;
+      transition: opacity 0.15s;
+    }
+    .submitter-email:hover { opacity: 0.75; }
+    .submitter-email-icon { font-size: 0.7rem; opacity: 0.8; }
+
     /* Barre de contrôle */
     .player-ctrl {
       padding: 10px 16px 12px;
@@ -805,26 +826,62 @@
       box-shadow: 0 4px 16px rgba(78,255,206,0.3);
     }
 
-    /* Toast */
-    .toast {
-      position: fixed;
-      bottom: 90px; right: 20px;
-      padding: 10px 16px;
-      border-radius: 8px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      border: 1px solid;
-      backdrop-filter: blur(12px);
-      opacity: 0;
-      transform: translateY(8px);
-      transition: all 0.25s var(--ease);
+    /* ── TOAST ── */
+    #toast-container {
+      position: fixed; bottom: 80px; right: 20px; z-index: 99999;
+      display: flex; flex-direction: column-reverse; gap: 10px;
       pointer-events: none;
-      z-index: 100;
     }
-    .toast.show { opacity: 1; transform: translateY(0); }
-    .toast.ok  { background: rgba(78,255,206,0.1); border-color: rgba(78,255,206,0.3); color: var(--aurora); }
-    .toast.warn{ background: rgba(245,230,66,0.08); border-color: rgba(245,230,66,0.25); color: var(--solar); }
-    .toast.err { background: rgba(255,107,107,0.1); border-color: rgba(255,107,107,0.25); color: var(--coral); }
+    .toast {
+      display: flex; align-items: flex-start; gap: 12px;
+      min-width: 300px; max-width: 380px;
+      background: #1a1f3e;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 14px 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3);
+      font-size: 0.85rem; font-weight: 500;
+      color: var(--white-soft);
+      pointer-events: all;
+      position: relative; overflow: hidden;
+      transform: translateX(120%);
+      opacity: 0;
+      transition: transform 0.35s cubic-bezier(0.21,1.02,0.73,1), opacity 0.35s ease;
+    }
+    .toast.show { transform: translateX(0); opacity: 1; }
+    .toast.hide { transform: translateX(120%); opacity: 0; }
+
+    .toast-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+    .toast-body { flex: 1; line-height: 1.4; }
+    .toast-title { font-weight: 700; font-size: 0.82rem; margin-bottom: 3px; }
+    .toast-msg   { font-size: 0.8rem; color: rgba(240,244,255,0.7); }
+
+    .toast-close {
+      flex-shrink: 0; background: none; border: none; cursor: pointer;
+      color: rgba(255,255,255,0.35); font-size: 1rem; padding: 0; line-height: 1;
+      transition: color 0.15s; margin-top: -2px;
+    }
+    .toast-close:hover { color: rgba(255,255,255,0.8); }
+
+    .toast-progress {
+      position: absolute; bottom: 0; left: 0; height: 3px; border-radius: 0 0 0 12px;
+      animation: toast-progress-shrink linear forwards;
+    }
+    @keyframes toast-progress-shrink {
+      from { width: 100%; } to { width: 0%; }
+    }
+
+    .toast.ok   { border-left: 3px solid var(--aurora); }
+    .toast.ok   .toast-title { color: var(--aurora); }
+    .toast.ok   .toast-progress { background: var(--aurora); }
+
+    .toast.warn { border-left: 3px solid var(--solar); }
+    .toast.warn .toast-title { color: var(--solar); }
+    .toast.warn .toast-progress { background: var(--solar); }
+
+    .toast.err  { border-left: 3px solid var(--coral); }
+    .toast.err  .toast-title { color: var(--coral); }
+    .toast.err  .toast-progress { background: var(--coral); }
 
     /* ══════════════════════════════════════════
        MODALS DÉCISION
@@ -1023,48 +1080,67 @@
       <div class="detail">
         <div class="detail-scroll">
 
-          <!-- Player (YouTube embed simulé) -->
-          <div class="player-wrap">
-            <div class="player-screen">
-              <div class="play-center" onclick="togglePlay(this)">▶</div>
-              <div class="player-sub-bar">"Les machines apprennent à rêver."</div>
-              <div class="yt-badge">YouTube</div>
+          <!-- Player vidéo réel -->
+          <div class="player-wrap" id="player-wrap">
+            <div class="player-screen" style="background:#000;cursor:pointer;" onclick="togglePlay()">
+              <video id="main-video" src="assets/video.mp4" preload="metadata"
+                style="width:100%;height:100%;object-fit:cover;display:block;"
+                onclick="event.stopPropagation()"></video>
+              <div class="play-overlay" id="play-overlay"><div class="play-circle">▶</div></div>
             </div>
             <div class="player-ctrl">
               <div class="ctrl-progress">
-                <div class="ctrl-bar">
-                  <div class="ctrl-bar-fill" id="pbar" style="width:42%;"></div>
+                <div class="ctrl-bar" id="ctrl-bar" onclick="seekVideo(event)">
+                  <div class="ctrl-bar-fill" id="pbar" style="width:0%"></div>
                 </div>
-                <span class="ctrl-time" id="ptime">0:25 / 1:00</span>
+                <span class="ctrl-time" id="ptime">0:00 / 0:00</span>
               </div>
               <div class="ctrl-buttons">
                 <div class="ctrl-left">
-                  <button class="cbtn">⏮</button>
-                  <button class="cbtn play-btn" onclick="togglePlay2(this)">▶</button>
-                  <button class="cbtn">⏭</button>
-                  <button class="cbtn">🔊</button>
+                  <button class="cbtn" onclick="skipVideo(-10)" title="−10s">⏮</button>
+                  <button class="cbtn play-btn" id="play-btn" onclick="togglePlay()">▶</button>
+                  <button class="cbtn" onclick="skipVideo(10)" title="+10s">⏭</button>
+                  <button class="cbtn" id="mute-btn" onclick="toggleMute()">🔊</button>
                   <span style="font-size:0.75rem;color:var(--mist);" id="player-film-name">Rêves de Silicium</span>
                 </div>
                 <div style="display:flex;gap:8px;align-items:center;">
-                  <span class="yt-info"><span class="yt-check">✓</span> Copyright OK · YouTube API</span>
-                  <span class="cc-btn">CC FR</span>
-                  <button class="cbtn">⛶</button>
+                  <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="1"
+                    oninput="setVolume(this.value)"
+                    style="width:70px;accent-color:var(--aurora);cursor:pointer;">
+                  <button class="cbtn" onclick="toggleFullscreen()" title="Plein écran">⛶</button>
                 </div>
               </div>
             </div>
+          </div>
+
+          <!-- Candidat -->
+          <div class="submitter-card">
+            <div class="submitter-avatar" id="d-avatar">LF</div>
+            <div class="submitter-info">
+              <div class="submitter-name" id="d-name">Léa Fontaine</div>
+              <a class="submitter-email" id="d-email-link" href="mailto:lea.fontaine@studio-lr.fr">
+                <span class="submitter-email-icon">✉</span>
+                <span id="d-email">lea.fontaine@studio-lr.fr</span>
+              </a>
+              <div class="submitter-meta">
+                <span id="d-country-flag">🇫🇷</span>
+                <span id="d-country-name">France</span>
+                <span class="submitter-sep">·</span>
+                <span>Dépôt le <span id="d-submitted">03/01/2026</span></span>
+              </div>
+            </div>
+            <div class="film-decision-badge fdb-none" id="d-decision-badge">— En attente</div>
           </div>
 
           <!-- Infos film -->
           <div class="film-header">
             <div>
               <div class="film-title-main" id="d-title">Rêves de Silicium</div>
-              <div class="film-author-main" id="d-author">Léa Fontaine · France · 2026</div>
               <div class="film-tags">
                 <span class="ftag ftag-img">Image IA</span>
                 <span class="ftag ftag-tool" id="d-tools">Runway ML · Sora · MusicGen</span>
               </div>
             </div>
-            <div class="film-decision-badge fdb-none" id="d-decision-badge">— En attente</div>
           </div>
 
           <!-- Métadonnées -->
@@ -1211,67 +1287,67 @@
     </div>
   </div>
 
-  <div class="toast" id="toast"></div>
+  <div id="toast-container"></div>
 
   <script>
     /* ── DONNÉES (maquette) ── */
     // decisions: null = pas encore évalué, 'valide', 'aRevoir', 'refuse'
     const films = [
-      { id:1,  title:"Rêves de Silicium",  author:"Léa Fontaine",   country:"France",    type:"img",
+      { id:1,  title:"Rêves de Silicium",  author:"Léa Fontaine",   country:"France",   flag:"🇫🇷", email:"lea.fontaine@studio-lr.fr",       submitted:"03/01/2026", type:"img",
         myDecision: 'valide',
         juryDec: { ML:'valide', PD:'aRevoir', KI:'valide',   SE: null },
         comments: { ML:'Narration percutante, maîtrise formelle remarquable.', PD:'Fin un peu abrupte, à retravailler.', KI:'Très forte proposition artistique.' },
         tools:"Runway ML · Sora · MusicGen", iasc:"ChatGPT-4o · Claude", iaimg:"Runway ML Gen-3 · Sora", iapost:"MusicGen · ElevenLabs",
         note:"J'ai travaillé avec Runway ML pour générer des séquences oniriques, puis dirigé les mouvements de caméra image par image.", dur:"00:59.8", bg:"#0d1b3e" },
-      { id:2,  title:"L'Enfant-Pixel",     author:"Amira Ben Said", country:"Tunisie",   type:"hyb",
+      { id:2,  title:"L'Enfant-Pixel",     author:"Amira Ben Said", country:"Tunisie",  flag:"🇹🇳", email:"amira.bensaid@cineart.tn",          submitted:"07/01/2026", type:"hyb",
         myDecision: 'valide',
         juryDec: { ML:'valide', PD:'valide', KI:'valide', SE: null },
         comments: { ML:'Direction visuelle exceptionnelle.', PD:'Très forte.', KI:'Bravo.' },
         tools:"Pika Labs · Udio", iasc:"GPT-4o", iaimg:"Pika Labs 1.5", iapost:"Udio · Premiere Pro",
         note:"Un film sur la frontière entre l'enfance et l'IA générative.", dur:"01:02.1", bg:"#0a2e1a" },
-      { id:3,  title:"Archipel 2048",      author:"Kenji Ito",      country:"Japon",     type:"img",
+      { id:3,  title:"Archipel 2048",      author:"Kenji Ito",      country:"Japon",    flag:"🇯🇵", email:"k.ito@tokyofilm.jp",                submitted:"11/01/2026", type:"img",
         myDecision: 'aRevoir',
         juryDec: { ML:'aRevoir', PD:'valide', KI: null, SE:'aRevoir' },
         comments: { ML:'Réflexion intéressante, manque de rythme.', PD:'Belle esthétique.' },
         tools:"Stable Diffusion · Kling", iasc:"Claude 3.5", iaimg:"Stable Diffusion XL · Kling", iapost:"Adobe Firefly",
         note:"Réflexion sur les îles artificielles et la montée des eaux.", dur:"01:00.0", bg:"#2e0a0a" },
-      { id:4,  title:"Mémoire Vive",       author:"Carlos Ruiz",    country:"Espagne",   type:"hyb",
+      { id:4,  title:"Mémoire Vive",       author:"Carlos Ruiz",    country:"Espagne",  flag:"🇪🇸", email:"carlos.ruiz@madridvisual.es",       submitted:"15/01/2026", type:"hyb",
         myDecision: null,
         juryDec: { ML: null, PD: null, KI: null, SE: null },
         comments: {},
         tools:"Midjourney · ElevenLabs", iasc:"Gemini", iaimg:"Midjourney V6", iapost:"ElevenLabs · Runway",
         note:"La mémoire d'un être humain transposée dans une machine.", dur:"01:28.0", bg:"#2e1a0a" },
-      { id:5,  title:"Nouveaux Soleils",   author:"Priya Mehta",    country:"Inde",      type:"img",
+      { id:5,  title:"Nouveaux Soleils",   author:"Priya Mehta",    country:"Inde",     flag:"🇮🇳", email:"priya.mehta@mumbaiframes.in",       submitted:"18/01/2026", type:"img",
         myDecision: null,
         juryDec: { ML:'valide', PD:'valide', KI:'valide', SE:'valide' },
         comments: { ML:'Chef-d\'œuvre.', PD:'Unanime.', KI:'Sublime.' },
         tools:"Sora · MusicGen", iasc:"Claude", iaimg:"Sora Turbo", iapost:"MusicGen · DaVinci",
         note:"Une aube nouvelle pour l'humanité guidée par l'IA.", dur:"01:00.0", bg:"#1a2e0a" },
-      { id:6,  title:"Frontières Douces",  author:"Omar Diallo",    country:"Sénégal",   type:"son",
+      { id:6,  title:"Frontières Douces",  author:"Omar Diallo",    country:"Sénégal",  flag:"🇸🇳", email:"omar.diallo@dakarcreative.sn",      submitted:"20/01/2026", type:"son",
         myDecision: null,
         juryDec: { ML:'refuse', PD:'aRevoir', KI: null, SE:'refuse' },
         comments: { ML:'Trop sonore, peu de visuel.', SE:'Ne correspond pas au cahier des charges.' },
         tools:"ElevenLabs · Suno", iasc:"Mistral", iaimg:"Aucun", iapost:"Suno AI · ElevenLabs",
         note:"Un voyage sonore entre deux cultures.", dur:"01:30.0", bg:"#2e0a2e" },
-      { id:7,  title:"Vague Numérique",    author:"Sofia Ek",       country:"Suède",     type:"hyb",
+      { id:7,  title:"Vague Numérique",    author:"Sofia Ek",       country:"Suède",    flag:"🇸🇪", email:"sofia.ek@nordicframes.se",          submitted:"22/01/2026", type:"hyb",
         myDecision: null,
         juryDec: { ML:'valide', PD: null, KI:'valide', SE:'aRevoir' },
         comments: { ML:'Travail visuel très soigné.', KI:'Bonne proposition.' },
         tools:"Runway · Suno", iasc:"GPT-4", iaimg:"Runway ML", iapost:"Suno AI",
         note:"Le numérique comme vague déferlante sur nos sociétés.", dur:"00:58.5", bg:"#0a2e2e" },
-      { id:8,  title:"Jardin des Codes",   author:"Lin Wei",        country:"Chine",     type:"img",
+      { id:8,  title:"Jardin des Codes",   author:"Lin Wei",        country:"Chine",    flag:"🇨🇳", email:"lin.wei@shanghaifilm.cn",           submitted:"25/01/2026", type:"img",
         myDecision: null,
         juryDec: { ML:'valide', PD: null, KI:'aRevoir', SE:'valide' },
         comments: { ML:'Poésie numérique rare.', SE:'Beau.' },
         tools:"Kling · Firefly", iasc:"Qwen", iaimg:"Kling AI", iapost:"Adobe Firefly",
         note:"Un jardin zen généré entièrement par IA.", dur:"01:00.0", bg:"#1a2e2e" },
-      { id:9,  title:"Signal Perdu",       author:"Aya Tanaka",     country:"Japon",     type:"hyb",
+      { id:9,  title:"Signal Perdu",       author:"Aya Tanaka",     country:"Japon",    flag:"🇯🇵", email:"aya.tanaka@tokyopix.jp",           submitted:"28/01/2026", type:"hyb",
         myDecision: null,
         juryDec: { ML: null, PD: null, KI: null, SE: null },
         comments: {},
         tools:"Pika · Udio", iasc:"GPT-4o", iaimg:"Pika Labs", iapost:"Udio",
         note:"Un signal dans le bruit numérique.", dur:"01:00.0", bg:"#1a0a3e" },
-      { id:10, title:"Horizon Zéro",       author:"Mia Schultz",    country:"Allemagne", type:"img",
+      { id:10, title:"Horizon Zéro",       author:"Mia Schultz",    country:"Allemagne", flag:"🇩🇪", email:"mia.schultz@berlinfilm.de",        submitted:"30/01/2026", type:"img",
         myDecision: null,
         juryDec: { ML:'valide', PD:'valide', KI:'valide', SE:'valide' },
         comments: { ML:'Incontournable.', PD:'Unanime.', KI:'Parfait.' },
@@ -1287,7 +1363,6 @@
 
     /* ── LISTE FILMS ── */
     let activeFilm = 1;
-    let playInterval = null, isPlaying = false, progress = 42;
 
     function renderList(filterFn) {
       const el = document.getElementById('film-list-scroll');
@@ -1312,9 +1387,17 @@
       activeFilm = id;
       const f = films.find(x=>x.id===id);
       document.getElementById('d-title').textContent  = f.title;
-      document.getElementById('d-author').textContent = `${f.author} · ${f.country} · 2026`;
       document.getElementById('d-tools').textContent  = f.tools;
       document.getElementById('d-dur').textContent    = f.dur;
+      // Carte candidat
+      const initials = f.author.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+      document.getElementById('d-avatar').textContent       = initials;
+      document.getElementById('d-name').textContent         = f.author;
+      document.getElementById('d-email').textContent        = f.email || '';
+      document.getElementById('d-email-link').href          = `mailto:${f.email || ''}`;
+      document.getElementById('d-country-flag').textContent = f.flag || '';
+      document.getElementById('d-country-name').textContent = f.country;
+      document.getElementById('d-submitted').textContent    = f.submitted || '';
       document.getElementById('d-ia-sc').textContent  = f.iasc;
       document.getElementById('d-ia-img').textContent = f.iaimg;
       document.getElementById('d-ia-post').textContent= f.iapost;
@@ -1340,36 +1423,81 @@
       document.getElementById('comment-input').value = f.comments?.['ML'] || '';
       renderVotes(f);
       renderComments(f);
-      stopPlayer(); progress = 0;
-      document.getElementById('pbar').style.width = '0%';
-      document.getElementById('ptime').textContent = '0:00 / 1:00';
+      stopPlayer();
       renderList();
     }
 
-    /* ── PLAYER ── */
-    function togglePlay(el) {
-      isPlaying = !isPlaying; el.textContent = isPlaying ? '⏸' : '▶'; el.style.paddingLeft = isPlaying ? '0' : '4px';
-      const b2 = document.querySelector('.cbtn.play-btn');
-      if (b2) { b2.textContent = isPlaying ? '⏸' : '▶'; b2.style.paddingLeft = isPlaying ? '0' : '2px'; }
-      if (isPlaying) startProgress(); else stopPlayer();
+    /* ── PLAYER RÉEL ── */
+    const vid = () => document.getElementById('main-video');
+
+    function fmtTime(s) {
+      const m = Math.floor(s / 60), sec = Math.floor(s % 60);
+      return `${m}:${String(sec).padStart(2,'0')}`;
     }
-    function togglePlay2(el) {
-      isPlaying = !isPlaying; el.textContent = isPlaying ? '⏸' : '▶'; el.style.paddingLeft = isPlaying ? '0' : '2px';
-      const bb = document.querySelector('.play-center');
-      if (bb) { bb.textContent = isPlaying ? '⏸' : '▶'; bb.style.paddingLeft = isPlaying ? '0' : '4px'; }
-      if (isPlaying) startProgress(); else stopPlayer();
+
+    function updateUI() {
+      const v = vid(); if (!v) return;
+      const pct = v.duration ? (v.currentTime / v.duration) * 100 : 0;
+      document.getElementById('pbar').style.width = pct + '%';
+      document.getElementById('ptime').textContent = `${fmtTime(v.currentTime)} / ${fmtTime(v.duration || 0)}`;
+      const playing = !v.paused && !v.ended;
+      document.getElementById('play-btn').textContent = playing ? '⏸' : '▶';
+      document.getElementById('play-btn').style.paddingLeft = playing ? '0' : '2px';
+      document.getElementById('play-overlay').classList.toggle('hidden', playing);
+      document.querySelector('#play-overlay .play-circle').textContent = playing ? '⏸' : '▶';
     }
-    function startProgress() {
-      if (playInterval) clearInterval(playInterval);
-      playInterval = setInterval(() => {
-        progress = Math.min(100, progress + 0.4);
-        document.getElementById('pbar').style.width = progress + '%';
-        const s = Math.round(progress * 0.6);
-        document.getElementById('ptime').textContent = `0:${String(s).padStart(2,'0')} / 1:00`;
-        if (progress >= 100) { isPlaying = false; clearInterval(playInterval); }
-      }, 150);
+
+    function togglePlay() {
+      const v = vid(); if (!v) return;
+      v.paused ? v.play() : v.pause();
     }
-    function stopPlayer() { if (playInterval) clearInterval(playInterval); isPlaying = false; }
+
+    function skipVideo(sec) {
+      const v = vid(); if (!v) return;
+      v.currentTime = Math.max(0, Math.min(v.duration || 0, v.currentTime + sec));
+    }
+
+    function seekVideo(e) {
+      const v = vid(); if (!v || !v.duration) return;
+      const bar = document.getElementById('ctrl-bar');
+      const rect = bar.getBoundingClientRect();
+      const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      v.currentTime = ratio * v.duration;
+    }
+
+    function toggleMute() {
+      const v = vid(); if (!v) return;
+      v.muted = !v.muted;
+      document.getElementById('mute-btn').textContent = v.muted ? '🔇' : '🔊';
+    }
+
+    function setVolume(val) {
+      const v = vid(); if (!v) return;
+      v.volume = val;
+      v.muted = (val == 0);
+      document.getElementById('mute-btn').textContent = (val == 0) ? '🔇' : '🔊';
+    }
+
+    function toggleFullscreen() {
+      const wrap = document.getElementById('player-wrap');
+      if (!document.fullscreenElement) wrap.requestFullscreen();
+      else document.exitFullscreen();
+    }
+
+    function stopPlayer() {
+      const v = vid(); if (!v) return;
+      v.pause(); v.currentTime = 0;
+      updateUI();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const v = vid(); if (!v) return;
+      v.addEventListener('timeupdate', updateUI);
+      v.addEventListener('loadedmetadata', updateUI);
+      v.addEventListener('play', updateUI);
+      v.addEventListener('pause', updateUI);
+      v.addEventListener('ended', updateUI);
+    });
 
     /* ── MODALS DÉCISION ── */
     function openModalARevoir() {
@@ -1432,12 +1560,13 @@
       const comment = document.getElementById('comment-input').value.trim();
       if (comment) f.comments['ML'] = comment;
       // Feedback toast selon type
-      const toasts = {
-        valide:   ['✓ Validé : ' + f.title, 'ok'],
-        aRevoir:  ['↩ À revoir — Email candidat envoyé : ' + f.title, 'warn'],
-        refuse:   ['✕ Refusé — Email candidat envoyé : ' + f.title, 'err'],
-      };
-      showToast(...toasts[type]);
+      if (type === 'valide') {
+        showToast('Film sélectionné avec succès', f.title, 'ok');
+      } else if (type === 'aRevoir') {
+        showToast('Email envoyé au candidat', f.title + ' — une nouvelle version est demandée', 'warn');
+      } else if (type === 'refuse') {
+        showToast('Email de refus envoyé', f.title + ' — le candidat a été notifié', 'err');
+      }
       loadFilm(activeFilm);
       updateCounts();
       if (type !== 'aRevoir') {
@@ -1617,10 +1746,34 @@
     }
 
     /* ── TOAST ── */
-    function showToast(msg, type='ok') {
-      const t = document.getElementById('toast');
-      t.textContent = msg; t.className = `toast ${type} show`;
-      setTimeout(() => t.classList.remove('show'), 3000);
+    const TOAST_ICONS = { ok: '✅', warn: '📩', err: '❌' };
+    const TOAST_DURATION = 4500;
+
+    function showToast(title, msg, type = 'ok') {
+      const container = document.getElementById('toast-container');
+      const t = document.createElement('div');
+      t.className = `toast ${type}`;
+      t.innerHTML = `
+        <div class="toast-icon">${TOAST_ICONS[type] || '💬'}</div>
+        <div class="toast-body">
+          <div class="toast-title">${title}</div>
+          <div class="toast-msg">${msg}</div>
+        </div>
+        <button class="toast-close" onclick="dismissToast(this.closest('.toast'))">✕</button>
+        <div class="toast-progress" style="animation-duration:${TOAST_DURATION}ms"></div>
+      `;
+      container.prepend(t);
+      requestAnimationFrame(() => requestAnimationFrame(() => t.classList.add('show')));
+      const timer = setTimeout(() => dismissToast(t), TOAST_DURATION);
+      t._timer = timer;
+    }
+
+    function dismissToast(t) {
+      if (!t) return;
+      clearTimeout(t._timer);
+      t.classList.add('hide');
+      t.classList.remove('show');
+      setTimeout(() => t.remove(), 380);
     }
 
     /* ── INIT ── */
