@@ -346,6 +346,46 @@
     }
     .player-screen:hover .play-circle { background: rgba(78,255,206,0.2); border-color: var(--aurora); transform: scale(1.06); }
     .play-overlay.hidden { opacity: 0; }
+    /* ── Carte candidat ── */
+    .submitter-card {
+      display: flex; align-items: center; gap: 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-bottom: 14px;
+    }
+    .submitter-avatar {
+      width: 40px; height: 40px; flex-shrink: 0;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--aurora), var(--lavande));
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display);
+      font-size: 0.78rem; font-weight: 800;
+      color: var(--deep-sky);
+      letter-spacing: 0;
+    }
+    .submitter-info { flex: 1; min-width: 0; }
+    .submitter-name {
+      font-weight: 700; font-size: 0.9rem;
+      color: var(--white-soft); margin-bottom: 4px;
+    }
+    .submitter-meta {
+      font-size: 0.75rem; color: var(--mist);
+      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    }
+    .submitter-sep { opacity: 0.4; }
+    .submitter-email {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.78rem; font-weight: 500;
+      color: var(--aurora);
+      text-decoration: none;
+      margin-bottom: 4px;
+      transition: opacity 0.15s;
+    }
+    .submitter-email:hover { opacity: 0.75; }
+    .submitter-email-icon { font-size: 0.7rem; opacity: 0.8; }
+
     /* Barre de contrôle */
     .player-ctrl {
       padding: 10px 16px 12px;
@@ -1073,17 +1113,34 @@
             </div>
           </div>
 
+          <!-- Candidat -->
+          <div class="submitter-card">
+            <div class="submitter-avatar" id="d-avatar">LF</div>
+            <div class="submitter-info">
+              <div class="submitter-name" id="d-name">Léa Fontaine</div>
+              <a class="submitter-email" id="d-email-link" href="mailto:lea.fontaine@studio-lr.fr">
+                <span class="submitter-email-icon">✉</span>
+                <span id="d-email">lea.fontaine@studio-lr.fr</span>
+              </a>
+              <div class="submitter-meta">
+                <span id="d-country-flag">🇫🇷</span>
+                <span id="d-country-name">France</span>
+                <span class="submitter-sep">·</span>
+                <span>Dépôt le <span id="d-submitted">03/01/2026</span></span>
+              </div>
+            </div>
+            <div class="film-decision-badge fdb-none" id="d-decision-badge">— En attente</div>
+          </div>
+
           <!-- Infos film -->
           <div class="film-header">
             <div>
               <div class="film-title-main" id="d-title">Rêves de Silicium</div>
-              <div class="film-author-main" id="d-author">Léa Fontaine · France · 2026</div>
               <div class="film-tags">
                 <span class="ftag ftag-img">Image IA</span>
                 <span class="ftag ftag-tool" id="d-tools">Runway ML · Sora · MusicGen</span>
               </div>
             </div>
-            <div class="film-decision-badge fdb-none" id="d-decision-badge">— En attente</div>
           </div>
 
           <!-- Métadonnées -->
@@ -1236,61 +1293,61 @@
     /* ── DONNÉES (maquette) ── */
     // decisions: null = pas encore évalué, 'valide', 'aRevoir', 'refuse'
     const films = [
-      { id:1,  title:"Rêves de Silicium",  author:"Léa Fontaine",   country:"France",    type:"img",
+      { id:1,  title:"Rêves de Silicium",  author:"Léa Fontaine",   country:"France",   flag:"🇫🇷", email:"lea.fontaine@studio-lr.fr",       submitted:"03/01/2026", type:"img",
         myDecision: 'valide',
         juryDec: { ML:'valide', PD:'aRevoir', KI:'valide',   SE: null },
         comments: { ML:'Narration percutante, maîtrise formelle remarquable.', PD:'Fin un peu abrupte, à retravailler.', KI:'Très forte proposition artistique.' },
         tools:"Runway ML · Sora · MusicGen", iasc:"ChatGPT-4o · Claude", iaimg:"Runway ML Gen-3 · Sora", iapost:"MusicGen · ElevenLabs",
         note:"J'ai travaillé avec Runway ML pour générer des séquences oniriques, puis dirigé les mouvements de caméra image par image.", dur:"00:59.8", bg:"#0d1b3e" },
-      { id:2,  title:"L'Enfant-Pixel",     author:"Amira Ben Said", country:"Tunisie",   type:"hyb",
+      { id:2,  title:"L'Enfant-Pixel",     author:"Amira Ben Said", country:"Tunisie",  flag:"🇹🇳", email:"amira.bensaid@cineart.tn",          submitted:"07/01/2026", type:"hyb",
         myDecision: 'valide',
         juryDec: { ML:'valide', PD:'valide', KI:'valide', SE: null },
         comments: { ML:'Direction visuelle exceptionnelle.', PD:'Très forte.', KI:'Bravo.' },
         tools:"Pika Labs · Udio", iasc:"GPT-4o", iaimg:"Pika Labs 1.5", iapost:"Udio · Premiere Pro",
         note:"Un film sur la frontière entre l'enfance et l'IA générative.", dur:"01:02.1", bg:"#0a2e1a" },
-      { id:3,  title:"Archipel 2048",      author:"Kenji Ito",      country:"Japon",     type:"img",
+      { id:3,  title:"Archipel 2048",      author:"Kenji Ito",      country:"Japon",    flag:"🇯🇵", email:"k.ito@tokyofilm.jp",                submitted:"11/01/2026", type:"img",
         myDecision: 'aRevoir',
         juryDec: { ML:'aRevoir', PD:'valide', KI: null, SE:'aRevoir' },
         comments: { ML:'Réflexion intéressante, manque de rythme.', PD:'Belle esthétique.' },
         tools:"Stable Diffusion · Kling", iasc:"Claude 3.5", iaimg:"Stable Diffusion XL · Kling", iapost:"Adobe Firefly",
         note:"Réflexion sur les îles artificielles et la montée des eaux.", dur:"01:00.0", bg:"#2e0a0a" },
-      { id:4,  title:"Mémoire Vive",       author:"Carlos Ruiz",    country:"Espagne",   type:"hyb",
+      { id:4,  title:"Mémoire Vive",       author:"Carlos Ruiz",    country:"Espagne",  flag:"🇪🇸", email:"carlos.ruiz@madridvisual.es",       submitted:"15/01/2026", type:"hyb",
         myDecision: null,
         juryDec: { ML: null, PD: null, KI: null, SE: null },
         comments: {},
         tools:"Midjourney · ElevenLabs", iasc:"Gemini", iaimg:"Midjourney V6", iapost:"ElevenLabs · Runway",
         note:"La mémoire d'un être humain transposée dans une machine.", dur:"01:28.0", bg:"#2e1a0a" },
-      { id:5,  title:"Nouveaux Soleils",   author:"Priya Mehta",    country:"Inde",      type:"img",
+      { id:5,  title:"Nouveaux Soleils",   author:"Priya Mehta",    country:"Inde",     flag:"🇮🇳", email:"priya.mehta@mumbaiframes.in",       submitted:"18/01/2026", type:"img",
         myDecision: null,
         juryDec: { ML:'valide', PD:'valide', KI:'valide', SE:'valide' },
         comments: { ML:'Chef-d\'œuvre.', PD:'Unanime.', KI:'Sublime.' },
         tools:"Sora · MusicGen", iasc:"Claude", iaimg:"Sora Turbo", iapost:"MusicGen · DaVinci",
         note:"Une aube nouvelle pour l'humanité guidée par l'IA.", dur:"01:00.0", bg:"#1a2e0a" },
-      { id:6,  title:"Frontières Douces",  author:"Omar Diallo",    country:"Sénégal",   type:"son",
+      { id:6,  title:"Frontières Douces",  author:"Omar Diallo",    country:"Sénégal",  flag:"🇸🇳", email:"omar.diallo@dakarcreative.sn",      submitted:"20/01/2026", type:"son",
         myDecision: null,
         juryDec: { ML:'refuse', PD:'aRevoir', KI: null, SE:'refuse' },
         comments: { ML:'Trop sonore, peu de visuel.', SE:'Ne correspond pas au cahier des charges.' },
         tools:"ElevenLabs · Suno", iasc:"Mistral", iaimg:"Aucun", iapost:"Suno AI · ElevenLabs",
         note:"Un voyage sonore entre deux cultures.", dur:"01:30.0", bg:"#2e0a2e" },
-      { id:7,  title:"Vague Numérique",    author:"Sofia Ek",       country:"Suède",     type:"hyb",
+      { id:7,  title:"Vague Numérique",    author:"Sofia Ek",       country:"Suède",    flag:"🇸🇪", email:"sofia.ek@nordicframes.se",          submitted:"22/01/2026", type:"hyb",
         myDecision: null,
         juryDec: { ML:'valide', PD: null, KI:'valide', SE:'aRevoir' },
         comments: { ML:'Travail visuel très soigné.', KI:'Bonne proposition.' },
         tools:"Runway · Suno", iasc:"GPT-4", iaimg:"Runway ML", iapost:"Suno AI",
         note:"Le numérique comme vague déferlante sur nos sociétés.", dur:"00:58.5", bg:"#0a2e2e" },
-      { id:8,  title:"Jardin des Codes",   author:"Lin Wei",        country:"Chine",     type:"img",
+      { id:8,  title:"Jardin des Codes",   author:"Lin Wei",        country:"Chine",    flag:"🇨🇳", email:"lin.wei@shanghaifilm.cn",           submitted:"25/01/2026", type:"img",
         myDecision: null,
         juryDec: { ML:'valide', PD: null, KI:'aRevoir', SE:'valide' },
         comments: { ML:'Poésie numérique rare.', SE:'Beau.' },
         tools:"Kling · Firefly", iasc:"Qwen", iaimg:"Kling AI", iapost:"Adobe Firefly",
         note:"Un jardin zen généré entièrement par IA.", dur:"01:00.0", bg:"#1a2e2e" },
-      { id:9,  title:"Signal Perdu",       author:"Aya Tanaka",     country:"Japon",     type:"hyb",
+      { id:9,  title:"Signal Perdu",       author:"Aya Tanaka",     country:"Japon",    flag:"🇯🇵", email:"aya.tanaka@tokyopix.jp",           submitted:"28/01/2026", type:"hyb",
         myDecision: null,
         juryDec: { ML: null, PD: null, KI: null, SE: null },
         comments: {},
         tools:"Pika · Udio", iasc:"GPT-4o", iaimg:"Pika Labs", iapost:"Udio",
         note:"Un signal dans le bruit numérique.", dur:"01:00.0", bg:"#1a0a3e" },
-      { id:10, title:"Horizon Zéro",       author:"Mia Schultz",    country:"Allemagne", type:"img",
+      { id:10, title:"Horizon Zéro",       author:"Mia Schultz",    country:"Allemagne", flag:"🇩🇪", email:"mia.schultz@berlinfilm.de",        submitted:"30/01/2026", type:"img",
         myDecision: null,
         juryDec: { ML:'valide', PD:'valide', KI:'valide', SE:'valide' },
         comments: { ML:'Incontournable.', PD:'Unanime.', KI:'Parfait.' },
@@ -1330,9 +1387,17 @@
       activeFilm = id;
       const f = films.find(x=>x.id===id);
       document.getElementById('d-title').textContent  = f.title;
-      document.getElementById('d-author').textContent = `${f.author} · ${f.country} · 2026`;
       document.getElementById('d-tools').textContent  = f.tools;
       document.getElementById('d-dur').textContent    = f.dur;
+      // Carte candidat
+      const initials = f.author.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+      document.getElementById('d-avatar').textContent       = initials;
+      document.getElementById('d-name').textContent         = f.author;
+      document.getElementById('d-email').textContent        = f.email || '';
+      document.getElementById('d-email-link').href          = `mailto:${f.email || ''}`;
+      document.getElementById('d-country-flag').textContent = f.flag || '';
+      document.getElementById('d-country-name').textContent = f.country;
+      document.getElementById('d-submitted').textContent    = f.submitted || '';
       document.getElementById('d-ia-sc').textContent  = f.iasc;
       document.getElementById('d-ia-img').textContent = f.iaimg;
       document.getElementById('d-ia-post').textContent= f.iapost;
