@@ -689,6 +689,23 @@ section {
    ================================================================ */
 .concept {
   background: rgba(10,15,46,0.92);
+  overflow: hidden;
+}
+
+/* --- Robot IA image — haut à droite de la section Concept --- */
+.robot-wrap {
+  position: absolute;
+  top: 0;
+  right: 40px;
+  z-index: 1;
+  pointer-events: none;
+}
+.robot-img {
+  width: 360px;
+  height: auto;
+  display: block;
+  opacity: 0.88;
+  filter: drop-shadow(0 0 30px rgba(78,255,206,0.15));
 }
 .concept::before {
   content: "";
@@ -1973,6 +1990,8 @@ footer {
   /* sections */
   section { padding: 0 24px; }
   .section-inner { padding: 60px 0; }
+  .robot-wrap { right: 24px; top: 10px; }
+  .robot-img { width: 260px; }
   .concept-grid { grid-template-columns: 1fr; gap: 16px; }
   .about-inner { grid-template-columns: 1fr; }
   .how-steps { grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -2040,6 +2059,8 @@ footer {
   .section-inner { padding: 48px 0; }
   .section-title { font-size: clamp(1.5rem, 7vw, 2rem); }
   .section-desc { font-size: 0.9rem; }
+  .robot-wrap { right: 16px; top: 10px; }
+  .robot-img { width: 180px; }
   .concept-grid { gap: 12px; }
   .how-steps { grid-template-columns: 1fr; gap: 16px; }
   .films-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
