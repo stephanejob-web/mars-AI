@@ -184,3 +184,31 @@ Site fluide, plus de freeze/lag. Fond shader manifeste fonctionnel avec lazy-loa
 - `js/index-main.js` — observer cascade par section, suppression code cinéma player
 - `js/index-sphere.js` — triggerExplosion(), explosion au scroll avec reset
 - `SESSION.md` — mise à jour
+
+---
+
+## Session 4 — Robot IA détouré dans la section Concept
+**Date** : 25 février 2026 (suite)
+
+### 1. Ajout d'un robot IA dans la section Concept
+- **Objectif** : image de robot IA en haut à droite de la section Concept pour renforcer l'identité visuelle
+- **Tentatives** : SVG animé → vidéo MP4 (`ia1.mp4`, blend mode) → image JPG (`Robot2.jpg`, blend mode) → **PNG détouré**
+- **Problème** : les formats JPG/MP4 avec fond sombre ne s'intègrent pas proprement malgré `mix-blend-mode: screen` et masques CSS
+
+### 2. Suppression du fond avec rembg (IA)
+- **Outil** : `rembg` (Python, modèle U2Net) — équivalent local de remove.bg
+- **Entrée** : `assets/Robot2.jpg` (1280×960, fond sombre avec circuits)
+- **Sortie** : `assets/Robot2.png` (1280×960, RGBA, fond 100% transparent)
+- Détourage propre du buste du robot
+
+### 3. Intégration CSS propre
+- **Avant** : `mix-blend-mode: screen`, `opacity: 0.9`, `mask-image: radial-gradient(...)` — résultat approximatif
+- **Après** : fond transparent natif, `opacity: 0.88`, `filter: drop-shadow(0 0 30px rgba(78,255,206,0.15))` — intégration naturelle
+- Plus besoin de hacks CSS pour cacher le fond
+
+### Fichiers modifiés
+- `views/index.html` — source image changée (`.jpg` → `.png`)
+- `css/index.css` — suppression blend-mode/mask, ajout drop-shadow aurora
+- `assets/Robot2.png` — nouveau fichier (PNG détouré)
+- `assets/Robot2.jpg` — fichier source original ajouté
+- `SESSION.md` — mise à jour
