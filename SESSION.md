@@ -110,3 +110,77 @@ Site fluide, plus de freeze/lag. Fond shader manifeste fonctionnel avec lazy-loa
 - `css/index.css` — suppression styles HUD, ajout `.btn-demo` + laser, améliorations design
 - `js/index-main.js` — suppression code cinéma player
 - `SESSION.md` — mise à jour
+
+---
+
+## Session 3 — Refonte hero, animations reveal, harmonisation sections
+**Date** : 25 février 2026 (suite)
+
+### 1. Explosion sphère 3D au scroll
+- **JS** (`js/index-sphere.js`) : extraction de `triggerExplosion()` en fonction réutilisable
+- Clic sur la sphère → explosion (inchangé)
+- Scroll vers le bas depuis le haut de page → explosion automatique (`scrollY > 30`)
+- Reset du déclencheur quand l'utilisateur revient en haut (`scrollY <= 5`)
+- Scroll handler avec `{ passive: true }`
+
+### 2. Restructuration du hero
+- **Suppression** du sous-texte "Aucune caméra. Aucun acteur..." (`.hero-accroche-sub`)
+- **Déplacement** des boutons CTA ("Soumettre un film" + "Démo") dans `.hero-accroche` sous le texte d'accroche
+- **Countdown** déplacé dans la colonne droite du hero (`.hero-right`), aligné en bas à droite
+- **Suppression** de `.hero-bottom-bar` (plus nécessaire)
+- **Boutons agrandis** : padding `16px 34px`, font-size `1rem`
+- **Laser continu** : animation `laser-sweep` en boucle infinie (2.5s), plus intense au hover (0.5s)
+
+### 3. Texte "Marseille" en haut à droite du hero
+- Police display, uppercase, `letter-spacing: 0.08em`
+- Effet shimmer : dégradé aurora/blanc/lavande glissant (animation 8s)
+- Style watermark subtil : texte transparent + stroke léger
+- Étiré verticalement (`scaleY(1.3)`) et compressé horizontalement (`scaleX(0.65)`)
+- Ancré en haut à droite (`transform-origin: right top`)
+
+### 4. Navbar — effet shrink au scroll
+- Classe `.nav-scrolled` ajoutée via JS quand `scrollY > 60`
+- Réduction du padding, tailles de police, logo, boutons via transitions CSS
+- Fond renforcé + `box-shadow` au scroll
+
+### 5. Harmonisation section Concept
+- **Titre section** : réduit à `clamp(1.4rem, 2.5vw, 2.2rem)` (était 4.5rem max)
+- **Label "Le Concept"** : agrandi à `1rem`, poids 700
+- **Description** : `1rem`, max-width `580px`
+- **Cartes concept** : padding `28px 24px`, gap `20px`, chiffres réduits (`clamp(1.5rem, 2.5vw, 2.2rem)`)
+- **Hover** plus subtil (`translateY(-4px)`)
+
+### 6. Alignement gauche sections corrigé
+- Padding horizontal déplacé de `.section-inner` vers les `<section>` parentes
+- `.section-inner` ne gère plus que le padding vertical + `max-width: 1400px`
+- Alignement cohérent entre hero-content et toutes les sections
+
+### 7. Agrandissement partenaires et badge
+- **Bandeau partenaires** : padding `10px 24px`, logo `30px`, textes agrandis
+- **Badge festival** : padding `8px 20px`, font `0.8rem`, point vert `8px`
+
+### 8. Suppression dev-nav
+- Supprimé le HTML des boutons MAQUETTE/Accueil/Espace Admin/Espace Jury
+- Supprimé le lien `dev-nav.css` du HTML
+- Supprimé les styles `.dev-nav`, `.dev-btn` de `index.css` (~40 lignes)
+
+### 9. Animations reveal en cascade au scroll
+- **Nouveau système** : observer sur les `<section>`, classe `.section-visible` déclenchée
+- Les `.reveal` enfants apparaissent en cascade via `data-delay="1"` à `"5"` (150ms entre chaque)
+- Animation : `translateY(50px)` → `0` + fade, courbe `cubic-bezier(0.16, 1, 0.3, 1)`
+- **Dividers** animés : `scaleX(0)` → `scaleX(1)` quand ils entrent dans le viewport
+- **`::before` concept** : ligne verte animée avec `@keyframes line-reveal`
+- Sections couvertes : Concept, À propos, Appel à projets, Comment ça marche, Galerie films, Jury, Palmarès
+- **Accessibilité** : `prefers-reduced-motion` désactive toutes les animations
+
+### 10. Nettoyage CSS
+- Supprimé styles orphelins : `.countdown-inner`, `.countdown-top-line`, `.hero-accroche-sub`
+- Supprimé responsive orphelins pour éléments supprimés
+- Supprimé les styles dev-nav (~40 lignes)
+
+### Fichiers modifiés
+- `views/index.html` — restructuration hero, ajout reveal/data-delay sur toutes les sections, ajout "Marseille"
+- `css/index.css` — refonte hero, harmonisation tailles, animations reveal/divider/shimmer, nettoyage
+- `js/index-main.js` — observer cascade par section, suppression code cinéma player
+- `js/index-sphere.js` — triggerExplosion(), explosion au scroll avec reset
+- `SESSION.md` — mise à jour
