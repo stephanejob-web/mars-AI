@@ -141,10 +141,8 @@
     const nav = document.querySelector('nav');
     const y   = window.scrollY;
 
-    // fond de nav
-    nav.style.background = y > 80
-      ? 'rgba(10,15,46,0.97)'
-      : 'linear-gradient(to bottom, rgba(10,15,46,0.95) 0%, transparent 100%)';
+    // fond de nav — classe scrolled pour le glassmorphism
+    nav.classList.toggle('nav-scrolled', y > 60);
 
     // Sphere fade: opacity 1→0 over 70% of hero height
     const heroHeight = heroEl.offsetHeight;

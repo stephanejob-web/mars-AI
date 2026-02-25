@@ -258,11 +258,17 @@
     if (isHovered) triggerExplosion();
   });
 
-  // Scroll depuis le haut — explosion au premier scroll vers le bas
+  // Scroll — explosion chaque fois qu'on quitte le haut de page
   let scrollExploded = false;
   window.addEventListener('scroll', () => {
-    if (scrollExploded) return;
-    if (window.scrollY > 30) {
+    const y = window.scrollY;
+    // Quand on revient tout en haut, on réarme le déclencheur
+    if (y <= 5) {
+      scrollExploded = false;
+      return;
+    }
+    // Dès qu'on commence à scroller vers le bas, on explose
+    if (!scrollExploded && y > 30) {
       scrollExploded = true;
       triggerExplosion();
     }

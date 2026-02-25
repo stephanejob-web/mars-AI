@@ -11,7 +11,6 @@
   <link rel="stylesheet" href="../css/tokens.css">
   <link rel="stylesheet" href="../css/reset.css">
   <link rel="stylesheet" href="../css/grain.css">
-  <link rel="stylesheet" href="../css/dev-nav.css">
   <link rel="stylesheet" href="../css/index.css">
 
   <!-- ============================================================
@@ -128,71 +127,59 @@
 
         <!-- Tags essentiels -->
         <div class="hero-tags">
-          <span class="tag"><strong>60 secondes</strong> pile</span>
+          <span class="tag"><strong>60s</strong> chrono</span>
           <span class="tag"><strong>120+</strong> pays</span>
-          <span class="tag"><strong>Gratuit</strong> · ouvert à tous</span>
-          <span class="tag"><strong>Prix</strong> remis à Marseille</span>
+          <span class="tag"><strong>100%</strong> gratuit</span>
+          <span class="tag"><strong>Prix</strong> Marseille</span>
+        </div>
+
+        <!-- Accroche + CTA -->
+        <div class="hero-accroche">
+          <p class="hero-accroche-title">
+            Voici ce qu'une IA peut créer.<br>
+            <span style="color:var(--aurora);">Imaginez ce que vous allez faire.</span>
+          </p>
+          <div class="hero-cta">
+            <a href="formulaire-depot.html" class="btn-primary">
+              Soumettre un film <span class="arrow">→</span>
+            </a>
+            <button class="btn-demo" onclick="window.open('../assets/video.mp4','_blank')">
+              Démo
+              <span class="btn-demo-laser"></span>
+            </button>
+          </div>
         </div>
 
       </div><!-- /hero-left -->
 
-      <!-- Colonne droite — texte + cinéma player -->
+      <!-- Colonne droite — countdown aligné en bas -->
       <div class="hero-right">
-
-        <!-- Texte accroche -->
-        <div class="hero-right-text">
-          <p class="hero-right-title">
-            Voici ce qu'une IA peut créer.<br>
-            <span style="color:var(--aurora);">Imaginez ce que vous allez faire.</span>
-          </p>
-          <p class="hero-right-sub">
-            Aucune caméra. Aucun acteur. Aucun tournage.<br>
-            Uniquement un prompt, un modèle, et une vision.
-          </p>
-        </div>
-
-        <!-- Boutons d'action hero (colonne droite) -->
-        <div class="hero-right-cta">
-          <a href="formulaire-depot.html" class="btn-primary">
-            Soumettre un film <span class="arrow">→</span>
-          </a>
-          <button class="btn-demo" onclick="window.open('../assets/video.mp4','_blank')">
-            Démo
-            <span class="btn-demo-laser"></span>
-          </button>
-        </div>
-
-      </div>
-
-    </div>
-
-    <!-- Compte à rebours pleine largeur -->
-    <div class="countdown-wrapper">
-      <div class="countdown-inner">
-        <div class="countdown-top">
-          <span class="countdown-top-line"></span>
-          <span class="countdown-label">Clôture des dépôts · 30 septembre 2026</span>
-          <span class="countdown-top-line r"></span>
-        </div>
-        <div class="countdown-units">
-          <div class="countdown-unit">
-            <span class="countdown-num" id="days">221</span>
-            <div class="countdown-lbl">Jours</div>
-          </div>
-          <div class="countdown-unit">
-            <span class="countdown-num" id="hours">08</span>
-            <div class="countdown-lbl">Heures</div>
-          </div>
-          <div class="countdown-unit">
-            <span class="countdown-num" id="minutes">33</span>
-            <div class="countdown-lbl">Minutes</div>
-          </div>
-          <div class="countdown-unit">
-            <span class="countdown-num" id="seconds">47</span>
-            <div class="countdown-lbl">Secondes</div>
+        <div class="countdown-inline">
+          <span class="countdown-label">Clôture des dépôts · 30 sept. 2026</span>
+          <div class="countdown-units">
+            <div class="countdown-unit">
+              <span class="countdown-num" id="days">217</span>
+              <div class="countdown-lbl">Jours</div>
+            </div>
+            <span class="countdown-sep">:</span>
+            <div class="countdown-unit">
+              <span class="countdown-num" id="hours">08</span>
+              <div class="countdown-lbl">Heures</div>
+            </div>
+            <span class="countdown-sep">:</span>
+            <div class="countdown-unit">
+              <span class="countdown-num" id="minutes">33</span>
+              <div class="countdown-lbl">Minutes</div>
+            </div>
+            <span class="countdown-sep">:</span>
+            <div class="countdown-unit">
+              <span class="countdown-num" id="seconds">47</span>
+              <div class="countdown-lbl">Secondes</div>
+            </div>
           </div>
         </div>
-      </div>
+      </div><!-- /hero-right -->
+
     </div>
   </section>
 
@@ -985,16 +972,6 @@
   <script src="../js/index-main.js"></script>
   <script type="module" src="../js/index-sphere.js"></script>
 
-  <!-- ============================================================
-       NAVIGATION DE DÉVELOPPEMENT — Liens entre maquettes
-       ============================================================ -->
-  <div id="dev-nav">
-    <span class="dn-label">Maquette</span>
-    <a href="index.html" class="dn-btn active">🏠 Accueil</a>
-    <div class="dn-sep"></div>
-    <a href="admin-panel.html" class="dn-btn espace-admin">🛡️ Espace Admin</a>
-    <a href="admin-jury.html"  class="dn-btn espace-jury">⚖️ Espace Jury</a>
-  </div>
 
 </body>
 </html>
