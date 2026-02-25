@@ -84,53 +84,6 @@
 
   document.querySelectorAll('.counter-num[data-target]').forEach(el => cObserver.observe(el));
 
-  // ── Cinéma player ──────────────────────────────────────
-  function fmtTime(s) {
-    const m = Math.floor(s / 60);
-    const sec = Math.floor(s % 60);
-    return String(m).padStart(2,'0') + ':' + String(sec).padStart(2,'0');
-  }
-
-  function startDemo() {
-    const vid     = document.getElementById('demo-video');
-    const overlay = document.getElementById('cinema-overlay');
-    const badge   = document.getElementById('cinema-badge');
-    if (!vid) return;
-    overlay.classList.add('gone');
-    badge.style.opacity = '0';
-    vid.controls = true;
-    vid.play();
-  }
-
-  // Timecode en temps réel + remise à 0 à la fin
-  (function() {
-    const vid = document.getElementById('demo-video');
-    const tc  = document.getElementById('hud-timecode');
-    if (!vid) return;
-    vid.addEventListener('timeupdate', () => {
-      if (tc) tc.textContent = fmtTime(vid.currentTime);
-    });
-    vid.addEventListener('ended', () => {
-      const overlay = document.getElementById('cinema-overlay');
-      const badge   = document.getElementById('cinema-badge');
-      vid.controls  = false;
-      overlay.classList.remove('gone');
-      badge.style.opacity = '1';
-      vid.currentTime = 0;
-      if (tc) tc.textContent = '00:00';
-    });
-  })();
-
-  // ── keyframes inline ───────────────────────────────────
-  const ks = document.createElement('style');
-  ks.textContent = `
-    @keyframes pulse-dot {
-      0%, 100% { opacity:1; transform:scale(1); }
-      50%       { opacity:0.4; transform:scale(0.6); }
-    }
-  `;
-  document.head.appendChild(ks);
-
   // Filter chips interactivity
   document.querySelectorAll('.filter-chip').forEach(chip => {
     chip.addEventListener('click', () => {

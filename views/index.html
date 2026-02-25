@@ -105,11 +105,11 @@
 
         <!-- Partenaires -->
         <div class="hero-partners">
-          <span class="hero-partners-label">Co-organisé par</span>
+          <span class="hero-partners-label">Une co-création</span>
           <a href="https://laplateforme.io/coding-school/" target="_blank" rel="noopener" class="hero-partners-logo">
             <img src="../assets/logo-laplateforme.png" alt="La Plateforme · Coding School">
           </a>
-          <span class="hero-partners-sep">×</span>
+          <span class="hero-partners-sep">&</span>
           <span class="hero-partners-name">Mobile Film Festival</span>
         </div>
 
@@ -151,54 +151,16 @@
           </p>
         </div>
 
-        <!-- Lecteur cinéma HUD -->
-        <div class="hud-frame">
-
-          <!-- Coins HUD aurora -->
-          <div class="hud-corner hud-tl"></div>
-          <div class="hud-corner hud-tr"></div>
-          <div class="hud-corner hud-bl" style="bottom:37px;"></div>
-          <div class="hud-corner hud-br" style="bottom:37px;"></div>
-
-          <div class="cinema-wrap" id="cinema-wrap">
-
-            <!-- Ligne de scan -->
-            <div class="cinema-scan"></div>
-
-            <!-- Badge IA -->
-            <div class="cinema-ia-badge" id="cinema-badge">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-                <path d="M12 2L9 9H2L7.5 13.5L5.5 21L12 16.5L18.5 21L16.5 13.5L22 9H15L12 2Z" fill="#4EFFCE" opacity="0.9"/>
-              </svg>
-              <span>Généré par IA</span>
-            </div>
-
-            <div class="cinema-overlay" id="cinema-overlay" onclick="startDemo()">
-              <div class="cinema-play" id="cinema-play">▶</div>
-              <div class="cinema-overlay-sub">Cliquer pour lancer la projection</div>
-            </div>
-
-            <video
-              id="demo-video"
-              src="../assets/video.mp4"
-              style="width:100%;display:block;background:#000;aspect-ratio:16/9;object-fit:cover;"
-              preload="metadata"
-              playsinline
-            ></video>
-
-          </div><!-- /cinema-wrap -->
-
-          <!-- Barre technique HUD -->
-          <div class="hud-bar">
-            <span class="hud-timecode" id="hud-timecode">00:00</span>
-            <div class="hud-bar-mid">
-              <span class="hud-rec-dot"></span>
-              <span>Prototype · marsAI 2026</span>
-            </div>
-            <span class="hud-res">1920×1080</span>
-          </div>
-
-        </div><!-- /hud-frame -->
+        <!-- Boutons d'action hero (colonne droite) -->
+        <div class="hero-right-cta">
+          <a href="formulaire-depot.html" class="btn-primary">
+            Soumettre un film <span class="arrow">→</span>
+          </a>
+          <button class="btn-demo" onclick="window.open('../assets/video.mp4','_blank')">
+            Démo
+            <span class="btn-demo-laser"></span>
+          </button>
+        </div>
 
       </div>
 

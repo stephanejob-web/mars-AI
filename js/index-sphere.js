@@ -213,45 +213,60 @@
     }
   });
 
-  // Click — explosion + reform
-  window.addEventListener('click', () => {
+  // Fonction d'explosion réutilisable (clic + scroll)
+  function triggerExplosion() {
+    if (isAnimating) return;
     const op = parseFloat(canvas.style.opacity);
     if (op < 0.1) return;
-    if (isHovered && !isAnimating) {
-      isAnimating = true;
 
-      // Hide solid mesh
-      gsap.to([sphereCore.material, sphereWire.material], {
-        opacity: 0, duration: 0.2,
-        onComplete: () => { sphereCore.visible = false; sphereWire.visible = false; }
-      });
+    isAnimating = true;
 
-      // Show particles & explode
-      explosionSystem.visible = true;
-      gsap.to(explosionMaterial, { opacity: 1, duration: 0.1 });
+    // Masquer la sphère solide
+    gsap.to([sphereCore.material, sphereWire.material], {
+      opacity: 0, duration: 0.2,
+      onComplete: () => { sphereCore.visible = false; sphereWire.visible = false; }
+    });
 
-      gsap.to(animState, {
-        progress: 1, duration: 1.5, ease: "power4.out",
-        onUpdate: updateExplosion,
-        onComplete: () => {
-          // Reform
-          gsap.to(animState, {
-            progress: 0, duration: 2, delay: 0.2, ease: "elastic.out(1, 0.5)",
-            onUpdate: updateExplosion,
-            onComplete: () => {
-              sphereCore.visible = true;
-              sphereWire.visible = true;
-              gsap.to(explosionMaterial, { opacity: 0, duration: 0.3 });
-              gsap.to([sphereCore.material, sphereWire.material], { opacity: 1, duration: 0.5 });
-              sphereWire.material.opacity = 0.15;
-              explosionSystem.visible = false;
-              isAnimating = false;
-            }
-          });
-        }
-      });
-    }
+    // Afficher les particules et exploser
+    explosionSystem.visible = true;
+    gsap.to(explosionMaterial, { opacity: 1, duration: 0.1 });
+
+    gsap.to(animState, {
+      progress: 1, duration: 1.5, ease: "power4.out",
+      onUpdate: updateExplosion,
+      onComplete: () => {
+        // Reformation
+        gsap.to(animState, {
+          progress: 0, duration: 2, delay: 0.2, ease: "elastic.out(1, 0.5)",
+          onUpdate: updateExplosion,
+          onComplete: () => {
+            sphereCore.visible = true;
+            sphereWire.visible = true;
+            gsap.to(explosionMaterial, { opacity: 0, duration: 0.3 });
+            gsap.to([sphereCore.material, sphereWire.material], { opacity: 1, duration: 0.5 });
+            sphereWire.material.opacity = 0.15;
+            explosionSystem.visible = false;
+            isAnimating = false;
+          }
+        });
+      }
+    });
+  }
+
+  // Clic sur la sphère — explosion
+  window.addEventListener('click', () => {
+    if (isHovered) triggerExplosion();
   });
+
+  // Scroll depuis le haut — explosion au premier scroll vers le bas
+  let scrollExploded = false;
+  window.addEventListener('scroll', () => {
+    if (scrollExploded) return;
+    if (window.scrollY > 30) {
+      scrollExploded = true;
+      triggerExplosion();
+    }
+  }, { passive: true });
 
   // Animation loop
   const clock = new THREE.Clock();

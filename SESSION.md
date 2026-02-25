@@ -82,3 +82,31 @@ Remplacement de UnicornStudio par un shader WebGL léger :
 
 ## Statut
 Site fluide, plus de freeze/lag. Fond shader manifeste fonctionnel avec lazy-loading.
+
+---
+
+## Session 2 — Amélioration du design de la page d'accueil
+**Date** : 25 février 2026
+
+### 1. Suppression du lecteur vidéo HUD
+- **HTML** (`views/index.html`) : supprimé le bloc `.hud-frame` (coins HUD, cinema-wrap, vidéo, overlay, hud-bar)
+- **CSS** (`css/index.css`) : supprimé ~165 lignes de styles (`.hud-frame`, `.hud-corner`, `.hud-bar`, `.cinema-wrap`, `.cinema-scan`, `.cinema-overlay`, `.cinema-play`, `.cinema-ia-badge`, `@keyframes hud-scan`)
+- **JS** (`js/index-main.js`) : supprimé `fmtTime()`, `startDemo()`, timecode IIFE, `@keyframes pulse-dot` inline (~46 lignes)
+
+### 2. Bouton Démo rouge avec effet laser
+- Ajout d'un bloc `.hero-right-cta` dans la colonne droite du hero (bouton "Soumettre un film" + bouton "Démo")
+- Bouton `.btn-demo` : bordure rouge (coral), fond transparent, `border-radius: 9999px`
+- Effet laser au survol : barre lumineuse `.btn-demo-laser` traversant le bouton via `@keyframes laser-sweep`
+- Hover : `box-shadow` rouge, couleur texte blanche
+- Responsive : taille réduite à 480px, centrage à 1024px
+
+### 3. Améliorations de design mineures
+- **Espacement sections** : `.section-inner` padding augmenté de `100px 60px` à `120px 60px`
+- **Countdown mobile** : gap 12px, label taille et espacement améliorés (480px)
+- **Galerie films** : overlay semi-transparent aurora au survol des `.film-thumb` (pseudo-élément `::after`)
+
+### Fichiers modifiés
+- `views/index.html` — suppression HUD, ajout bouton Démo
+- `css/index.css` — suppression styles HUD, ajout `.btn-demo` + laser, améliorations design
+- `js/index-main.js` — suppression code cinéma player
+- `SESSION.md` — mise à jour

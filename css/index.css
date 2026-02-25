@@ -311,32 +311,36 @@ nav {
 .hero-right {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
+  justify-content: flex-end;
+  padding-top: 80px;
+  align-items: flex-end;
+  text-align: right;
 }
 .hero-right-text {
   padding: 4px 0;
 }
 .hero-right-title {
   font-family: var(--font-display);
-  font-size: clamp(1.1rem, 2vw, 1.8rem);
+  font-size: clamp(0.95rem, 1.6vw, 1.4rem);
   font-weight: 700;
   line-height: 1.35;
   color: var(--white-soft);
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 .hero-right-sub {
-  font-size: 0.88rem;
+  font-size: 0.8rem;
   color: var(--mist);
   line-height: 1.7;
 }
 
 /* --- Description claire sous le titre --- */
 .hero-desc {
-  font-size: 1.05rem;
+  font-size: 0.92rem;
   color: var(--mist);
-  line-height: 1.75;
-  margin-bottom: 10px;
-  max-width: 520px;
+  line-height: 1.7;
+  margin-bottom: 8px;
+  max-width: 480px;
 }
 .hero-desc strong { color: var(--white-soft); }
 .hero-action {
@@ -362,17 +366,17 @@ nav {
 /* --- Badge « edition » du hero --- */
 .hero-badge {
   display: inline-flex;
-  gap: 8px;
+  gap: 7px;
   background: rgba(78,255,206,0.1);
   border: 1px solid rgba(78,255,206,0.3);
   border-radius: 9999px;
-  padding: 6px 16px;
-  font-size: 0.78rem;
+  padding: 5px 14px;
+  font-size: 0.68rem;
   font-weight: 600;
   color: var(--aurora);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 .hero-badge::before {
   content: "";
@@ -389,7 +393,7 @@ nav {
 /* --- Titre principal du hero --- */
 .hero-title {
   font-family: var(--font-display);
-  font-size: clamp(3.5rem, 8vw, 9rem);
+  font-size: clamp(2.8rem, 6vw, 6.5rem);
   font-weight: 800;
   line-height: 0.95;
   letter-spacing: -0.03em;
@@ -405,27 +409,27 @@ nav {
 /* --- Sous-titre du hero --- */
 .hero-subtitle {
   font-family: var(--font-display);
-  font-size: clamp(1.5rem, 3vw, 3.2rem);
+  font-size: clamp(1.2rem, 2.4vw, 2.4rem);
   font-weight: 400;
   color: var(--mist);
   letter-spacing: -0.01em;
-  margin-bottom: 40px;
+  margin-bottom: 32px;
 }
 
 /* --- Tags technologiques du hero --- */
 .hero-tags {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
-  margin-bottom: 48px;
+  margin-bottom: 36px;
 }
 .tag {
   background: rgba(255,255,255,0.06);
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 6px;
-  padding: 8px 16px;
+  padding: 6px 12px;
   font-family: var(--font-mono);
-  font-size: 0.90rem;
+  font-size: 0.75rem;
   color: var(--mist);
 }
 .tag strong { color: var(--white-soft); }
@@ -441,10 +445,10 @@ nav {
   gap: 10px;
   background: var(--solar);
   color: var(--deep-sky);
-  padding: 16px 36px;
+  padding: 12px 28px;
   border-radius: 9999px;
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 0.9rem;
   letter-spacing: 0.01em;
   transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
 }
@@ -476,47 +480,48 @@ nav {
    ================================================================ */
 .hero-partners {
   display: inline-flex;
-  gap: 14px;
-  margin-bottom: 28px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.13);
-  border-radius: 14px;
-  padding: 12px 20px;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 20px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 9999px;
+  padding: 7px 18px;
   backdrop-filter: blur(8px);
   flex-wrap: wrap;
 }
 .hero-partners-label {
-  font-size: 0.73rem;
-  font-weight: 600;
-  letter-spacing: 0.09em;
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--mist);
+  color: rgba(136,146,176,0.6);
   white-space: nowrap;
-  padding-right: 4px;
-  border-right: 1px solid rgba(255,255,255,0.12);
+  padding-right: 6px;
+  border-right: 1px solid rgba(255,255,255,0.08);
 }
 .hero-partners-logo {
   display: flex;
   transition: opacity 0.2s;
 }
 .hero-partners-logo img {
-  height: 34px;
+  height: 24px;
   width: auto;
   filter: brightness(0) invert(1);
-  opacity: 0.90;
+  opacity: 0.80;
   transition: opacity 0.2s;
 }
 .hero-partners-logo:hover img { opacity: 1; }
 .hero-partners-sep {
-  color: var(--aurora);
-  font-family: var(--font-display);
-  font-size: 1.0rem;
-  opacity: 0.55;
+  color: rgba(136,146,176,0.4);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 400;
 }
 .hero-partners-name {
-  font-size: 0.90rem;
-  font-weight: 700;
-  color: var(--white-soft);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.7);
   letter-spacing: 0.01em;
   white-space: nowrap;
 }
@@ -605,7 +610,7 @@ section { position: relative; }
 .section-inner {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 100px 60px;
+  padding: 120px 60px;
 }
 .section-label {
   font-size: 0.80rem;
@@ -1145,6 +1150,16 @@ section { position: relative; }
   background: linear-gradient(to top, rgba(5,8,24,0.90) 0%, rgba(5,8,24,0.42) 42%, transparent 72%);
   z-index: 1;
 }
+
+/* Overlay colore au survol de la vignette */
+.film-thumb::after {
+  content: ""; position: absolute; inset: 0;
+  background: rgba(78,255,206,0.08);
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+.film-card:hover .film-thumb::after { opacity: 1; }
 
 /* Bouton lecture centre sur la vignette */
 .film-thumb-play {
@@ -1860,6 +1875,7 @@ footer {
   .hero-tags { justify-content: center; }
   .hero-right-title { text-align: center; }
   .hero-right-sub { text-align: center; }
+  .hero-right-cta { justify-content: center; }
 
   /* sections */
   .section-inner { padding: 60px 24px; }
@@ -1940,7 +1956,8 @@ footer {
 
   /* compte a rebours */
   .countdown-num { font-size: clamp(1.6rem, 7vw, 2.2rem); }
-  .countdown-lbl { font-size: 0.58rem; }
+  .countdown-units { gap: 12px; }
+  .countdown-lbl { font-size: 0.62rem; letter-spacing: 0.08em; }
   .countdown-label { font-size: 0.68rem; }
 
   /* compteurs */
@@ -1950,6 +1967,7 @@ footer {
 
   /* boutons */
   .btn-primary { font-size: 0.85rem; padding: 12px 20px; }
+  .btn-demo { font-size: 0.85rem; padding: 12px 20px; }
   .btn-nav { font-size: 0.72rem; padding: 8px 14px; }
 
   /* manifeste */
@@ -2163,169 +2181,62 @@ footer {
 }
 
 /* ================================================================
-   CADRE HUD (habillage futuriste autour du lecteur video)
-   Coins lumineux, barre technique, effet scan
+   BOUTONS CTA HERO COLONNE DROITE
+   Bouton Demo rouge avec effet laser au survol
    ================================================================ */
-.hud-frame {
-  position: relative;
-}
-
-/* Lueur ambiante autour du lecteur */
-.hud-frame::before {
-  content: '';
-  position: absolute;
-  inset: -32px;
-  background: radial-gradient(ellipse at center, rgba(78,255,206,0.14) 0%, transparent 68%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* --- Coins HUD — 4 coins identiques repositionnes --- */
-.hud-corner {
-  position: absolute;
-  width: 22px; height: 22px;
-  z-index: 10;
-  pointer-events: none;
-}
-.hud-corner::before,
-.hud-corner::after {
-  content: '';
-  position: absolute;
-  background: var(--aurora);
-  box-shadow: 0 0 8px rgba(78,255,206,0.9);
-}
-.hud-corner::before { width: 2px; height: 100%; }
-.hud-corner::after  { width: 100%; height: 2px; }
-
-/* Haut-gauche */
-.hud-tl { top: -5px; left: -5px; }
-.hud-tl::before { top: 0; left: 0; }
-.hud-tl::after  { top: 0; left: 0; }
-
-/* Haut-droite */
-.hud-tr { top: -5px; right: -5px; }
-.hud-tr::before { top: 0; right: 0; left: auto; }
-.hud-tr::after  { top: 0; right: 0; left: auto; }
-
-/* Bas-gauche */
-.hud-bl { bottom: -5px; left: -5px; }
-.hud-bl::before { bottom: 0; top: auto; left: 0; }
-.hud-bl::after  { bottom: 0; top: auto; left: 0; }
-
-/* Bas-droite */
-.hud-br { bottom: -5px; right: -5px; }
-.hud-br::before { bottom: 0; top: auto; right: 0; left: auto; }
-.hud-br::after  { bottom: 0; top: auto; right: 0; left: auto; }
-
-/* --- Barre technique sous le lecteur --- */
-.hud-bar {
+.hero-right-cta {
   display: flex;
-  justify-content: space-between;
-  padding: 9px 16px;
-  background: rgba(8,12,38,0.92);
-  border: 1px solid rgba(78,255,206,0.13);
-  border-top: none;
-  border-radius: 0 0 12px 12px;
-  font-family: var(--font-mono);
-  font-size: 0.67rem;
-  color: var(--mist-light);
-  position: relative;
-  z-index: 1;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
-.hud-timecode { color: var(--aurora); letter-spacing: 0.06em; }
-.hud-bar-mid {
-  display: flex; align-items: center; gap: 7px;
-  font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase;
-  color: rgba(136,146,176,0.55);
-}
-.hud-rec-dot {
-  display: inline-block;
-  width: 5px; height: 5px; border-radius: 50%;
-  background: var(--coral);
-  box-shadow: 0 0 6px rgba(255,107,107,0.8);
-  animation: pulse 1.4s ease-in-out infinite;
-}
-.hud-res { color: rgba(136,146,176,0.7); letter-spacing: 0.06em; }
 
-/* ================================================================
-   LECTEUR CINEMA
-   Conteneur video avec effets de scan et overlay de lecture
-   ================================================================ */
-.cinema-wrap {
+/* --- Bouton Demo rouge avec effet laser --- */
+.btn-demo {
   position: relative;
-  border-radius: 12px 12px 0 0;
-  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  background: transparent;
+  color: var(--coral);
+  border: 2px solid var(--coral);
+  border-radius: 9999px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
   cursor: pointer;
-  box-shadow:
-    0 0 0 1px rgba(78,255,206,0.12),
-    0 16px 64px rgba(0,0,0,0.8),
-    0 0 80px rgba(78,255,206,0.06);
-  z-index: 1;
-}
-.cinema-wrap video {
-  width: 100%; display: block;
-  background: #000; aspect-ratio: 16/9; object-fit: cover;
+  overflow: hidden;
+  transition: color 0.3s var(--ease), box-shadow 0.3s var(--ease), border-color 0.3s var(--ease);
 }
 
-/* --- Ligne de scan animee --- */
-@keyframes hud-scan {
-  0%   { top: -2px; opacity: 0; }
-  5%   { opacity: 0.7; }
-  95%  { opacity: 0.7; }
-  100% { top: 100%; opacity: 0; }
-}
-.cinema-scan {
+/* Balayage laser — barre lumineuse qui traverse le bouton au survol */
+.btn-demo-laser {
   position: absolute;
-  left: 0; right: 0; height: 1.5px;
-  background: linear-gradient(90deg, transparent 0%, rgba(78,255,206,0.7) 50%, transparent 100%);
-  animation: hud-scan 4s linear infinite;
-  z-index: 4;
-  pointer-events: none;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,107,107,0.4), transparent);
+  transform: skewX(-20deg);
+  transition: none;
 }
 
-/* --- Overlay de lecture (bouton play + sous-titre) --- */
-.cinema-overlay {
-  position: absolute; inset: 0; z-index: 2;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.6) 100%);
-  transition: opacity 0.5s ease;
-}
-.cinema-overlay.gone { opacity: 0; pointer-events: none; }
-.cinema-play {
-  width: 100px; height: 100px; border-radius: 50%;
-  background: rgba(78,255,206,0.07);
-  backdrop-filter: blur(16px);
-  border: 2px solid rgba(78,255,206,0.35);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 2.2rem; color: var(--aurora);
-  transition: transform 0.25s, background 0.25s, border-color 0.25s, box-shadow 0.25s;
-  margin-bottom: 18px;
-  box-shadow: 0 0 40px rgba(78,255,206,0.15), inset 0 0 20px rgba(78,255,206,0.04);
-}
-.cinema-play:hover {
-  transform: scale(1.1);
-  background: rgba(78,255,206,0.15);
-  border-color: rgba(78,255,206,0.6);
-  box-shadow: 0 0 60px rgba(78,255,206,0.3), inset 0 0 30px rgba(78,255,206,0.08);
-}
-.cinema-overlay-sub {
-  font-family: var(--font-mono);
-  font-size: 0.72rem; color: rgba(255,255,255,0.45);
-  letter-spacing: 0.06em;
+.btn-demo:hover {
+  color: #fff;
+  border-color: var(--coral);
+  box-shadow: 0 0 30px rgba(255,107,107,0.4), 0 0 60px rgba(255,107,107,0.15);
 }
 
-/* --- Badge IA sur la video --- */
-.cinema-ia-badge {
-  position: absolute; top: 14px; left: 14px; z-index: 3;
-  background: rgba(10,15,46,0.8); backdrop-filter: blur(8px);
-  border: 1px solid rgba(78,255,206,0.22); border-radius: 7px;
-  padding: 5px 11px; display: flex; align-items: center; gap: 7px;
-  pointer-events: none; transition: opacity 0.4s;
+.btn-demo:hover .btn-demo-laser {
+  animation: laser-sweep 0.6s ease forwards;
 }
-.cinema-ia-badge span {
-  font-family: var(--font-mono); font-size: 0.67rem;
-  color: var(--aurora); font-weight: 500; letter-spacing: 0.04em;
+
+@keyframes laser-sweep {
+  0%   { left: -100%; }
+  100% { left: 120%; }
 }
 
 /* ================================================================
