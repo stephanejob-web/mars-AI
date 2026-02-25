@@ -26,16 +26,35 @@
   setInterval(updateCountdown, 1000);
   updateCountdown();
 
-  // Scroll reveal
+  // Scroll reveal — fade-in isolés + dividers
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+  }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
 
-  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  document.querySelectorAll('.fade-in, .divider').forEach(el => observer.observe(el));
+
+  // Scroll reveal — cascade par section
+  // Quand une section entre dans le viewport, tous ses .reveal enfants
+  // apparaissent en cascade grâce aux data-delay CSS
+  const sectionObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('section-visible');
+        sectionObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('section, .cta-section').forEach(sec => {
+    if (sec.querySelectorAll('.reveal').length > 0) {
+      sectionObserver.observe(sec);
+    }
+  });
 
   // ── Manifeste scroll reveal ────────────────────────────
   const mObserver = new IntersectionObserver((entries) => {

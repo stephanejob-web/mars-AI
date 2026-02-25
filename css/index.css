@@ -620,33 +620,36 @@ nav.nav-scrolled .lang-btn {
    UTILITAIRES COMMUNS AUX SECTIONS
    Conteneur interne, labels, titres et descriptions
    ================================================================ */
-section { position: relative; }
+section {
+  position: relative;
+  padding: 0 60px;
+}
 .section-inner {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 120px 60px;
+  padding: 100px 0;
 }
 .section-label {
-  font-size: 0.80rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--aurora);
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 .section-title {
   font-family: var(--font-display);
-  font-size: clamp(2rem, 4vw, 4.5rem);
+  font-size: clamp(1.4rem, 2.5vw, 2.2rem);
   font-weight: 800;
   letter-spacing: -0.02em;
-  line-height: 1.1;
-  margin-bottom: 24px;
+  line-height: 1.2;
+  margin-bottom: 20px;
 }
 .section-desc {
-  font-size: 1.05rem;
+  font-size: 1rem;
   color: var(--mist);
-  max-width: 540px;
-  line-height: 1.7;
+  max-width: 580px;
+  line-height: 1.75;
 }
 
 /* ================================================================
@@ -662,60 +665,69 @@ section { position: relative; }
   top: 0; left: 0; right: 0;
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(78,255,206,0.3), transparent);
+  transform: scaleX(0);
+  animation: line-reveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+}
+@keyframes line-reveal {
+  to { transform: scaleX(1); }
+}
+.concept .section-desc {
+  max-width: 600px;
 }
 .concept-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 2px;
-  margin-top: 64px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 48px;
 }
 .concept-card {
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 16px;
-  padding: 40px 36px;
+  border-radius: 14px;
+  padding: 28px 24px;
   transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease), border-color 0.3s;
   cursor: default;
-  margin: 1px;
+  display: flex;
+  flex-direction: column;
 }
 .concept-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 0 50px rgba(78,255,206,0.15);
-  border-color: rgba(78,255,206,0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 0 40px rgba(78,255,206,0.10);
+  border-color: rgba(78,255,206,0.2);
 }
 .concept-card:nth-child(2):hover {
-  box-shadow: 0 0 50px rgba(192,132,252,0.15);
-  border-color: rgba(192,132,252,0.3);
+  box-shadow: 0 0 40px rgba(192,132,252,0.10);
+  border-color: rgba(192,132,252,0.2);
 }
 .concept-card:nth-child(3):hover {
-  box-shadow: 0 0 50px rgba(245,230,66,0.15);
-  border-color: rgba(245,230,66,0.2);
+  box-shadow: 0 0 40px rgba(245,230,66,0.10);
+  border-color: rgba(245,230,66,0.15);
 }
 .concept-icon {
-  font-size: 2.5rem;
-  margin-bottom: 24px;
+  font-size: 1.8rem;
+  margin-bottom: 16px;
   display: block;
 }
 .concept-num {
   font-family: var(--font-mono);
-  font-size: clamp(2.5rem, 4vw, 5rem);
+  font-size: clamp(1.5rem, 2.5vw, 2.2rem);
   font-weight: 500;
   color: var(--aurora);
   line-height: 1;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 .concept-card:nth-child(2) .concept-num { color: var(--lavande); }
 .concept-card:nth-child(3) .concept-num { color: var(--solar); }
 .concept-card-title {
   font-family: var(--font-display);
-  font-size: 1.3rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 .concept-card p {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: var(--mist);
-  line-height: 1.65;
+  line-height: 1.7;
 }
 
 /* ================================================================
@@ -1797,16 +1809,22 @@ footer {
   width: 100%;
   height: 1px;
   background: linear-gradient(90deg, transparent 5%, rgba(78,255,206,0.12) 30%, rgba(192,132,252,0.10) 70%, transparent 95%);
+  transform: scaleX(0);
+  transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.divider.visible {
+  transform: scaleX(1);
 }
 
 /* ================================================================
    ANIMATIONS AU DEFILEMENT (scroll reveal)
    Apparition progressive des elements
    ================================================================ */
+/* --- Apparition par le bas (défaut) --- */
 .fade-in {
   opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+  transform: translateY(40px);
+  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
 }
 .fade-in.visible {
   opacity: 1;
@@ -1815,6 +1833,34 @@ footer {
 .fade-in:nth-child(2) { transition-delay: 0.1s; }
 .fade-in:nth-child(3) { transition-delay: 0.2s; }
 .fade-in:nth-child(4) { transition-delay: 0.3s; }
+
+/* --- Reveal en cascade par section ---
+   Les .reveal restent cachés jusqu'à ce que leur section parent
+   reçoive la classe .section-visible (via IntersectionObserver).
+   Les data-delay créent l'effet cascade. */
+.reveal {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+/* Déclenchement quand la section devient visible */
+.section-visible .reveal {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* Délais en cascade */
+.section-visible .reveal[data-delay="1"] { transition-delay: 0.15s; }
+.section-visible .reveal[data-delay="2"] { transition-delay: 0.3s; }
+.section-visible .reveal[data-delay="3"] { transition-delay: 0.45s; }
+.section-visible .reveal[data-delay="4"] { transition-delay: 0.6s; }
+.section-visible .reveal[data-delay="5"] { transition-delay: 0.75s; }
+
+/* --- Accessibilité : désactiver les animations si préférence --- */
+@media (prefers-reduced-motion: reduce) {
+  .fade-in, .reveal, .divider { opacity: 1; transform: none; transition: none; }
+  .section-visible .reveal { transition: none; }
+  .concept::before { animation: none; transform: scaleX(1); }
+}
 
 /* ================================================================
    MENU HAMBURGER ET PANNEAU MOBILE
@@ -1893,7 +1939,8 @@ footer {
   .hero-cta { justify-content: center; }
 
   /* sections */
-  .section-inner { padding: 60px 24px; }
+  section { padding: 0 24px; }
+  .section-inner { padding: 60px 0; }
   .concept-grid { grid-template-columns: 1fr; gap: 16px; }
   .about-inner { grid-template-columns: 1fr; }
   .how-steps { grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -1957,7 +2004,8 @@ footer {
   .hero-accroche-title { font-size: 1rem; }
 
   /* sections */
-  .section-inner { padding: 48px 20px; }
+  section { padding: 0 20px; }
+  .section-inner { padding: 48px 0; }
   .section-title { font-size: clamp(1.5rem, 7vw, 2rem); }
   .section-desc { font-size: 0.9rem; }
   .concept-grid { gap: 12px; }
