@@ -711,8 +711,9 @@
       .partner-date { color: #888 !important; }
 
       /* Sections */
-      .section { margin-bottom: 18pt !important; page-break-inside: avoid; }
-      .sec-rule { background: #ddd !important; margin: 8pt 0 12pt !important; }
+      .section { margin-bottom: 18pt !important; }
+      .sec-head { page-break-after: avoid; }
+      .sec-rule { background: #ddd !important; margin: 8pt 0 12pt !important; page-break-after: avoid; }
       .sec-num {
         background: #e8f5e9 !important;
         border: 1pt solid #00897b !important;
@@ -744,7 +745,7 @@
       .card ul li::before { color: #999 !important; }
 
       /* Highlight boxes */
-      .highlight-box { border: 1pt solid #ccc !important; }
+      .highlight-box { border: 1pt solid #ccc !important; page-break-inside: avoid; }
       .hb-aurora { background: #e8f5e9 !important; border-color: #00897b !important; }
       .hb-solar  { background: #fffde7 !important; border-color: #b8860b !important; }
       .hb-coral  { background: #fce4ec !important; border-color: #c0392b !important; }
@@ -756,6 +757,7 @@
       .sb-refuse { background: #fce4ec !important; color: #c0392b !important; border-color: #c0392b !important; }
 
       /* Flow steps */
+      .flow-step { page-break-inside: avoid; }
       .flow-dot { background: #e8f5e9 !important; border-color: #00897b !important; color: #00897b !important; }
       .flow-title { color: #1a1a2e !important; }
       .flow-desc  { color: #555 !important; }
@@ -774,21 +776,21 @@
       .phase-desc  { color: #555 !important; }
 
       /* Toggle opts */
-      .toggle-opt { background: #f9f9f9 !important; border: 1pt solid #ddd !important; }
+      .toggle-opt { background: #f9f9f9 !important; border: 1pt solid #ddd !important; page-break-inside: avoid; }
       .to-badge.to-a { background: #e8f5e9 !important; color: #00897b !important; border-color: #00897b !important; }
       .to-badge.to-b { background: #fffde7 !important; color: #b8860b !important; border-color: #b8860b !important; }
       .to-text { color: #333 !important; }
       .to-text strong { color: #1a1a2e !important; }
 
       /* Tech grid */
-      .tech-item { background: #f9f9f9 !important; border: 1pt solid #ddd !important; }
+      .tech-item { background: #f9f9f9 !important; border: 1pt solid #ddd !important; page-break-inside: avoid; }
       .tech-name { color: #1a1a2e !important; }
       .tech-role { color: #666 !important; }
 
       /* ── USER STORIES PRINT ── */
       .section[id^="us-"] { page-break-before: always; }
 
-      .persona-block { page-break-inside: avoid; margin-bottom: 14pt !important; }
+      .persona-block { margin-bottom: 14pt !important; }
       .persona-header {
         padding: 10pt 12pt !important;
         page-break-inside: avoid;
@@ -807,6 +809,7 @@
       .pc-a { color: #c0392b !important; border-color: #c0392b !important; background: #fce4ec !important; }
 
       .us-table { border-collapse: collapse !important; width: 100% !important; }
+      .us-table thead { display: table-header-group; }
       .us-table thead tr { border-bottom: 1.5pt solid #ccc !important; }
       .us-table thead th {
         color: #888 !important;
