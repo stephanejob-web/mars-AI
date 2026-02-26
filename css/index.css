@@ -2045,13 +2045,6 @@ footer {
   .countdown-sep { font-size: 0.9rem; padding-bottom: 8px; }
   .scroll-hint { display: none; }
 
-  /* manifeste */
-  .manifeste-section { padding: 80px 24px; }
-  .manifeste-line { font-size: clamp(1.7rem, 6vw, 2.8rem); }
-  .manifeste-sub { font-size: 0.92rem; }
-  .ev-card-wrapper { width: 240px; height: 150px; }
-  .card-stream { height: 170px; }
-
   /* compteurs */
   .counters-section { padding: 60px 24px; }
   .counters-grid { grid-template-columns: repeat(2, 1fr); }
@@ -2126,13 +2119,6 @@ footer {
   .btn-demo { font-size: 0.85rem; padding: 12px 20px; }
   .btn-nav { font-size: 0.72rem; padding: 8px 14px; }
 
-  /* manifeste */
-  .manifeste-line { font-size: clamp(1.4rem, 7.5vw, 2rem); }
-  .manifeste-sub { font-size: 0.88rem; }
-  .ev-card-wrapper { width: 180px; height: 110px; }
-  .card-stream { height: 130px; }
-  .ascii-content { font-size: 8px; line-height: 10px; }
-
   /* mars.AI night */
   .marsnight-title { font-size: clamp(1.8rem, 9vw, 2.5rem); }
   .marsnight-desc { font-size: 0.9rem; }
@@ -2148,7 +2134,7 @@ footer {
    Texte typographique plein ecran avec arriere-plan shader WebGL
    ================================================================ */
 .manifeste-section {
-  padding: 40px 60px 30px;
+  padding: 80px 60px 60px;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -2186,9 +2172,25 @@ footer {
   pointer-events: none;
 }
 
-/* Contenu au-dessus de l'arriere-plan */
-.manifeste-inner {
-  position: relative; z-index: 2;
+/* Grille 2 colonnes : carousel gauche + texte droite */
+.manifeste-grid {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 80px;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Colonne texte (droite) */
+.manifeste-text {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
 }
 
 /* --- Animation d'apparition du manifeste --- */
@@ -2202,9 +2204,9 @@ footer {
 /* --- Lignes typographiques du manifeste --- */
 .manifeste-line {
   font-family: var(--font-display);
-  font-size: clamp(1.2rem, 2.4vw, 2.2rem);
+  font-size: clamp(1.4rem, 2.6vw, 2.4rem);
   font-weight: 800;
-  line-height: 1.25;
+  line-height: 1.3;
   letter-spacing: -0.02em;
   color: var(--white-soft);
   display: block;
@@ -2213,12 +2215,13 @@ footer {
 
 /* Lignes secondaires (plus subtiles, italique, taille reduite) */
 .manifeste-line.dim {
-  color: rgba(160,170,200,0.5);
-  font-size: clamp(1.1rem, 2.2vw, 2rem);
-  font-weight: 700;
+  color: rgba(160,170,200,0.55);
+  font-size: clamp(1rem, 1.8vw, 1.4rem);
+  font-weight: 600;
   font-style: italic;
   text-shadow: 0 2px 20px rgba(3,3,5,0.9);
   letter-spacing: -0.01em;
+  margin-bottom: 4px;
 }
 
 /* Mots-cles avec lueur coloree */
@@ -2235,9 +2238,10 @@ footer {
 .manifeste-sep {
   display: block;
   width: 80px; height: 2px;
-  margin: 18px auto;
-  background: linear-gradient(90deg, transparent, var(--aurora) 50%, transparent);
+  margin: 10px 0;
+  background: linear-gradient(90deg, var(--aurora), transparent);
   transform: scaleX(0);
+  transform-origin: left;
   transition: transform 0.7s ease;
   box-shadow: 0 0 16px rgba(78,255,206,0.3);
 }
@@ -2245,11 +2249,11 @@ footer {
 
 /* --- Sous-texte du manifeste --- */
 .manifeste-sub {
-  font-size: 0.95rem;
-  color: rgba(160,170,200,0.8);
-  line-height: 1.7;
+  font-size: 0.92rem;
+  color: rgba(160,170,200,0.75);
+  line-height: 1.65;
   max-width: 540px;
-  margin: 14px auto 0;
+  margin: 16px 0 0;
   text-shadow: 0 2px 16px rgba(3,3,5,0.8);
 }
 .manifeste-sub strong {
@@ -2262,12 +2266,12 @@ footer {
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 20px;
-  justify-content: center;
+  justify-content: flex-start;
 }
 .manifeste-tool {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
-  padding: 5px 14px;
+  font-size: 0.82rem;
+  padding: 8px 18px;
   background: rgba(78,255,206,0.05);
   border: 1px solid rgba(78,255,206,0.15);
   border-radius: 6px;
@@ -2281,49 +2285,54 @@ footer {
 }
 
 /* ================================================================
-   MANIFESTE — Carousel Evervault en arriere-plan
-   Flux horizontal de cartes + scanner vertical derriere le texte
+   MANIFESTE — Carousel vertical YouTube + scanner horizontal
+   Défilement vertical de cartes YouTube à gauche de la grille.
+   Scanner horizontal révèle l'ASCII au passage.
    ================================================================ */
 
-/* --- Viewport carousel : sous le texte, pleine largeur --- */
+/* --- Viewport carousel : colonne gauche, hauteur fixe --- */
 .carousel-viewport {
   position: relative;
   width: 100%;
-  height: 280px;
+  height: 560px;
   overflow: hidden;
+  border-radius: 16px;
   z-index: 2;
-  margin-top: 16px;
 }
 
-/* --- Flux horizontal de cartes --- */
+/* --- Flux vertical de cartes --- */
 .card-stream {
   position: absolute;
+  top: 0; left: 0;
   width: 100%;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 250px;
-  display: flex;
-  align-items: center;
+  height: 100%;
   overflow: visible;
   z-index: 2;
 }
 
 .card-line {
   display: flex;
-  align-items: center;
-  gap: 50px;
-  white-space: nowrap;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
   will-change: transform;
 }
 
-/* --- Carte : wrapper normal + ascii --- */
+/* --- Carte YouTube : lien cliquable, thumbnail + overlay --- */
 .ev-card-wrapper {
   position: relative;
-  width: 380px;
-  height: 230px;
+  width: 100%;
+  height: 200px;
   flex-shrink: 0;
   border: 1px solid rgba(150, 100, 255, 0.15);
   border-radius: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  display: block;
+  transition: border-color 0.3s;
+}
+.ev-card-wrapper:hover {
+  border-color: rgba(150, 100, 255, 0.4);
 }
 
 .ev-card {
@@ -2334,21 +2343,83 @@ footer {
   overflow: hidden;
 }
 
-/* couche normale (video) */
+/* couche normale (thumbnail YouTube) */
 .ev-card-normal {
   z-index: 2;
   background: linear-gradient(135deg, rgba(30, 20, 60, 0.9), rgba(15, 10, 40, 0.9));
 }
-.ev-card-normal video {
+.ev-card-normal img {
   width: 100%; height: 100%;
   object-fit: cover;
   display: block;
 }
 
-/* couche ASCII (code revele par le scanner) */
+/* overlay titre + badge sur chaque carte */
+.ev-card-overlay {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 12px 14px;
+  background: linear-gradient(to top, rgba(5,5,20,0.85), transparent);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+}
+.ev-card-title {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(240,244,255,0.9);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+.ev-card-badge {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  padding: 3px 8px;
+  background: rgba(150,100,255,0.15);
+  border: 1px solid rgba(150,100,255,0.3);
+  border-radius: 4px;
+  color: rgba(196,181,253,0.9);
+  flex-shrink: 0;
+}
+
+/* icône play au centre */
+.ev-card-play {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: rgba(150,100,255,0.25);
+  border: 2px solid rgba(150,100,255,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  pointer-events: none;
+  transition: background 0.3s, border-color 0.3s;
+}
+.ev-card-wrapper:hover .ev-card-play {
+  background: rgba(150,100,255,0.4);
+  border-color: rgba(180,130,255,0.7);
+}
+.ev-card-play::after {
+  content: '';
+  display: block;
+  width: 0; height: 0;
+  border-style: solid;
+  border-width: 8px 0 8px 14px;
+  border-color: transparent transparent transparent rgba(255,255,255,0.85);
+  margin-left: 2px;
+}
+
+/* couche ASCII (code révélé par le scanner) */
 .ev-card-ascii {
   z-index: 1;
-  /* clip-path géré en inline par JS */
   background: rgba(8, 10, 28, 0.95);
 }
 
@@ -2363,10 +2434,10 @@ footer {
   white-space: pre;
   pointer-events: none;
   animation: ascii-glitch 0.1s infinite linear alternate-reverse;
-  -webkit-mask-image: linear-gradient(to right,
+  -webkit-mask-image: linear-gradient(to bottom,
     rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 50%,
     rgba(0,0,0,0.2) 100%);
-  mask-image: linear-gradient(to right,
+  mask-image: linear-gradient(to bottom,
     rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 50%,
     rgba(0,0,0,0.2) 100%);
 }
@@ -2377,16 +2448,16 @@ footer {
   100%{ opacity: 1; }
 }
 
-/* --- Scanner vertical (faisceau lumineux) --- */
+/* --- Scanner HORIZONTAL (faisceau lumineux) --- */
 .scanner-beam {
   position: absolute;
-  left: 50%;
-  top: 0;
-  transform: translateX(-50%);
-  width: 3px;
-  height: 100%;
+  top: 35%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 100%;
+  height: 3px;
   border-radius: 20px;
-  background: linear-gradient(to bottom,
+  background: linear-gradient(to right,
     transparent,
     rgba(150, 100, 255, 0.7),
     rgba(180, 130, 255, 1),
@@ -2401,8 +2472,8 @@ footer {
   animation: beam-pulse 2s ease-in-out infinite alternate;
 }
 @keyframes beam-pulse {
-  0%   { opacity: 0.8; transform: translateX(-50%) scaleY(1); }
-  100% { opacity: 1;   transform: translateX(-50%) scaleY(1.02); }
+  0%   { opacity: 0.8; transform: translateY(-50%) scaleX(1); }
+  100% { opacity: 1;   transform: translateY(-50%) scaleX(1.02); }
 }
 
 /* --- Canvas particules scanner --- */
@@ -2413,6 +2484,29 @@ footer {
   height: 100%;
   z-index: 5;
   pointer-events: none;
+}
+
+/* --- Manifeste responsive : tablette --- */
+@media (max-width: 1024px) {
+  .manifeste-section { padding: 80px 24px; }
+  .manifeste-grid { grid-template-columns: 1fr; gap: 30px; }
+  .manifeste-text { text-align: center; }
+  .manifeste-sep { margin: 18px auto; }
+  .manifeste-sub { margin: 14px auto 0; }
+  .manifeste-tools { justify-content: center; }
+  .manifeste-line { font-size: clamp(1.7rem, 6vw, 2.8rem); }
+  .manifeste-sub { font-size: 0.92rem; }
+  .carousel-viewport { height: 360px; max-width: 420px; margin: 0 auto; }
+  .ev-card-wrapper { height: 160px; }
+}
+
+/* --- Manifeste responsive : mobile --- */
+@media (max-width: 480px) {
+  .manifeste-line { font-size: clamp(1.4rem, 7.5vw, 2rem); }
+  .manifeste-sub { font-size: 0.88rem; }
+  .carousel-viewport { height: 300px; max-width: 100%; }
+  .ev-card-wrapper { height: 150px; }
+  .ascii-content { font-size: 8px; line-height: 10px; }
 }
 
 /* ================================================================
