@@ -632,12 +632,223 @@
       font-family: var(--font-mono);
     }
 
-    /* Print */
+    /* ══════════════════════════════
+       IMPRESSION
+    ══════════════════════════════ */
     @media print {
-      .sidebar, #dev-nav { display: none !important; }
-      .main { margin-left: 0; padding: 24px 40px; max-width: 100%; }
-      body { background: white; color: black; }
+      @page {
+        size: A4;
+        margin: 18mm 16mm 18mm 16mm;
+      }
+
+      /* Masquer éléments non imprimables */
+      .sidebar, #dev-nav, .sb-footer { display: none !important; }
       .cover::before { display: none; }
+
+      /* Reset layout */
+      body {
+        background: white !important;
+        color: #1a1a2e !important;
+        font-size: 9pt;
+        line-height: 1.5;
+        display: block;
+      }
+      .main {
+        margin-left: 0 !important;
+        padding: 0 !important;
+        max-width: 100% !important;
+      }
+
+      /* Couleurs texte adaptées print */
+      :root {
+        --white-soft: #1a1a2e;
+        --mist: #555;
+        --mist-light: #333;
+        --aurora: #00897b;
+        --solar: #b8860b;
+        --lavande: #7b4fa6;
+        --coral: #c0392b;
+        --surface: #f5f5f5;
+        --surface-2: #efefef;
+      }
+
+      /* Page de couverture */
+      .cover {
+        border-bottom: 2pt solid #e0e0e0 !important;
+        padding-bottom: 20pt !important;
+        margin-bottom: 24pt !important;
+        page-break-after: avoid;
+      }
+      .cover-title { font-size: 24pt !important; color: #1a1a2e !important; }
+      .cover-title .accent { color: #00897b !important; }
+      .cover-sub { color: #555 !important; font-size: 11pt !important; }
+      .cover-eyebrow { color: #00897b !important; }
+
+      .cover-kpi {
+        background: none !important;
+        border: 1pt solid #ddd !important;
+        border-radius: 6pt !important;
+      }
+      .kpi { border: none !important; background: none !important; }
+      .kpi-val { font-size: 18pt !important; }
+      .kpi-aurora { color: #00897b !important; }
+      .kpi-solar  { color: #b8860b !important; }
+      .kpi-lavande{ color: #7b4fa6 !important; }
+      .kpi-coral  { color: #c0392b !important; }
+
+      .cover-pills { gap: 6pt !important; }
+      .pill { border: 1pt solid #ccc !important; background: #f8f8f8 !important; color: #333 !important; }
+      .pill-aurora { border-color: #00897b !important; color: #00897b !important; }
+      .pill-solar  { border-color: #b8860b !important; color: #b8860b !important; }
+      .pill-lavande{ border-color: #7b4fa6 !important; color: #7b4fa6 !important; }
+
+      .cover-partners {
+        background: #f8f8f8 !important;
+        border: 1pt solid #ddd !important;
+      }
+      .partner-logo { background: #eee !important; border: 1pt solid #ccc !important; color: #333 !important; }
+      .partner-label { color: #888 !important; }
+      .partner-date { color: #888 !important; }
+
+      /* Sections */
+      .section { margin-bottom: 18pt !important; page-break-inside: avoid; }
+      .sec-rule { background: #ddd !important; margin: 8pt 0 12pt !important; }
+      .sec-num {
+        background: #e8f5e9 !important;
+        border: 1pt solid #00897b !important;
+        color: #00897b !important;
+      }
+      .sec-title { color: #1a1a2e !important; font-size: 13pt !important; }
+
+      /* Info table */
+      .info-table { border: 1pt solid #ddd !important; }
+      .info-table tr { border-bottom: 1pt solid #eee !important; }
+      .info-table td:first-child { background: #f5f5f5 !important; color: #555 !important; }
+      .info-table td:last-child { color: #1a1a2e !important; }
+
+      /* Cards */
+      .card {
+        background: #f9f9f9 !important;
+        border: 1pt solid #ddd !important;
+        page-break-inside: avoid;
+      }
+      .card.ca { border-color: #00897b !important; }
+      .card.cs { border-color: #b8860b !important; }
+      .card.cl { border-color: #7b4fa6 !important; }
+      .card.cc { border-color: #c0392b !important; }
+      .card-label.cl-aurora { color: #00897b !important; }
+      .card-label.cl-solar  { color: #b8860b !important; }
+      .card-label.cl-lavande{ color: #7b4fa6 !important; }
+      .card-label.cl-coral  { color: #c0392b !important; }
+      .card ul li { color: #333 !important; border-color: #eee !important; }
+      .card ul li::before { color: #999 !important; }
+
+      /* Highlight boxes */
+      .highlight-box { border: 1pt solid #ccc !important; }
+      .hb-aurora { background: #e8f5e9 !important; border-color: #00897b !important; }
+      .hb-solar  { background: #fffde7 !important; border-color: #b8860b !important; }
+      .hb-coral  { background: #fce4ec !important; border-color: #c0392b !important; }
+
+      /* Status badges */
+      .status-badge { border: 1pt solid !important; }
+      .sb-ok     { background: #e8f5e9 !important; color: #00897b !important; border-color: #00897b !important; }
+      .sb-warn   { background: #fffde7 !important; color: #b8860b !important; border-color: #b8860b !important; }
+      .sb-refuse { background: #fce4ec !important; color: #c0392b !important; border-color: #c0392b !important; }
+
+      /* Flow steps */
+      .flow-dot { background: #e8f5e9 !important; border-color: #00897b !important; color: #00897b !important; }
+      .flow-title { color: #1a1a2e !important; }
+      .flow-desc  { color: #555 !important; }
+      .flow-step::before { background: #ddd !important; }
+
+      /* Naming box */
+      .naming { background: #f0fdf4 !important; border-color: #00897b !important; color: #00897b !important; }
+      .naming-ex { color: #666 !important; }
+
+      /* Phases */
+      .phase { background: #f9f9f9 !important; border: 1pt solid #ddd !important; page-break-inside: avoid; }
+      .pb-1 { background: #e8f5e9 !important; color: #00897b !important; border-color: #00897b !important; }
+      .pb-2 { background: #fffde7 !important; color: #b8860b !important; border-color: #b8860b !important; }
+      .pb-3 { background: #f3e5f5 !important; color: #7b4fa6 !important; border-color: #7b4fa6 !important; }
+      .phase-title { color: #1a1a2e !important; }
+      .phase-desc  { color: #555 !important; }
+
+      /* Toggle opts */
+      .toggle-opt { background: #f9f9f9 !important; border: 1pt solid #ddd !important; }
+      .to-badge.to-a { background: #e8f5e9 !important; color: #00897b !important; border-color: #00897b !important; }
+      .to-badge.to-b { background: #fffde7 !important; color: #b8860b !important; border-color: #b8860b !important; }
+      .to-text { color: #333 !important; }
+      .to-text strong { color: #1a1a2e !important; }
+
+      /* Tech grid */
+      .tech-item { background: #f9f9f9 !important; border: 1pt solid #ddd !important; }
+      .tech-name { color: #1a1a2e !important; }
+      .tech-role { color: #666 !important; }
+
+      /* ── USER STORIES PRINT ── */
+      .section[id^="us-"] { page-break-before: always; }
+
+      .persona-block { page-break-inside: avoid; margin-bottom: 14pt !important; }
+      .persona-header {
+        padding: 10pt 12pt !important;
+        page-break-inside: avoid;
+        page-break-after: avoid;
+      }
+      .ph-visiteur    { background: #f5f5f5 !important; border: 1pt solid #ccc !important; }
+      .ph-realisateur { background: #e8f5e9 !important; border: 1pt solid #00897b !important; }
+      .ph-jury        { background: #f3e5f5 !important; border: 1pt solid #7b4fa6 !important; }
+      .ph-admin       { background: #fce4ec !important; border: 1pt solid #c0392b !important; }
+      .ph-name { color: #1a1a2e !important; font-size: 11pt !important; }
+      .ph-theme { color: #555 !important; }
+      .ph-count { border: 1pt solid #ccc !important; color: #333 !important; background: white !important; }
+      .pc-v { color: #555 !important; }
+      .pc-r { color: #00897b !important; border-color: #00897b !important; background: #e8f5e9 !important; }
+      .pc-j { color: #7b4fa6 !important; border-color: #7b4fa6 !important; background: #f3e5f5 !important; }
+      .pc-a { color: #c0392b !important; border-color: #c0392b !important; background: #fce4ec !important; }
+
+      .us-table { border-collapse: collapse !important; width: 100% !important; }
+      .us-table thead tr { border-bottom: 1.5pt solid #ccc !important; }
+      .us-table thead th {
+        color: #888 !important;
+        font-size: 7pt !important;
+        padding: 5pt 8pt !important;
+        background: #f5f5f5 !important;
+      }
+      .us-table tbody tr { border-bottom: 0.5pt solid #eee !important; page-break-inside: avoid; }
+      .us-table tbody tr:hover { background: none !important; }
+      .us-table td { padding: 7pt 8pt !important; }
+
+      .us-id {
+        font-size: 7pt !important;
+        padding: 2pt 5pt !important;
+      }
+      .uid-v { background: #f0f0f0 !important; color: #555 !important; }
+      .uid-r { background: #e8f5e9 !important; color: #00897b !important; }
+      .uid-j { background: #f3e5f5 !important; color: #7b4fa6 !important; }
+      .uid-a { background: #fce4ec !important; color: #c0392b !important; }
+
+      .us-tag { background: #f0f0f0 !important; border: 0.5pt solid #ccc !important; color: #666 !important; font-size: 7pt !important; }
+      .us-story-title { color: #1a1a2e !important; font-size: 9pt !important; }
+      .us-formula { color: #444 !important; font-size: 8pt !important; }
+      .us-formula .w { color: #1a1a2e !important; }
+      .us-formula .g { color: #00897b !important; opacity: 1 !important; }
+
+      /* Liens */
+      a[href] { color: #00897b !important; text-decoration: none !important; }
+
+      /* Footer */
+      .doc-footer {
+        border-top: 1pt solid #ddd !important;
+        color: #aaa !important;
+        font-size: 7pt !important;
+        margin-top: 24pt !important;
+      }
+
+      /* Grilles responsive → colonne unique sur print */
+      .card-grid.cg-3 { grid-template-columns: repeat(2, 1fr) !important; }
+      .card-grid.cg-4 { grid-template-columns: repeat(2, 1fr) !important; }
+      .tech-grid      { grid-template-columns: repeat(2, 1fr) !important; }
+      .cover-kpi      { grid-template-columns: repeat(4, 1fr) !important; }
     }
   </style>
 </head>
