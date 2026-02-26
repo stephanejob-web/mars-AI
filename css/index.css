@@ -695,17 +695,44 @@ section {
 /* --- Robot IA image — haut à droite de la section Concept --- */
 .robot-wrap {
   position: absolute;
-  top: 0;
+  top: 60px;
   right: 40px;
   z-index: 1;
   pointer-events: none;
+}
+/* Lumière qui trace le contour du robot */
+/* Lumière au-dessus de la tête du robot */
+.robot-wrap::before {
+  content: "";
+  position: absolute;
+  top: 30px;
+  left: 55%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 40px;
+  background: radial-gradient(circle, rgba(100,200,255,1) 0%, rgba(100,200,255,0.5) 35%, transparent 70%);
+  border-radius: 50%;
+  z-index: 2;
+  pointer-events: none;
+  animation: robot-head-glow 4s ease-in-out infinite;
 }
 .robot-img {
   width: 360px;
   height: auto;
   display: block;
-  opacity: 0.88;
+  opacity: 0.85;
   filter: drop-shadow(0 0 30px rgba(78,255,206,0.15));
+  animation: robot-float 6s ease-in-out infinite;
+  mask-image: linear-gradient(to bottom, #000 60%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent 100%);
+}
+@keyframes robot-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-22px); }
+}
+@keyframes robot-head-glow {
+  0%, 100% { opacity: 0; transform: translateX(-50%) scale(0.6); }
+  50%      { opacity: 1; transform: translateX(-50%) scale(1); }
 }
 .concept::before {
   content: "";
