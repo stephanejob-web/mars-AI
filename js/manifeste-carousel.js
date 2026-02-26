@@ -1,75 +1,83 @@
 /* ================================================================
-   MANIFESTE CAROUSEL — Style Evervault Card Scanner
+   MANIFESTE CAROUSEL — Style Evervault Card Scanner (OPTIMISÉ)
    Flux horizontal de cartes vidéo traversant un scanner vertical.
    Quand une carte croise le scanner, un côté se transforme en ASCII.
    Particules violettes émanant du faisceau.
    IIFE autonome, 0 dépendance externe.
+
+   OPTIMISATIONS v2 (GPU Intel UHD) :
+   - 6 cartes au lieu de 12
+   - 3 vidéos légères seulement (ia.mp4 53Mo exclue)
+   - Max 3 vidéos en lecture simultanée
+   - 60 particules au lieu de 400
+   - DOM queries cachées, gradients pré-calculés
+   - Boucle RAF unique, gestion vidéo throttlée
    ================================================================ */
 ;(function () {
   'use strict';
 
   /* ----------------------------------------------------------------
-     Configuration
+     Configuration (optimisée pour GPU intégré)
      ---------------------------------------------------------------- */
   var VIDEOS = [
-    '../assets/ia2.mp4',
-    '../assets/ia3.mp4',
-    '../assets/ia1.mp4',
-    '../assets/ia.mp4'
+    '../assets/ia2.mp4',   // ~4.6 Mo
+    '../assets/ia3.mp4',   // ~6.7 Mo
+    '../assets/ia1.mp4'    // ~21 Mo — ia.mp4 (53Mo) exclu
   ];
-  var CARD_COUNT    = 12;      // 3 sets de 4 vidéos
+  var CARD_COUNT    = 6;       // réduit de 12 à 6
   var CARD_W        = 380;
   var CARD_H        = 230;
   var CARD_GAP      = 50;
   var SCROLL_SPEED  = 80;      // px/s
-  var SCANNER_W     = 8;       // zone de détection du scanner (px)
-  var PARTICLE_MAX  = 400;
-  var FADE_ZONE     = 50;      // zone de fondu haut/bas des particules
+  var SCANNER_W     = 8;
+  var PARTICLE_MAX  = 60;      // réduit de 400 à 60
+  var FADE_ZONE     = 50;
+  var MAX_PLAYING   = 3;       // max 3 vidéos en lecture simultanée
+  var VIDEO_CHECK_INTERVAL = 500; // vérifier vidéos toutes les 500ms au lieu de chaque frame
 
   /* ----------------------------------------------------------------
      Générateur de code ASCII (thème IA/vidéo)
      ---------------------------------------------------------------- */
+  var _codeSnippets = [
+    '// compiled preview • scanner demo',
+    '/* generated for visual effect */',
+    'const SCAN_WIDTH = 8;',
+    'const MAX_PARTICLES = 2500;',
+    'const TRANSITION = 0.05;',
+    'function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }',
+    'function lerp(a, b, t) { return a + (b - a) * t; }',
+    'class Particle0 { constructor(x, y, vx, vy, r, a) {',
+    '  this.x = x; this.y = y;',
+    '  this.vx = vx; this.vy = vy;',
+    '} step(dt) { this.x += this.vx * dt; this.y += this.vy * dt; } }',
+    'const scanner = { x: Math.floor(window.innerWidth / 2), width: SCAN_WIDTH, glow: 3.5 };',
+    'function drawParticle(ctx, p) { ctx.globalAlpha = clamp(p.a, 0, 1);',
+    '  ctx.drawImage(gradient, p.x - p.r, p.y - p.r, p.r * 2, p.r * 2); }',
+    'function tick(t) { const dt = 0.016; // update & render }',
+    'const state = { intensity: 1.2, particles: MAX_PARTICLES };',
+    'ctx.globalCompositeOperation = "lighter";',
+    '// ascii overlay is masked with a 3-phase gradient',
+    'if (state.intensity > 1) { scanner.glow += 0.01; }',
+    'class Particle1 { constructor(x, y, vx, vy, r, a) {',
+    '  this.x = x; this.vx = vx; this.vy = vy;',
+    '} step(dt) { this.x += this.vx; this.y += this.vy; } }',
+    'const neer = { x: Math.floor(window.innerWidth / 2) };',
+    'function drawParticle(cta, p) { ctx.globalAlpha =',
+    '  clamp(p.a, 0, 1); ctx.drawImage(gradient, p.x, p.y); }',
+    'b.floor(window.innerWidth / 2), width: SCAN_WIDTH'
+  ];
+  // flux pré-construit (évite de recalculer à chaque appel)
+  var _codeFlow = _codeSnippets.join(' ');
+  while (_codeFlow.length < 8000) {
+    _codeFlow += ' ' + _codeSnippets[Math.floor(Math.random() * _codeSnippets.length)];
+  }
+
   function generateCode(cols, rows) {
-    var snippets = [
-      '// compiled preview • scanner demo',
-      '/* generated for visual effect */',
-      'const SCAN_WIDTH = 8;',
-      'const MAX_PARTICLES = 2500;',
-      'const TRANSITION = 0.05;',
-      'function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }',
-      'function lerp(a, b, t) { return a + (b - a) * t; }',
-      'class Particle0 { constructor(x, y, vx, vy, r, a) {',
-      '  this.x = x; this.y = y;',
-      '  this.vx = vx; this.vy = vy;',
-      '} step(dt) { this.x += this.vx * dt; this.y += this.vy * dt; } }',
-      'const scanner = { x: Math.floor(window.innerWidth / 2), width: SCAN_WIDTH, glow: 3.5 };',
-      'function drawParticle(ctx, p) { ctx.globalAlpha = clamp(p.a, 0, 1);',
-      '  ctx.drawImage(gradient, p.x - p.r, p.y - p.r, p.r * 2, p.r * 2); }',
-      'function tick(t) { const dt = 0.016; // update & render }',
-      'const state = { intensity: 1.2, particles: MAX_PARTICLES };',
-      'ctx.globalCompositeOperation = "lighter";',
-      '// ascii overlay is masked with a 3-phase gradient',
-      'if (state.intensity > 1) { scanner.glow += 0.01; }',
-      'class Particle1 { constructor(x, y, vx, vy, r, a) {',
-      '  this.x = x; this.vx = vx; this.vy = vy;',
-      '} step(dt) { this.x += this.vx; this.y += this.vy; } }',
-      'const neer = { x: Math.floor(window.innerWidth / 2) };',
-      'function drawParticle(cta, p) { ctx.globalAlpha =',
-      '  clamp(p.a, 0, 1); ctx.drawImage(gradient, p.x, p.y); }',
-      'b.floor(window.innerWidth / 2), width: SCAN_WIDTH',
-    ];
-
-    // construire un flux continu de texte
-    var flow = snippets.join(' ');
     var total = cols * rows;
-    while (flow.length < total + cols) {
-      flow += ' ' + snippets[Math.floor(Math.random() * snippets.length)];
-    }
-
     var out = '';
-    var offset = Math.floor(Math.random() * 200); // décalage aléatoire
+    var offset = Math.floor(Math.random() * 200);
     for (var r = 0; r < rows; r++) {
-      var line = flow.substr(offset + r * cols, cols);
+      var line = _codeFlow.substr(offset + r * cols, cols);
       if (line.length < cols) line += ' '.repeat(cols - line.length);
       out += line + (r < rows - 1 ? '\n' : '');
     }
@@ -77,8 +85,7 @@
   }
 
   function calcCodeDims(w, h) {
-    var charW = 6, lineH = 12;
-    return { cols: Math.floor(w / charW), rows: Math.floor(h / lineH) };
+    return { cols: Math.floor(w / 6), rows: Math.floor(h / 12) };
   }
 
 
@@ -89,15 +96,14 @@
     var wrapper = document.createElement('div');
     wrapper.className = 'ev-card-wrapper';
 
-    // couche normale (vidéo)
+    // couche normale (vidéo) — preload metadata seulement
     var normal = document.createElement('div');
     normal.className = 'ev-card ev-card-normal';
     var video = document.createElement('video');
     video.muted = true;
     video.loop = true;
     video.playsInline = true;
-    video.autoplay = true;
-    video.preload = 'auto';
+    video.preload = 'metadata'; // pas 'auto' — charge les données à la demande
     video.src = VIDEOS[index % VIDEOS.length];
     normal.appendChild(video);
 
@@ -112,6 +118,12 @@
 
     wrapper.appendChild(normal);
     wrapper.appendChild(ascii);
+
+    // cache les refs DOM sur le wrapper pour éviter querySelector chaque frame
+    wrapper._normal = normal;
+    wrapper._ascii = ascii;
+    wrapper._video = video;
+
     return wrapper;
   }
 
@@ -133,7 +145,9 @@
     this.mouseVel   = 0;
     this.containerW = 0;
     this.lineW      = 0;
+    this.wrappers   = [];   // cache des wrappers
     this.videos     = [];
+    this._lastVideoCheck = 0;
 
     this._populate();
     this._calcDims();
@@ -147,15 +161,17 @@
       var card = createCard(i);
       this.cardLine.appendChild(card);
     }
-    // collecter toutes les vidéos
-    this.videos = Array.from(this.cardLine.querySelectorAll('video'));
+    // cacher les refs DOM une seule fois
+    this.wrappers = Array.from(this.cardLine.querySelectorAll('.ev-card-wrapper'));
+    this.videos = [];
+    for (var j = 0; j < this.wrappers.length; j++) {
+      this.videos.push(this.wrappers[j]._video);
+    }
   };
 
   CardStream.prototype._calcDims = function () {
     this.containerW = this.viewport.offsetWidth;
     this.lineW = (CARD_W + CARD_GAP) * CARD_COUNT;
-    // position initiale : centrer les cartes pour qu'elles soient visibles dès le départ
-    // on place la ligne pour que le milieu du set soit au milieu du viewport
     this.position = -(this.lineW / 2 - this.containerW / 2);
   };
 
@@ -164,22 +180,16 @@
     if (this.running) return;
     this.running = true;
     this.lastTime = performance.now();
-    this._preloadVisible();
+    this._lastVideoCheck = 0;
     this._loop();
-  };
-
-  /* lancer la lecture de toutes les vidéos visibles */
-  CardStream.prototype._preloadVisible = function () {
-    for (var i = 0; i < this.videos.length; i++) {
-      var v = this.videos[i];
-      if (v.paused) v.play().catch(function () {});
-    }
   };
 
   CardStream.prototype.stop = function () {
     this.running = false;
-    // mettre toutes les vidéos en pause
-    this.videos.forEach(function (v) { if (!v.paused) v.pause(); });
+    // pause toutes les vidéos
+    for (var i = 0; i < this.videos.length; i++) {
+      if (!this.videos[i].paused) this.videos[i].pause();
+    }
   };
 
   CardStream.prototype._loop = function () {
@@ -190,7 +200,6 @@
     this.lastTime = now;
 
     if (!this.dragging) {
-      // friction douce
       if (this.velocity > SCROLL_SPEED) {
         this.velocity *= 0.96;
         if (this.velocity < SCROLL_SPEED) this.velocity = SCROLL_SPEED;
@@ -201,12 +210,17 @@
 
     this.cardLine.style.transform = 'translateX(' + this.position + 'px)';
     this._updateClipping();
-    this._manageVideos();
+
+    // vérifier les vidéos seulement toutes les 500ms (pas chaque frame)
+    if (now - this._lastVideoCheck > VIDEO_CHECK_INTERVAL) {
+      this._manageVideos();
+      this._lastVideoCheck = now;
+    }
 
     requestAnimationFrame(function () { self._loop(); });
   };
 
-  /* boucle infinie : quand tout sort, on revient */
+  /* boucle infinie */
   CardStream.prototype._wrap = function () {
     if (this.position < -this.lineW) {
       this.position = this.containerW;
@@ -215,60 +229,66 @@
     }
   };
 
-  /* clipping scanner : révèle ASCII quand la carte croise le faisceau */
+  /* clipping scanner — utilise les refs cachées, pas de querySelector */
   CardStream.prototype._updateClipping = function () {
     var scannerX = this.containerW / 2;
     var scanLeft = scannerX - SCANNER_W / 2;
     var scanRight = scannerX + SCANNER_W / 2;
+    var vpRect = this.viewport.getBoundingClientRect(); // 1 seul appel
 
-    var wrappers = this.cardLine.querySelectorAll('.ev-card-wrapper');
-    for (var i = 0; i < wrappers.length; i++) {
-      var wrap = wrappers[i];
+    for (var i = 0; i < this.wrappers.length; i++) {
+      var wrap = this.wrappers[i];
       var rect = wrap.getBoundingClientRect();
-      var vpRect = this.viewport.getBoundingClientRect();
       var cardLeft  = rect.left - vpRect.left;
       var cardRight = rect.right - vpRect.left;
       var cardW     = rect.width;
 
-      var normal = wrap.querySelector('.ev-card-normal');
-      var ascii  = wrap.querySelector('.ev-card-ascii');
+      var normal = wrap._normal;
+      var ascii  = wrap._ascii;
 
       if (cardLeft < scanRight && cardRight > scanLeft) {
-        // la carte croise le scanner — clip progressif
         var intersectLeft  = Math.max(scanLeft - cardLeft, 0);
         var intersectRight = Math.min(scanRight - cardLeft, cardW);
         var pctLeft  = (intersectLeft / cardW) * 100;
         var pctRight = (intersectRight / cardW) * 100;
-        // normal : cacher la partie gauche (déjà scannée)
         normal.style.clipPath = 'inset(0 0 0 ' + pctLeft + '%)';
-        // ascii : cacher la partie droite (pas encore scannée)
         ascii.style.clipPath = 'inset(0 ' + (100 - pctRight) + '% 0 0)';
       } else if (cardRight <= scanLeft) {
-        // carte entièrement passée : tout en ASCII
         normal.style.clipPath = 'inset(0 0 0 100%)';
         ascii.style.clipPath = 'none';
       } else {
-        // carte pas encore scannée : tout en vidéo
         normal.style.clipPath = 'none';
         ascii.style.clipPath = 'inset(0 100% 0 0)';
       }
     }
   };
 
-  /* play/pause des vidéos selon proximité au viewport */
+  /* play/pause intelligent — max 3 vidéos en lecture simultanée */
   CardStream.prototype._manageVideos = function () {
     var vpRect = this.viewport.getBoundingClientRect();
-    var margin = 500;
+    var scannerX = vpRect.left + this.containerW / 2;
 
+    // trier les vidéos par distance au scanner (les plus proches en premier)
+    var scored = [];
     for (var i = 0; i < this.videos.length; i++) {
-      var v    = this.videos[i];
-      var rect = v.getBoundingClientRect();
-      var visible = rect.right > vpRect.left - margin && rect.left < vpRect.right + margin;
+      var v = this.videos[i];
+      var vRect = v.getBoundingClientRect();
+      var center = (vRect.left + vRect.right) / 2;
+      var dist = Math.abs(center - scannerX);
+      var inViewport = vRect.right > vpRect.left && vRect.left < vpRect.right;
+      scored.push({ video: v, dist: dist, inViewport: inViewport });
+    }
+    scored.sort(function (a, b) { return a.dist - b.dist; });
 
-      if (visible) {
-        if (v.paused) v.play().catch(function () {});
+    // jouer les MAX_PLAYING plus proches qui sont dans le viewport, pauser le reste
+    var playing = 0;
+    for (var j = 0; j < scored.length; j++) {
+      var s = scored[j];
+      if (s.inViewport && playing < MAX_PLAYING) {
+        if (s.video.paused) s.video.play().catch(function () {});
+        playing++;
       } else {
-        if (!v.paused) v.pause();
+        if (!s.video.paused) s.video.pause();
       }
     }
   };
@@ -319,7 +339,6 @@
     }, { passive: true });
     document.addEventListener('touchend', endDrag);
 
-    // scroll molette
     line.addEventListener('wheel', function (e) {
       e.preventDefault();
       self.position += (e.deltaY > 0 ? -20 : 20);
@@ -334,18 +353,17 @@
     });
   };
 
-  /* rafraîchir le contenu ASCII périodiquement */
+  /* rafraîchir le contenu ASCII périodiquement (800ms au lieu de 250ms) */
   CardStream.prototype.startAsciiRefresh = function () {
     var self = this;
+    var contents = this.cardLine.querySelectorAll('.ascii-content');
+    this._asciiContents = contents; // cache
     this._asciiTimer = setInterval(function () {
-      var contents = self.cardLine.querySelectorAll('.ascii-content');
-      for (var i = 0; i < contents.length; i++) {
-        if (Math.random() < 0.15) {
-          var dims = calcCodeDims(CARD_W, CARD_H);
-          contents[i].textContent = generateCode(dims.cols, dims.rows);
-        }
-      }
-    }, 250);
+      // rafraîchir 1 seule carte aléatoire par tick (pas toutes)
+      var idx = Math.floor(Math.random() * self._asciiContents.length);
+      var dims = calcCodeDims(CARD_W, CARD_H);
+      self._asciiContents[idx].textContent = generateCode(dims.cols, dims.rows);
+    }, 800);
   };
 
   CardStream.prototype.stopAsciiRefresh = function () {
@@ -357,21 +375,19 @@
 
 
   /* ----------------------------------------------------------------
-     ScannerParticles — Canvas 2D
-     Particules violettes émanant du faisceau scanner vertical.
-     Adaptées de l'effet Evervault.
+     ScannerParticles — Canvas 2D (optimisé)
+     60 particules au lieu de 400, gradients pré-calculés.
      ---------------------------------------------------------------- */
   function ScannerParticles(canvas, getBeamX) {
     this.canvas   = canvas;
     this.ctx      = canvas.getContext('2d');
-    this.getBeamX = getBeamX; // fonction retournant le X du scanner
+    this.getBeamX = getBeamX;
     this.running  = false;
     this.rafId    = null;
 
     this.w = 0;
     this.h = 0;
     this.particles = [];
-    this.count     = 0;
     this.beamW     = 3;
 
     this._createGradient();
@@ -400,7 +416,7 @@
     return {
       x: bx + (Math.random() - 0.5) * this.beamW,
       y: Math.random() * this.h,
-      vx: (0.2 + Math.random() * 0.8),
+      vx: 0.2 + Math.random() * 0.8,
       vy: (Math.random() - 0.5) * 0.3,
       radius: 0.4 + Math.random() * 0.6,
       alpha: 0.6 + Math.random() * 0.4,
@@ -417,22 +433,20 @@
     var rect = this.canvas.parentElement.getBoundingClientRect();
     this.w = rect.width;
     this.h = rect.height;
-    this.canvas.width  = this.w;
-    this.canvas.height = this.h;
+    // rendu à 50% de résolution — les particules sont floues par nature, pas besoin de full res
+    this.canvas.width  = Math.round(this.w * 0.5);
+    this.canvas.height = Math.round(this.h * 0.5);
   };
 
   ScannerParticles.prototype.start = function () {
     if (this.running) return;
     this.running = true;
     this._resize();
-    // initialiser les particules
     this.particles = [];
-    this.count = 0;
     for (var i = 0; i < PARTICLE_MAX; i++) {
       var p = this._makeParticle();
       p.origAlpha = p.alpha;
       this.particles.push(p);
-      this.count++;
     }
     this._loop();
   };
@@ -448,28 +462,41 @@
   ScannerParticles.prototype._loop = function () {
     if (!this.running) return;
     var self = this;
-    this._render();
+    var now = performance.now();
+    // throttle à ~30fps (33ms entre frames)
+    if (now - (self._lastFrame || 0) >= 33) {
+      self._lastFrame = now;
+      this._render();
+    }
     this.rafId = requestAnimationFrame(function () { self._loop(); });
   };
 
   ScannerParticles.prototype._render = function () {
     var ctx = this.ctx;
+    // coordonnées en espace réel (CSS), canvas à 50%
     var w = this.w, h = this.h;
-    var bx = this.getBeamX();
+    var cw = this.canvas.width, ch = this.canvas.height;
+    var scale = 0.5;
+    var bx = this.getBeamX() * scale;
 
-    // fond transparent
     ctx.globalCompositeOperation = 'source-over';
-    ctx.clearRect(0, 0, w, h);
+    ctx.clearRect(0, 0, cw, ch);
 
-    // dessiner le glow du faisceau
-    this._drawBeamGlow(bx);
-
-    // dessiner les particules
+    // glow simplifié (1 seul gradient)
+    var lw = this.beamW;
     ctx.globalCompositeOperation = 'lighter';
+    var g = ctx.createLinearGradient(bx - lw * 3, 0, bx + lw * 3, 0);
+    g.addColorStop(0, 'rgba(139, 92, 246, 0)');
+    g.addColorStop(0.5, 'rgba(196, 181, 253, 0.5)');
+    g.addColorStop(1, 'rgba(139, 92, 246, 0)');
+    ctx.globalAlpha = 0.7;
+    ctx.fillStyle = g;
+    ctx.fillRect(bx - lw * 3, 0, lw * 6, ch);
+
+    // particules (coordonnées en espace réel, dessinées en espace canvas)
     for (var i = 0; i < this.particles.length; i++) {
       var p = this.particles[i];
 
-      // mouvement
       p.x += p.vx;
       p.y += p.vy;
       p.time++;
@@ -479,8 +506,9 @@
 
       // respawn si mort ou hors écran
       if (p.x > w + 10 || p.life <= 0) {
-        this.particles[i] = this._makeParticle();
-        this.particles[i].origAlpha = this.particles[i].alpha;
+        var np = this._makeParticle();
+        np.origAlpha = np.alpha;
+        this.particles[i] = np;
         continue;
       }
 
@@ -488,67 +516,18 @@
       var fadeAlpha = 1;
       if (p.y < FADE_ZONE) fadeAlpha = p.y / FADE_ZONE;
       else if (p.y > h - FADE_ZONE) fadeAlpha = (h - p.y) / FADE_ZONE;
-      fadeAlpha = Math.max(0, Math.min(1, fadeAlpha));
+      if (fadeAlpha < 0) fadeAlpha = 0;
+      if (fadeAlpha > 1) fadeAlpha = 1;
 
-      ctx.globalAlpha = Math.max(0, p.alpha) * fadeAlpha;
-      ctx.drawImage(this._gradCache,
-        p.x - p.radius, p.y - p.radius,
-        p.radius * 2, p.radius * 2);
+      var a = p.alpha * fadeAlpha;
+      if (a <= 0) continue; // skip invisible — évite un drawImage inutile
+      ctx.globalAlpha = a;
+      // dessiner en coordonnées canvas (÷2)
+      var px = p.x * scale;
+      var py = p.y * scale;
+      var pr = p.radius;
+      ctx.drawImage(this._gradCache, px - pr, py - pr, pr * 2, pr * 2);
     }
-
-    // spawn de nouvelles particules
-    if (Math.random() < 0.8 && this.count < PARTICLE_MAX) {
-      var np = this._makeParticle();
-      np.origAlpha = np.alpha;
-      this.particles.push(np);
-      this.count++;
-    }
-
-    // nettoyage mémoire si trop de particules
-    if (this.particles.length > PARTICLE_MAX + 100) {
-      this.particles = this.particles.slice(-PARTICLE_MAX);
-      this.count = this.particles.length;
-    }
-  };
-
-  /* glow du faisceau scanner (dessiné sur le canvas) */
-  ScannerParticles.prototype._drawBeamGlow = function (bx) {
-    var ctx = this.ctx;
-    var h = this.h;
-    var lw = this.beamW;
-
-    // gradient vertical pour fondu haut/bas
-    var vGrad = ctx.createLinearGradient(0, 0, 0, h);
-    vGrad.addColorStop(0, 'rgba(255,255,255,0)');
-    vGrad.addColorStop(FADE_ZONE / h, 'rgba(255,255,255,1)');
-    vGrad.addColorStop(1 - FADE_ZONE / h, 'rgba(255,255,255,1)');
-    vGrad.addColorStop(1, 'rgba(255,255,255,0)');
-
-    ctx.globalCompositeOperation = 'lighter';
-
-    // glow large
-    var g2 = ctx.createLinearGradient(bx - lw * 4, 0, bx + lw * 4, 0);
-    g2.addColorStop(0, 'rgba(139, 92, 246, 0)');
-    g2.addColorStop(0.5, 'rgba(139, 92, 246, 0.35)');
-    g2.addColorStop(1, 'rgba(139, 92, 246, 0)');
-    ctx.globalAlpha = 0.6;
-    ctx.fillStyle = g2;
-    ctx.fillRect(bx - lw * 4, 0, lw * 8, h);
-
-    // glow moyen
-    var g1 = ctx.createLinearGradient(bx - lw * 2, 0, bx + lw * 2, 0);
-    g1.addColorStop(0, 'rgba(139, 92, 246, 0)');
-    g1.addColorStop(0.5, 'rgba(196, 181, 253, 0.7)');
-    g1.addColorStop(1, 'rgba(139, 92, 246, 0)');
-    ctx.globalAlpha = 0.8;
-    ctx.fillStyle = g1;
-    ctx.fillRect(bx - lw * 2, 0, lw * 4, h);
-
-    // masque vertical (fondu haut/bas)
-    ctx.globalCompositeOperation = 'destination-in';
-    ctx.globalAlpha = 1;
-    ctx.fillStyle = vGrad;
-    ctx.fillRect(0, 0, this.w, h);
   };
 
 
