@@ -2049,6 +2049,8 @@ footer {
   .manifeste-section { padding: 80px 24px; }
   .manifeste-line { font-size: clamp(1.7rem, 6vw, 2.8rem); }
   .manifeste-sub { font-size: 0.92rem; }
+  .ev-card-wrapper { width: 240px; height: 150px; }
+  .card-stream { height: 170px; }
 
   /* compteurs */
   .counters-section { padding: 60px 24px; }
@@ -2127,6 +2129,9 @@ footer {
   /* manifeste */
   .manifeste-line { font-size: clamp(1.4rem, 7.5vw, 2rem); }
   .manifeste-sub { font-size: 0.88rem; }
+  .ev-card-wrapper { width: 180px; height: 110px; }
+  .card-stream { height: 130px; }
+  .ascii-content { font-size: 8px; line-height: 10px; }
 
   /* mars.AI night */
   .marsnight-title { font-size: clamp(1.8rem, 9vw, 2.5rem); }
@@ -2143,7 +2148,7 @@ footer {
    Texte typographique plein ecran avec arriere-plan shader WebGL
    ================================================================ */
 .manifeste-section {
-  padding: 130px 60px;
+  padding: 40px 60px 30px;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -2173,11 +2178,11 @@ footer {
   position: absolute; inset: 0; z-index: 1;
   background:
     linear-gradient(to bottom,
-      rgba(10,15,46,0.95) 0%,
-      rgba(10,15,46,0.45) 30%,
-      rgba(10,15,46,0.35) 50%,
-      rgba(10,15,46,0.45) 70%,
-      rgba(10,15,46,0.95) 100%);
+      rgba(10,15,46,0.9) 0%,
+      rgba(10,15,46,0.2) 30%,
+      rgba(10,15,46,0.1) 50%,
+      rgba(10,15,46,0.2) 70%,
+      rgba(10,15,46,0.9) 100%);
   pointer-events: none;
 }
 
@@ -2197,9 +2202,9 @@ footer {
 /* --- Lignes typographiques du manifeste --- */
 .manifeste-line {
   font-family: var(--font-display);
-  font-size: clamp(1.6rem, 3.5vw, 4rem);
+  font-size: clamp(1.2rem, 2.4vw, 2.2rem);
   font-weight: 800;
-  line-height: 1.2;
+  line-height: 1.25;
   letter-spacing: -0.02em;
   color: var(--white-soft);
   display: block;
@@ -2208,8 +2213,8 @@ footer {
 
 /* Lignes secondaires (plus subtiles, italique, taille reduite) */
 .manifeste-line.dim {
-  color: rgba(160,170,200,0.45);
-  font-size: clamp(1.3rem, 2.8vw, 3.2rem);
+  color: rgba(160,170,200,0.5);
+  font-size: clamp(1.1rem, 2.2vw, 2rem);
   font-weight: 700;
   font-style: italic;
   text-shadow: 0 2px 20px rgba(3,3,5,0.9);
@@ -2230,7 +2235,7 @@ footer {
 .manifeste-sep {
   display: block;
   width: 80px; height: 2px;
-  margin: 44px auto;
+  margin: 18px auto;
   background: linear-gradient(90deg, transparent, var(--aurora) 50%, transparent);
   transform: scaleX(0);
   transition: transform 0.7s ease;
@@ -2240,11 +2245,11 @@ footer {
 
 /* --- Sous-texte du manifeste --- */
 .manifeste-sub {
-  font-size: 0.88rem;
-  color: rgba(160,170,200,0.7);
-  line-height: 1.9;
-  max-width: 500px;
-  margin: 36px auto 0;
+  font-size: 0.95rem;
+  color: rgba(160,170,200,0.8);
+  line-height: 1.7;
+  max-width: 540px;
+  margin: 14px auto 0;
   text-shadow: 0 2px 16px rgba(3,3,5,0.8);
 }
 .manifeste-sub strong {
@@ -2256,7 +2261,7 @@ footer {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 28px;
+  margin-top: 20px;
   justify-content: center;
 }
 .manifeste-tool {
@@ -2273,6 +2278,141 @@ footer {
 .manifeste-tool:hover {
   border-color: rgba(78,255,206,0.35);
   color: var(--aurora);
+}
+
+/* ================================================================
+   MANIFESTE — Carousel Evervault en arriere-plan
+   Flux horizontal de cartes + scanner vertical derriere le texte
+   ================================================================ */
+
+/* --- Viewport carousel : sous le texte, pleine largeur --- */
+.carousel-viewport {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  overflow: hidden;
+  z-index: 2;
+  margin-top: 16px;
+}
+
+/* --- Flux horizontal de cartes --- */
+.card-stream {
+  position: absolute;
+  width: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 250px;
+  display: flex;
+  align-items: center;
+  overflow: visible;
+  z-index: 2;
+}
+
+.card-line {
+  display: flex;
+  align-items: center;
+  gap: 50px;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+/* --- Carte : wrapper normal + ascii --- */
+.ev-card-wrapper {
+  position: relative;
+  width: 380px;
+  height: 230px;
+  flex-shrink: 0;
+  border: 1px solid rgba(150, 100, 255, 0.15);
+  border-radius: 14px;
+}
+
+.ev-card {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+/* couche normale (video) */
+.ev-card-normal {
+  z-index: 2;
+  background: linear-gradient(135deg, rgba(30, 20, 60, 0.9), rgba(15, 10, 40, 0.9));
+}
+.ev-card-normal video {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* couche ASCII (code revele par le scanner) */
+.ev-card-ascii {
+  z-index: 1;
+  /* clip-path géré en inline par JS */
+  background: rgba(8, 10, 28, 0.95);
+}
+
+.ascii-content {
+  position: absolute;
+  inset: 0;
+  color: rgba(180, 140, 255, 0.6);
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  line-height: 12px;
+  overflow: hidden;
+  white-space: pre;
+  pointer-events: none;
+  animation: ascii-glitch 0.1s infinite linear alternate-reverse;
+  -webkit-mask-image: linear-gradient(to right,
+    rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 50%,
+    rgba(0,0,0,0.2) 100%);
+  mask-image: linear-gradient(to right,
+    rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 50%,
+    rgba(0,0,0,0.2) 100%);
+}
+@keyframes ascii-glitch {
+  0%  { opacity: 1; }
+  15% { opacity: 0.92; }
+  50% { opacity: 0.85; }
+  100%{ opacity: 1; }
+}
+
+/* --- Scanner vertical (faisceau lumineux) --- */
+.scanner-beam {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  width: 3px;
+  height: 100%;
+  border-radius: 20px;
+  background: linear-gradient(to bottom,
+    transparent,
+    rgba(150, 100, 255, 0.7),
+    rgba(180, 130, 255, 1),
+    rgba(150, 100, 255, 0.7),
+    transparent);
+  box-shadow:
+    0 0 12px rgba(150, 100, 255, 0.6),
+    0 0 35px rgba(150, 100, 255, 0.3),
+    0 0 80px rgba(150, 100, 255, 0.1);
+  z-index: 10;
+  pointer-events: none;
+  animation: beam-pulse 2s ease-in-out infinite alternate;
+}
+@keyframes beam-pulse {
+  0%   { opacity: 0.8; transform: translateX(-50%) scaleY(1); }
+  100% { opacity: 1;   transform: translateX(-50%) scaleY(1.02); }
+}
+
+/* --- Canvas particules scanner --- */
+.scanner-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  pointer-events: none;
 }
 
 /* ================================================================

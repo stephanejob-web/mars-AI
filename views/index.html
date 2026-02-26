@@ -231,7 +231,7 @@
     <canvas id="manifeste-shader-canvas"></canvas>
     <div class="manifeste-overlay"></div>
 
-    <!-- Contenu -->
+    <!-- Contenu texte -->
     <div class="manifeste-inner">
 
       <div class="m-fade" style="transition-delay:0s">
@@ -270,34 +270,21 @@
 
     </div><!-- /manifeste-inner -->
 
+    <!-- Carousel vidéo sous le texte (flux horizontal + scanner) -->
+    <div class="carousel-viewport m-fade" style="transition-delay:1.2s">
+      <canvas class="scanner-canvas"></canvas>
+      <div class="scanner-beam"></div>
+      <div class="card-stream">
+        <div class="card-line"></div>
+      </div>
+    </div>
+
   </section>
 
   <!-- Shader WebGL du manifeste (chargé paresseusement, mis en pause hors écran) -->
   <script src="../js/index-shader.js"></script>
-
-  <!-- ============================================================
-       COMPTEURS ANIMÉS — Chiffres-clés du festival
-       ============================================================ -->
-  <section class="counters-section">
-    <div class="counters-grid">
-      <div class="counter-item">
-        <span class="counter-num c-aurora" data-target="20000" data-suffix="">0</span>
-        <div class="counter-label">Candidatures attendues</div>
-      </div>
-      <div class="counter-item">
-        <span class="counter-num c-solar" data-target="120" data-suffix="+">0</span>
-        <div class="counter-label">Pays représentés</div>
-      </div>
-      <div class="counter-item">
-        <span class="counter-num c-lavande" data-target="50" data-suffix="">0</span>
-        <div class="counter-label">Films finalistes</div>
-      </div>
-      <div class="counter-item">
-        <span class="counter-num c-white" data-target="60" data-suffix="s">0</span>
-        <div class="counter-label">Secondes pour tout dire</div>
-      </div>
-    </div>
-  </section>
+  <!-- Carousel vidéo + scanner du manifeste -->
+  <script src="../js/manifeste-carousel.js"></script>
 
   <div class="divider"></div>
 
