@@ -108,6 +108,26 @@
       </div>
     </div>
 
+    <!-- ══ GRAPHIQUE RÉPARTITION JURY ══ -->
+    <div class="chart-section">
+      <div class="chart-header">
+        <div>
+          <h2 class="chart-title">Répartition des films par juré</h2>
+          <p class="chart-sub">Charge de travail de chaque membre actif du jury</p>
+        </div>
+        <div class="chart-legend">
+          <span class="cl-item cl-ok"><span class="cl-dot"></span>≤ 10 films</span>
+          <span class="cl-item cl-warn"><span class="cl-dot"></span>11–15</span>
+          <span class="cl-item cl-danger"><span class="cl-dot"></span>> 15</span>
+        </div>
+      </div>
+      <div class="chart-canvas-wrap">
+        <canvas id="jury-chart"></canvas>
+        <div class="chart-tooltip" id="chart-tooltip"></div>
+      </div>
+      <div class="chart-footer" id="chart-footer"></div>
+    </div>
+
     <!-- Tableau utilisateurs -->
     <div class="section-head">
       <div>

@@ -361,6 +361,7 @@
     document.getElementById('topbar-info').textContent  = titles[name][1];
     if (name === 'assign') renderAssignView();
     if (name === 'site')   { renderJuryAdmin(); renderSponsorsAdmin(); }
+    if (name === 'users')  { chartAnimProgress = 1; renderJuryChart(); }
   }
 
   /* ── DRAPEAUX PAYS ── */
@@ -881,5 +882,217 @@
     showToast(`✓ ${total} film${total > 1 ? 's' : ''} répartis équitablement`, 'ok');
   }
 
+  /* ── GRAPHIQUE RÉPARTITION JURY ── */
+  let chartAnimProgress = 0;
+  let chartAnimId = null;
+  let chartBarRects = [];   // pour le hover
+
+  function renderJuryChart() {
+    const canvas = document.getElementById('jury-chart');
+    if (!canvas) return;
+    const wrap = canvas.parentElement;
+    const ctx = canvas.getContext('2d');
+
+    const juryUsers = users.filter(u => u.role === 'jury' && u.active);
+    if (!juryUsers.length) { canvas.style.display = 'none'; return; }
+    canvas.style.display = 'block';
+
+    // Tri par nombre de films (décroissant)
+    const sorted = [...juryUsers].sort((a, b) => b.assigned.length - a.assigned.length);
+    const maxVal = Math.max(...sorted.map(u => u.assigned.length), 1);
+
+    // Dimensions
+    const dpr = window.devicePixelRatio || 1;
+    const labelW = 150;
+    const barH = 28;
+    const gap = 10;
+    const rightPad = 48;
+    const totalH = sorted.length * (barH + gap) + 10;
+    const rectW = wrap.clientWidth;
+
+    canvas.width  = rectW * dpr;
+    canvas.height = totalH * dpr;
+    canvas.style.height = totalH + 'px';
+    ctx.scale(dpr, dpr);
+
+    const barAreaW = rectW - labelW - rightPad;
+    chartBarRects = [];
+
+    ctx.clearRect(0, 0, rectW, totalH);
+
+    // Style helpers
+    const colors = {
+      ok:     { bar: '#4EFFCE', glow: 'rgba(78,255,206,0.18)', text: '#4EFFCE' },
+      warn:   { bar: '#F5E642', glow: 'rgba(245,230,66,0.15)', text: '#F5E642' },
+      danger: { bar: '#FF6B6B', glow: 'rgba(255,107,107,0.15)', text: '#FF6B6B' },
+    };
+    function getLevel(n) { return n <= 10 ? 'ok' : n <= 15 ? 'warn' : 'danger'; }
+
+    sorted.forEach((u, i) => {
+      const y = i * (barH + gap) + 5;
+      const n = u.assigned.length;
+      const lvl = getLevel(n);
+      const col = colors[lvl];
+
+      // First name + first letter of last name
+      const parts = u.name.split(' ');
+      const short = parts.length > 1
+        ? parts[0] + ' ' + parts.slice(1).map(p => p[0] + '.').join(' ')
+        : parts[0];
+
+      // Label
+      ctx.font = '600 12px Inter, sans-serif';
+      ctx.fillStyle = '#8892B0';
+      ctx.textBaseline = 'middle';
+      ctx.textAlign = 'right';
+      ctx.fillText(short, labelW - 14, y + barH / 2);
+
+      // Background track
+      ctx.beginPath();
+      const trackR = 6;
+      ctx.roundRect(labelW, y, barAreaW, barH, trackR);
+      ctx.fillStyle = 'rgba(255,255,255,0.025)';
+      ctx.fill();
+
+      // Gridlines at intervals of 5
+      for (let g = 5; g <= maxVal; g += 5) {
+        const gx = labelW + (g / maxVal) * barAreaW;
+        ctx.beginPath();
+        ctx.moveTo(gx, y);
+        ctx.lineTo(gx, y + barH);
+        ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+
+      // Animated bar
+      const rawW = (n / maxVal) * barAreaW;
+      const animW = rawW * chartAnimProgress;
+
+      if (animW > 2) {
+        // Gradient bar
+        const grad = ctx.createLinearGradient(labelW, 0, labelW + animW, 0);
+        if (lvl === 'ok') {
+          grad.addColorStop(0, 'rgba(78,255,206,0.15)');
+          grad.addColorStop(1, 'rgba(78,255,206,0.45)');
+        } else if (lvl === 'warn') {
+          grad.addColorStop(0, 'rgba(245,230,66,0.12)');
+          grad.addColorStop(1, 'rgba(245,230,66,0.4)');
+        } else {
+          grad.addColorStop(0, 'rgba(255,107,107,0.15)');
+          grad.addColorStop(1, 'rgba(255,107,107,0.5)');
+        }
+
+        ctx.beginPath();
+        ctx.roundRect(labelW, y, animW, barH, trackR);
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        // Glow edge
+        ctx.beginPath();
+        ctx.roundRect(labelW + animW - 3, y + 2, 3, barH - 4, 2);
+        ctx.fillStyle = col.bar;
+        ctx.fill();
+
+        // Subtle top border
+        ctx.beginPath();
+        ctx.roundRect(labelW, y, animW, barH, trackR);
+        ctx.strokeStyle = col.glow;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+
+      // Count badge
+      if (chartAnimProgress > 0.3) {
+        const countX = labelW + animW + 10;
+        ctx.font = '700 12px "JetBrains Mono", monospace';
+        ctx.fillStyle = col.text;
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.globalAlpha = Math.min(1, (chartAnimProgress - 0.3) / 0.3);
+        ctx.fillText(String(n), countX, y + barH / 2);
+        ctx.globalAlpha = 1;
+      }
+
+      // Store bar hit area
+      chartBarRects.push({
+        x: labelW, y, w: barAreaW, h: barH,
+        user: u, count: n, level: lvl
+      });
+    });
+
+    // Footer stats
+    const footer = document.getElementById('chart-footer');
+    if (footer) {
+      const totalFilms = films.length;
+      const assigned   = films.filter(f => sorted.some(u => u.assigned.includes(f.id))).length;
+      const avg        = sorted.length ? (sorted.reduce((s, u) => s + u.assigned.length, 0) / sorted.length).toFixed(1) : 0;
+      footer.innerHTML = `
+        <span class="cf-stat aurora">📊 <strong>${assigned}</strong> / ${totalFilms} films assignés</span>
+        <span class="cf-stat solar">👤 <strong>${sorted.length}</strong> jurés actifs</span>
+        <span class="cf-stat lavande">⚖️ Moyenne : <strong>${avg}</strong> films / juré</span>`;
+    }
+  }
+
+  // ── Chart Animation ──
+  function animateChart() {
+    if (chartAnimId) cancelAnimationFrame(chartAnimId);
+    chartAnimProgress = 0;
+    const start = performance.now();
+    const dur = 800;
+    function tick(now) {
+      const t = Math.min(1, (now - start) / dur);
+      // Ease out cubic
+      chartAnimProgress = 1 - Math.pow(1 - t, 3);
+      renderJuryChart();
+      if (t < 1) chartAnimId = requestAnimationFrame(tick);
+    }
+    chartAnimId = requestAnimationFrame(tick);
+  }
+
+  // ── Chart Hover ──
+  (function setupChartHover() {
+    const canvas = document.getElementById('jury-chart');
+    const tooltip = document.getElementById('chart-tooltip');
+    if (!canvas || !tooltip) return;
+
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const mx = e.clientX - rect.left;
+      const my = e.clientY - rect.top;
+      let hit = null;
+      for (const bar of chartBarRects) {
+        if (mx >= bar.x && mx <= bar.x + bar.w && my >= bar.y && my <= bar.y + bar.h) {
+          hit = bar; break;
+        }
+      }
+      if (hit) {
+        const pct = films.length > 0 ? ((hit.count / films.length) * 100).toFixed(1) : 0;
+        const loadLabel = hit.level === 'ok' ? '✅ Charge normale' : hit.level === 'warn' ? '⚠️ Charge élevée' : '🔴 Surchargé';
+        tooltip.innerHTML = `
+          <div class="ct-name">${hit.user.name}</div>
+          <div class="ct-count" style="color:${hit.level === 'ok' ? 'var(--aurora)' : hit.level === 'warn' ? 'var(--solar)' : 'var(--coral)'}">
+            ${hit.count} film${hit.count > 1 ? 's' : ''} assigné${hit.count > 1 ? 's' : ''} · ${pct}%
+          </div>
+          <div style="font-size:0.68rem;color:var(--mist);margin-top:2px;">${loadLabel}</div>`;
+        const tx = Math.min(e.clientX - rect.left + 12, canvas.clientWidth - 200);
+        const ty = e.clientY - rect.top - 70;
+        tooltip.style.left = tx + 'px';
+        tooltip.style.top  = ty + 'px';
+        tooltip.classList.add('visible');
+        canvas.style.cursor = 'pointer';
+      } else {
+        tooltip.classList.remove('visible');
+        canvas.style.cursor = 'default';
+      }
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+      tooltip.classList.remove('visible');
+      canvas.style.cursor = 'default';
+    });
+  })();
+
   /* ── INIT ── */
   renderUsers();
+  animateChart();
