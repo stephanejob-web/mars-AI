@@ -156,6 +156,15 @@
         <h2>Films soumis</h2>
         <p>Visionnez chaque film et assignez-le au jury de votre choix.</p>
       </div>
+      <button
+        onclick="openRepartirModal()"
+        style="display:flex;align-items:center;gap:8px;padding:9px 18px;background:rgba(78,255,206,0.1);border:1.5px solid rgba(78,255,206,0.35);border-radius:10px;font-family:var(--font-body);font-size:0.82rem;font-weight:700;color:var(--aurora);cursor:pointer;transition:all 0.18s;white-space:nowrap;"
+        onmouseover="this.style.background='rgba(78,255,206,0.2)'"
+        onmouseout="this.style.background='rgba(78,255,206,0.1)'"
+        id="btn-repartir"
+      >
+        ⚡ Répartir équitablement
+      </button>
     </div>
 
     <!-- Barre de recherche films -->
@@ -501,6 +510,30 @@
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- ══ MODALE RÉPARTITION ÉQUITABLE ══ -->
+<div class="modal-overlay" id="modal-repartir">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Répartition équitable</div>
+        <div style="font-size:0.75rem;color:var(--mist);margin-top:3px;" id="repartir-sub">Aperçu avant application</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('repartir')">✕</button>
+    </div>
+
+    <!-- Aperçu par jury -->
+    <div id="repartir-preview" style="margin:4px 0 8px;display:flex;flex-direction:column;gap:10px;"></div>
+
+    <!-- Résumé total -->
+    <div id="repartir-summary" style="padding:10px 14px;background:rgba(78,255,206,0.06);border:1px solid rgba(78,255,206,0.18);border-radius:10px;font-size:0.8rem;color:var(--aurora);margin-bottom:4px;"></div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('repartir')">Annuler</button>
+      <button class="btn-confirm" id="btn-confirm-repartir" onclick="applyRepartition()">⚡ Appliquer la répartition →</button>
+    </div>
+  </div>
+</div>
 
 <!-- Script principal du panneau d'administration -->
 <script src="../js/admin-panel.js"></script>

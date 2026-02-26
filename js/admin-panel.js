@@ -78,18 +78,18 @@
   ];
 
   let users = [
-    { id:1,  name:"Marie Lefebvre",  email:"m.lefebvre@marsai.fr",  role:"jury",       active:true,  token:"MLF-7A2K-X9P", assigned:[1,2,3,5],        cls:"ua-1", label:"Présidente · Réalisatrice", avatar:"https://i.pravatar.cc/150?img=47" },
-    { id:2,  name:"Pierre Dubois",   email:"p.dubois@marsai.fr",    role:"jury",       active:true,  token:"PDB-3R8M-Q1T", assigned:[1,4,6,7],        cls:"ua-2", label:"Directeur artistique",      avatar:"https://i.pravatar.cc/150?img=12" },
-    { id:3,  name:"Kenji Ito",       email:"k.ito@marsai.jp",       role:"jury",       active:true,  token:"KIT-9S4N-W2V", assigned:[2,3,8,9],        cls:"ua-3", label:"Artiste numérique",         avatar:"https://i.pravatar.cc/150?img=68" },
-    { id:4,  name:"Sofia Eriksson",  email:"s.eriksson@marsai.se",  role:"jury",       active:true,  token:"SEK-5H1B-R4C", assigned:[5,6,7,10],       cls:"ua-4", label:"Critique de cinéma",        avatar:"https://i.pravatar.cc/150?img=44" },
-    { id:5,  name:"Camille Moreau",  email:"c.moreau@marsai.fr",    role:"moderateur", active:true,  token:"CMR-2J6D-L8Z", assigned:[],               cls:"ua-5", label:"Modératrice",               avatar:"https://i.pravatar.cc/150?img=25" },
-    { id:6,  name:"Thomas Leroy",    email:"t.leroy@marsai.fr",     role:"moderateur", active:false, token:"TLR-8K3F-P7Y", assigned:[],               cls:"ua-6", label:"Modérateur",                avatar:"https://i.pravatar.cc/150?img=15" },
-    { id:7,  name:"Amara Touré",     email:"a.toure@marsai.ml",     role:"jury",       active:true,  token:"ATR-4L9G-H3N", assigned:[1,3,5,7,9,11,13],cls:"ua-1", label:"Productrice",               avatar:"https://i.pravatar.cc/150?img=32" },
-    { id:8,  name:"Elena Petrov",    email:"e.petrov@marsai.ru",    role:"jury",       active:true,  token:"EPV-7K2R-J6M", assigned:[2,4],            cls:"ua-2", label:"Compositrice",              avatar:"https://i.pravatar.cc/150?img=29" },
-    { id:9,  name:"Yuki Nakamura",   email:"y.nakamura@marsai.jp",  role:"jury",       active:true,  token:"YNK-1P8T-V5B", assigned:[3,6,9],          cls:"ua-3", label:"Réalisatrice",              avatar:"https://i.pravatar.cc/150?img=56" },
-    { id:10, name:"Carlos Ruiz",     email:"c.ruiz@marsai.es",      role:"jury",       active:true,  token:"CRZ-9D3C-W7Q", assigned:[],               cls:"ua-4", label:"Chef opérateur",            avatar:"https://i.pravatar.cc/150?img=18" },
-    { id:11, name:"Priya Mehta",     email:"p.mehta@marsai.in",     role:"jury",       active:true,  token:"PMT-6A1N-X2V", assigned:[4,8],            cls:"ua-1", label:"Scénariste",                avatar:"https://i.pravatar.cc/150?img=36" },
-    { id:12, name:"Omar Diallo",     email:"o.diallo@marsai.sn",    role:"jury",       active:true,  token:"ODL-3S7F-L9Z", assigned:[],               cls:"ua-2", label:"Directeur photo",           avatar:"https://i.pravatar.cc/150?img=11" },
+    { id:1,  name:"Marie Lefebvre",  email:"m.lefebvre@marsai.fr",  role:"jury",       active:true,  token:"MLF-7A2K-X9P", assigned:[1,2,3,5,11,15,19,23,27,31,35,39,43,47],          cls:"ua-1", label:"Présidente · Réalisatrice", avatar:"https://i.pravatar.cc/150?img=47" },
+    { id:2,  name:"Pierre Dubois",   email:"p.dubois@marsai.fr",    role:"jury",       active:true,  token:"PDB-3R8M-Q1T", assigned:[1,4,6,7,12,16,20,24,28,32,36,40,44],            cls:"ua-2", label:"Directeur artistique",      avatar:"https://i.pravatar.cc/150?img=12" },
+    { id:3,  name:"Kenji Ito",       email:"k.ito@marsai.jp",       role:"jury",       active:true,  token:"KIT-9S4N-W2V", assigned:[2,3,8,9,13,17,21,25,29,33,37,41,45],            cls:"ua-3", label:"Artiste numérique",         avatar:"https://i.pravatar.cc/150?img=68" },
+    { id:4,  name:"Sofia Eriksson",  email:"s.eriksson@marsai.se",  role:"jury",       active:true,  token:"SEK-5H1B-R4C", assigned:[5,6,7,10,14,18,22,26,30,34,38,42,46,50],        cls:"ua-4", label:"Critique de cinéma",        avatar:"https://i.pravatar.cc/150?img=44" },
+    { id:5,  name:"Camille Moreau",  email:"c.moreau@marsai.fr",    role:"moderateur", active:true,  token:"CMR-2J6D-L8Z", assigned:[],                                             cls:"ua-5", label:"Modératrice",               avatar:"https://i.pravatar.cc/150?img=25" },
+    { id:6,  name:"Thomas Leroy",    email:"t.leroy@marsai.fr",     role:"moderateur", active:false, token:"TLR-8K3F-P7Y", assigned:[],                                             cls:"ua-6", label:"Modérateur",                avatar:"https://i.pravatar.cc/150?img=15" },
+    { id:7,  name:"Amara Touré",     email:"a.toure@marsai.ml",     role:"jury",       active:true,  token:"ATR-4L9G-H3N", assigned:[1,3,5,7,9,11,13,49],                          cls:"ua-1", label:"Productrice",               avatar:"https://i.pravatar.cc/150?img=32" },
+    { id:8,  name:"Elena Petrov",    email:"e.petrov@marsai.ru",    role:"jury",       active:true,  token:"EPV-7K2R-J6M", assigned:[2,4,44,46,48],                                 cls:"ua-2", label:"Compositrice",              avatar:"https://i.pravatar.cc/150?img=29" },
+    { id:9,  name:"Yuki Nakamura",   email:"y.nakamura@marsai.jp",  role:"jury",       active:true,  token:"YNK-1P8T-V5B", assigned:[3,6,9,15,17,19,21],                           cls:"ua-3", label:"Réalisatrice",              avatar:"https://i.pravatar.cc/150?img=56" },
+    { id:10, name:"Carlos Ruiz",     email:"c.ruiz@marsai.es",      role:"jury",       active:true,  token:"CRZ-9D3C-W7Q", assigned:[22,26,30,34,38],                               cls:"ua-4", label:"Chef opérateur",            avatar:"https://i.pravatar.cc/150?img=18" },
+    { id:11, name:"Priya Mehta",     email:"p.mehta@marsai.in",     role:"jury",       active:true,  token:"PMT-6A1N-X2V", assigned:[4,8,23,27,31,35],                             cls:"ua-1", label:"Scénariste",                avatar:"https://i.pravatar.cc/150?img=36" },
+    { id:12, name:"Omar Diallo",     email:"o.diallo@marsai.sn",    role:"jury",       active:true,  token:"ODL-3S7F-L9Z", assigned:[36,40,48,50],                                 cls:"ua-2", label:"Directeur photo",           avatar:"https://i.pravatar.cc/150?img=11" },
   ];
 
   let newUserRole = 'jury';
@@ -811,6 +811,74 @@
 
   function closeCommentsModal() {
     document.getElementById('modal-comments').classList.remove('open');
+  }
+
+  /* ── RÉPARTITION ÉQUITABLE ── */
+  let repartirPlan = [];
+
+  function openRepartirModal() {
+    const juryUsers = users.filter(u => u.role === 'jury' && u.active);
+    if (juryUsers.length === 0) {
+      showToast('Aucun jury actif pour la répartition', 'err');
+      return;
+    }
+
+    const unassigned = films.filter(f => !juryUsers.some(u => u.assigned.includes(f.id)));
+    if (unassigned.length === 0) {
+      showToast('Tous les films sont déjà assignés', 'warn');
+      return;
+    }
+
+    // Répartition round-robin équitable
+    repartirPlan = juryUsers.map(u => ({ userId: u.id, newFilmIds: [] }));
+    unassigned.forEach((f, i) => {
+      repartirPlan[i % juryUsers.length].newFilmIds.push(f.id);
+    });
+
+    // Rendu aperçu
+    const preview = document.getElementById('repartir-preview');
+    preview.innerHTML = repartirPlan.map(plan => {
+      const u = users.find(x => x.id === plan.userId);
+      const current = u.assigned.length;
+      const added   = plan.newFilmIds.length;
+      const total   = current + added;
+      const loadStyle = total <= 10 ? 'color:var(--aurora)' : total <= 20 ? 'color:var(--solar)' : 'color:var(--coral)';
+      return `<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;">
+        <img src="${u.avatar}" alt="${u.name}" style="width:34px;height:34px;border-radius:8px;object-fit:cover;flex-shrink:0;">
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:0.82rem;font-weight:700;color:var(--white-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${u.name}</div>
+          <div style="font-size:0.72rem;color:var(--mist);">${current} actuel${current > 1 ? 's' : ''} + <span style="color:var(--aurora);">+${added} nouveau${added > 1 ? 'x' : ''}</span></div>
+        </div>
+        <div style="font-family:var(--font-mono);font-size:1.05rem;font-weight:800;${loadStyle};flex-shrink:0;">${total}</div>
+      </div>`;
+    }).join('');
+
+    document.getElementById('repartir-sub').textContent =
+      `${unassigned.length} film${unassigned.length > 1 ? 's' : ''} à répartir entre ${juryUsers.length} jurés`;
+
+    const perJury = Math.floor(unassigned.length / juryUsers.length);
+    const extra   = unassigned.length % juryUsers.length;
+    document.getElementById('repartir-summary').innerHTML =
+      `⚡ ${unassigned.length} films répartis — environ <strong>${perJury}${extra > 0 ? '–'+(perJury+1) : ''} films</strong> par juré`;
+
+    document.getElementById('modal-repartir').classList.add('open');
+  }
+
+  function applyRepartition() {
+    if (!repartirPlan.length) return;
+    let total = 0;
+    repartirPlan.forEach(plan => {
+      const u = users.find(x => x.id === plan.userId);
+      if (!u) return;
+      plan.newFilmIds.forEach(fid => {
+        if (!u.assigned.includes(fid)) { u.assigned.push(fid); total++; }
+      });
+    });
+    closeModal('repartir');
+    repartirPlan = [];
+    renderAssignView();
+    renderUsers();
+    showToast(`✓ ${total} film${total > 1 ? 's' : ''} répartis équitablement`, 'ok');
   }
 
   /* ── INIT ── */
