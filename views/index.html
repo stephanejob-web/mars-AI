@@ -11,7 +11,6 @@
   <link rel="stylesheet" href="../css/tokens.css">
   <link rel="stylesheet" href="../css/reset.css">
   <link rel="stylesheet" href="../css/grain.css">
-  <link rel="stylesheet" href="../css/dev-nav.css">
   <link rel="stylesheet" href="../css/index.css">
 
   <!-- ============================================================
@@ -105,11 +104,11 @@
 
         <!-- Partenaires -->
         <div class="hero-partners">
-          <span class="hero-partners-label">Co-organisé par</span>
+          <span class="hero-partners-label">Une co-création</span>
           <a href="https://laplateforme.io/coding-school/" target="_blank" rel="noopener" class="hero-partners-logo">
             <img src="../assets/logo-laplateforme.png" alt="La Plateforme · Coding School">
           </a>
-          <span class="hero-partners-sep">×</span>
+          <span class="hero-partners-sep">&</span>
           <span class="hero-partners-name">Mobile Film Festival</span>
         </div>
 
@@ -128,109 +127,60 @@
 
         <!-- Tags essentiels -->
         <div class="hero-tags">
-          <span class="tag"><strong>60 secondes</strong> pile</span>
+          <span class="tag"><strong>60s</strong> chrono</span>
           <span class="tag"><strong>120+</strong> pays</span>
-          <span class="tag"><strong>Gratuit</strong> · ouvert à tous</span>
-          <span class="tag"><strong>Prix</strong> remis à Marseille</span>
+          <span class="tag"><strong>100%</strong> gratuit</span>
+          <span class="tag"><strong>Prix</strong> Marseille</span>
+        </div>
+
+        <!-- Accroche + CTA -->
+        <div class="hero-accroche">
+          <p class="hero-accroche-title">
+            Voici ce qu'une IA peut créer.<br>
+            <span style="color:var(--aurora);">Imaginez ce que vous allez faire.</span>
+          </p>
+          <div class="hero-cta">
+            <a href="formulaire-depot.html" class="btn-primary">
+              Soumettre un film <span class="arrow">→</span>
+            </a>
+            <button class="btn-demo" onclick="window.open('../assets/video.mp4','_blank')">
+              Démo
+              <span class="btn-demo-laser"></span>
+            </button>
+          </div>
         </div>
 
       </div><!-- /hero-left -->
 
-      <!-- Colonne droite — texte + cinéma player -->
+      <!-- Colonne droite — Marseille + countdown -->
       <div class="hero-right">
-
-        <!-- Texte accroche -->
-        <div class="hero-right-text">
-          <p class="hero-right-title">
-            Voici ce qu'une IA peut créer.<br>
-            <span style="color:var(--aurora);">Imaginez ce que vous allez faire.</span>
-          </p>
-          <p class="hero-right-sub">
-            Aucune caméra. Aucun acteur. Aucun tournage.<br>
-            Uniquement un prompt, un modèle, et une vision.
-          </p>
-        </div>
-
-        <!-- Lecteur cinéma HUD -->
-        <div class="hud-frame">
-
-          <!-- Coins HUD aurora -->
-          <div class="hud-corner hud-tl"></div>
-          <div class="hud-corner hud-tr"></div>
-          <div class="hud-corner hud-bl" style="bottom:37px;"></div>
-          <div class="hud-corner hud-br" style="bottom:37px;"></div>
-
-          <div class="cinema-wrap" id="cinema-wrap">
-
-            <!-- Ligne de scan -->
-            <div class="cinema-scan"></div>
-
-            <!-- Badge IA -->
-            <div class="cinema-ia-badge" id="cinema-badge">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-                <path d="M12 2L9 9H2L7.5 13.5L5.5 21L12 16.5L18.5 21L16.5 13.5L22 9H15L12 2Z" fill="#4EFFCE" opacity="0.9"/>
-              </svg>
-              <span>Généré par IA</span>
+        <div class="hero-city">Marseille</div>
+        <div class="countdown-inline">
+          <span class="countdown-label">Clôture des dépôts · 30 sept. 2026</span>
+          <div class="countdown-units">
+            <div class="countdown-unit">
+              <span class="countdown-num" id="days">217</span>
+              <div class="countdown-lbl">Jours</div>
             </div>
-
-            <div class="cinema-overlay" id="cinema-overlay" onclick="startDemo()">
-              <div class="cinema-play" id="cinema-play">▶</div>
-              <div class="cinema-overlay-sub">Cliquer pour lancer la projection</div>
+            <span class="countdown-sep">:</span>
+            <div class="countdown-unit">
+              <span class="countdown-num" id="hours">08</span>
+              <div class="countdown-lbl">Heures</div>
             </div>
-
-            <video
-              id="demo-video"
-              src="../assets/video.mp4"
-              style="width:100%;display:block;background:#000;aspect-ratio:16/9;object-fit:cover;"
-              preload="metadata"
-              playsinline
-            ></video>
-
-          </div><!-- /cinema-wrap -->
-
-          <!-- Barre technique HUD -->
-          <div class="hud-bar">
-            <span class="hud-timecode" id="hud-timecode">00:00</span>
-            <div class="hud-bar-mid">
-              <span class="hud-rec-dot"></span>
-              <span>Prototype · marsAI 2026</span>
+            <span class="countdown-sep">:</span>
+            <div class="countdown-unit">
+              <span class="countdown-num" id="minutes">33</span>
+              <div class="countdown-lbl">Minutes</div>
             </div>
-            <span class="hud-res">1920×1080</span>
-          </div>
-
-        </div><!-- /hud-frame -->
-
-      </div>
-
-    </div>
-
-    <!-- Compte à rebours pleine largeur -->
-    <div class="countdown-wrapper">
-      <div class="countdown-inner">
-        <div class="countdown-top">
-          <span class="countdown-top-line"></span>
-          <span class="countdown-label">Clôture des dépôts · 30 septembre 2026</span>
-          <span class="countdown-top-line r"></span>
-        </div>
-        <div class="countdown-units">
-          <div class="countdown-unit">
-            <span class="countdown-num" id="days">221</span>
-            <div class="countdown-lbl">Jours</div>
-          </div>
-          <div class="countdown-unit">
-            <span class="countdown-num" id="hours">08</span>
-            <div class="countdown-lbl">Heures</div>
-          </div>
-          <div class="countdown-unit">
-            <span class="countdown-num" id="minutes">33</span>
-            <div class="countdown-lbl">Minutes</div>
-          </div>
-          <div class="countdown-unit">
-            <span class="countdown-num" id="seconds">47</span>
-            <div class="countdown-lbl">Secondes</div>
+            <span class="countdown-sep">:</span>
+            <div class="countdown-unit">
+              <span class="countdown-num" id="seconds">47</span>
+              <div class="countdown-lbl">Secondes</div>
+            </div>
           </div>
         </div>
-      </div>
+      </div><!-- /hero-right -->
+
     </div>
   </section>
 
@@ -238,23 +188,29 @@
        CONCEPT — Présentation des 3 piliers du concours
        ============================================================ -->
   <section class="concept" id="concours">
+
+    <!-- Robot IA — haut à droite -->
+    <div class="robot-wrap reveal" data-delay="2">
+      <img class="robot-img" src="../assets/Robot2.png" alt="" loading="lazy">
+    </div>
+
     <div class="section-inner">
-      <div class="section-label">Le Concept</div>
-      <h2 class="section-title">Une contrainte absolue,<br>une liberté totale</h2>
-      <p class="section-desc">marsAI est un concours international de courts-métrages d'une minute intégralement générés par IA. Co-organisé par <strong style="color:var(--white-soft)">La Plateforme</strong> et le <strong style="color:var(--white-soft)">Mobile Film Festival</strong>. L'humain reste au cœur de la création.</p>
+      <div class="section-label reveal">Le Concept</div>
+      <h2 class="section-title reveal" data-delay="1">Une contrainte absolue,<br>une liberté totale</h2>
+      <p class="section-desc reveal" data-delay="2">marsAI est un concours international de courts-métrages d'une minute intégralement générés par IA. Co-organisé par <strong style="color:var(--white-soft)">La Plateforme</strong> et le <strong style="color:var(--white-soft)">Mobile Film Festival</strong>. L'humain reste au cœur de la création.</p>
 
       <div class="concept-grid">
-        <div class="concept-card fade-in">
+        <div class="concept-card reveal" data-delay="3">
           <span class="concept-num">1'</span>
           <div class="concept-card-title">1 Minute, 1 Film</div>
           <p>La règle d'or : 60 secondes pile. Chaque seconde compte pour raconter quelque chose qui dure.</p>
         </div>
-        <div class="concept-card fade-in">
+        <div class="concept-card reveal" data-delay="4">
           <span class="concept-num">IA</span>
           <div class="concept-card-title">L'humain au cœur de l'IA</div>
           <p>Scénario, génération image/vidéo, post-production — tous les outils IA sont documentés. Un réalisateur peut soumettre plusieurs films.</p>
         </div>
-        <div class="concept-card fade-in">
+        <div class="concept-card reveal" data-delay="5">
           <span class="concept-num">50</span>
           <div class="concept-card-title">Films en compétition</div>
           <p>Le jury sélectionne 50 œuvres parmi 20 000 candidatures. Grand Prix, Prix du Jury, Prix du Public — modèle Cannes avec bourses.</p>
@@ -353,14 +309,14 @@
     <div class="section-inner">
       <div class="about-inner">
         <div class="about-text">
-          <div class="section-label">L'Événement · Marseille 2026</div>
-          <h2 class="section-title">Vivez la naissance<br>d'un nouveau cinéma</h2>
-          <p class="section-desc">Trois jours aux Friches Belle de Mai — une ancienne manufacture industrielle transformée en capitale culturelle. Salles de projection, lumières basses, jury international, et sur scène : les créateurs qui réinventent le 7e art avec l'IA. Vous y serez.</p>
+          <div class="section-label reveal">L'Événement · Marseille 2026</div>
+          <h2 class="section-title reveal" data-delay="1">Vivez la naissance<br>d'un nouveau cinéma</h2>
+          <p class="section-desc reveal" data-delay="2">Trois jours aux Friches Belle de Mai — une ancienne manufacture industrielle transformée en capitale culturelle. Salles de projection, lumières basses, jury international, et sur scène : les créateurs qui réinventent le 7e art avec l'IA. Vous y serez.</p>
 
           <!-- Programme -->
           <div class="event-programme">
 
-            <div class="prog-item">
+            <div class="prog-item reveal">
               <span class="prog-dot" style="background:var(--aurora)"></span>
               <div>
                 <div class="prog-day">Vendredi soir — Ouverture</div>
@@ -372,7 +328,7 @@
               </div>
             </div>
 
-            <div class="prog-item">
+            <div class="prog-item reveal">
               <span class="prog-dot" style="background:var(--lavande)"></span>
               <div>
                 <div class="prog-day">Samedi — Deux journées de conférences</div>
@@ -396,7 +352,7 @@
               </div>
             </div>
 
-            <div class="prog-item">
+            <div class="prog-item reveal">
               <span class="prog-dot" style="background:var(--solar)"></span>
               <div>
                 <div class="prog-day">Dimanche — Gala de clôture</div>
@@ -475,8 +431,8 @@
     <div class="cta-section">
       <div class="cta-block">
         <div class="cta-left">
-          <div class="section-label">Appel à Projets</div>
-          <h2 class="section-title" style="max-width: 440px;">Votre film a sa place ici</h2>
+          <div class="section-label reveal">Appel à Projets</div>
+          <h2 class="section-title reveal" data-delay="1" style="max-width: 440px;">Votre film a sa place ici</h2>
           <ul class="cta-requirements">
             <li>Durée : <strong>60 secondes pile</strong></li>
             <li>IA entière ou hybride — documentée dans la fiche IA</li>
@@ -504,15 +460,15 @@
   <section class="how-section">
     <div class="section-inner">
 
-      <div class="how-header fade-in">
-        <div class="section-label">Dépôt de film</div>
-        <h2 class="section-title">Comment ça marche ?</h2>
-        <p class="section-desc" style="max-width:520px;margin:0 auto;">Un tunnel guidé en 4 étapes — de votre profil à la soumission finale. Moins de 10 minutes.</p>
+      <div class="how-header">
+        <div class="section-label reveal">Dépôt de film</div>
+        <h2 class="section-title reveal" data-delay="1">Comment ça marche ?</h2>
+        <p class="section-desc reveal" data-delay="2" style="max-width:520px;margin:0 auto;">Un tunnel guidé en 4 étapes — de votre profil à la soumission finale. Moins de 10 minutes.</p>
       </div>
 
       <div class="how-steps">
 
-        <div class="how-card fade-in">
+        <div class="how-card reveal" data-delay="1">
           <div class="how-num-wrap">
             <div class="how-circle hc-1">👤</div>
             <div class="how-step-num">01</div>
@@ -522,7 +478,7 @@
           <span class="how-tag ht-1">Identité & contact</span>
         </div>
 
-        <div class="how-card fade-in">
+        <div class="how-card reveal" data-delay="2">
           <div class="how-num-wrap">
             <div class="how-circle hc-2">🎬</div>
             <div class="how-step-num">02</div>
@@ -532,7 +488,7 @@
           <span class="how-tag ht-2">Titre · Synopsis · Vidéo</span>
         </div>
 
-        <div class="how-card fade-in">
+        <div class="how-card reveal" data-delay="3">
           <div class="how-num-wrap">
             <div class="how-circle hc-3">🤖</div>
             <div class="how-step-num">03</div>
@@ -542,7 +498,7 @@
           <span class="how-tag ht-3">Outils · Sous-titres FR/EN</span>
         </div>
 
-        <div class="how-card fade-in">
+        <div class="how-card reveal" data-delay="4">
           <div class="how-num-wrap">
             <div class="how-circle hc-4">✅</div>
             <div class="how-step-num">04</div>
@@ -574,8 +530,8 @@
     <div class="section-inner">
       <div class="gallery-header">
         <div>
-          <div class="section-label">Sélection Officielle marsAI 2026</div>
-          <h2 class="section-title" style="margin-bottom:0">50 Films · Imaginez des futurs souhaitables</h2>
+          <div class="section-label reveal">Sélection Officielle marsAI 2026</div>
+          <h2 class="section-title reveal" data-delay="1" style="margin-bottom:0">50 Films · Imaginez des futurs souhaitables</h2>
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:12px;">
           <div class="gallery-filters">
@@ -894,15 +850,15 @@
        ============================================================ -->
   <section class="jury-section" id="jury">
     <div class="section-inner">
-      <div class="section-label">Jury International · marsAI 2026</div>
-      <h2 class="section-title">Le Jury</h2>
-      <p class="section-desc" style="margin-bottom:52px;">Des créateurs, artistes et personnalités du cinéma venus du monde entier pour évaluer les œuvres en compétition.</p>
+      <div class="section-label reveal">Jury International · marsAI 2026</div>
+      <h2 class="section-title reveal" data-delay="1">Le Jury</h2>
+      <p class="section-desc reveal" data-delay="2" style="margin-bottom:52px;">Des créateurs, artistes et personnalités du cinéma venus du monde entier pour évaluer les œuvres en compétition.</p>
 
       <!-- Carte vedette (président·e) -->
-      <div id="jury-featured-wrap"></div>
+      <div id="jury-featured-wrap" class="reveal" data-delay="3"></div>
 
       <!-- Grille des membres -->
-      <div class="jury-grid" id="jury-grid"></div>
+      <div class="jury-grid reveal" data-delay="4" id="jury-grid"></div>
     </div>
   </section>
 
@@ -913,12 +869,12 @@
        ============================================================ -->
   <section class="palmares-section" id="palmares">
     <div class="section-inner">
-      <div class="section-label" style="text-align:center;margin-bottom:14px;">Palmarès · Modèle Cannes</div>
-      <h2 class="section-title" style="text-align:center;margin-bottom:16px;">Les Prix marsAI</h2>
+      <div class="section-label reveal" style="text-align:center;margin-bottom:14px;">Palmarès · Modèle Cannes</div>
+      <h2 class="section-title reveal" data-delay="1" style="text-align:center;margin-bottom:16px;">Les Prix marsAI</h2>
       <p class="palmares-intro">Bourses et récompenses décernées par le jury international au terme des projections officielles.</p>
 
       <!-- Grand Prix -->
-      <div class="award-grand">
+      <div class="award-grand reveal" data-delay="2">
         <div class="award-grand-shine"></div>
         <div class="award-grand-icon">
           <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -935,17 +891,17 @@
 
       <!-- Prix secondaires -->
       <div class="awards-secondary">
-        <div class="award-card award-jury">
+        <div class="award-card award-jury reveal" data-delay="3">
           <div class="award-icon">⚖️</div>
           <div class="award-name">Prix du Jury</div>
           <div class="award-desc">Coup de cœur artistique — sélection spéciale décernée par le jury international.</div>
         </div>
-        <div class="award-card award-public">
+        <div class="award-card award-public reveal" data-delay="4">
           <div class="award-icon">🌍</div>
           <div class="award-name">Prix du Public</div>
           <div class="award-desc">Vote ouvert en ligne pendant le festival — le public désigne son film favori.</div>
         </div>
-        <div class="award-card award-innov">
+        <div class="award-card award-innov reveal" data-delay="5">
           <div class="award-icon">🤖</div>
           <div class="award-name">Prix Innovation IA</div>
           <div class="award-desc">Usage le plus audacieux et créatif de l'intelligence artificielle dans la création.</div>
@@ -1023,16 +979,6 @@
   <script src="../js/index-main.js"></script>
   <script type="module" src="../js/index-sphere.js"></script>
 
-  <!-- ============================================================
-       NAVIGATION DE DÉVELOPPEMENT — Liens entre maquettes
-       ============================================================ -->
-  <div id="dev-nav">
-    <span class="dn-label">Maquette</span>
-    <a href="index.html" class="dn-btn active">🏠 Accueil</a>
-    <div class="dn-sep"></div>
-    <a href="admin-panel.html" class="dn-btn espace-admin">🛡️ Espace Admin</a>
-    <a href="admin-jury.html"  class="dn-btn espace-jury">⚖️ Espace Jury</a>
-  </div>
 
 </body>
 </html>
