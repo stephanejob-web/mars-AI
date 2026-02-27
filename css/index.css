@@ -220,8 +220,8 @@ nav.nav-scrolled .lang-btn {
   z-index: 0;
   pointer-events: none;
   object-fit: cover;
-  opacity: 0.9;
-  filter: brightness(0.7);
+  opacity: 1;
+  filter: none;
 }
 
 /* ================================================================
@@ -284,14 +284,7 @@ nav.nav-scrolled .lang-btn {
   overflow: hidden;
 }
 .hero-canvas-bg::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(to right,  rgba(10,15,46,0.35) 15%, transparent 60%),
-    linear-gradient(to top,    rgba(10,15,46,0.40) 0%,  transparent 30%),
-    linear-gradient(to bottom, rgba(10,15,46,0.20) 0%,  transparent 20%);
-  pointer-events: none;
+  display: none;
 }
 
 /* --- Badge IA genere --- */

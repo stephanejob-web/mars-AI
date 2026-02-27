@@ -163,9 +163,9 @@
     // fond de nav — classe scrolled pour le glassmorphism
     nav.classList.toggle('nav-scrolled', y > 60);
 
-    // Vidéo hero : opacity 0.9→0 sur 70% de la hauteur hero
+    // Vidéo hero : opacity 1→0 sur 70% de la hauteur hero
     const heroHeight = heroEl.offsetHeight;
-    const videoOpacity = 0.9 * Math.max(0, 1 - (y / (heroHeight * 0.7)));
+    const videoOpacity = Math.max(0, 1 - (y / (heroHeight * 0.7)));
     const heroVideo = document.getElementById('hero-video');
     if (heroVideo) heroVideo.style.opacity = videoOpacity;
 
