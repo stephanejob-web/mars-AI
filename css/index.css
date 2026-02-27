@@ -823,170 +823,193 @@ section {
    ================================================================ */
 .about {
   position: relative;
-  overflow: hidden;
-  background: rgba(10,15,46,0.92);
+  overflow: visible;
+}
+.about-bg {
+  position: absolute;
+  top: -60px;
+  bottom: -60px;
+  left: 0;
+  right: 0;
+  background: url('../assets/friche-belle-mai-toit-terrasse.jpg') center 40% / cover no-repeat;
+  filter: saturate(0.4) brightness(0.65);
+  pointer-events: none;
+  /* Masque combiné : fondu haut/bas + fondu gauche (texte) vers droite (globe) */
+  -webkit-mask-image:
+    linear-gradient(180deg, transparent 0%, black 15%, black 85%, transparent 100%),
+    linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.3) 25%, black 55%, black 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(180deg, transparent 0%, black 15%, black 85%, transparent 100%),
+    linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.3) 25%, black 55%, black 100%);
+  mask-composite: intersect;
+}
+/* Voile bleu léger côté texte pour lisibilité */
+.about::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(10, 15, 46, 0.75) 0%,
+    rgba(10, 15, 46, 0.4) 40%,
+    transparent 65%
+  );
+  pointer-events: none;
+}
+.about .section-inner {
+  position: relative;
+  z-index: 1;
 }
 .about-inner {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 80px;
+  gap: 40px;
+  align-items: center;
 }
 .about-visual {
   position: relative;
+  display: flex;
+  justify-content: center;
 }
 
-/* --- Carte du lieu (venue) avec carte Google Maps --- */
-.venue-card {
-  background: var(--horizon);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 24px 80px rgba(0,0,0,0.5);
-}
-.venue-map {
-  height: 300px;
+/* --- Globe 3D container --- */
+.globe-container {
   position: relative;
-  overflow: hidden;
+  width: 100%;
+  max-width: 460px;
 }
-.venue-map iframe {
-  width: 100%; height: 115%; border: none;
-  filter: saturate(0.2) brightness(0.55) hue-rotate(185deg);
-  margin-top: -7%;
+.globe-wrap {
+  width: 100%;
+  aspect-ratio: 1;
+  position: relative;
+}
+.globe-wrap canvas {
+  width: 100% !important;
+  height: 100% !important;
   display: block;
 }
-.venue-map-overlay {
-  position: absolute; inset: 0;
-  background: linear-gradient(to bottom, rgba(10,15,46,0.2) 0%, rgba(10,15,46,0.75) 100%);
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 12px;
+
+/* --- Carte venue compacte superposée sur le globe --- */
+.venue-overlay {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  background: rgba(10, 15, 46, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(78, 255, 206, 0.15);
+  border-radius: 10px;
+  padding: 10px 16px;
+  text-align: center;
+  white-space: nowrap;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
 }
-.venue-pin {
-  font-size: 2.8rem;
-  display: block;
-  animation: bounce 2s ease-in-out infinite;
-  filter: drop-shadow(0 6px 16px rgba(78,255,206,0.45));
-}
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-9px); }
-}
-.venue-coords-badge {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--aurora);
-  background: rgba(10,15,46,0.75);
-  border: 1px solid rgba(78,255,206,0.22);
-  border-radius: 30px;
-  padding: 6px 16px;
-  letter-spacing: 0.07em;
-  backdrop-filter: blur(8px);
-}
-.venue-info {
-  padding: 24px 28px 28px;
-}
-.venue-name {
+.venue-overlay-name {
   font-family: var(--font-display);
-  font-size: 1.4rem;
+  font-size: 0.85rem;
   font-weight: 800;
+  color: var(--white-soft);
+  margin-bottom: 1px;
+}
+.venue-overlay-address {
+  font-size: 0.65rem;
+  color: var(--mist);
   margin-bottom: 4px;
 }
-.venue-address {
-  font-size: 0.85rem;
-  color: var(--mist);
-  margin-bottom: 16px;
+.venue-overlay-coords {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--aurora);
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
 }
-.venue-tags {
-  display: flex; gap: 8px; flex-wrap: wrap;
-  margin-bottom: 20px;
-}
-.venue-tag {
-  font-size: 0.72rem; font-weight: 600;
-  padding: 4px 11px;
-  border-radius: 20px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.09);
-  color: var(--mist);
-}
-.venue-btn {
-  display: inline-flex; align-items: center; gap: 7px;
-  background: rgba(78,255,206,0.08);
-  border: 1px solid rgba(78,255,206,0.25);
-  border-radius: 10px;
-  padding: 10px 20px;
+.venue-overlay-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(78, 255, 206, 0.1);
+  border: 1px solid rgba(78, 255, 206, 0.25);
+  border-radius: 6px;
+  padding: 4px 12px;
   font-family: var(--font-body);
-  font-size: 0.82rem; font-weight: 600;
+  font-size: 0.68rem;
+  font-weight: 600;
   color: var(--aurora);
   text-decoration: none;
   transition: all 0.2s;
 }
-.venue-btn:hover { background: rgba(78,255,206,0.16); transform: translateY(-1px); }
-.about-stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-top: 16px;
+.venue-overlay-btn:hover {
+  background: rgba(78, 255, 206, 0.18);
+  transform: translateY(-1px);
 }
 
 /* ================================================================
-   PROGRAMME (timeline verticale)
-   Liste chronologique des journees du festival
+   PROGRAMME COMPACT (3 lignes - refonte 2026-02)
+   Version condensée : Ven / Sam / Dim
    ================================================================ */
-.event-programme {
+.prog-compact {
   display: flex;
   flex-direction: column;
   gap: 0;
-  margin-top: 28px;
-  border-left: 1px solid rgba(255,255,255,0.08);
-  padding-left: 24px;
+  margin-top: 24px;
+  border-left: 2px solid rgba(255, 255, 255, 0.06);
+  padding-left: 18px;
 }
-.prog-item {
+.prog-line {
   display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  padding: 14px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-  position: relative;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
-.prog-item:last-child { border-bottom: none; }
-.prog-dot {
-  width: 10px; height: 10px;
+.prog-line:last-child { border-bottom: none; }
+.prog-dot-mini {
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  margin-top: 5px;
   flex-shrink: 0;
-  position: absolute;
-  left: -29px;
-  box-shadow: 0 0 10px currentColor;
+  box-shadow: 0 0 8px currentColor;
 }
-.prog-day {
-  font-size: 0.82rem;
+.prog-line-day {
+  font-size: 0.78rem;
   font-weight: 700;
   color: var(--white-soft);
-  margin-bottom: 3px;
+  min-width: 36px;
 }
-.prog-desc {
-  font-size: 0.78rem;
+.prog-line-desc {
+  font-size: 0.76rem;
   color: var(--mist);
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
-/* --- Puces statistiques (stat chips) --- */
-.stat-chip {
-  background: rgba(78,255,206,0.07);
-  border: 1px solid rgba(78,255,206,0.15);
-  border-radius: 10px;
-  padding: 16px 20px;
+/* --- Stats mini en ligne --- */
+.stat-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 22px;
+  flex-wrap: wrap;
 }
-.stat-value {
+.stat-chip-mini {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  background: rgba(78, 255, 206, 0.06);
+  border: 1px solid rgba(78, 255, 206, 0.12);
+  border-radius: 8px;
+  padding: 8px 14px;
+}
+.stat-mini-value {
   font-family: var(--font-mono);
-  font-size: 1.6rem;
+  font-size: 1rem;
   color: var(--aurora);
-  font-weight: 500;
+  font-weight: 600;
 }
-.stat-label {
-  font-size: 0.8rem;
+.stat-mini-label {
+  font-size: 0.72rem;
   color: var(--mist);
-  margin-top: 2px;
 }
 
 /* ================================================================
@@ -1898,6 +1921,8 @@ footer {
   background: linear-gradient(90deg, transparent 5%, rgba(78,255,206,0.12) 30%, rgba(192,132,252,0.10) 70%, transparent 95%);
   transform: scaleX(0);
   transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  z-index: 3;
 }
 .divider.visible {
   transform: scaleX(1);
@@ -2033,6 +2058,8 @@ footer {
   .robot-img { width: 260px; }
   .concept-grid { grid-template-columns: 1fr; gap: 16px; }
   .about-inner { grid-template-columns: 1fr; }
+  .globe-container { max-width: 380px; }
+  .venue-overlay { min-width: 210px; }
   .how-steps { grid-template-columns: 1fr 1fr; gap: 20px; }
   .how-steps::before { display: none; }
   .films-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
@@ -2133,9 +2160,22 @@ footer {
   .marsnight-desc { font-size: 0.9rem; }
   .marsnight-detail { padding: 8px 14px; font-size: 0.8rem; }
 
-  /* a propos */
-  .stat-chip { min-width: unset; }
-  .prog-desc { font-size: 0.82rem; }
+  /* a propos — globe */
+  .globe-container { max-width: 280px; }
+  .venue-overlay {
+    min-width: 180px;
+    padding: 10px 14px;
+    bottom: 8px;
+    border-radius: 10px;
+  }
+  .venue-overlay-name { font-size: 0.9rem; }
+  .venue-overlay-address { font-size: 0.7rem; }
+  .venue-overlay-coords { font-size: 0.6rem; }
+  .venue-overlay-btn { font-size: 0.72rem; padding: 5px 12px; }
+  .stat-row { gap: 6px; }
+  .stat-chip-mini { padding: 6px 10px; }
+  .stat-mini-value { font-size: 0.88rem; }
+  .prog-line-desc { font-size: 0.7rem; }
 }
 
 /* ================================================================
