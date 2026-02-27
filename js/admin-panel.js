@@ -78,18 +78,18 @@
   ];
 
   let users = [
-    { id:1,  name:"Marie Lefebvre",  email:"m.lefebvre@marsai.fr",  role:"jury",       active:true,  token:"MLF-7A2K-X9P", assigned:[1,2,3,5],        cls:"ua-1", label:"Présidente · Réalisatrice", avatar:"https://i.pravatar.cc/150?img=47" },
-    { id:2,  name:"Pierre Dubois",   email:"p.dubois@marsai.fr",    role:"jury",       active:true,  token:"PDB-3R8M-Q1T", assigned:[1,4,6,7],        cls:"ua-2", label:"Directeur artistique",      avatar:"https://i.pravatar.cc/150?img=12" },
-    { id:3,  name:"Kenji Ito",       email:"k.ito@marsai.jp",       role:"jury",       active:true,  token:"KIT-9S4N-W2V", assigned:[2,3,8,9],        cls:"ua-3", label:"Artiste numérique",         avatar:"https://i.pravatar.cc/150?img=68" },
-    { id:4,  name:"Sofia Eriksson",  email:"s.eriksson@marsai.se",  role:"jury",       active:true,  token:"SEK-5H1B-R4C", assigned:[5,6,7,10],       cls:"ua-4", label:"Critique de cinéma",        avatar:"https://i.pravatar.cc/150?img=44" },
-    { id:5,  name:"Camille Moreau",  email:"c.moreau@marsai.fr",    role:"moderateur", active:true,  token:"CMR-2J6D-L8Z", assigned:[],               cls:"ua-5", label:"Modératrice",               avatar:"https://i.pravatar.cc/150?img=25" },
-    { id:6,  name:"Thomas Leroy",    email:"t.leroy@marsai.fr",     role:"moderateur", active:false, token:"TLR-8K3F-P7Y", assigned:[],               cls:"ua-6", label:"Modérateur",                avatar:"https://i.pravatar.cc/150?img=15" },
-    { id:7,  name:"Amara Touré",     email:"a.toure@marsai.ml",     role:"jury",       active:true,  token:"ATR-4L9G-H3N", assigned:[1,3,5,7,9,11,13],cls:"ua-1", label:"Productrice",               avatar:"https://i.pravatar.cc/150?img=32" },
-    { id:8,  name:"Elena Petrov",    email:"e.petrov@marsai.ru",    role:"jury",       active:true,  token:"EPV-7K2R-J6M", assigned:[2,4],            cls:"ua-2", label:"Compositrice",              avatar:"https://i.pravatar.cc/150?img=29" },
-    { id:9,  name:"Yuki Nakamura",   email:"y.nakamura@marsai.jp",  role:"jury",       active:true,  token:"YNK-1P8T-V5B", assigned:[3,6,9],          cls:"ua-3", label:"Réalisatrice",              avatar:"https://i.pravatar.cc/150?img=56" },
-    { id:10, name:"Carlos Ruiz",     email:"c.ruiz@marsai.es",      role:"jury",       active:true,  token:"CRZ-9D3C-W7Q", assigned:[],               cls:"ua-4", label:"Chef opérateur",            avatar:"https://i.pravatar.cc/150?img=18" },
-    { id:11, name:"Priya Mehta",     email:"p.mehta@marsai.in",     role:"jury",       active:true,  token:"PMT-6A1N-X2V", assigned:[4,8],            cls:"ua-1", label:"Scénariste",                avatar:"https://i.pravatar.cc/150?img=36" },
-    { id:12, name:"Omar Diallo",     email:"o.diallo@marsai.sn",    role:"jury",       active:true,  token:"ODL-3S7F-L9Z", assigned:[],               cls:"ua-2", label:"Directeur photo",           avatar:"https://i.pravatar.cc/150?img=11" },
+    { id:1,  name:"Marie Lefebvre",  email:"m.lefebvre@marsai.fr",  role:"jury",       active:true,  token:"MLF-7A2K-X9P", assigned:[1,2,3,5,11,15,19,23,27,31,35,39,43,47],          cls:"ua-1", label:"Présidente · Réalisatrice", avatar:"https://i.pravatar.cc/150?img=47" },
+    { id:2,  name:"Pierre Dubois",   email:"p.dubois@marsai.fr",    role:"jury",       active:true,  token:"PDB-3R8M-Q1T", assigned:[1,4,6,7,12,16,20,24,28,32,36,40,44],            cls:"ua-2", label:"Directeur artistique",      avatar:"https://i.pravatar.cc/150?img=12" },
+    { id:3,  name:"Kenji Ito",       email:"k.ito@marsai.jp",       role:"jury",       active:true,  token:"KIT-9S4N-W2V", assigned:[2,3,8,9,13,17,21,25,29,33,37,41,45],            cls:"ua-3", label:"Artiste numérique",         avatar:"https://i.pravatar.cc/150?img=68" },
+    { id:4,  name:"Sofia Eriksson",  email:"s.eriksson@marsai.se",  role:"jury",       active:true,  token:"SEK-5H1B-R4C", assigned:[5,6,7,10,14,18,22,26,30,34,38,42,46,50],        cls:"ua-4", label:"Critique de cinéma",        avatar:"https://i.pravatar.cc/150?img=44" },
+    { id:5,  name:"Camille Moreau",  email:"c.moreau@marsai.fr",    role:"moderateur", active:true,  token:"CMR-2J6D-L8Z", assigned:[],                                             cls:"ua-5", label:"Modératrice",               avatar:"https://i.pravatar.cc/150?img=25" },
+    { id:6,  name:"Thomas Leroy",    email:"t.leroy@marsai.fr",     role:"moderateur", active:false, token:"TLR-8K3F-P7Y", assigned:[],                                             cls:"ua-6", label:"Modérateur",                avatar:"https://i.pravatar.cc/150?img=15" },
+    { id:7,  name:"Amara Touré",     email:"a.toure@marsai.ml",     role:"jury",       active:true,  token:"ATR-4L9G-H3N", assigned:[1,3,5,7,9,11,13,49],                          cls:"ua-1", label:"Productrice",               avatar:"https://i.pravatar.cc/150?img=32" },
+    { id:8,  name:"Elena Petrov",    email:"e.petrov@marsai.ru",    role:"jury",       active:true,  token:"EPV-7K2R-J6M", assigned:[2,4,44,46,48],                                 cls:"ua-2", label:"Compositrice",              avatar:"https://i.pravatar.cc/150?img=29" },
+    { id:9,  name:"Yuki Nakamura",   email:"y.nakamura@marsai.jp",  role:"jury",       active:true,  token:"YNK-1P8T-V5B", assigned:[3,6,9,15,17,19,21],                           cls:"ua-3", label:"Réalisatrice",              avatar:"https://i.pravatar.cc/150?img=56" },
+    { id:10, name:"Carlos Ruiz",     email:"c.ruiz@marsai.es",      role:"jury",       active:true,  token:"CRZ-9D3C-W7Q", assigned:[22,26,30,34,38],                               cls:"ua-4", label:"Chef opérateur",            avatar:"https://i.pravatar.cc/150?img=18" },
+    { id:11, name:"Priya Mehta",     email:"p.mehta@marsai.in",     role:"jury",       active:true,  token:"PMT-6A1N-X2V", assigned:[4,8,23,27,31,35],                             cls:"ua-1", label:"Scénariste",                avatar:"https://i.pravatar.cc/150?img=36" },
+    { id:12, name:"Omar Diallo",     email:"o.diallo@marsai.sn",    role:"jury",       active:true,  token:"ODL-3S7F-L9Z", assigned:[36,40,48,50],                                 cls:"ua-2", label:"Directeur photo",           avatar:"https://i.pravatar.cc/150?img=11" },
   ];
 
   let newUserRole = 'jury';
@@ -361,6 +361,7 @@
     document.getElementById('topbar-info').textContent  = titles[name][1];
     if (name === 'assign') renderAssignView();
     if (name === 'site')   { renderJuryAdmin(); renderSponsorsAdmin(); }
+    if (name === 'users')  { chartAnimProgress = 1; renderJuryChart(); }
   }
 
   /* ── DRAPEAUX PAYS ── */
@@ -813,5 +814,285 @@
     document.getElementById('modal-comments').classList.remove('open');
   }
 
+  /* ── RÉPARTITION ÉQUITABLE ── */
+  let repartirPlan = [];
+
+  function openRepartirModal() {
+    const juryUsers = users.filter(u => u.role === 'jury' && u.active);
+    if (juryUsers.length === 0) {
+      showToast('Aucun jury actif pour la répartition', 'err');
+      return;
+    }
+
+    const unassigned = films.filter(f => !juryUsers.some(u => u.assigned.includes(f.id)));
+    if (unassigned.length === 0) {
+      showToast('Tous les films sont déjà assignés', 'warn');
+      return;
+    }
+
+    // Répartition round-robin équitable
+    repartirPlan = juryUsers.map(u => ({ userId: u.id, newFilmIds: [] }));
+    unassigned.forEach((f, i) => {
+      repartirPlan[i % juryUsers.length].newFilmIds.push(f.id);
+    });
+
+    // Rendu aperçu
+    const preview = document.getElementById('repartir-preview');
+    preview.innerHTML = repartirPlan.map(plan => {
+      const u = users.find(x => x.id === plan.userId);
+      const current = u.assigned.length;
+      const added   = plan.newFilmIds.length;
+      const total   = current + added;
+      const loadStyle = total <= 10 ? 'color:var(--aurora)' : total <= 20 ? 'color:var(--solar)' : 'color:var(--coral)';
+      return `<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;">
+        <img src="${u.avatar}" alt="${u.name}" style="width:34px;height:34px;border-radius:8px;object-fit:cover;flex-shrink:0;">
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:0.82rem;font-weight:700;color:var(--white-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${u.name}</div>
+          <div style="font-size:0.72rem;color:var(--mist);">${current} actuel${current > 1 ? 's' : ''} + <span style="color:var(--aurora);">+${added} nouveau${added > 1 ? 'x' : ''}</span></div>
+        </div>
+        <div style="font-family:var(--font-mono);font-size:1.05rem;font-weight:800;${loadStyle};flex-shrink:0;">${total}</div>
+      </div>`;
+    }).join('');
+
+    document.getElementById('repartir-sub').textContent =
+      `${unassigned.length} film${unassigned.length > 1 ? 's' : ''} à répartir entre ${juryUsers.length} jurés`;
+
+    const perJury = Math.floor(unassigned.length / juryUsers.length);
+    const extra   = unassigned.length % juryUsers.length;
+    document.getElementById('repartir-summary').innerHTML =
+      `⚡ ${unassigned.length} films répartis — environ <strong>${perJury}${extra > 0 ? '–'+(perJury+1) : ''} films</strong> par juré`;
+
+    document.getElementById('modal-repartir').classList.add('open');
+  }
+
+  function applyRepartition() {
+    if (!repartirPlan.length) return;
+    let total = 0;
+    repartirPlan.forEach(plan => {
+      const u = users.find(x => x.id === plan.userId);
+      if (!u) return;
+      plan.newFilmIds.forEach(fid => {
+        if (!u.assigned.includes(fid)) { u.assigned.push(fid); total++; }
+      });
+    });
+    closeModal('repartir');
+    repartirPlan = [];
+    renderAssignView();
+    renderUsers();
+    showToast(`✓ ${total} film${total > 1 ? 's' : ''} répartis équitablement`, 'ok');
+  }
+
+  /* ── GRAPHIQUE RÉPARTITION JURY ── */
+  let chartAnimProgress = 0;
+  let chartAnimId = null;
+  let chartBarRects = [];   // pour le hover
+
+  function renderJuryChart() {
+    const canvas = document.getElementById('jury-chart');
+    if (!canvas) return;
+    const wrap = canvas.parentElement;
+    const ctx = canvas.getContext('2d');
+
+    const juryUsers = users.filter(u => u.role === 'jury' && u.active);
+    if (!juryUsers.length) { canvas.style.display = 'none'; return; }
+    canvas.style.display = 'block';
+
+    // Tri par nombre de films (décroissant)
+    const sorted = [...juryUsers].sort((a, b) => b.assigned.length - a.assigned.length);
+    const maxVal = Math.max(...sorted.map(u => u.assigned.length), 1);
+
+    // Dimensions
+    const dpr = window.devicePixelRatio || 1;
+    const labelW = 150;
+    const barH = 28;
+    const gap = 10;
+    const rightPad = 48;
+    const totalH = sorted.length * (barH + gap) + 10;
+    const rectW = wrap.clientWidth;
+
+    canvas.width  = rectW * dpr;
+    canvas.height = totalH * dpr;
+    canvas.style.height = totalH + 'px';
+    ctx.scale(dpr, dpr);
+
+    const barAreaW = rectW - labelW - rightPad;
+    chartBarRects = [];
+
+    ctx.clearRect(0, 0, rectW, totalH);
+
+    // Style helpers
+    const colors = {
+      ok:     { bar: '#4EFFCE', glow: 'rgba(78,255,206,0.18)', text: '#4EFFCE' },
+      warn:   { bar: '#F5E642', glow: 'rgba(245,230,66,0.15)', text: '#F5E642' },
+      danger: { bar: '#FF6B6B', glow: 'rgba(255,107,107,0.15)', text: '#FF6B6B' },
+    };
+    function getLevel(n) { return n <= 10 ? 'ok' : n <= 15 ? 'warn' : 'danger'; }
+
+    sorted.forEach((u, i) => {
+      const y = i * (barH + gap) + 5;
+      const n = u.assigned.length;
+      const lvl = getLevel(n);
+      const col = colors[lvl];
+
+      // First name + first letter of last name
+      const parts = u.name.split(' ');
+      const short = parts.length > 1
+        ? parts[0] + ' ' + parts.slice(1).map(p => p[0] + '.').join(' ')
+        : parts[0];
+
+      // Label
+      ctx.font = '600 12px Inter, sans-serif';
+      ctx.fillStyle = '#8892B0';
+      ctx.textBaseline = 'middle';
+      ctx.textAlign = 'right';
+      ctx.fillText(short, labelW - 14, y + barH / 2);
+
+      // Background track
+      ctx.beginPath();
+      const trackR = 6;
+      ctx.roundRect(labelW, y, barAreaW, barH, trackR);
+      ctx.fillStyle = 'rgba(255,255,255,0.025)';
+      ctx.fill();
+
+      // Gridlines at intervals of 5
+      for (let g = 5; g <= maxVal; g += 5) {
+        const gx = labelW + (g / maxVal) * barAreaW;
+        ctx.beginPath();
+        ctx.moveTo(gx, y);
+        ctx.lineTo(gx, y + barH);
+        ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+
+      // Animated bar
+      const rawW = (n / maxVal) * barAreaW;
+      const animW = rawW * chartAnimProgress;
+
+      if (animW > 2) {
+        // Gradient bar
+        const grad = ctx.createLinearGradient(labelW, 0, labelW + animW, 0);
+        if (lvl === 'ok') {
+          grad.addColorStop(0, 'rgba(78,255,206,0.15)');
+          grad.addColorStop(1, 'rgba(78,255,206,0.45)');
+        } else if (lvl === 'warn') {
+          grad.addColorStop(0, 'rgba(245,230,66,0.12)');
+          grad.addColorStop(1, 'rgba(245,230,66,0.4)');
+        } else {
+          grad.addColorStop(0, 'rgba(255,107,107,0.15)');
+          grad.addColorStop(1, 'rgba(255,107,107,0.5)');
+        }
+
+        ctx.beginPath();
+        ctx.roundRect(labelW, y, animW, barH, trackR);
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        // Glow edge
+        ctx.beginPath();
+        ctx.roundRect(labelW + animW - 3, y + 2, 3, barH - 4, 2);
+        ctx.fillStyle = col.bar;
+        ctx.fill();
+
+        // Subtle top border
+        ctx.beginPath();
+        ctx.roundRect(labelW, y, animW, barH, trackR);
+        ctx.strokeStyle = col.glow;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+
+      // Count badge
+      if (chartAnimProgress > 0.3) {
+        const countX = labelW + animW + 10;
+        ctx.font = '700 12px "JetBrains Mono", monospace';
+        ctx.fillStyle = col.text;
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.globalAlpha = Math.min(1, (chartAnimProgress - 0.3) / 0.3);
+        ctx.fillText(String(n), countX, y + barH / 2);
+        ctx.globalAlpha = 1;
+      }
+
+      // Store bar hit area
+      chartBarRects.push({
+        x: labelW, y, w: barAreaW, h: barH,
+        user: u, count: n, level: lvl
+      });
+    });
+
+    // Footer stats
+    const footer = document.getElementById('chart-footer');
+    if (footer) {
+      const totalFilms = films.length;
+      const assigned   = films.filter(f => sorted.some(u => u.assigned.includes(f.id))).length;
+      const avg        = sorted.length ? (sorted.reduce((s, u) => s + u.assigned.length, 0) / sorted.length).toFixed(1) : 0;
+      footer.innerHTML = `
+        <span class="cf-stat aurora">📊 <strong>${assigned}</strong> / ${totalFilms} films assignés</span>
+        <span class="cf-stat solar">👤 <strong>${sorted.length}</strong> jurés actifs</span>
+        <span class="cf-stat lavande">⚖️ Moyenne : <strong>${avg}</strong> films / juré</span>`;
+    }
+  }
+
+  // ── Chart Animation ──
+  function animateChart() {
+    if (chartAnimId) cancelAnimationFrame(chartAnimId);
+    chartAnimProgress = 0;
+    const start = performance.now();
+    const dur = 800;
+    function tick(now) {
+      const t = Math.min(1, (now - start) / dur);
+      // Ease out cubic
+      chartAnimProgress = 1 - Math.pow(1 - t, 3);
+      renderJuryChart();
+      if (t < 1) chartAnimId = requestAnimationFrame(tick);
+    }
+    chartAnimId = requestAnimationFrame(tick);
+  }
+
+  // ── Chart Hover ──
+  (function setupChartHover() {
+    const canvas = document.getElementById('jury-chart');
+    const tooltip = document.getElementById('chart-tooltip');
+    if (!canvas || !tooltip) return;
+
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const mx = e.clientX - rect.left;
+      const my = e.clientY - rect.top;
+      let hit = null;
+      for (const bar of chartBarRects) {
+        if (mx >= bar.x && mx <= bar.x + bar.w && my >= bar.y && my <= bar.y + bar.h) {
+          hit = bar; break;
+        }
+      }
+      if (hit) {
+        const pct = films.length > 0 ? ((hit.count / films.length) * 100).toFixed(1) : 0;
+        const loadLabel = hit.level === 'ok' ? '✅ Charge normale' : hit.level === 'warn' ? '⚠️ Charge élevée' : '🔴 Surchargé';
+        tooltip.innerHTML = `
+          <div class="ct-name">${hit.user.name}</div>
+          <div class="ct-count" style="color:${hit.level === 'ok' ? 'var(--aurora)' : hit.level === 'warn' ? 'var(--solar)' : 'var(--coral)'}">
+            ${hit.count} film${hit.count > 1 ? 's' : ''} assigné${hit.count > 1 ? 's' : ''} · ${pct}%
+          </div>
+          <div style="font-size:0.68rem;color:var(--mist);margin-top:2px;">${loadLabel}</div>`;
+        const tx = Math.min(e.clientX - rect.left + 12, canvas.clientWidth - 200);
+        const ty = e.clientY - rect.top - 70;
+        tooltip.style.left = tx + 'px';
+        tooltip.style.top  = ty + 'px';
+        tooltip.classList.add('visible');
+        canvas.style.cursor = 'pointer';
+      } else {
+        tooltip.classList.remove('visible');
+        canvas.style.cursor = 'default';
+      }
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+      tooltip.classList.remove('visible');
+      canvas.style.cursor = 'default';
+    });
+  })();
+
   /* ── INIT ── */
   renderUsers();
+  animateChart();

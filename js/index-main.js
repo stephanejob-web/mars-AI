@@ -26,16 +26,35 @@
   setInterval(updateCountdown, 1000);
   updateCountdown();
 
-  // Scroll reveal
+  // Scroll reveal — fade-in isolés + dividers
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+  }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
 
-  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  document.querySelectorAll('.fade-in, .divider').forEach(el => observer.observe(el));
+
+  // Scroll reveal — cascade par section
+  // Quand une section entre dans le viewport, tous ses .reveal enfants
+  // apparaissent en cascade grâce aux data-delay CSS
+  const sectionObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('section-visible');
+        sectionObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('section, .cta-section').forEach(sec => {
+    if (sec.querySelectorAll('.reveal').length > 0) {
+      sectionObserver.observe(sec);
+    }
+  });
 
   // ── Manifeste scroll reveal ────────────────────────────
   const mObserver = new IntersectionObserver((entries) => {
@@ -83,53 +102,6 @@
   }, { threshold: 0.5 });
 
   document.querySelectorAll('.counter-num[data-target]').forEach(el => cObserver.observe(el));
-
-  // ── Cinéma player ──────────────────────────────────────
-  function fmtTime(s) {
-    const m = Math.floor(s / 60);
-    const sec = Math.floor(s % 60);
-    return String(m).padStart(2,'0') + ':' + String(sec).padStart(2,'0');
-  }
-
-  function startDemo() {
-    const vid     = document.getElementById('demo-video');
-    const overlay = document.getElementById('cinema-overlay');
-    const badge   = document.getElementById('cinema-badge');
-    if (!vid) return;
-    overlay.classList.add('gone');
-    badge.style.opacity = '0';
-    vid.controls = true;
-    vid.play();
-  }
-
-  // Timecode en temps réel + remise à 0 à la fin
-  (function() {
-    const vid = document.getElementById('demo-video');
-    const tc  = document.getElementById('hud-timecode');
-    if (!vid) return;
-    vid.addEventListener('timeupdate', () => {
-      if (tc) tc.textContent = fmtTime(vid.currentTime);
-    });
-    vid.addEventListener('ended', () => {
-      const overlay = document.getElementById('cinema-overlay');
-      const badge   = document.getElementById('cinema-badge');
-      vid.controls  = false;
-      overlay.classList.remove('gone');
-      badge.style.opacity = '1';
-      vid.currentTime = 0;
-      if (tc) tc.textContent = '00:00';
-    });
-  })();
-
-  // ── keyframes inline ───────────────────────────────────
-  const ks = document.createElement('style');
-  ks.textContent = `
-    @keyframes pulse-dot {
-      0%, 100% { opacity:1; transform:scale(1); }
-      50%       { opacity:0.4; transform:scale(0.6); }
-    }
-  `;
-  document.head.appendChild(ks);
 
   // Filter chips interactivity
   document.querySelectorAll('.filter-chip').forEach(chip => {
@@ -188,10 +160,8 @@
     const nav = document.querySelector('nav');
     const y   = window.scrollY;
 
-    // fond de nav
-    nav.style.background = y > 80
-      ? 'rgba(10,15,46,0.97)'
-      : 'linear-gradient(to bottom, rgba(10,15,46,0.95) 0%, transparent 100%)';
+    // fond de nav — classe scrolled pour le glassmorphism
+    nav.classList.toggle('nav-scrolled', y > 60);
 
     // Sphere fade: opacity 1→0 over 70% of hero height
     const heroHeight = heroEl.offsetHeight;
