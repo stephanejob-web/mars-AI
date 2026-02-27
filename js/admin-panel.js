@@ -350,11 +350,24 @@ function renderAssignView(page) {
   }
   emptyEl.style.display = 'none';
 
+  // Palettes de couleurs uniques par carte
+  const cardPalettes = [
+    { accent: '#4effce', bg: 'linear-gradient(135deg,#032e22 0%,#050f1a 60%,#031e16 100%)' },
+    { accent: '#c084fc', bg: 'linear-gradient(135deg,#1e0a38 0%,#050818 60%,#150830 100%)' },
+    { accent: '#ff6b6b', bg: 'linear-gradient(135deg,#2e0a0a 0%,#080510 60%,#1e0606 100%)' },
+    { accent: '#f5e642', bg: 'linear-gradient(135deg,#2a2200 0%,#080810 60%,#1c1800 100%)' },
+    { accent: '#60a5fa', bg: 'linear-gradient(135deg,#071e38 0%,#050818 60%,#040e22 100%)' },
+    { accent: '#f472b6', bg: 'linear-gradient(135deg,#2e0a1c 0%,#080510 60%,#1e0612 100%)' },
+    { accent: '#34d399', bg: 'linear-gradient(135deg,#022e1e 0%,#050f1a 60%,#021e14 100%)' },
+    { accent: '#fb923c', bg: 'linear-gradient(135deg,#2e1400 0%,#0a0608 60%,#1e0e00 100%)' },
+  ];
+
   grid.innerHTML = pageFilms.map(f => {
     const assignedJury = juryUsers.filter(u => u.assigned.includes(f.id));
     const nAssigned = assignedJury.length;
     const isAssigned = nAssigned > 0;
     const nComments = f.comments ? Object.keys(f.comments).length : 0;
+    const pal = cardPalettes[f.id % cardPalettes.length];
 
     const assignedBadge = isAssigned
       ? `<div class="assigned-badge ab-ok">✓ ${nAssigned} juré${nAssigned > 1 ? 's' : ''}</div>`
@@ -378,13 +391,16 @@ function renderAssignView(page) {
     }).join('');
     const juryRow = `<div style="display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap;">${avatars}</div>`;
 
-    return `<div class="film-card">
-        <div class="film-thumb" onclick="playFilm(${f.id})">
+    return `<div class="film-card" style="--card-accent-color:${pal.accent}22;">
+        <div class="film-card-accent" style="background:${pal.accent};opacity:0.7;"></div>
+        <div class="film-thumb" onclick="playFilm(${f.id})" style="background:${pal.bg};">
           <video src="../assets/video.mp4" muted preload="none" id="vid-${f.id}"></video>
+          <div class="film-num-bg">${String(f.id).padStart(3, '0')}</div>
           <div class="film-thumb-overlay">
+            <div class="film-thumb-flag">${flags[f.country] || '🌐'}</div>
             <div class="play-btn">▶</div>
           </div>
-          <div class="film-num-badge">#${String(f.id).padStart(2, '0')}</div>
+          <div class="film-num-badge">#${String(f.id).padStart(3, '0')}</div>
           ${assignedBadge}
         </div>
         <div class="film-body">
@@ -441,13 +457,23 @@ function renderAssignView(page) {
 function playFilm(filmId) {
   const vid = document.getElementById('vid-' + filmId);
   if (!vid) return;
+  const thumb = vid.closest('.film-thumb');
   if (vid.paused) {
-    document.querySelectorAll('.film-thumb video').forEach(v => { if (v !== vid) v.pause(); });
+    // Stopper + reset tous les autres
+    document.querySelectorAll('.film-thumb video').forEach(v => {
+      if (v !== vid) {
+        v.pause();
+        v.classList.remove('playing');
+        v.closest('.film-thumb').classList.remove('playing');
+      }
+    });
     vid.play();
-    vid.closest('.film-thumb').querySelector('.film-thumb-overlay').style.opacity = '0';
+    vid.classList.add('playing');
+    thumb.classList.add('playing');
   } else {
     vid.pause();
-    vid.closest('.film-thumb').querySelector('.film-thumb-overlay').style.opacity = '1';
+    vid.classList.remove('playing');
+    thumb.classList.remove('playing');
   }
 }
 

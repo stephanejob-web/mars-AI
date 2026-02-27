@@ -762,50 +762,97 @@
 /* ── MÉDIATHÈQUE FILMS ────────────────────────────────────────── */
 .film-card {
   background: var(--surface-2);
-  border: 1px solid rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.06);
   border-radius: 14px;
   overflow: hidden;
-  transition: border-color 0.2s, transform 0.15s;
+  transition: border-color 0.2s, transform 0.18s, box-shadow 0.2s;
 }
 .film-card:hover {
-  border-color: rgba(255,255,255,0.1);
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.35);
+}
+
+/* ── Barre accent colorée en haut ─────────────────────────────── */
+.film-card-accent {
+  height: 3px;
+  width: 100%;
+  flex-shrink: 0;
 }
 
 .film-thumb {
   position: relative;
   width: 100%;
   aspect-ratio: 16/9;
-  background: #000;
   overflow: hidden;
   cursor: pointer;
 }
-.film-thumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.film-thumb video {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 2;
+}
+.film-thumb video.playing { opacity: 1; }
+.film-thumb.playing .film-thumb-overlay { opacity: 0; pointer-events: none; }
+
 .film-thumb-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(5,8,24,0.45);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s;
+  gap: 8px;
+  transition: opacity 0.2s;
+  z-index: 3;
 }
-.film-thumb:hover .film-thumb-overlay { background: rgba(5,8,24,0.2); }
+
+/* Drapeau pays */
+.film-thumb-flag {
+  font-size: 2.8rem;
+  line-height: 1;
+  filter: drop-shadow(0 2px 10px rgba(0,0,0,0.7));
+  transition: transform 0.2s;
+}
+.film-thumb:hover .film-thumb-flag { transform: scale(1.12); }
+
 .play-btn {
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background: rgba(78,255,206,0.15);
-  border: 2px solid rgba(78,255,206,0.5);
+  background: rgba(0,0,0,0.4);
+  border: 2px solid rgba(255,255,255,0.4);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
-  transition: transform 0.15s, background 0.15s;
+  font-size: 0.9rem;
+  transition: transform 0.15s, border-color 0.15s, background 0.15s;
+  backdrop-filter: blur(6px);
 }
 .film-thumb:hover .play-btn {
-  transform: scale(1.1);
-  background: rgba(78,255,206,0.25);
+  transform: scale(1.12);
+  border-color: rgba(255,255,255,0.8);
+  background: rgba(0,0,0,0.6);
+}
+
+/* Numéro en filigrane */
+.film-num-bg {
+  position: absolute;
+  bottom: -10px;
+  right: 4px;
+  font-family: var(--font-mono);
+  font-size: 4rem;
+  font-weight: 900;
+  color: rgba(255,255,255,0.06);
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+  z-index: 1;
+  letter-spacing: -0.04em;
 }
 
 /* ── BADGES FILM ──────────────────────────────────────────────── */
@@ -814,14 +861,16 @@
   top: 8px;
   left: 8px;
   font-family: var(--font-mono);
-  font-size: 0.6rem;
-  font-weight: 700;
-  background: rgba(5,8,24,0.75);
-  color: var(--mist);
-  border: 1px solid rgba(255,255,255,0.1);
+  font-size: 0.58rem;
+  font-weight: 800;
+  background: rgba(5,8,24,0.7);
+  color: rgba(255,255,255,0.5);
+  border: 1px solid rgba(255,255,255,0.12);
   border-radius: 5px;
   padding: 2px 7px;
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(8px);
+  z-index: 4;
+  letter-spacing: 0.06em;
 }
 .assigned-badge {
   position: absolute;
