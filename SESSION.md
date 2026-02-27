@@ -212,3 +212,62 @@ Site fluide, plus de freeze/lag. Fond shader manifeste fonctionnel avec lazy-loa
 - `assets/Robot2.png` — nouveau fichier (PNG détouré)
 - `assets/Robot2.jpg` — fichier source original ajouté
 - `SESSION.md` — mise à jour
+
+---
+
+## Session 5 — Carousel Evervault + Optimisation GPU massive
+**Date** : 26 février 2026
+
+### 1. Carousel Evervault — correction chemins vidéo
+- **Bug critique** : les vidéos du carousel ne s'affichaient jamais (cartes vides à droite du scanner)
+- **Cause** : chemins `../assets/videos/ia2.mp4` au lieu de `../assets/ia2.mp4` (dossier `videos/` inexistant)
+- **Fix** : correction des 4 chemins vidéo dans le tableau `VIDEOS`
+
+### 2. Correction clip-path inline
+- **Problème** : le clipping CSS via variables custom (`--clip-right`, `--clip-left`) ne fonctionnait pas sur les vidéos
+- **Fix** : suppression des `clip-path` CSS sur `.ev-card-normal` et `.ev-card-ascii`, remplacement par `style.clipPath` inline dans le JS (`_updateClipping()`)
+
+### 3. Optimisation GPU — Shader WebGL (`index-shader.js`)
+Le GPU Intel UHD 620 était saturé à 100%. Optimisations appliquées :
+- **Résolution rendu ÷2** : canvas à 50% de la taille réelle (CSS upscale) → 4x moins de pixels
+- **Lignes shader réduites** : `linesPerGroup` de 16 à 8 → 2x moins de calculs/pixel
+- **Throttle 30fps** au lieu de 60fps → 2x moins de frames
+- **Gain estimé** : ~16x moins de charge GPU
+
+### 4. Optimisation GPU — Carousel (`manifeste-carousel.js`)
+- **Cartes réduites** : 12 → 6 (moins de vidéos à décoder)
+- **Vidéos simultanées** : max 3 en lecture (les plus proches du scanner), reste en pause
+- **ia.mp4 (53Mo) exclu** : rotation sur 3 vidéos légères uniquement
+- **Particules** : 400 → 60
+- **Canvas particules** : résolution ÷2
+- **Throttle particules** : 30fps
+- **DOM queries cachées** : `querySelector` remplacé par refs `wrapper._normal`, `wrapper._ascii`
+- **Gestion vidéos throttlée** : toutes les 500ms au lieu de chaque frame
+- **ASCII refresh** : 800ms (1 carte aléatoire) au lieu de 250ms (toutes les cartes)
+- `preload="metadata"` au lieu de `"auto"`
+
+### 5. Optimisation GPU — Sphère Three.js (`index-sphere.js`)
+- **UnrealBloomPass SUPPRIMÉ** : élimine 5-8 passes GPU supplémentaires par frame → rendu direct `renderer.render()`
+- **Lumière violette → verte** : `secondary` changé de `0xC084FC` à `0x4EFFCE` (uniforme avec primary)
+- **pixelRatio plafonné à 1** (au lieu de 2) → 4x moins de pixels sur écran hi-DPI
+- **Throttle 30fps**
+- **Géométrie sphère** : detail 10 → 6 (~10K → ~2.5K vertices)
+- **MeshPhysicalMaterial → MeshStandardMaterial** (clearcoat supprimé)
+- **Explosion** : 5000 → 2000 particules
+- **Lumières** : intensité 400 → 150
+- **Émissivité renforcée** (0.05 → 0.15) et wireframe opacity (0.15 → 0.25) pour compenser l'absence de bloom
+- **powerPreference** : `"high-performance"` → `"low-power"`
+- Imports postprocessing (EffectComposer, RenderPass, UnrealBloomPass) supprimés
+
+### Résultat performance
+- **GPU** : de 100% → ~25-30% (Intel UHD Graphics 620)
+- **RAM** : de 75% → ~56%
+- **CPU** : de 48% → ~35%
+- Site fluide, pas de freeze/lag
+
+### Fichiers modifiés
+- `js/index-shader.js` — résolution ÷2, 8 lignes, 30fps
+- `js/index-sphere.js` — bloom supprimé, rendu direct, violet → vert, 30fps, géométrie allégée
+- `js/manifeste-carousel.js` — chemins vidéo corrigés, 6 cartes, 60 particules, clip-path inline, DOM caché
+- `css/index.css` — suppression clip-path CSS sur `.ev-card-normal` et `.ev-card-ascii`
+- `SESSION.md` — mise à jour
