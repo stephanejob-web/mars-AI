@@ -759,7 +759,116 @@
   background: rgba(245,230,66,0.03);
 }
 
-/* ── MÉDIATHÈQUE FILMS ────────────────────────────────────────── */
+/* ── LISTE FILMS ──────────────────────────────────────────────── */
+.film-list-wrap {
+  background: var(--surface-2);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.film-list-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.film-list-table thead th {
+  text-align: left;
+  padding: 10px 16px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mist);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  background: rgba(255,255,255,0.02);
+  white-space: nowrap;
+}
+.flt-num { width: 52px; }
+.fl-row {
+  cursor: pointer;
+  transition: background 0.12s;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.fl-row:last-child { border-bottom: none; }
+.fl-row:hover { background: rgba(255,255,255,0.03); }
+.fl-row td { padding: 11px 16px; vertical-align: middle; }
+.fl-td-num {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.22);
+  white-space: nowrap;
+}
+.fl-title {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--white-soft);
+}
+.fl-author {
+  font-size: 0.7rem;
+  color: var(--mist);
+  margin-top: 2px;
+}
+.fl-td-country {
+  font-size: 0.82rem;
+  color: var(--mist);
+  white-space: nowrap;
+}
+.fl-td-jury {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.fl-not-assigned {
+  font-size: 0.72rem;
+  color: var(--coral);
+  opacity: 0.75;
+}
+.fl-comment-btn {
+  background: rgba(192,132,252,0.08);
+  border: 1px solid rgba(192,132,252,0.2);
+  border-radius: 6px;
+  padding: 3px 9px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--lavande);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.fl-comment-btn:hover {
+  background: rgba(192,132,252,0.18);
+  border-color: rgba(192,132,252,0.4);
+}
+.fl-td-action { white-space: nowrap; }
+.btn-fl-assign {
+  padding: 6px 14px;
+  border-radius: 7px;
+  background: rgba(78,255,206,0.07);
+  border: 1px solid rgba(78,255,206,0.22);
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--aurora);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.btn-fl-assign:hover {
+  background: rgba(78,255,206,0.15);
+  border-color: rgba(78,255,206,0.4);
+}
+.btn-fl-assign.is-assigned {
+  background: rgba(255,255,255,0.03);
+  border-color: rgba(255,255,255,0.09);
+  color: var(--mist);
+}
+.btn-fl-assign.is-assigned:hover {
+  background: rgba(78,255,206,0.07);
+  border-color: rgba(78,255,206,0.22);
+  color: var(--aurora);
+}
+
+/* ── MÉDIATHÈQUE FILMS (cartes — conservé pour référence) ─────── */
 .film-card {
   background: var(--surface-2);
   border: 1px solid rgba(255,255,255,0.06);
@@ -948,11 +1057,62 @@
   border-color: rgba(78,255,206,0.4);
 }
 
+/* ── BARRE ONGLETS + TOGGLE VUE ───────────────────────────────── */
+.tabs-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.tabs-toolbar .film-tabs {
+  flex: 1;
+  margin-bottom: 0;
+}
+.view-mode-toggle {
+  display: flex;
+  gap: 3px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 3px;
+  flex-shrink: 0;
+}
+.vmt-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 13px;
+  border-radius: 7px;
+  border: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--mist);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.vmt-btn:hover { color: var(--white-soft); background: rgba(255,255,255,0.05); }
+.vmt-btn.active {
+  background: rgba(78,255,206,0.1);
+  color: var(--aurora);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+
+/* ── GRILLE CARTES FILMS ──────────────────────────────────────── */
+.assign-cards-grid {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
 /* ── ONGLETS FILMS ────────────────────────────────────────────── */
 .film-tabs {
   display: flex;
   gap: 3px;
-  margin-bottom: 20px;
+  margin-bottom: 0;
   background: rgba(255,255,255,0.04);
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 12px;
