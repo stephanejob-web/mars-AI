@@ -231,73 +231,65 @@
     <canvas id="manifeste-shader-canvas"></canvas>
     <div class="manifeste-overlay"></div>
 
-    <!-- Contenu -->
-    <div class="manifeste-inner">
+    <!-- Grille 2 colonnes : carousel gauche + texte droite -->
+    <div class="manifeste-grid">
 
-      <div class="m-fade" style="transition-delay:0s">
-        <span class="manifeste-line dim">Le cinéma a été inventé en 1895.</span>
+      <!-- Colonne GAUCHE — Carousel vertical YouTube -->
+      <div class="carousel-viewport">
+        <canvas class="scanner-canvas"></canvas>
+        <div class="scanner-beam"></div>
+        <div class="card-stream">
+          <div class="card-line"></div>
+        </div>
       </div>
 
-      <div class="m-fade" style="transition-delay:0.15s">
-        <span class="manifeste-line dim">Pendant 130 ans, la caméra était la seule voie.</span>
-      </div>
+      <!-- Colonne DROITE — Texte manifeste -->
+      <div class="manifeste-text">
 
-      <div class="manifeste-sep m-fade" style="transition-delay:0.35s"></div>
+        <div class="m-fade" style="transition-delay:0s">
+          <span class="manifeste-line dim">Le cinéma a été inventé en 1895.</span>
+        </div>
 
-      <div class="m-fade" style="transition-delay:0.5s">
-        <span class="manifeste-line"><span class="hl-aurora">L'IA générative</span> vient de tout réinventer.</span>
-      </div>
+        <div class="m-fade" style="transition-delay:0.15s">
+          <span class="manifeste-line dim">Pendant 130 ans, la caméra était la seule voie.</span>
+        </div>
 
-      <div class="m-fade" style="transition-delay:0.65s">
-        <span class="manifeste-line">Et <span class="hl-solar">vous</span> êtes au bord de cette révolution.</span>
-      </div>
+        <div class="manifeste-sep m-fade" style="transition-delay:0.35s"></div>
 
-      <div class="m-fade manifeste-sub" style="transition-delay:0.9s">
-        Sora, Runway, Kling, Pika, Stable Video, ComfyUI…<br>
-        Les outils existent. La question n'est plus <em>comment</em>.<br>
-        <strong style="color:var(--white-soft);">La question est : qu'avez-vous à dire en 60 secondes ?</strong>
-      </div>
+        <div class="m-fade" style="transition-delay:0.5s">
+          <span class="manifeste-line"><span class="hl-aurora">L'IA générative</span> vient de tout réinventer.</span>
+        </div>
 
-      <div class="manifeste-tools m-fade" style="transition-delay:1.1s">
-        <span class="manifeste-tool">Sora</span>
-        <span class="manifeste-tool">Runway</span>
-        <span class="manifeste-tool">Kling</span>
-        <span class="manifeste-tool">Pika</span>
-        <span class="manifeste-tool">Stable Video</span>
-        <span class="manifeste-tool">ComfyUI</span>
-        <span class="manifeste-tool">+ tous les autres</span>
-      </div>
+        <div class="m-fade" style="transition-delay:0.65s">
+          <span class="manifeste-line">Et <span class="hl-solar">vous</span> êtes au bord de cette révolution.</span>
+        </div>
 
-    </div><!-- /manifeste-inner -->
+        <div class="m-fade manifeste-sub" style="transition-delay:0.9s">
+          Sora, Runway, Kling, Pika, Stable Video, ComfyUI…<br>
+          Les outils existent. La question n'est plus <em>comment</em>.<br>
+          <strong style="color:var(--white-soft);">La question est : qu'avez-vous à dire en 60 secondes ?</strong>
+        </div>
+
+        <div class="manifeste-tools m-fade" style="transition-delay:1.1s">
+          <span class="manifeste-tool">Sora</span>
+          <span class="manifeste-tool">Runway</span>
+          <span class="manifeste-tool">Kling</span>
+          <span class="manifeste-tool">Pika</span>
+          <span class="manifeste-tool">Stable Video</span>
+          <span class="manifeste-tool">ComfyUI</span>
+          <span class="manifeste-tool">+ tous les autres</span>
+        </div>
+
+      </div><!-- /manifeste-text -->
+
+    </div><!-- /manifeste-grid -->
 
   </section>
 
   <!-- Shader WebGL du manifeste (chargé paresseusement, mis en pause hors écran) -->
   <script src="../js/index-shader.js"></script>
-
-  <!-- ============================================================
-       COMPTEURS ANIMÉS — Chiffres-clés du festival
-       ============================================================ -->
-  <section class="counters-section">
-    <div class="counters-grid">
-      <div class="counter-item">
-        <span class="counter-num c-aurora" data-target="20000" data-suffix="">0</span>
-        <div class="counter-label">Candidatures attendues</div>
-      </div>
-      <div class="counter-item">
-        <span class="counter-num c-solar" data-target="120" data-suffix="+">0</span>
-        <div class="counter-label">Pays représentés</div>
-      </div>
-      <div class="counter-item">
-        <span class="counter-num c-lavande" data-target="50" data-suffix="">0</span>
-        <div class="counter-label">Films finalistes</div>
-      </div>
-      <div class="counter-item">
-        <span class="counter-num c-white" data-target="60" data-suffix="s">0</span>
-        <div class="counter-label">Secondes pour tout dire</div>
-      </div>
-    </div>
-  </section>
+  <!-- Carousel vidéo + scanner du manifeste -->
+  <script src="../js/manifeste-carousel.js"></script>
 
   <div class="divider"></div>
 
