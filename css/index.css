@@ -208,17 +208,20 @@ nav.nav-scrolled .lang-btn {
 }
 
 /* ================================================================
-   CANVAS THREE.JS — ARRIERE-PLAN 3D
+   VIDÉO HERO — ARRIERE-PLAN FIXE
    ================================================================ */
-#webgl-canvas {
+#hero-video {
   position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  transform: translate(-50%, -50%);
   z-index: 0;
   pointer-events: none;
-  transition: opacity 0.1s linear;
-  will-change: opacity;
+  object-fit: cover;
+  opacity: 0.9;
+  filter: brightness(0.7);
 }
 
 /* ================================================================
@@ -824,6 +827,7 @@ section {
 .about {
   position: relative;
   overflow: visible;
+  background: rgba(10, 15, 46, 0.97);
 }
 .about-bg {
   position: absolute;
@@ -2058,7 +2062,6 @@ footer {
   .robot-img { width: 260px; }
   .concept-grid { grid-template-columns: 1fr; gap: 16px; }
   .about-inner { grid-template-columns: 1fr; }
-  .globe-container { max-width: 380px; }
   .venue-overlay { min-width: 210px; }
   .how-steps { grid-template-columns: 1fr 1fr; gap: 20px; }
   .how-steps::before { display: none; }
@@ -2160,8 +2163,7 @@ footer {
   .marsnight-desc { font-size: 0.9rem; }
   .marsnight-detail { padding: 8px 14px; font-size: 0.8rem; }
 
-  /* a propos — globe */
-  .globe-container { max-width: 280px; }
+  /* a propos — vidéo */
   .venue-overlay {
     min-width: 180px;
     padding: 10px 14px;
@@ -3017,7 +3019,7 @@ footer {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-  #webgl-canvas { display: none !important; }
+  #hero-video { display: none !important; }
   .aurora-bg, .aurora-bg::before, .aurora-bg::after { display: none; }
 }
 

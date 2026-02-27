@@ -29,9 +29,11 @@
 <body>
 
   <!-- ============================================================
-       CANVAS THREE.JS — Arrière-plan 3D (sphère interactive)
+       VIDÉO — Arrière-plan hero (remplace la sphère 3D)
        ============================================================ -->
-  <canvas id="webgl-canvas" aria-hidden="true"></canvas>
+  <video id="hero-video" autoplay muted loop playsinline preload="auto" aria-hidden="true">
+    <source src="../assets/Création_Vidéo_IA_pour_MarsAI_Marseille.mp4" type="video/mp4">
+  </video>
 
   <!-- ============================================================
        NAVIGATION PRINCIPALE
@@ -922,7 +924,6 @@
        SCRIPTS PRINCIPAUX — Logique métier et interactions
        ============================================================ -->
   <script src="../js/index-main.js"></script>
-  <script type="module" src="../js/index-sphere.js"></script>
 
 
 </body>
