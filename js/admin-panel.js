@@ -97,19 +97,80 @@ const films = [
   { id: 50, title: "La Mémoire des Pixels", author: "Zara Ahmed", country: "Pakistan" },
 ];
 
+/* ── GÉNÉRATION DES 450 FILMS RESTANTS (51–500) ── */
+(function () {
+  const titles = [
+    "Soleil Binaire","Ombre Numérique","Éclat Artificiel","Mémoire Quantique","Flux Vital",
+    "Signal d'Aube","Conscience Augmentée","Territoire Virtuel","Silence Algorithmique","Lumière Codée",
+    "Rêve Mécanique","Corps Numérique","Voix Synthétique","Regard Artificiel","Temps Fractal",
+    "Monde Parallèle","Âme Pixelisée","Identité Simulée","Horizon Numérique","Portail Quantique",
+    "Écho des Machines","Pulsion Électrique","Mémoire Effacée","Données Perdues","Réseau Vivant",
+    "Interface Humaine","Protocole Émotionnel","Simulation Parfaite","Glitch Poétique","Bruit Blanc",
+    "Cartographie du Futur","Spectre Numérique","Onde de Choc","Réalité Altérée","Nœud Temporel",
+    "Dimension Zéro","Lumière Artificielle","Territoire Inconnu","Signal Fantôme","Pixel Vivant",
+    "Cerveau Augmenté","Système Nerveux","Circuit Émotionnel","Fréquence Vitale","Onde Cérébrale",
+    "Transmission Directe","Connexion Totale","Fusion Numérique","Évolution Forcée","Mutation Digitale",
+    "Chaos Ordonné","Harmonie Binaire","Symphonie Numérique","Composition Artificielle","Rythme Codé",
+    "Danse des Algorithmes","Mouvement Synthétique","Geste Mécanique","Corps Augmenté","Peau Numérique",
+    "Regard Profond","Vision Augmentée","Œil Artificiel","Perspective Codée","Angle Mort",
+    "Surface Miroir","Reflet Numérique","Image Fantôme","Portrait Synthétique","Visage Augmenté",
+    "Identité Fragmentée","Moi Numérique","Conscience Divisée","Dualité Digitale","Multiplicité",
+    "Archipel Numérique","Île Virtuelle","Territoire Flottant","Espace Intermédiaire","Zone Grise",
+    "Frontière Perméable","Limite Effacée","Bord du Réel","Seuil Numérique","Passage Secret",
+    "Porte Quantique","Clé Algorithmique","Code Source Vif","Programme Émotionnel","Script Poétique",
+    "Langage Nouveau","Mot Binaire","Phrase Codée","Texte Augmenté","Récit Numérique",
+  ];
+  const firstNames = [
+    "Amara","Lucas","Mei","Rafael","Yuki","Sofia","Ibrahim","Elena","Kofi","Priya",
+    "Diego","Nadia","Sven","Leila","Thomas","Aiko","Carlos","Fatima","James","Olga",
+    "Hana","Viktor","Giulia","Samuel","Claire","Omar","Rania","Pavel","Sunita","Layla",
+    "Chidi","Nina","Pablo","Aya","Marco","Ingrid","Étienne","Mele","Yasmine","Chen",
+    "Dmitri","Ana","Selin","Idrissa","Lin","Camille","Rafael","Zara","Mehdi","Park",
+  ];
+  const lastNames = [
+    "Touré","Schmidt","Zhang","Fernández","Nakamura","Eriksson","Diallo","Petrov","Mensah","Mehta",
+    "Castillo","Hassan","Lindqvist","Nasser","Vidal","Suzuki","Ruiz","Zahra","Okafor","Sorokina",
+    "Kim","Novak","Romano","Oduya","Morin","Diallo","Al-Rashid","Novák","Rao","Al-Rashid",
+    "Osei","Kovač","Herrera","Tanaka","Ferretti","Larsen","Blanchard","Tupou","Alaoui","Mingzhi",
+    "Volkov","Rodrigues","Yıldız","Coulibaly","Wei","Perret","Santos","Ahmed","Karimi","Ji-won",
+  ];
+  const countries = [
+    "France","Japon","Brésil","Allemagne","Espagne","Italie","Canada","Mexique","Corée du Sud","Inde",
+    "Sénégal","Maroc","Algérie","Tunisie","Égypte","Nigeria","Ghana","Kenya","Mali","Burkina Faso",
+    "Chine","Russie","Ukraine","Pologne","Suède","Norvège","Danemark","Portugal","Argentine","Colombie",
+    "Pérou","Chili","Turquie","Iran","Liban","Irak","Pakistan","Bangladesh","Thaïlande","Vietnam",
+    "Philippines","Indonésie","Australie","Nouvelle-Zélande","Afrique du Sud","Éthiopie","Tanzanie","Mozambique","Angola","Tonga",
+  ];
+
+  for (let i = 51; i <= 500; i++) {
+    const ti = (i - 51) % titles.length;
+    const fi = (i * 7) % firstNames.length;
+    const li = (i * 13) % lastNames.length;
+    const ci = (i * 3) % countries.length;
+    films.push({
+      id: i,
+      title: titles[ti] + (Math.floor((i - 51) / titles.length) > 0 ? ' ' + (Math.floor((i - 51) / titles.length) + 1) : ''),
+      author: firstNames[fi] + ' ' + lastNames[li],
+      country: countries[ci],
+      juryDec: {},
+      comments: {},
+    });
+  }
+})();
+
 let users = [
-  { id: 1, name: "Marie Lefebvre", email: "m.lefebvre@marsai.fr", role: "jury", active: true, token: "MLF-7A2K-X9P", assigned: [1, 2, 3, 5, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], cls: "ua-1", label: "Présidente · Réalisatrice", avatar: "https://i.pravatar.cc/150?img=47" },
-  { id: 2, name: "Pierre Dubois", email: "p.dubois@marsai.fr", role: "jury", active: true, token: "PDB-3R8M-Q1T", assigned: [1, 4, 6, 7, 12, 16, 20, 24, 28, 32, 36, 40, 44], cls: "ua-2", label: "Directeur artistique", avatar: "https://i.pravatar.cc/150?img=12" },
-  { id: 3, name: "Kenji Ito", email: "k.ito@marsai.jp", role: "jury", active: true, token: "KIT-9S4N-W2V", assigned: [2, 3, 8, 9, 13, 17, 21, 25, 29, 33, 37, 41, 45], cls: "ua-3", label: "Artiste numérique", avatar: "https://i.pravatar.cc/150?img=68" },
-  { id: 4, name: "Sofia Eriksson", email: "s.eriksson@marsai.se", role: "jury", active: true, token: "SEK-5H1B-R4C", assigned: [5, 6, 7, 10, 14, 18, 22, 26, 30, 34, 38, 42, 46, 50], cls: "ua-4", label: "Critique de cinéma", avatar: "https://i.pravatar.cc/150?img=44" },
+  { id: 1, name: "Marie Lefebvre", email: "m.lefebvre@marsai.fr", role: "jury", active: true, token: "MLF-7A2K-X9P", assigned: [], cls: "ua-1", label: "Présidente · Réalisatrice", avatar: "https://i.pravatar.cc/150?img=47" },
+  { id: 2, name: "Pierre Dubois", email: "p.dubois@marsai.fr", role: "jury", active: true, token: "PDB-3R8M-Q1T", assigned: [], cls: "ua-2", label: "Directeur artistique", avatar: "https://i.pravatar.cc/150?img=12" },
+  { id: 3, name: "Kenji Ito", email: "k.ito@marsai.jp", role: "jury", active: true, token: "KIT-9S4N-W2V", assigned: [], cls: "ua-3", label: "Artiste numérique", avatar: "https://i.pravatar.cc/150?img=68" },
+  { id: 4, name: "Sofia Eriksson", email: "s.eriksson@marsai.se", role: "jury", active: true, token: "SEK-5H1B-R4C", assigned: [], cls: "ua-4", label: "Critique de cinéma", avatar: "https://i.pravatar.cc/150?img=44" },
   { id: 5, name: "Camille Moreau", email: "c.moreau@marsai.fr", role: "moderateur", active: true, token: "CMR-2J6D-L8Z", assigned: [], cls: "ua-5", label: "Modératrice", avatar: "https://i.pravatar.cc/150?img=25" },
   { id: 6, name: "Thomas Leroy", email: "t.leroy@marsai.fr", role: "moderateur", active: false, token: "TLR-8K3F-P7Y", assigned: [], cls: "ua-6", label: "Modérateur", avatar: "https://i.pravatar.cc/150?img=15" },
-  { id: 7, name: "Amara Touré", email: "a.toure@marsai.ml", role: "jury", active: true, token: "ATR-4L9G-H3N", assigned: [1, 3, 5, 7, 9, 11, 13, 49], cls: "ua-1", label: "Productrice", avatar: "https://i.pravatar.cc/150?img=32" },
-  { id: 8, name: "Elena Petrov", email: "e.petrov@marsai.ru", role: "jury", active: true, token: "EPV-7K2R-J6M", assigned: [2, 4, 44, 46, 48], cls: "ua-2", label: "Compositrice", avatar: "https://i.pravatar.cc/150?img=29" },
-  { id: 9, name: "Yuki Nakamura", email: "y.nakamura@marsai.jp", role: "jury", active: true, token: "YNK-1P8T-V5B", assigned: [3, 6, 9, 15, 17, 19, 21], cls: "ua-3", label: "Réalisatrice", avatar: "https://i.pravatar.cc/150?img=56" },
-  { id: 10, name: "Carlos Ruiz", email: "c.ruiz@marsai.es", role: "jury", active: true, token: "CRZ-9D3C-W7Q", assigned: [22, 26, 30, 34, 38], cls: "ua-4", label: "Chef opérateur", avatar: "https://i.pravatar.cc/150?img=18" },
-  { id: 11, name: "Priya Mehta", email: "p.mehta@marsai.in", role: "jury", active: true, token: "PMT-6A1N-X2V", assigned: [4, 8, 23, 27, 31, 35], cls: "ua-1", label: "Scénariste", avatar: "https://i.pravatar.cc/150?img=36" },
-  { id: 12, name: "Omar Diallo", email: "o.diallo@marsai.sn", role: "jury", active: true, token: "ODL-3S7F-L9Z", assigned: [36, 40, 48, 50], cls: "ua-2", label: "Directeur photo", avatar: "https://i.pravatar.cc/150?img=11" },
+  { id: 7, name: "Amara Touré", email: "a.toure@marsai.ml", role: "jury", active: true, token: "ATR-4L9G-H3N", assigned: [], cls: "ua-1", label: "Productrice", avatar: "https://i.pravatar.cc/150?img=32" },
+  { id: 8, name: "Elena Petrov", email: "e.petrov@marsai.ru", role: "jury", active: true, token: "EPV-7K2R-J6M", assigned: [], cls: "ua-2", label: "Compositrice", avatar: "https://i.pravatar.cc/150?img=29" },
+  { id: 9, name: "Yuki Nakamura", email: "y.nakamura@marsai.jp", role: "jury", active: true, token: "YNK-1P8T-V5B", assigned: [], cls: "ua-3", label: "Réalisatrice", avatar: "https://i.pravatar.cc/150?img=56" },
+  { id: 10, name: "Carlos Ruiz", email: "c.ruiz@marsai.es", role: "jury", active: true, token: "CRZ-9D3C-W7Q", assigned: [], cls: "ua-4", label: "Chef opérateur", avatar: "https://i.pravatar.cc/150?img=18" },
+  { id: 11, name: "Priya Mehta", email: "p.mehta@marsai.in", role: "jury", active: true, token: "PMT-6A1N-X2V", assigned: [], cls: "ua-1", label: "Scénariste", avatar: "https://i.pravatar.cc/150?img=36" },
+  { id: 12, name: "Omar Diallo", email: "o.diallo@marsai.sn", role: "jury", active: true, token: "ODL-3S7F-L9Z", assigned: [], cls: "ua-2", label: "Directeur photo", avatar: "https://i.pravatar.cc/150?img=11" },
 ];
 
 let newUserRole = 'jury';
@@ -226,7 +287,7 @@ function toggleFilmJury(filmId, userId) {
 }
 
 /* ── VUE ASSIGNATION (médiathèque) ── */
-const FILMS_PER_PAGE = 6;
+const FILMS_PER_PAGE = 10;
 let currentPage = 1;
 let currentFilmTab = 'pending';
 
@@ -341,13 +402,40 @@ function renderAssignView(page) {
   const pag = document.getElementById('pagination');
   if (!pag) return;
   if (totalPages <= 1) { pag.innerHTML = ''; return; }
-  let html = `<button class="page-btn" onclick="renderAssignView(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>←</button>`;
-  for (let i = 1; i <= totalPages; i++) {
-    html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="renderAssignView(${i})">${i}</button>`;
+
+  // Calcul des pages à afficher avec ellipses
+  const delta = 2;
+  const rangeSet = new Set();
+  rangeSet.add(1);
+  rangeSet.add(totalPages);
+  for (let i = Math.max(2, currentPage - delta); i <= Math.min(totalPages - 1, currentPage + delta); i++) rangeSet.add(i);
+  const rangeArr = [...rangeSet].sort((a, b) => a - b);
+  const pages = [];
+  let prev = null;
+  for (const p of rangeArr) {
+    if (prev !== null && p - prev > 1) pages.push('…');
+    pages.push(p);
+    prev = p;
   }
-  html += `<button class="page-btn" onclick="renderAssignView(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>→</button>`;
-  html += `<span style="font-size:0.7rem;color:var(--mist);margin-left:6px;">${(currentPage - 1) * FILMS_PER_PAGE + 1}–${Math.min(currentPage * FILMS_PER_PAGE, filmList.length)} / ${filmList.length} films</span>`;
-  pag.innerHTML = html;
+
+  // Rendu
+  let row = `<div class="pag-row">`;
+  row += `<button class="page-btn page-nav" onclick="renderAssignView(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>← Préc.</button>`;
+  for (const p of pages) {
+    if (p === '…') {
+      row += `<span class="page-dots">···</span>`;
+    } else {
+      row += `<button class="page-btn ${p === currentPage ? 'active' : ''}" onclick="renderAssignView(${p})">${p}</button>`;
+    }
+  }
+  row += `<button class="page-btn page-nav" onclick="renderAssignView(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Suiv. →</button>`;
+  row += `</div>`;
+
+  const from = (currentPage - 1) * FILMS_PER_PAGE + 1;
+  const to = Math.min(currentPage * FILMS_PER_PAGE, filmList.length);
+  row += `<div class="pag-info">${from}–${to} sur ${filmList.length} films &nbsp;·&nbsp; page ${currentPage} / ${totalPages}</div>`;
+
+  pag.innerHTML = row;
 }
 
 function playFilm(filmId) {
@@ -1116,3 +1204,5 @@ function animateChart() {
 /* ── INIT ── */
 renderUsers();
 animateChart();
+const brmCount = document.getElementById('brm-count');
+if (brmCount) brmCount.textContent = films.length;
