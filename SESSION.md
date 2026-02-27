@@ -271,3 +271,47 @@ Le GPU Intel UHD 620 était saturé à 100%. Optimisations appliquées :
 - `js/manifeste-carousel.js` — chemins vidéo corrigés, 6 cartes, 60 particules, clip-path inline, DOM caché
 - `css/index.css` — suppression clip-path CSS sur `.ev-card-normal` et `.ev-card-ascii`
 - `SESSION.md` — mise à jour
+
+---
+
+## Session 6 — Amélioration robot IA + fond manifeste
+**Date** : 27 février 2026
+
+### 1. Nettoyage image Robot2.png
+- **Problème** : contours de découpe visibles (halo blanc/gris du fond original), rectangle de l'image apparent sur fond sombre
+- **Script Python (Pillow)** : érosion 2px de la frange alpha, suppression des pixels blancs de bordure, blur doux (0.8px) pour lisser les bords
+- **Backup** conservé dans `assets/Robot2_backup.png`
+
+### 2. Suppression du contour rectangulaire
+- **Cause** : `mask-image: linear-gradient(to bottom)` ne masquait que le bas → contour rectangulaire visible sur les côtés et le haut
+- **Fix** : masque double combiné avec `mask-composite: intersect` :
+  - `radial-gradient(ellipse 80% 100% at 50% 30%)` — fondu sur les côtés et le haut
+  - `linear-gradient(to bottom, #000 55%, transparent 100%)` — fondu progressif en bas
+- `drop-shadow` déplacé de `.robot-img` vers `.robot-wrap` (parent) pour éviter le halo rectangulaire
+- `opacity: 1` + `background: transparent; border: none; outline: none;` pour supprimer tout rendu parasite
+
+### 3. Animation robot plus vivante
+- **Vitesse** : `6s` → `4s` (plus rapide)
+- **Amplitude** : `22px` → `20px`
+- **Résultat** : mouvement flottant bien visible et vivant
+
+### 4. Lumière bleue au-dessus de la tête renforcée
+- **Taille** : `40x40px` → `90x90px`
+- **Position** remontée (`top: 30px` → `top: 10px`)
+- **Couleur** plus bleue intense (`rgba(80,160,255,0.9)`)
+- **Opacité min** : `0` → `0.3` (toujours visible, ne disparaît plus)
+- **Pulsation** plus ample (`scale 0.8→1.1`)
+
+### 5. Luminosité du robot
+- Ajout `filter: brightness(1.23)` sur `.robot-img` pour éclaircir le visage trop sombre
+
+### 6. Image de fond section Manifeste
+- **Opacité** augmentée : `0.5` → `0.7`
+- **Luminosité** : ajout `filter: brightness(1.2)`
+- Image de fond (visage futuriste) plus visible et colorée
+
+### Fichiers modifiés
+- `assets/Robot2.png` — image re-nettoyée (frange supprimée, bords lissés)
+- `assets/Robot2_backup.png` — backup de l'original
+- `css/index.css` — masque radial+linéaire, animation 4s, lumière bleue renforcée, brightness robot et manifeste
+- `SESSION.md` — mise à jour
