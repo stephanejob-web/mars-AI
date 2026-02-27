@@ -176,16 +176,18 @@
         <h2>Films soumis</h2>
         <p>Visionnez chaque film et assignez-le au jury de votre choix.</p>
       </div>
-      <button
-        onclick="openRepartirModal()"
-        style="display:flex;align-items:center;gap:8px;padding:9px 18px;background:rgba(78,255,206,0.1);border:1.5px solid rgba(78,255,206,0.35);border-radius:10px;font-family:var(--font-body);font-size:0.82rem;font-weight:700;color:var(--aurora);cursor:pointer;transition:all 0.18s;white-space:nowrap;"
-        onmouseover="this.style.background='rgba(78,255,206,0.2)'"
-        onmouseout="this.style.background='rgba(78,255,206,0.1)'"
-        id="btn-repartir"
-      >
-        ⚡ Répartir équitablement
-      </button>
     </div>
+
+    <button id="btn-repartir" onclick="openRepartirModal()" class="btn-repartir-main">
+      <div class="brm-left">
+        <span class="brm-icon">⚡</span>
+        <div>
+          <div class="brm-title">Répartir équitablement</div>
+          <div class="brm-sub">Distribuer automatiquement les <span id="brm-count">500</span> films entre tous les jurés actifs</div>
+        </div>
+      </div>
+      <span class="brm-arrow">→</span>
+    </button>
 
     <!-- Barre de recherche films -->
     <div style="position:relative;margin-bottom:16px;">
@@ -241,7 +243,7 @@
     </div>
 
     <!-- Pagination -->
-    <div id="pagination" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:24px;"></div>
+    <div id="pagination"></div>
   </div>
 
   <!-- ══════ VUE PHASES ══════ -->
@@ -560,12 +562,27 @@
 
 <!-- ─── NAV MAQUETTE ─── -->
   <div id="dev-nav">
-    <span class="dn-label">Maquette</span>
-    <a href="index.html" class="dn-btn">🏠 Accueil</a>
+    <div class="dn-header">
+      <span class="dn-icon-main">🧭</span>
+      <span class="dn-title">Maquette</span>
+    </div>
+    <a href="index.html" class="dn-btn">
+      <span class="dn-icon">🏠</span>
+      <span class="dn-lbl">Accueil</span>
+    </a>
     <div class="dn-sep"></div>
-    <a href="admin-panel.html" class="dn-btn espace-admin active">🛡️ Espace Admin</a>
-    <a href="admin-jury.html"  class="dn-btn espace-jury">⚖️ Espace Jury</a>
-    <a href="cahier-des-charges.html" class="dn-btn">📄 CDC</a>
+    <a href="admin-panel.html" class="dn-btn espace-admin active">
+      <span class="dn-icon">🛡️</span>
+      <span class="dn-lbl">Admin</span>
+    </a>
+    <a href="admin-jury.html" class="dn-btn espace-jury">
+      <span class="dn-icon">⚖️</span>
+      <span class="dn-lbl">Jury</span>
+    </a>
+    <a href="cahier-des-charges.html" class="dn-btn">
+      <span class="dn-icon">📄</span>
+      <span class="dn-lbl">CDC</span>
+    </a>
   </div>
 </body>
 </html>
