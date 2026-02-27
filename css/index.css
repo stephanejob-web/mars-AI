@@ -1205,6 +1205,14 @@ section {
   border-radius: 12px;
   margin-bottom: 11px;
 }
+.film-thumb-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
 .film-thumb-bg {
   width: 100%; height: 100%;
   position: absolute; inset: 0;
