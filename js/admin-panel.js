@@ -287,9 +287,17 @@ function toggleFilmJury(filmId, userId) {
 }
 
 /* ── VUE ASSIGNATION (médiathèque) ── */
-const FILMS_PER_PAGE = 10;
+const FILMS_PER_PAGE = 20;
 let currentPage = 1;
 let currentFilmTab = 'pending';
+let currentViewMode = 'list';
+
+function setViewMode(mode) {
+  currentViewMode = mode;
+  document.getElementById('vmt-list').classList.toggle('active', mode === 'list');
+  document.getElementById('vmt-grid').classList.toggle('active', mode === 'grid');
+  renderAssignView();
+}
 
 function switchFilmTab(tab) {
   currentFilmTab = tab;
@@ -302,8 +310,8 @@ function switchFilmTab(tab) {
   document.getElementById('tab-pending').classList.toggle('active', tab === 'pending');
   document.getElementById('tab-assigned').classList.toggle('active', tab === 'assigned');
   renderAssignView();
-  // Remonter en haut de la grille
-  document.getElementById('assign-grid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // Remonter en haut de la liste
+  document.getElementById('view-assign').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function renderAssignView(page) {
@@ -337,10 +345,13 @@ function renderAssignView(page) {
 
   // État vide
   const emptyEl = document.getElementById('assign-empty');
+  const listWrap = document.getElementById('film-list-wrap');
+  const cardsWrap = document.getElementById('assign-cards');
   if (filmList.length === 0) {
     grid.innerHTML = '';
-    emptyEl.querySelector
-      ? null : null;
+    if (cardsWrap) cardsWrap.innerHTML = '';
+    if (listWrap) listWrap.style.display = 'none';
+    if (cardsWrap) cardsWrap.style.display = 'none';
     emptyEl.innerHTML = filmSearchQuery
       ? `<div style="font-size:2rem;margin-bottom:12px;">🔍</div><div style="font-family:var(--font-display);font-size:1rem;font-weight:800;color:var(--white-soft);margin-bottom:6px;">Aucun résultat pour "${filmSearchQuery}"</div><div style="font-size:0.78rem;color:var(--mist);">Essayez un autre titre, réalisateur ou pays.</div>`
       : `<div style="font-size:3rem;margin-bottom:16px;">🎉</div><div style="font-family:var(--font-display);font-size:1.1rem;font-weight:800;color:var(--white-soft);margin-bottom:8px;">Tous les films sont assignés !</div><div style="font-size:0.8rem;color:var(--mist);">Retrouvez-les dans l'onglet "Assignés".</div>`;
@@ -350,7 +361,7 @@ function renderAssignView(page) {
   }
   emptyEl.style.display = 'none';
 
-  // Palettes de couleurs uniques par carte
+  // Palettes pour la vue grille
   const cardPalettes = [
     { accent: '#4effce', bg: 'linear-gradient(135deg,#032e22 0%,#050f1a 60%,#031e16 100%)' },
     { accent: '#c084fc', bg: 'linear-gradient(135deg,#1e0a38 0%,#050818 60%,#150830 100%)' },
@@ -362,57 +373,78 @@ function renderAssignView(page) {
     { accent: '#fb923c', bg: 'linear-gradient(135deg,#2e1400 0%,#0a0608 60%,#1e0e00 100%)' },
   ];
 
-  grid.innerHTML = pageFilms.map(f => {
-    const assignedJury = juryUsers.filter(u => u.assigned.includes(f.id));
-    const nAssigned = assignedJury.length;
-    const isAssigned = nAssigned > 0;
-    const nComments = f.comments ? Object.keys(f.comments).length : 0;
-    const pal = cardPalettes[f.id % cardPalettes.length];
+  if (currentViewMode === 'list') {
+    if (listWrap) listWrap.style.display = '';
+    if (cardsWrap) cardsWrap.style.display = 'none';
 
-    const assignedBadge = isAssigned
-      ? `<div class="assigned-badge ab-ok">✓ ${nAssigned} juré${nAssigned > 1 ? 's' : ''}</div>`
-      : `<div class="assigned-badge ab-none">Non assigné</div>`;
+    grid.innerHTML = pageFilms.map(f => {
+      const assignedJury = juryUsers.filter(u => u.assigned.includes(f.id));
+      const isAssigned = assignedJury.length > 0;
+      const nComments = f.comments ? Object.keys(f.comments).length : 0;
+      const avatarStack = isAssigned
+        ? `<div class="av-stack">${assignedJury.slice(0, 4).map(u => `<img src="${u.avatar}" alt="${u.name}" title="${u.name}">`).join('')}${assignedJury.length > 4 ? `<div class="av-extra">+${assignedJury.length - 4}</div>` : ''}</div>`
+        : `<span class="fl-not-assigned">Non assigné</span>`;
+      const commentBtn = nComments > 0
+        ? `<button class="fl-comment-btn" onclick="event.stopPropagation();openCommentsModal(${f.id})">💬 ${nComments}</button>`
+        : '';
+      return `<tr class="fl-row" onclick="openDrawer(${f.id})">
+          <td class="fl-td-num">#${String(f.id).padStart(3, '0')}</td>
+          <td class="fl-td-film"><div class="fl-title">${f.title}</div><div class="fl-author">${f.author}</div></td>
+          <td class="fl-td-country">${flags[f.country] || '🌐'} ${f.country}</td>
+          <td class="fl-td-jury">${avatarStack}${commentBtn}</td>
+          <td class="fl-td-action">
+            <button class="btn-fl-assign ${isAssigned ? 'is-assigned' : ''}" onclick="event.stopPropagation();openDrawer(${f.id})">${isAssigned ? 'Modifier' : 'Assigner'} →</button>
+          </td>
+        </tr>`;
+    }).join('');
 
-    const avatars = juryUsers.map(u => {
-      const assigned = u.assigned.includes(f.id);
-      const total = u.assigned.length;
-      const badgeCls = total <= 5 ? 'alb-green' : total <= 10 ? 'alb-orange' : 'alb-red';
-      const shadow = assigned
-        ? '0 0 0 2.5px var(--aurora),0 0 10px rgba(78,255,206,0.3)'
-        : '0 0 0 2px rgba(255,255,255,0.12)';
-      const opacity = assigned ? '1' : '0.3';
-      return `<div class="av-load-wrap" onclick="toggleFilmJury(${f.id}, ${u.id})" title="${u.name} — ${total} film${total !== 1 ? 's' : ''} assignés">
-          <img src="${u.avatar}" alt="${u.name}"
-            style="box-shadow:${shadow};opacity:${opacity};"
-            onmouseover="this.style.opacity='1'"
-            onmouseout="this.style.opacity='${opacity}'">
-          <span class="av-load-badge ${badgeCls}">${total}</span>
+  } else {
+    if (listWrap) listWrap.style.display = 'none';
+    if (cardsWrap) cardsWrap.style.display = 'grid';
+
+    cardsWrap.innerHTML = pageFilms.map(f => {
+      const assignedJury = juryUsers.filter(u => u.assigned.includes(f.id));
+      const nAssigned = assignedJury.length;
+      const isAssigned = nAssigned > 0;
+      const nComments = f.comments ? Object.keys(f.comments).length : 0;
+      const pal = cardPalettes[f.id % cardPalettes.length];
+      const assignedBadge = isAssigned
+        ? `<div class="assigned-badge ab-ok">✓ ${nAssigned} juré${nAssigned > 1 ? 's' : ''}</div>`
+        : `<div class="assigned-badge ab-none">Non assigné</div>`;
+      const avatars = juryUsers.map(u => {
+        const assigned = u.assigned.includes(f.id);
+        const total = u.assigned.length;
+        const badgeCls = total <= 5 ? 'alb-green' : total <= 10 ? 'alb-orange' : 'alb-red';
+        const shadow = assigned ? '0 0 0 2.5px var(--aurora),0 0 10px rgba(78,255,206,0.3)' : '0 0 0 2px rgba(255,255,255,0.12)';
+        const opacity = assigned ? '1' : '0.3';
+        return `<div class="av-load-wrap" onclick="toggleFilmJury(${f.id}, ${u.id})" title="${u.name}">
+            <img src="${u.avatar}" alt="${u.name}" style="box-shadow:${shadow};opacity:${opacity};" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='${opacity}'">
+            <span class="av-load-badge ${badgeCls}">${total}</span>
+          </div>`;
+      }).join('');
+      return `<div class="film-card" style="--card-accent-color:${pal.accent}22;">
+          <div class="film-card-accent" style="background:${pal.accent};opacity:0.7;"></div>
+          <div class="film-thumb" onclick="playFilm(${f.id})" style="background:${pal.bg};">
+            <video src="../assets/video.mp4" muted preload="none" id="vid-${f.id}"></video>
+            <div class="film-num-bg">${String(f.id).padStart(3, '0')}</div>
+            <div class="film-thumb-overlay">
+              <div class="film-thumb-flag">${flags[f.country] || '🌐'}</div>
+              <div class="play-btn">▶</div>
+            </div>
+            <div class="film-num-badge">#${String(f.id).padStart(3, '0')}</div>
+            ${assignedBadge}
+          </div>
+          <div class="film-body">
+            <div class="film-title">${f.title}</div>
+            <div class="film-meta">${f.author} · ${flags[f.country] || ''} ${f.country}</div>
+            <div style="display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap;">${avatars}</div>
+            ${nComments > 0
+              ? `<button class="film-comments-btn" onclick="openCommentsModal(${f.id})">💬 ${nComments} commentaire${nComments > 1 ? 's' : ''}</button>`
+              : `<button class="film-comments-btn no-comments" disabled>💬 Aucun commentaire</button>`}
+          </div>
         </div>`;
     }).join('');
-    const juryRow = `<div style="display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap;">${avatars}</div>`;
-
-    return `<div class="film-card" style="--card-accent-color:${pal.accent}22;">
-        <div class="film-card-accent" style="background:${pal.accent};opacity:0.7;"></div>
-        <div class="film-thumb" onclick="playFilm(${f.id})" style="background:${pal.bg};">
-          <video src="../assets/video.mp4" muted preload="none" id="vid-${f.id}"></video>
-          <div class="film-num-bg">${String(f.id).padStart(3, '0')}</div>
-          <div class="film-thumb-overlay">
-            <div class="film-thumb-flag">${flags[f.country] || '🌐'}</div>
-            <div class="play-btn">▶</div>
-          </div>
-          <div class="film-num-badge">#${String(f.id).padStart(3, '0')}</div>
-          ${assignedBadge}
-        </div>
-        <div class="film-body">
-          <div class="film-title">${f.title}</div>
-          <div class="film-meta">${f.author} · ${flags[f.country] || ''} ${f.country}</div>
-          ${juryRow}
-          ${nComments > 0
-        ? `<button class="film-comments-btn" onclick="openCommentsModal(${f.id})">💬 ${nComments} commentaire${nComments > 1 ? 's' : ''}</button>`
-        : `<button class="film-comments-btn no-comments" disabled>💬 Aucun commentaire</button>`}
-        </div>
-      </div>`;
-  }).join('');
+  }
 
   // Pagination
   const pag = document.getElementById('pagination');

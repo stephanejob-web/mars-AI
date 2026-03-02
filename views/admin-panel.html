@@ -221,19 +221,48 @@
       </div>
     </div>
 
-    <!-- Onglets -->
-    <div class="film-tabs">
-      <button class="film-tab pending-tab active" id="tab-pending" onclick="switchFilmTab('pending')">
-        🎬 À assigner
-        <span class="tab-count" id="count-pending">—</span>
-      </button>
-      <button class="film-tab assigned-tab" id="tab-assigned" onclick="switchFilmTab('assigned')">
-        ✓ Assignés
-        <span class="tab-count" id="count-assigned">—</span>
-      </button>
+    <!-- Onglets + Toggle de vue -->
+    <div class="tabs-toolbar">
+      <div class="film-tabs">
+        <button class="film-tab pending-tab active" id="tab-pending" onclick="switchFilmTab('pending')">
+          🎬 À assigner
+          <span class="tab-count" id="count-pending">—</span>
+        </button>
+        <button class="film-tab assigned-tab" id="tab-assigned" onclick="switchFilmTab('assigned')">
+          ✓ Assignés
+          <span class="tab-count" id="count-assigned">—</span>
+        </button>
+      </div>
+      <div class="view-mode-toggle">
+        <button class="vmt-btn active" id="vmt-list" onclick="setViewMode('list')" title="Vue liste">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="2" width="12" height="1.5" rx="0.75" fill="currentColor"/><rect x="1" y="6" width="12" height="1.5" rx="0.75" fill="currentColor"/><rect x="1" y="10" width="12" height="1.5" rx="0.75" fill="currentColor"/></svg>
+          Liste
+        </button>
+        <button class="vmt-btn" id="vmt-grid" onclick="setViewMode('grid')" title="Vue grille">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" fill="currentColor"/><rect x="8" y="1" width="5" height="5" rx="1" fill="currentColor"/><rect x="1" y="8" width="5" height="5" rx="1" fill="currentColor"/><rect x="8" y="8" width="5" height="5" rx="1" fill="currentColor"/></svg>
+          Grille
+        </button>
+      </div>
     </div>
 
-    <div id="assign-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;"></div>
+    <!-- Vue Liste -->
+    <div class="film-list-wrap" id="film-list-wrap">
+      <table class="film-list-table">
+        <thead>
+          <tr>
+            <th class="flt-num">#</th>
+            <th>Film</th>
+            <th>Pays</th>
+            <th>Jury assigné</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="assign-grid"></tbody>
+      </table>
+    </div>
+
+    <!-- Vue Grille -->
+    <div id="assign-cards" class="assign-cards-grid" style="display:none;"></div>
 
     <!-- État vide -->
     <div id="assign-empty" style="display:none;text-align:center;padding:60px 20px;">
