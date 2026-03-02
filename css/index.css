@@ -23,14 +23,14 @@ nav {
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 100;
-  background: rgba(14,19,52,0.55);
+  background: rgba(20,26,66,0.55);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid rgba(255,255,255,0.06);
   transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
 }
 nav.nav-scrolled {
-  background: rgba(14,19,52,0.92);
+  background: rgba(20,26,66,0.92);
   border-bottom-color: rgba(78,255,206,0.08);
   box-shadow: 0 4px 30px rgba(0,0,0,0.3);
 }
@@ -703,10 +703,11 @@ section {
    ================================================================ */
 .concept {
   background: linear-gradient(
-    to bottom,
-    rgba(13, 18, 50, 0.82) 0%,
-    rgba(14, 19, 52, 0.90) 15%,
-    rgba(14, 19, 52, 0.92) 100%
+    160deg,
+    #141A42 0%,
+    #171E4A 40%,
+    #161D50 70%,
+    #141A42 100%
   );
   overflow: hidden;
   position: relative;
@@ -716,27 +717,18 @@ section {
   position: absolute;
   border-radius: 50%;
   filter: blur(80px);
-  opacity: 0.12;
+  opacity: 0.25;
   pointer-events: none;
   z-index: 0;
 }
 .concept-orb--1 {
-  width: 400px; height: 400px;
-  background: radial-gradient(circle, var(--aurora), transparent 70%);
-  top: 10%; left: -5%;
-  animation: orb-drift-1 12s ease-in-out infinite;
+  display: none;
 }
 .concept-orb--2 {
-  width: 300px; height: 300px;
-  background: radial-gradient(circle, var(--lavande), transparent 70%);
-  bottom: 5%; right: 10%;
-  animation: orb-drift-2 10s ease-in-out infinite;
+  display: none;
 }
 .concept-orb--3 {
-  width: 250px; height: 250px;
-  background: radial-gradient(circle, var(--solar), transparent 70%);
-  top: 50%; left: 40%;
-  animation: orb-drift-3 14s ease-in-out infinite;
+  display: none;
 }
 @keyframes orb-drift-1 {
   0%, 100% { transform: translate(0, 0) scale(1); }
@@ -814,6 +806,41 @@ section {
 @keyframes line-reveal {
   to { transform: scaleX(1); }
 }
+/* --- Particules flottantes --- */
+.concept-particles {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.particle {
+  position: absolute;
+  bottom: -10px;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--aurora);
+  opacity: 0;
+  animation: particle-rise linear infinite;
+}
+.particle:nth-child(even) {
+  background: var(--lavande);
+  width: 2px;
+  height: 2px;
+}
+.particle:nth-child(3n) {
+  background: var(--solar);
+  width: 2.5px;
+  height: 2.5px;
+}
+@keyframes particle-rise {
+  0%   { opacity: 0; transform: translateY(0) translateX(0); }
+  15%  { opacity: 0.6; }
+  85%  { opacity: 0.4; }
+  100% { opacity: 0; transform: translateY(-600px) translateX(20px); }
+}
+
 .concept .section-inner {
   position: relative;
   z-index: 1;
@@ -844,8 +871,9 @@ section {
   z-index: 1;
 }
 .concept-card {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 4px 30px rgba(78,255,206,0.06);
   border-radius: 16px;
   padding: 32px 28px;
   transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease), border-color 0.4s, background 0.4s;
@@ -969,7 +997,13 @@ section {
 .about {
   position: relative;
   overflow: visible;
-  background: rgba(14, 19, 52, 0.94);
+  background: linear-gradient(
+    135deg,
+    #141A42 0%,
+    #181F4E 35%,
+    #1A2155 65%,
+    #151B46 100%
+  );
 }
 .about-bg {
   position: absolute;
@@ -978,7 +1012,7 @@ section {
   left: 0;
   right: 0;
   background: url('../assets/friche-belle-mai-toit-terrasse.jpg') center 40% / cover no-repeat;
-  filter: saturate(0.5) brightness(0.72);
+  filter: saturate(0.85) brightness(0.82);
   pointer-events: none;
   /* Masque combiné : fondu haut/bas + fondu gauche (texte) vers droite (globe) */
   -webkit-mask-image:
@@ -997,8 +1031,8 @@ section {
   inset: 0;
   background: linear-gradient(
     90deg,
-    rgba(14, 19, 52, 0.70) 0%,
-    rgba(14, 19, 52, 0.35) 40%,
+    rgba(21, 27, 70, 0.65) 0%,
+    rgba(21, 27, 70, 0.30) 40%,
     transparent 65%
   );
   pointer-events: none;
@@ -1034,6 +1068,10 @@ section {
   width: 100% !important;
   height: 100% !important;
   display: block;
+  cursor: grab;
+}
+.globe-wrap canvas:active {
+  cursor: grabbing;
 }
 
 /* --- Carte venue compacte superposée sur le globe --- */
@@ -1043,7 +1081,7 @@ section {
   left: 50%;
   transform: translateX(-50%);
   z-index: 2;
-  background: rgba(10, 15, 46, 0.7);
+  background: rgba(21, 27, 70, 0.6);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(78, 255, 206, 0.15);
@@ -1168,7 +1206,7 @@ section {
 .cta-block {
   max-width: 1200px;
   margin: 0 auto;
-  background: linear-gradient(135deg, rgba(78,255,206,0.08) 0%, rgba(192,132,252,0.08) 50%, rgba(10,15,46,0) 100%);
+  background: linear-gradient(135deg, rgba(78,255,206,0.08) 0%, rgba(192,132,252,0.08) 50%, rgba(21,27,70,0) 100%);
   border: 1px solid rgba(78,255,206,0.2);
   border-radius: 24px;
   padding: 72px 80px;
@@ -1250,7 +1288,13 @@ section {
    Films en competition : carte vedette + grille de vignettes
    ================================================================ */
 .gallery-section {
-  background: rgba(14,19,52,0.92);
+  background: linear-gradient(
+    170deg,
+    #151B46 0%,
+    #191F52 45%,
+    #1C2358 70%,
+    #161C48 100%
+  );
   position: relative;
   overflow: hidden;
 }
@@ -1395,7 +1439,7 @@ section {
   overflow: hidden;
   cursor: pointer;
   transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), box-shadow 0.35s ease, border-color 0.35s ease;
-  background: rgba(14,19,52,0.85);
+  background: rgba(21,27,70,0.85);
   border: 1px solid rgba(255,255,255,0.07);
   padding-bottom: 14px;
 }
@@ -1553,7 +1597,13 @@ section {
 .how-section {
   position: relative;
   overflow: hidden;
-  background: rgba(14,19,52,0.90);
+  background: linear-gradient(
+    145deg,
+    #151B46 0%,
+    #1A2050 40%,
+    #1D2456 60%,
+    #161C48 100%
+  );
 }
 .how-header {
   text-align: center;
@@ -1653,7 +1703,12 @@ section {
    Apercu du lecteur video embarque
    ================================================================ */
 .player-section {
-  background: rgba(10,14,42,0.92);
+  background: linear-gradient(
+    180deg,
+    #151B46 0%,
+    #171E4C 50%,
+    #141A42 100%
+  );
   padding: 80px 60px;
 }
 .player-preview {
@@ -1795,7 +1850,7 @@ section {
   padding: 8px 16px;
   border-radius: 8px;
   border: 1px solid rgba(255,255,255,0.08);
-  background: rgba(14,19,52,0.85);
+  background: rgba(21,27,70,0.85);
 }
 .film-nav-btn:hover {
   color: var(--white-soft);
@@ -1815,7 +1870,13 @@ section {
    ================================================================ */
 .palmares-section {
   position: relative;
-  background: rgba(14,19,52,0.92);
+  background: linear-gradient(
+    155deg,
+    #161C48 0%,
+    #1B2254 40%,
+    #1E255A 65%,
+    #171E4A 100%
+  );
   padding: 100px 0;
   overflow: hidden;
 }
@@ -1964,7 +2025,11 @@ section {
    Grille : marque, liens, partenaires, mentions legales
    ================================================================ */
 footer {
-  background: rgba(14,19,52,0.95);
+  background: linear-gradient(
+    180deg,
+    #161C48 0%,
+    #111535 100%
+  );
   border-top: 1px solid rgba(255,255,255,0.06);
   padding: 60px;
 }
@@ -2141,7 +2206,7 @@ footer {
 .nav-panel {
   display: none;
   position: fixed; top: 64px; left: 0; right: 0;
-  background: rgba(14,19,52,0.97);
+  background: rgba(21,27,70,0.95);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(255,255,255,0.07);
   padding: 20px 24px 28px;
@@ -2358,11 +2423,11 @@ footer {
   position: absolute; inset: 0; z-index: 1;
   background:
     linear-gradient(to bottom,
-      rgba(10,15,46,0.9) 0%,
-      rgba(10,15,46,0.2) 30%,
-      rgba(10,15,46,0.1) 50%,
-      rgba(10,15,46,0.2) 70%,
-      rgba(10,15,46,0.9) 100%);
+      rgba(21,27,70,0.85) 0%,
+      rgba(21,27,70,0.15) 30%,
+      rgba(21,27,70,0.08) 50%,
+      rgba(21,27,70,0.15) 70%,
+      rgba(21,27,70,0.85) 100%);
   pointer-events: none;
 }
 
@@ -2404,7 +2469,7 @@ footer {
   letter-spacing: -0.02em;
   color: var(--white-soft);
   display: block;
-  text-shadow: 0 2px 30px rgba(3,3,5,0.9), 0 0 60px rgba(10,15,46,0.5);
+  text-shadow: 0 2px 30px rgba(3,3,5,0.9), 0 0 60px rgba(21,27,70,0.4);
 }
 
 /* Lignes secondaires (plus subtiles, italique, taille reduite) */
@@ -2713,7 +2778,12 @@ footer {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(14,19,52,0.92);
+  background: linear-gradient(
+    165deg,
+    #141A42 0%,
+    #181F50 50%,
+    #151B46 100%
+  );
 }
 .counters-grid {
   display: grid;
@@ -2729,7 +2799,7 @@ footer {
   text-align: center;
   padding: 40px 20px;
   position: relative;
-  background: rgba(14,19,52,0.6);
+  background: rgba(21,27,70,0.6);
   border: 1px solid rgba(255,255,255,0.06);
   border-radius: 2px;
   transition: background 0.3s;
@@ -2834,12 +2904,12 @@ footer {
     radial-gradient(ellipse at 75% 40%, rgba(192,132,252,0.26) 0%, transparent 52%),
     radial-gradient(ellipse at 50% 90%, rgba(78,255,206,0.10) 0%, transparent 40%),
     radial-gradient(circle at 50% 20%, rgba(255,107,107,0.08) 0%, transparent 35%),
-    linear-gradient(180deg, rgba(14,19,52,0.92) 0%, rgba(20,10,35,0.88) 45%, rgba(14,19,52,0.92) 100%);
+    linear-gradient(180deg, rgba(21,27,70,0.90) 0%, rgba(20,10,35,0.88) 45%, rgba(21,27,70,0.90) 100%);
 }
 .marsnight-section::after {
   content: "";
   position: absolute; inset: 0; z-index: 2;
-  background: radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(14,19,52,0.55) 100%);
+  background: radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(21,27,70,0.50) 100%);
   pointer-events: none;
 }
 .marsnight-stars {
@@ -2914,7 +2984,13 @@ footer {
    ================================================================ */
 .jury-section {
   position: relative;
-  background: rgba(14,19,52,0.92);
+  background: linear-gradient(
+    140deg,
+    #151B46 0%,
+    #1A2052 40%,
+    #1D2558 65%,
+    #161C48 100%
+  );
   padding: 120px 0;
   overflow: hidden;
 }
@@ -3016,7 +3092,7 @@ footer {
   gap: 20px;
 }
 .jury-card {
-  background: rgba(14,19,52,0.88);
+  background: rgba(21,27,70,0.85);
   border: 1px solid rgba(255,255,255,0.09);
   border-radius: 20px;
   overflow: hidden;
@@ -3035,7 +3111,7 @@ footer {
 .jury-card-photo-wrap::after {
   content: "";
   position: absolute; inset: 0;
-  background: linear-gradient(to top, rgba(8,12,38,0.5) 0%, transparent 40%);
+  background: linear-gradient(to top, rgba(21,27,70,0.4) 0%, transparent 40%);
   pointer-events: none;
 }
 .jury-card-photo {
@@ -3066,7 +3142,12 @@ footer {
    Logos partenaires classes par tiers (principal, officiel, etc.)
    ================================================================ */
 .sponsors-section {
-  background: rgba(14,19,52,0.90);
+  background: linear-gradient(
+    175deg,
+    #161C48 0%,
+    #191F50 50%,
+    #151B46 100%
+  );
   border-top: 1px solid rgba(255,255,255,0.06);
   border-bottom: 1px solid rgba(255,255,255,0.06);
   padding: 64px 0;

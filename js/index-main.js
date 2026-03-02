@@ -289,3 +289,4 @@
     document.getElementById('sponsors-display').innerHTML = html;
   }
   renderSponsors();
+

@@ -279,7 +279,7 @@ canvas.addEventListener('mousedown', (e) => {
   mouseOnDown.y = e.clientY;
   targetOnDown.x = target.x;
   targetOnDown.y = target.y;
-  canvas.style.cursor = 'move';
+  canvas.style.cursor = 'grabbing';
 });
 
 window.addEventListener('mousemove', (e) => {
@@ -293,7 +293,7 @@ window.addEventListener('mousemove', (e) => {
 
 window.addEventListener('mouseup', () => {
   isDragging = false;
-  canvas.style.cursor = 'default';
+  canvas.style.cursor = '';
 });
 
 // Touch (mobile)
