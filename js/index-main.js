@@ -192,11 +192,21 @@ window.addEventListener('scroll', () => {
   // Restart Three.js loop when sphere becomes visible again
   if (sphereOpacity > 0 && window._restartSphereAnim) window._restartSphereAnim();
 
-  // scrollspy — section active = celle dont le top est la plus proche au-dessus du centre écran
-  const mid = y + window.innerHeight * 0.35;
-  let active = null;
-  navSections.forEach(s => {
-    if (s.el && s.el.offsetTop <= mid) active = s.id;
+    // Vidéo hero : opacity 1→0 sur 70% de la hauteur hero
+    const heroHeight = heroEl.offsetHeight;
+    const videoOpacity = Math.max(0, 1 - (y / (heroHeight * 0.7)));
+    const heroVideo = document.getElementById('hero-video');
+    if (heroVideo) heroVideo.style.opacity = videoOpacity;
+
+    // scrollspy — section active = celle dont le top est la plus proche au-dessus du centre écran
+    const mid = y + window.innerHeight * 0.35;
+    let active = null;
+    navSections.forEach(s => {
+      if (s.el && s.el.offsetTop <= mid) active = s.id;
+    });
+    document.querySelectorAll('.nav-item').forEach(a => {
+      a.classList.toggle('nav-active', a.dataset.section === active);
+    });
   });
   document.querySelectorAll('.nav-item').forEach(a => {
     a.classList.toggle('nav-active', a.dataset.section === active);

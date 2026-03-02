@@ -368,3 +368,40 @@ Le GPU Intel UHD 620 était saturé à 100%. Optimisations appliquées :
 - `views/index.html` — section #programme restructurée, ajout canvas globe + about-bg
 - `css/index.css` — suppression anciens styles venue/programme, ajout globe/compact/fond image
 - `SESSION.md` — mise à jour
+
+---
+
+## Session 8 — Remplacement sphère hero par vidéo + clarté vidéo
+**Date** : 27 février 2026
+
+### 1. Remplacement de la sphère 3D hero par une vidéo
+- **Supprimé** : `<canvas id="webgl-canvas">` (sphère wireframe Three.js)
+- **Supprimé** : `<script type="module" src="../js/index-sphere.js">` (plus chargé)
+- **Ajouté** : `<video id="hero-video">` en arrière-plan fixe (autoplay, muted, loop, playsinline)
+- **Source** : `assets/Création_Vidéo_IA_pour_MarsAI_Marseille.mp4` (9.3 Mo)
+- Le globe 3D wikiglobe (section Événement) est **conservé intact**
+
+### 2. Adaptation CSS #webgl-canvas → #hero-video
+- **Position** : `fixed`, centré via `top:50%; left:50%; transform:translate(-50%,-50%)`
+- **Couverture** : `min-width:100%; min-height:100%; object-fit:cover`
+- **z-index** : 0 (derrière tout le contenu)
+- **Accessibilité** : `prefers-reduced-motion` → `display: none`
+- Commentaire section mis à jour : "CANVAS THREE.JS" → "VIDÉO HERO"
+
+### 3. Nettoyage index-main.js
+- Référence `#webgl-canvas` → `#hero-video` (scroll fade)
+- Suppression de `window._restartSphereAnim` (plus nécessaire pour une vidéo)
+- Guard `if (heroVideo)` pour éviter les erreurs si l'élément est absent
+
+### 4. Clarté vidéo — suppression des filtres
+- **Problème** : vidéo voilée/bleue, couleurs pas nettes
+- **Cause** : 3 couches d'overlay cumulées — `opacity: 0.35` + `filter: saturate/brightness` + `.hero-canvas-bg::after` (3 gradients bleu foncé)
+- **Itération progressive** : opacity 0.35→0.55→0.65→0.9→**1**, filtre saturate/brightness → **none**
+- **Overlay `.hero-canvas-bg::after`** : 3 gradients bleu foncé → `display: none`
+- **Résultat** : vidéo à 100% de qualité native, aucun filtre, fade 1→0 au scroll
+
+### Fichiers modifiés
+- `views/index.html` — canvas hero → video, script sphere supprimé
+- `css/index.css` — styles #hero-video, overlay supprimé, commentaire mis à jour
+- `js/index-main.js` — référence vidéo, suppression _restartSphereAnim
+- `SESSION.md` — mise à jour
