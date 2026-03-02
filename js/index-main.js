@@ -185,28 +185,17 @@ window.addEventListener('scroll', () => {
   // fond de nav — classe scrolled pour le glassmorphism
   nav.classList.toggle('nav-scrolled', y > 60);
 
-  // Sphere fade: opacity 1→0 over 70% of hero height
+  // Vidéo hero : opacity 1→0 sur 70% de la hauteur hero
   const heroHeight = heroEl.offsetHeight;
-  const sphereOpacity = Math.max(0, 1 - (y / (heroHeight * 0.7)));
-  document.getElementById('webgl-canvas').style.opacity = sphereOpacity;
-  // Restart Three.js loop when sphere becomes visible again
-  if (sphereOpacity > 0 && window._restartSphereAnim) window._restartSphereAnim();
+  const videoOpacity = Math.max(0, 1 - (y / (heroHeight * 0.7)));
+  const heroVideo = document.getElementById('hero-video');
+  if (heroVideo) heroVideo.style.opacity = videoOpacity;
 
-    // Vidéo hero : opacity 1→0 sur 70% de la hauteur hero
-    const heroHeight = heroEl.offsetHeight;
-    const videoOpacity = Math.max(0, 1 - (y / (heroHeight * 0.7)));
-    const heroVideo = document.getElementById('hero-video');
-    if (heroVideo) heroVideo.style.opacity = videoOpacity;
-
-    // scrollspy — section active = celle dont le top est la plus proche au-dessus du centre écran
-    const mid = y + window.innerHeight * 0.35;
-    let active = null;
-    navSections.forEach(s => {
-      if (s.el && s.el.offsetTop <= mid) active = s.id;
-    });
-    document.querySelectorAll('.nav-item').forEach(a => {
-      a.classList.toggle('nav-active', a.dataset.section === active);
-    });
+  // scrollspy — section active = celle dont le top est la plus proche au-dessus du centre écran
+  const mid = y + window.innerHeight * 0.35;
+  let active = null;
+  navSections.forEach(s => {
+    if (s.el && s.el.offsetTop <= mid) active = s.id;
   });
   document.querySelectorAll('.nav-item').forEach(a => {
     a.classList.toggle('nav-active', a.dataset.section === active);
