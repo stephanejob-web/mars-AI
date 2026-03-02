@@ -271,3 +271,137 @@ Le GPU Intel UHD 620 était saturé à 100%. Optimisations appliquées :
 - `js/manifeste-carousel.js` — chemins vidéo corrigés, 6 cartes, 60 particules, clip-path inline, DOM caché
 - `css/index.css` — suppression clip-path CSS sur `.ev-card-normal` et `.ev-card-ascii`
 - `SESSION.md` — mise à jour
+
+---
+
+## Session 6 — Amélioration robot IA + fond manifeste
+**Date** : 27 février 2026
+
+### 1. Nettoyage image Robot2.png
+- **Problème** : contours de découpe visibles (halo blanc/gris du fond original), rectangle de l'image apparent sur fond sombre
+- **Script Python (Pillow)** : érosion 2px de la frange alpha, suppression des pixels blancs de bordure, blur doux (0.8px) pour lisser les bords
+- **Backup** conservé dans `assets/Robot2_backup.png`
+
+### 2. Suppression du contour rectangulaire
+- **Cause** : `mask-image: linear-gradient(to bottom)` ne masquait que le bas → contour rectangulaire visible sur les côtés et le haut
+- **Fix** : masque double combiné avec `mask-composite: intersect` :
+  - `radial-gradient(ellipse 80% 100% at 50% 30%)` — fondu sur les côtés et le haut
+  - `linear-gradient(to bottom, #000 55%, transparent 100%)` — fondu progressif en bas
+- `drop-shadow` déplacé de `.robot-img` vers `.robot-wrap` (parent) pour éviter le halo rectangulaire
+- `opacity: 1` + `background: transparent; border: none; outline: none;` pour supprimer tout rendu parasite
+
+### 3. Animation robot plus vivante
+- **Vitesse** : `6s` → `4s` (plus rapide)
+- **Amplitude** : `22px` → `20px`
+- **Résultat** : mouvement flottant bien visible et vivant
+
+### 4. Lumière bleue au-dessus de la tête renforcée
+- **Taille** : `40x40px` → `90x90px`
+- **Position** remontée (`top: 30px` → `top: 10px`)
+- **Couleur** plus bleue intense (`rgba(80,160,255,0.9)`)
+- **Opacité min** : `0` → `0.3` (toujours visible, ne disparaît plus)
+- **Pulsation** plus ample (`scale 0.8→1.1`)
+
+### 5. Luminosité du robot
+- Ajout `filter: brightness(1.23)` sur `.robot-img` pour éclaircir le visage trop sombre
+
+### 6. Image de fond section Manifeste
+- **Opacité** augmentée : `0.5` → `0.7`
+- **Luminosité** : ajout `filter: brightness(1.2)`
+- Image de fond (visage futuriste) plus visible et colorée
+
+### Fichiers modifiés
+- `assets/Robot2.png` — image re-nettoyée (frange supprimée, bords lissés)
+- `assets/Robot2_backup.png` — backup de l'original
+- `css/index.css` — masque radial+linéaire, animation 4s, lumière bleue renforcée, brightness robot et manifeste
+- `SESSION.md` — mise à jour
+
+---
+
+## Session 7 — Refonte section "L'Événement" + Globe 3D wikiglobe
+**Date** : 27 février 2026
+
+### 1. Globe 3D interactif (style wikiglobe)
+- **Nouveau fichier** `js/index-globe.js` — ES module Three.js (~280 lignes)
+- **Basé sur** [vrandezo/wikiglobe](https://github.com/vrandezo/wikiglobe) (dat.globe), porté vers Three.js 0.160
+- **Shaders GLSL identiques** au wikiglobe original :
+  - Shader Terre : texture `world.jpg` + lueur blanche Fresnel sur les bords
+  - Shader Atmosphère : halo bleu `vec4(0.1, 0.2, 0.5, 0.7)` avec `pow(..., 12.0)` (backside)
+- **Données Wikipedia FR** : `assets/globe-data.json` (265 Ko, ~26 000 points) chargées en async
+- **Fonction couleur** fidèle au wikiglobe : HSV `hue = 0.6 - val * 0.25` (bleu → cyan → vert)
+- **Points lumineux** : `PointsMaterial`, `AdditiveBlending`, `vertexColors`
+- **Marqueur Marseille** : dot coral pulsant + anneau animé (43.2964°N, 5.3736°E)
+- **Drag souris** : rotation orbitale avec easing 0.1 (identique wikiglobe) + support tactile mobile
+- **Auto-rotation** lente (0.003 rad/frame), reprend après 3s d'inactivité
+- **Performance** : throttle 20fps, `IntersectionObserver` pause/resume, `pixelRatio: 1`, `powerPreference: low-power`
+- **Texture placeholder** : canvas 1x1 sombre au démarrage pour éviter le noir avant chargement
+- **Fallback** : si WebGL indisponible, canvas masqué
+
+### 2. Restructuration HTML section #programme
+- **Supprimé** : timeline longue (4 items + speakers), iframe OpenStreetMap, overlay carte, stat-chips gros
+- **Colonne gauche** : description raccourcie, programme compact 3 lignes (Ven/Sam/Dim avec dots colorés), stats mini en ligne (50 films / 120+ pays / Gratuit)
+- **Colonne droite** : `<canvas id="globe-canvas">` + carte venue compacte superposée (nom, adresse, coordonnées, bouton itinéraire)
+
+### 3. Refonte CSS section
+- **Supprimé** (~160 lignes) : `.venue-map`, `.venue-map iframe`, `.venue-map-overlay`, `.venue-pin`, `@keyframes bounce`, `.venue-coords-badge`, `.venue-info`, `.venue-name`, `.venue-address`, `.venue-tags`, `.venue-tag`, `.venue-btn`, `.venue-card`, `.about-stats`, `.event-programme`, `.prog-item`, `.prog-dot`, `.prog-day`, `.prog-desc`, `.stat-chip`, `.stat-value`, `.stat-label`
+- **Ajouté** : `.globe-container`, `.globe-wrap` (aspect-ratio 1, max-width 460px), `.venue-overlay` compact (glassmorphism, 10px padding), `.prog-compact`, `.prog-line`, `.prog-dot-mini`, `.stat-row`, `.stat-chip-mini`
+- **Layout** : grid gap réduit 80→40px, `align-items: center`, colonne globe centrée en flexbox
+- **Responsive** : globe max-width 380px (1024px), 280px (480px)
+
+### 4. Image de fond Friches Belle de Mai
+- **Image** : `assets/friche-belle-mai-toit-terrasse.jpg` — photo toit-terrasse des Friches
+- **Intégration** : `div.about-bg` en position absolue, déborde ±60px en haut/bas pour couvrir les transitions
+- **Filtre** : `brightness(0.65)`, `saturate(0.4)` — image visible mais intégrée au thème sombre
+- **Masque CSS double** (`mask-composite: intersect`) :
+  - Vertical : fondu transparent en haut/bas → pas de cassure de couleur au scroll
+  - Horizontal : transparent à gauche (texte lisible) → visible à droite (zone globe)
+- **Voile bleu** (`::after`) : dégradé gauche→droite `rgba(10,15,46,0.75)` → transparent pour garantir la lisibilité du texte
+- **Dividers** : `z-index: 3` pour rester visibles au-dessus du fond
+
+### 5. Assets ajoutés
+- `assets/world.jpg` — texture Terre (94 Ko, du repo wikiglobe)
+- `assets/globe-data.json` — données Wikipedia FR résolution 3 (265 Ko)
+- `assets/friche-belle-mai-toit-terrasse.jpg` — photo Friches Belle de Mai
+
+### Fichiers modifiés
+- `js/index-globe.js` — **CRÉÉ** (globe 3D wikiglobe, ~280 lignes)
+- `views/index.html` — section #programme restructurée, ajout canvas globe + about-bg
+- `css/index.css` — suppression anciens styles venue/programme, ajout globe/compact/fond image
+- `SESSION.md` — mise à jour
+
+---
+
+## Session 8 — Remplacement sphère hero par vidéo + clarté vidéo
+**Date** : 27 février 2026
+
+### 1. Remplacement de la sphère 3D hero par une vidéo
+- **Supprimé** : `<canvas id="webgl-canvas">` (sphère wireframe Three.js)
+- **Supprimé** : `<script type="module" src="../js/index-sphere.js">` (plus chargé)
+- **Ajouté** : `<video id="hero-video">` en arrière-plan fixe (autoplay, muted, loop, playsinline)
+- **Source** : `assets/Création_Vidéo_IA_pour_MarsAI_Marseille.mp4` (9.3 Mo)
+- Le globe 3D wikiglobe (section Événement) est **conservé intact**
+
+### 2. Adaptation CSS #webgl-canvas → #hero-video
+- **Position** : `fixed`, centré via `top:50%; left:50%; transform:translate(-50%,-50%)`
+- **Couverture** : `min-width:100%; min-height:100%; object-fit:cover`
+- **z-index** : 0 (derrière tout le contenu)
+- **Accessibilité** : `prefers-reduced-motion` → `display: none`
+- Commentaire section mis à jour : "CANVAS THREE.JS" → "VIDÉO HERO"
+
+### 3. Nettoyage index-main.js
+- Référence `#webgl-canvas` → `#hero-video` (scroll fade)
+- Suppression de `window._restartSphereAnim` (plus nécessaire pour une vidéo)
+- Guard `if (heroVideo)` pour éviter les erreurs si l'élément est absent
+
+### 4. Clarté vidéo — suppression des filtres
+- **Problème** : vidéo voilée/bleue, couleurs pas nettes
+- **Cause** : 3 couches d'overlay cumulées — `opacity: 0.35` + `filter: saturate/brightness` + `.hero-canvas-bg::after` (3 gradients bleu foncé)
+- **Itération progressive** : opacity 0.35→0.55→0.65→0.9→**1**, filtre saturate/brightness → **none**
+- **Overlay `.hero-canvas-bg::after`** : 3 gradients bleu foncé → `display: none`
+- **Résultat** : vidéo à 100% de qualité native, aucun filtre, fade 1→0 au scroll
+
+### Fichiers modifiés
+- `views/index.html` — canvas hero → video, script sphere supprimé
+- `css/index.css` — styles #hero-video, overlay supprimé, commentaire mis à jour
+- `js/index-main.js` — référence vidéo, suppression _restartSphereAnim
+- `SESSION.md` — mise à jour

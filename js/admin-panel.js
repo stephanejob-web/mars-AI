@@ -97,19 +97,80 @@ const films = [
   { id: 50, title: "La Mémoire des Pixels", author: "Zara Ahmed", country: "Pakistan" },
 ];
 
+/* ── GÉNÉRATION DES 450 FILMS RESTANTS (51–500) ── */
+(function () {
+  const titles = [
+    "Soleil Binaire","Ombre Numérique","Éclat Artificiel","Mémoire Quantique","Flux Vital",
+    "Signal d'Aube","Conscience Augmentée","Territoire Virtuel","Silence Algorithmique","Lumière Codée",
+    "Rêve Mécanique","Corps Numérique","Voix Synthétique","Regard Artificiel","Temps Fractal",
+    "Monde Parallèle","Âme Pixelisée","Identité Simulée","Horizon Numérique","Portail Quantique",
+    "Écho des Machines","Pulsion Électrique","Mémoire Effacée","Données Perdues","Réseau Vivant",
+    "Interface Humaine","Protocole Émotionnel","Simulation Parfaite","Glitch Poétique","Bruit Blanc",
+    "Cartographie du Futur","Spectre Numérique","Onde de Choc","Réalité Altérée","Nœud Temporel",
+    "Dimension Zéro","Lumière Artificielle","Territoire Inconnu","Signal Fantôme","Pixel Vivant",
+    "Cerveau Augmenté","Système Nerveux","Circuit Émotionnel","Fréquence Vitale","Onde Cérébrale",
+    "Transmission Directe","Connexion Totale","Fusion Numérique","Évolution Forcée","Mutation Digitale",
+    "Chaos Ordonné","Harmonie Binaire","Symphonie Numérique","Composition Artificielle","Rythme Codé",
+    "Danse des Algorithmes","Mouvement Synthétique","Geste Mécanique","Corps Augmenté","Peau Numérique",
+    "Regard Profond","Vision Augmentée","Œil Artificiel","Perspective Codée","Angle Mort",
+    "Surface Miroir","Reflet Numérique","Image Fantôme","Portrait Synthétique","Visage Augmenté",
+    "Identité Fragmentée","Moi Numérique","Conscience Divisée","Dualité Digitale","Multiplicité",
+    "Archipel Numérique","Île Virtuelle","Territoire Flottant","Espace Intermédiaire","Zone Grise",
+    "Frontière Perméable","Limite Effacée","Bord du Réel","Seuil Numérique","Passage Secret",
+    "Porte Quantique","Clé Algorithmique","Code Source Vif","Programme Émotionnel","Script Poétique",
+    "Langage Nouveau","Mot Binaire","Phrase Codée","Texte Augmenté","Récit Numérique",
+  ];
+  const firstNames = [
+    "Amara","Lucas","Mei","Rafael","Yuki","Sofia","Ibrahim","Elena","Kofi","Priya",
+    "Diego","Nadia","Sven","Leila","Thomas","Aiko","Carlos","Fatima","James","Olga",
+    "Hana","Viktor","Giulia","Samuel","Claire","Omar","Rania","Pavel","Sunita","Layla",
+    "Chidi","Nina","Pablo","Aya","Marco","Ingrid","Étienne","Mele","Yasmine","Chen",
+    "Dmitri","Ana","Selin","Idrissa","Lin","Camille","Rafael","Zara","Mehdi","Park",
+  ];
+  const lastNames = [
+    "Touré","Schmidt","Zhang","Fernández","Nakamura","Eriksson","Diallo","Petrov","Mensah","Mehta",
+    "Castillo","Hassan","Lindqvist","Nasser","Vidal","Suzuki","Ruiz","Zahra","Okafor","Sorokina",
+    "Kim","Novak","Romano","Oduya","Morin","Diallo","Al-Rashid","Novák","Rao","Al-Rashid",
+    "Osei","Kovač","Herrera","Tanaka","Ferretti","Larsen","Blanchard","Tupou","Alaoui","Mingzhi",
+    "Volkov","Rodrigues","Yıldız","Coulibaly","Wei","Perret","Santos","Ahmed","Karimi","Ji-won",
+  ];
+  const countries = [
+    "France","Japon","Brésil","Allemagne","Espagne","Italie","Canada","Mexique","Corée du Sud","Inde",
+    "Sénégal","Maroc","Algérie","Tunisie","Égypte","Nigeria","Ghana","Kenya","Mali","Burkina Faso",
+    "Chine","Russie","Ukraine","Pologne","Suède","Norvège","Danemark","Portugal","Argentine","Colombie",
+    "Pérou","Chili","Turquie","Iran","Liban","Irak","Pakistan","Bangladesh","Thaïlande","Vietnam",
+    "Philippines","Indonésie","Australie","Nouvelle-Zélande","Afrique du Sud","Éthiopie","Tanzanie","Mozambique","Angola","Tonga",
+  ];
+
+  for (let i = 51; i <= 500; i++) {
+    const ti = (i - 51) % titles.length;
+    const fi = (i * 7) % firstNames.length;
+    const li = (i * 13) % lastNames.length;
+    const ci = (i * 3) % countries.length;
+    films.push({
+      id: i,
+      title: titles[ti] + (Math.floor((i - 51) / titles.length) > 0 ? ' ' + (Math.floor((i - 51) / titles.length) + 1) : ''),
+      author: firstNames[fi] + ' ' + lastNames[li],
+      country: countries[ci],
+      juryDec: {},
+      comments: {},
+    });
+  }
+})();
+
 let users = [
-  { id: 1, name: "Marie Lefebvre", email: "m.lefebvre@marsai.fr", role: "jury", active: true, token: "MLF-7A2K-X9P", assigned: [1, 2, 3, 5, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], cls: "ua-1", label: "Présidente · Réalisatrice", avatar: "https://i.pravatar.cc/150?img=47" },
-  { id: 2, name: "Pierre Dubois", email: "p.dubois@marsai.fr", role: "jury", active: true, token: "PDB-3R8M-Q1T", assigned: [1, 4, 6, 7, 12, 16, 20, 24, 28, 32, 36, 40, 44], cls: "ua-2", label: "Directeur artistique", avatar: "https://i.pravatar.cc/150?img=12" },
-  { id: 3, name: "Kenji Ito", email: "k.ito@marsai.jp", role: "jury", active: true, token: "KIT-9S4N-W2V", assigned: [2, 3, 8, 9, 13, 17, 21, 25, 29, 33, 37, 41, 45], cls: "ua-3", label: "Artiste numérique", avatar: "https://i.pravatar.cc/150?img=68" },
-  { id: 4, name: "Sofia Eriksson", email: "s.eriksson@marsai.se", role: "jury", active: true, token: "SEK-5H1B-R4C", assigned: [5, 6, 7, 10, 14, 18, 22, 26, 30, 34, 38, 42, 46, 50], cls: "ua-4", label: "Critique de cinéma", avatar: "https://i.pravatar.cc/150?img=44" },
+  { id: 1, name: "Marie Lefebvre", email: "m.lefebvre@marsai.fr", role: "jury", active: true, token: "MLF-7A2K-X9P", assigned: [], cls: "ua-1", label: "Présidente · Réalisatrice", avatar: "https://i.pravatar.cc/150?img=47" },
+  { id: 2, name: "Pierre Dubois", email: "p.dubois@marsai.fr", role: "jury", active: true, token: "PDB-3R8M-Q1T", assigned: [], cls: "ua-2", label: "Directeur artistique", avatar: "https://i.pravatar.cc/150?img=12" },
+  { id: 3, name: "Kenji Ito", email: "k.ito@marsai.jp", role: "jury", active: true, token: "KIT-9S4N-W2V", assigned: [], cls: "ua-3", label: "Artiste numérique", avatar: "https://i.pravatar.cc/150?img=68" },
+  { id: 4, name: "Sofia Eriksson", email: "s.eriksson@marsai.se", role: "jury", active: true, token: "SEK-5H1B-R4C", assigned: [], cls: "ua-4", label: "Critique de cinéma", avatar: "https://i.pravatar.cc/150?img=44" },
   { id: 5, name: "Camille Moreau", email: "c.moreau@marsai.fr", role: "moderateur", active: true, token: "CMR-2J6D-L8Z", assigned: [], cls: "ua-5", label: "Modératrice", avatar: "https://i.pravatar.cc/150?img=25" },
   { id: 6, name: "Thomas Leroy", email: "t.leroy@marsai.fr", role: "moderateur", active: false, token: "TLR-8K3F-P7Y", assigned: [], cls: "ua-6", label: "Modérateur", avatar: "https://i.pravatar.cc/150?img=15" },
-  { id: 7, name: "Amara Touré", email: "a.toure@marsai.ml", role: "jury", active: true, token: "ATR-4L9G-H3N", assigned: [1, 3, 5, 7, 9, 11, 13, 49], cls: "ua-1", label: "Productrice", avatar: "https://i.pravatar.cc/150?img=32" },
-  { id: 8, name: "Elena Petrov", email: "e.petrov@marsai.ru", role: "jury", active: true, token: "EPV-7K2R-J6M", assigned: [2, 4, 44, 46, 48], cls: "ua-2", label: "Compositrice", avatar: "https://i.pravatar.cc/150?img=29" },
-  { id: 9, name: "Yuki Nakamura", email: "y.nakamura@marsai.jp", role: "jury", active: true, token: "YNK-1P8T-V5B", assigned: [3, 6, 9, 15, 17, 19, 21], cls: "ua-3", label: "Réalisatrice", avatar: "https://i.pravatar.cc/150?img=56" },
-  { id: 10, name: "Carlos Ruiz", email: "c.ruiz@marsai.es", role: "jury", active: true, token: "CRZ-9D3C-W7Q", assigned: [22, 26, 30, 34, 38], cls: "ua-4", label: "Chef opérateur", avatar: "https://i.pravatar.cc/150?img=18" },
-  { id: 11, name: "Priya Mehta", email: "p.mehta@marsai.in", role: "jury", active: true, token: "PMT-6A1N-X2V", assigned: [4, 8, 23, 27, 31, 35], cls: "ua-1", label: "Scénariste", avatar: "https://i.pravatar.cc/150?img=36" },
-  { id: 12, name: "Omar Diallo", email: "o.diallo@marsai.sn", role: "jury", active: true, token: "ODL-3S7F-L9Z", assigned: [36, 40, 48, 50], cls: "ua-2", label: "Directeur photo", avatar: "https://i.pravatar.cc/150?img=11" },
+  { id: 7, name: "Amara Touré", email: "a.toure@marsai.ml", role: "jury", active: true, token: "ATR-4L9G-H3N", assigned: [], cls: "ua-1", label: "Productrice", avatar: "https://i.pravatar.cc/150?img=32" },
+  { id: 8, name: "Elena Petrov", email: "e.petrov@marsai.ru", role: "jury", active: true, token: "EPV-7K2R-J6M", assigned: [], cls: "ua-2", label: "Compositrice", avatar: "https://i.pravatar.cc/150?img=29" },
+  { id: 9, name: "Yuki Nakamura", email: "y.nakamura@marsai.jp", role: "jury", active: true, token: "YNK-1P8T-V5B", assigned: [], cls: "ua-3", label: "Réalisatrice", avatar: "https://i.pravatar.cc/150?img=56" },
+  { id: 10, name: "Carlos Ruiz", email: "c.ruiz@marsai.es", role: "jury", active: true, token: "CRZ-9D3C-W7Q", assigned: [], cls: "ua-4", label: "Chef opérateur", avatar: "https://i.pravatar.cc/150?img=18" },
+  { id: 11, name: "Priya Mehta", email: "p.mehta@marsai.in", role: "jury", active: true, token: "PMT-6A1N-X2V", assigned: [], cls: "ua-1", label: "Scénariste", avatar: "https://i.pravatar.cc/150?img=36" },
+  { id: 12, name: "Omar Diallo", email: "o.diallo@marsai.sn", role: "jury", active: true, token: "ODL-3S7F-L9Z", assigned: [], cls: "ua-2", label: "Directeur photo", avatar: "https://i.pravatar.cc/150?img=11" },
 ];
 
 let newUserRole = 'jury';
@@ -226,9 +287,17 @@ function toggleFilmJury(filmId, userId) {
 }
 
 /* ── VUE ASSIGNATION (médiathèque) ── */
-const FILMS_PER_PAGE = 6;
+const FILMS_PER_PAGE = 20;
 let currentPage = 1;
 let currentFilmTab = 'pending';
+let currentViewMode = 'list';
+
+function setViewMode(mode) {
+  currentViewMode = mode;
+  document.getElementById('vmt-list').classList.toggle('active', mode === 'list');
+  document.getElementById('vmt-grid').classList.toggle('active', mode === 'grid');
+  renderAssignView();
+}
 
 function switchFilmTab(tab) {
   currentFilmTab = tab;
@@ -241,8 +310,8 @@ function switchFilmTab(tab) {
   document.getElementById('tab-pending').classList.toggle('active', tab === 'pending');
   document.getElementById('tab-assigned').classList.toggle('active', tab === 'assigned');
   renderAssignView();
-  // Remonter en haut de la grille
-  document.getElementById('assign-grid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // Remonter en haut de la liste
+  document.getElementById('view-assign').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function renderAssignView(page) {
@@ -276,10 +345,13 @@ function renderAssignView(page) {
 
   // État vide
   const emptyEl = document.getElementById('assign-empty');
+  const listWrap = document.getElementById('film-list-wrap');
+  const cardsWrap = document.getElementById('assign-cards');
   if (filmList.length === 0) {
     grid.innerHTML = '';
-    emptyEl.querySelector
-      ? null : null;
+    if (cardsWrap) cardsWrap.innerHTML = '';
+    if (listWrap) listWrap.style.display = 'none';
+    if (cardsWrap) cardsWrap.style.display = 'none';
     emptyEl.innerHTML = filmSearchQuery
       ? `<div style="font-size:2rem;margin-bottom:12px;">🔍</div><div style="font-family:var(--font-display);font-size:1rem;font-weight:800;color:var(--white-soft);margin-bottom:6px;">Aucun résultat pour "${filmSearchQuery}"</div><div style="font-size:0.78rem;color:var(--mist);">Essayez un autre titre, réalisateur ou pays.</div>`
       : `<div style="font-size:3rem;margin-bottom:16px;">🎉</div><div style="font-family:var(--font-display);font-size:1.1rem;font-weight:800;color:var(--white-soft);margin-bottom:8px;">Tous les films sont assignés !</div><div style="font-size:0.8rem;color:var(--mist);">Retrouvez-les dans l'onglet "Assignés".</div>`;
@@ -289,77 +361,151 @@ function renderAssignView(page) {
   }
   emptyEl.style.display = 'none';
 
-  grid.innerHTML = pageFilms.map(f => {
-    const assignedJury = juryUsers.filter(u => u.assigned.includes(f.id));
-    const nAssigned = assignedJury.length;
-    const isAssigned = nAssigned > 0;
-    const nComments = f.comments ? Object.keys(f.comments).length : 0;
+  // Palettes pour la vue grille
+  const cardPalettes = [
+    { accent: '#4effce', bg: 'linear-gradient(135deg,#032e22 0%,#050f1a 60%,#031e16 100%)' },
+    { accent: '#c084fc', bg: 'linear-gradient(135deg,#1e0a38 0%,#050818 60%,#150830 100%)' },
+    { accent: '#ff6b6b', bg: 'linear-gradient(135deg,#2e0a0a 0%,#080510 60%,#1e0606 100%)' },
+    { accent: '#f5e642', bg: 'linear-gradient(135deg,#2a2200 0%,#080810 60%,#1c1800 100%)' },
+    { accent: '#60a5fa', bg: 'linear-gradient(135deg,#071e38 0%,#050818 60%,#040e22 100%)' },
+    { accent: '#f472b6', bg: 'linear-gradient(135deg,#2e0a1c 0%,#080510 60%,#1e0612 100%)' },
+    { accent: '#34d399', bg: 'linear-gradient(135deg,#022e1e 0%,#050f1a 60%,#021e14 100%)' },
+    { accent: '#fb923c', bg: 'linear-gradient(135deg,#2e1400 0%,#0a0608 60%,#1e0e00 100%)' },
+  ];
 
-    const assignedBadge = isAssigned
-      ? `<div class="assigned-badge ab-ok">✓ ${nAssigned} juré${nAssigned > 1 ? 's' : ''}</div>`
-      : `<div class="assigned-badge ab-none">Non assigné</div>`;
+  if (currentViewMode === 'list') {
+    if (listWrap) listWrap.style.display = '';
+    if (cardsWrap) cardsWrap.style.display = 'none';
 
-    const avatars = juryUsers.map(u => {
-      const assigned = u.assigned.includes(f.id);
-      const total = u.assigned.length;
-      const badgeCls = total <= 5 ? 'alb-green' : total <= 10 ? 'alb-orange' : 'alb-red';
-      const shadow = assigned
-        ? '0 0 0 2.5px var(--aurora),0 0 10px rgba(78,255,206,0.3)'
-        : '0 0 0 2px rgba(255,255,255,0.12)';
-      const opacity = assigned ? '1' : '0.3';
-      return `<div class="av-load-wrap" onclick="toggleFilmJury(${f.id}, ${u.id})" title="${u.name} — ${total} film${total !== 1 ? 's' : ''} assignés">
-          <img src="${u.avatar}" alt="${u.name}"
-            style="box-shadow:${shadow};opacity:${opacity};"
-            onmouseover="this.style.opacity='1'"
-            onmouseout="this.style.opacity='${opacity}'">
-          <span class="av-load-badge ${badgeCls}">${total}</span>
+    grid.innerHTML = pageFilms.map(f => {
+      const assignedJury = juryUsers.filter(u => u.assigned.includes(f.id));
+      const isAssigned = assignedJury.length > 0;
+      const nComments = f.comments ? Object.keys(f.comments).length : 0;
+      const avatarStack = isAssigned
+        ? `<div class="av-stack">${assignedJury.slice(0, 4).map(u => `<img src="${u.avatar}" alt="${u.name}" title="${u.name}">`).join('')}${assignedJury.length > 4 ? `<div class="av-extra">+${assignedJury.length - 4}</div>` : ''}</div>`
+        : `<span class="fl-not-assigned">Non assigné</span>`;
+      const commentBtn = nComments > 0
+        ? `<button class="fl-comment-btn" onclick="event.stopPropagation();openCommentsModal(${f.id})">💬 ${nComments}</button>`
+        : '';
+      return `<tr class="fl-row" onclick="openDrawer(${f.id})">
+          <td class="fl-td-num">#${String(f.id).padStart(3, '0')}</td>
+          <td class="fl-td-film"><div class="fl-title">${f.title}</div><div class="fl-author">${f.author}</div></td>
+          <td class="fl-td-country">${flags[f.country] || '🌐'} ${f.country}</td>
+          <td class="fl-td-jury">${avatarStack}${commentBtn}</td>
+          <td class="fl-td-action">
+            <button class="btn-fl-assign ${isAssigned ? 'is-assigned' : ''}" onclick="event.stopPropagation();openDrawer(${f.id})">${isAssigned ? 'Modifier' : 'Assigner'} →</button>
+          </td>
+        </tr>`;
+    }).join('');
+
+  } else {
+    if (listWrap) listWrap.style.display = 'none';
+    if (cardsWrap) cardsWrap.style.display = 'grid';
+
+    cardsWrap.innerHTML = pageFilms.map(f => {
+      const assignedJury = juryUsers.filter(u => u.assigned.includes(f.id));
+      const nAssigned = assignedJury.length;
+      const isAssigned = nAssigned > 0;
+      const nComments = f.comments ? Object.keys(f.comments).length : 0;
+      const pal = cardPalettes[f.id % cardPalettes.length];
+      const assignedBadge = isAssigned
+        ? `<div class="assigned-badge ab-ok">✓ ${nAssigned} juré${nAssigned > 1 ? 's' : ''}</div>`
+        : `<div class="assigned-badge ab-none">Non assigné</div>`;
+      const avatars = juryUsers.map(u => {
+        const assigned = u.assigned.includes(f.id);
+        const total = u.assigned.length;
+        const badgeCls = total <= 5 ? 'alb-green' : total <= 10 ? 'alb-orange' : 'alb-red';
+        const shadow = assigned ? '0 0 0 2.5px var(--aurora),0 0 10px rgba(78,255,206,0.3)' : '0 0 0 2px rgba(255,255,255,0.12)';
+        const opacity = assigned ? '1' : '0.3';
+        return `<div class="av-load-wrap" onclick="toggleFilmJury(${f.id}, ${u.id})" title="${u.name}">
+            <img src="${u.avatar}" alt="${u.name}" style="box-shadow:${shadow};opacity:${opacity};" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='${opacity}'">
+            <span class="av-load-badge ${badgeCls}">${total}</span>
+          </div>`;
+      }).join('');
+      return `<div class="film-card" style="--card-accent-color:${pal.accent}22;">
+          <div class="film-card-accent" style="background:${pal.accent};opacity:0.7;"></div>
+          <div class="film-thumb" onclick="playFilm(${f.id})" style="background:${pal.bg};">
+            <video src="../assets/video.mp4" muted preload="none" id="vid-${f.id}"></video>
+            <div class="film-num-bg">${String(f.id).padStart(3, '0')}</div>
+            <div class="film-thumb-overlay">
+              <div class="film-thumb-flag">${flags[f.country] || '🌐'}</div>
+              <div class="play-btn">▶</div>
+            </div>
+            <div class="film-num-badge">#${String(f.id).padStart(3, '0')}</div>
+            ${assignedBadge}
+          </div>
+          <div class="film-body">
+            <div class="film-title">${f.title}</div>
+            <div class="film-meta">${f.author} · ${flags[f.country] || ''} ${f.country}</div>
+            <div style="display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap;">${avatars}</div>
+            ${nComments > 0
+              ? `<button class="film-comments-btn" onclick="openCommentsModal(${f.id})">💬 ${nComments} commentaire${nComments > 1 ? 's' : ''}</button>`
+              : `<button class="film-comments-btn no-comments" disabled>💬 Aucun commentaire</button>`}
+          </div>
         </div>`;
     }).join('');
-    const juryRow = `<div style="display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap;">${avatars}</div>`;
-
-    return `<div class="film-card">
-        <div class="film-thumb" onclick="playFilm(${f.id})">
-          <video src="../assets/video.mp4" muted preload="none" id="vid-${f.id}"></video>
-          <div class="film-thumb-overlay">
-            <div class="play-btn">▶</div>
-          </div>
-          <div class="film-num-badge">#${String(f.id).padStart(2, '0')}</div>
-          ${assignedBadge}
-        </div>
-        <div class="film-body">
-          <div class="film-title">${f.title}</div>
-          <div class="film-meta">${f.author} · ${flags[f.country] || ''} ${f.country}</div>
-          ${juryRow}
-          ${nComments > 0
-        ? `<button class="film-comments-btn" onclick="openCommentsModal(${f.id})">💬 ${nComments} commentaire${nComments > 1 ? 's' : ''}</button>`
-        : `<button class="film-comments-btn no-comments" disabled>💬 Aucun commentaire</button>`}
-        </div>
-      </div>`;
-  }).join('');
+  }
 
   // Pagination
   const pag = document.getElementById('pagination');
   if (!pag) return;
   if (totalPages <= 1) { pag.innerHTML = ''; return; }
-  let html = `<button class="page-btn" onclick="renderAssignView(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>←</button>`;
-  for (let i = 1; i <= totalPages; i++) {
-    html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="renderAssignView(${i})">${i}</button>`;
+
+  // Calcul des pages à afficher avec ellipses
+  const delta = 2;
+  const rangeSet = new Set();
+  rangeSet.add(1);
+  rangeSet.add(totalPages);
+  for (let i = Math.max(2, currentPage - delta); i <= Math.min(totalPages - 1, currentPage + delta); i++) rangeSet.add(i);
+  const rangeArr = [...rangeSet].sort((a, b) => a - b);
+  const pages = [];
+  let prev = null;
+  for (const p of rangeArr) {
+    if (prev !== null && p - prev > 1) pages.push('…');
+    pages.push(p);
+    prev = p;
   }
-  html += `<button class="page-btn" onclick="renderAssignView(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>→</button>`;
-  html += `<span style="font-size:0.7rem;color:var(--mist);margin-left:6px;">${(currentPage - 1) * FILMS_PER_PAGE + 1}–${Math.min(currentPage * FILMS_PER_PAGE, filmList.length)} / ${filmList.length} films</span>`;
-  pag.innerHTML = html;
+
+  // Rendu
+  let row = `<div class="pag-row">`;
+  row += `<button class="page-btn page-nav" onclick="renderAssignView(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>← Préc.</button>`;
+  for (const p of pages) {
+    if (p === '…') {
+      row += `<span class="page-dots">···</span>`;
+    } else {
+      row += `<button class="page-btn ${p === currentPage ? 'active' : ''}" onclick="renderAssignView(${p})">${p}</button>`;
+    }
+  }
+  row += `<button class="page-btn page-nav" onclick="renderAssignView(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Suiv. →</button>`;
+  row += `</div>`;
+
+  const from = (currentPage - 1) * FILMS_PER_PAGE + 1;
+  const to = Math.min(currentPage * FILMS_PER_PAGE, filmList.length);
+  row += `<div class="pag-info">${from}–${to} sur ${filmList.length} films &nbsp;·&nbsp; page ${currentPage} / ${totalPages}</div>`;
+
+  pag.innerHTML = row;
 }
 
 function playFilm(filmId) {
   const vid = document.getElementById('vid-' + filmId);
   if (!vid) return;
+  const thumb = vid.closest('.film-thumb');
   if (vid.paused) {
-    document.querySelectorAll('.film-thumb video').forEach(v => { if (v !== vid) v.pause(); });
+    // Stopper + reset tous les autres
+    document.querySelectorAll('.film-thumb video').forEach(v => {
+      if (v !== vid) {
+        v.pause();
+        v.classList.remove('playing');
+        v.closest('.film-thumb').classList.remove('playing');
+      }
+    });
     vid.play();
-    vid.closest('.film-thumb').querySelector('.film-thumb-overlay').style.opacity = '0';
+    vid.classList.add('playing');
+    thumb.classList.add('playing');
   } else {
     vid.pause();
-    vid.closest('.film-thumb').querySelector('.film-thumb-overlay').style.opacity = '1';
+    vid.classList.remove('playing');
+    thumb.classList.remove('playing');
   }
 }
 
@@ -1116,3 +1262,5 @@ function animateChart() {
 /* ── INIT ── */
 renderUsers();
 animateChart();
+const brmCount = document.getElementById('brm-count');
+if (brmCount) brmCount.textContent = films.length;

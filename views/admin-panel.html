@@ -176,16 +176,18 @@
         <h2>Films soumis</h2>
         <p>Visionnez chaque film et assignez-le au jury de votre choix.</p>
       </div>
-      <button
-        onclick="openRepartirModal()"
-        style="display:flex;align-items:center;gap:8px;padding:9px 18px;background:rgba(78,255,206,0.1);border:1.5px solid rgba(78,255,206,0.35);border-radius:10px;font-family:var(--font-body);font-size:0.82rem;font-weight:700;color:var(--aurora);cursor:pointer;transition:all 0.18s;white-space:nowrap;"
-        onmouseover="this.style.background='rgba(78,255,206,0.2)'"
-        onmouseout="this.style.background='rgba(78,255,206,0.1)'"
-        id="btn-repartir"
-      >
-        ⚡ Répartir équitablement
-      </button>
     </div>
+
+    <button id="btn-repartir" onclick="openRepartirModal()" class="btn-repartir-main">
+      <div class="brm-left">
+        <span class="brm-icon">⚡</span>
+        <div>
+          <div class="brm-title">Répartir équitablement</div>
+          <div class="brm-sub">Distribuer automatiquement les <span id="brm-count">500</span> films entre tous les jurés actifs</div>
+        </div>
+      </div>
+      <span class="brm-arrow">→</span>
+    </button>
 
     <!-- Barre de recherche films -->
     <div style="position:relative;margin-bottom:16px;">
@@ -219,19 +221,48 @@
       </div>
     </div>
 
-    <!-- Onglets -->
-    <div class="film-tabs">
-      <button class="film-tab pending-tab active" id="tab-pending" onclick="switchFilmTab('pending')">
-        🎬 À assigner
-        <span class="tab-count" id="count-pending">—</span>
-      </button>
-      <button class="film-tab assigned-tab" id="tab-assigned" onclick="switchFilmTab('assigned')">
-        ✓ Assignés
-        <span class="tab-count" id="count-assigned">—</span>
-      </button>
+    <!-- Onglets + Toggle de vue -->
+    <div class="tabs-toolbar">
+      <div class="film-tabs">
+        <button class="film-tab pending-tab active" id="tab-pending" onclick="switchFilmTab('pending')">
+          🎬 À assigner
+          <span class="tab-count" id="count-pending">—</span>
+        </button>
+        <button class="film-tab assigned-tab" id="tab-assigned" onclick="switchFilmTab('assigned')">
+          ✓ Assignés
+          <span class="tab-count" id="count-assigned">—</span>
+        </button>
+      </div>
+      <div class="view-mode-toggle">
+        <button class="vmt-btn active" id="vmt-list" onclick="setViewMode('list')" title="Vue liste">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="2" width="12" height="1.5" rx="0.75" fill="currentColor"/><rect x="1" y="6" width="12" height="1.5" rx="0.75" fill="currentColor"/><rect x="1" y="10" width="12" height="1.5" rx="0.75" fill="currentColor"/></svg>
+          Liste
+        </button>
+        <button class="vmt-btn" id="vmt-grid" onclick="setViewMode('grid')" title="Vue grille">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" fill="currentColor"/><rect x="8" y="1" width="5" height="5" rx="1" fill="currentColor"/><rect x="1" y="8" width="5" height="5" rx="1" fill="currentColor"/><rect x="8" y="8" width="5" height="5" rx="1" fill="currentColor"/></svg>
+          Grille
+        </button>
+      </div>
     </div>
 
-    <div id="assign-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;"></div>
+    <!-- Vue Liste -->
+    <div class="film-list-wrap" id="film-list-wrap">
+      <table class="film-list-table">
+        <thead>
+          <tr>
+            <th class="flt-num">#</th>
+            <th>Film</th>
+            <th>Pays</th>
+            <th>Jury assigné</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="assign-grid"></tbody>
+      </table>
+    </div>
+
+    <!-- Vue Grille -->
+    <div id="assign-cards" class="assign-cards-grid" style="display:none;"></div>
 
     <!-- État vide -->
     <div id="assign-empty" style="display:none;text-align:center;padding:60px 20px;">
@@ -241,7 +272,7 @@
     </div>
 
     <!-- Pagination -->
-    <div id="pagination" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:24px;"></div>
+    <div id="pagination"></div>
   </div>
 
   <!-- ══════ VUE PHASES ══════ -->
@@ -560,12 +591,31 @@
 
 <!-- ─── NAV MAQUETTE ─── -->
   <div id="dev-nav">
-    <span class="dn-label">Maquette</span>
-    <a href="index.html" class="dn-btn">🏠 Accueil</a>
+    <div class="dn-header">
+      <span class="dn-icon-main">🧭</span>
+      <span class="dn-title">Maquette</span>
+    </div>
+    <a href="index.html" class="dn-btn">
+      <span class="dn-icon">🏠</span>
+      <span class="dn-lbl">Accueil</span>
+    </a>
     <div class="dn-sep"></div>
-    <a href="admin-panel.html" class="dn-btn espace-admin active">🛡️ Espace Admin</a>
-    <a href="admin-jury.html"  class="dn-btn espace-jury">⚖️ Espace Jury</a>
-    <a href="cahier-des-charges.html" class="dn-btn">📄 CDC</a>
-  </div>
+    <a href="admin-panel.html" class="dn-btn espace-admin active">
+      <span class="dn-icon">🛡️</span>
+      <span class="dn-lbl">Admin</span>
+    </a>
+    <a href="admin-jury.html" class="dn-btn espace-jury">
+      <span class="dn-icon">⚖️</span>
+      <span class="dn-lbl">Jury</span>
+    </a>
+    <a href="cahier-des-charges.html" class="dn-btn">
+      <span class="dn-icon">📄</span>
+      <span class="dn-lbl">CDC</span>
+    </a>
+      <a href="https://dylan-blanc.github.io/UserStory-MarsAI/" class="dn-btn" target="_blank">
+      <span class="dn-icon">📋</span>
+      <span class="dn-lbl">User Stories</span>
+    </a>
+</div>
 </body>
 </html>
