@@ -506,21 +506,22 @@
   <section class="gallery-section" id="films">
     <div class="section-inner">
       <div class="gallery-header">
-        <div>
+        <div class="gallery-header-top">
           <div class="section-label reveal">Sélection Officielle marsAI 2026</div>
           <h2 class="section-title reveal" data-delay="1" style="margin-bottom:0">50 Films · Imaginez des futurs souhaitables</h2>
         </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:12px;">
+        <div class="gallery-header-bottom">
           <div class="gallery-filters">
             <span class="filter-chip active" onclick="setFilter(this)">Tous</span>
             <span class="filter-chip" onclick="setFilter(this)">IA Pure</span>
             <span class="filter-chip" onclick="setFilter(this)">Hybride</span>
           </div>
-          <div style="font-size:0.75rem;color:var(--mist);">20 films / page · Pagination</div>
         </div>
       </div>
 
-      <div class="films-grid">
+      <!-- Rangée 1 — défilement automatique vers la droite -->
+      <div class="films-carousel-wrap">
+        <div class="films-carousel films-row-1">
         <!-- Film 1 -->
         <div class="film-card fade-in">
           <div class="film-thumb">
@@ -641,6 +642,12 @@
             <div class="film-badges"><span class="badge badge-image">IA Pure</span></div>
           </div>
         </div>
+      </div>
+      </div><!-- /films-carousel-wrap row 1 -->
+
+      <!-- Rangée 2 — défilement automatique vers la gauche -->
+      <div class="films-carousel-wrap" style="margin-top:18px;">
+        <div class="films-carousel films-row-2">
         <!-- Film 11 -->
         <div class="film-card fade-in">
           <div class="film-thumb">
@@ -762,17 +769,7 @@
           </div>
         </div>
       </div>
-
-      <!-- Pagination -->
-      <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:48px;">
-        <button onclick="this.style.opacity=1" style="width:36px;height:36px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:var(--mist);font-size:0.85rem;cursor:pointer;">←</button>
-        <button style="width:36px;height:36px;background:var(--aurora);border:none;border-radius:8px;color:var(--deep-sky);font-weight:700;font-size:0.85rem;cursor:pointer;">1</button>
-        <button style="width:36px;height:36px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:var(--mist);font-size:0.85rem;cursor:pointer;">2</button>
-        <button style="width:36px;height:36px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:var(--mist);font-size:0.85rem;cursor:pointer;">3</button>
-        <span style="color:var(--mist);font-size:0.85rem;">…</span>
-        <span style="font-size:0.75rem;color:var(--mist);margin-left:8px;font-family:var(--font-mono);">20 films / page · 3 pages</span>
-        <button style="width:36px;height:36px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:var(--mist);font-size:0.85rem;cursor:pointer;">→</button>
-      </div>
+      </div><!-- /films-carousel-wrap row 2 -->
     </div>
   </section>
 
