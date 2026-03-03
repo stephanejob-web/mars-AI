@@ -1944,3 +1944,39 @@
 .cf-stat.solar strong  { color: var(--solar); }
 .cf-stat.lavande strong { color: var(--lavande); }
 
+/* ══════════════════════════════════════════
+   SÉLECTION — Filtres et Tri
+   ══════════════════════════════════════════ */
+.sel-filter,
+.sel-sort {
+  padding: 6px 14px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  font-size: 0.78rem;
+  color: var(--mist);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-weight: 600;
+  transition: all 0.15s;
+}
+.sel-filter:hover,
+.sel-sort:hover {
+  background: rgba(192,132,252,0.08);
+  border-color: rgba(192,132,252,0.25);
+  color: var(--lavande);
+}
+.sel-filter.active {
+  background: rgba(192,132,252,0.12);
+  border-color: rgba(192,132,252,0.4);
+  color: var(--lavande);
+  font-weight: 700;
+}
+.sel-sort.active {
+  background: rgba(78,255,206,0.1);
+  border-color: rgba(78,255,206,0.3);
+  color: var(--aurora);
+  font-weight: 700;
+}
+.sv-aurora   { color: var(--aurora); }
+.sv-coral    { color: var(--coral); }

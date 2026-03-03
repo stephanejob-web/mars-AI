@@ -510,12 +510,12 @@ function playFilm(filmId) {
 }
 
 /* ── VUES ── */
-const views = ['users', 'assign', 'phases', 'moderation', 'awards', 'site'];
+const views = ['users', 'assign', 'phases', 'selection', 'awards', 'site'];
 const titles = {
   users: ['Gestion des utilisateurs', 'Jurys et modérateurs — accès par login/mot de passe ou Gmail'],
   assign: ['Films soumis', 'Visionnez et assignez chaque film au jury'],
   phases: ['Phases & Dates', 'Définissez les dates des sessions jury'],
-  moderation: ['Modération — Tickets & Notifications', 'Suivi des signalements et demandes liés aux films'],
+  selection: ['Sélection & Modération', 'Votes, commentaires et signalements du jury — tout en un'],
   awards: ['Awards & Sponsors', 'Gérez les prix du festival et leurs sponsors associés'],
   site: ['Administration du site', 'Vidéo hero, informations et calendrier public'],
 };
@@ -530,6 +530,7 @@ function showView(name, el) {
   if (name === 'assign') renderAssignView();
   if (name === 'site') { renderJuryAdmin(); renderSponsorsAdmin(); }
   if (name === 'users') { chartAnimProgress = 1; renderJuryChart(); }
+  if (name === 'selection') renderSelection();
 }
 
 /* ── DRAPEAUX PAYS ── */
@@ -1266,3 +1267,257 @@ renderUsers();
 animateChart();
 const brmCount = document.getElementById('brm-count');
 if (brmCount) brmCount.textContent = films.length;
+
+/* ══════════════════════════════════════════
+   SÉLECTION & MODÉRATION — Vue unifiée
+   ══════════════════════════════════════════ */
+let selFilter = 'tous';
+let selSort = 'score';
+const adminDecisions = {}; // filmId → 'valide'|'refuse'|null
+
+// Tickets data (previously in Modération view)
+const filmTickets = {
+  1: [{ id: 'TK-001', type: '🎵 Droits musicaux', reporter: 'Jury — Marie L.', desc: 'Musique de fond potentiellement sous copyright.', status: 'attente', date: '2026-11-18' }],
+  3: [{ id: 'TK-003', type: '▶ YouTube rejeté', reporter: 'Système', desc: 'Vidéo non accessible, lien YouTube invalide.', status: 'attente', date: '2026-11-21' }],
+  4: [{ id: 'TK-004', type: '📋 Lisibilité', reporter: 'Jury — Thomas R.', desc: 'Sous-titres illisibles sur fond clair.', status: 'en_cours', date: '2026-11-22' }],
+  6: [{ id: 'TK-002', type: '🎵 Droits musicaux', reporter: 'Admin', desc: 'Vérification droits en cours.', status: 'en_cours', date: '2026-11-20' }],
+  7: [{ id: 'TK-005', type: '↩ Révision demandée', reporter: 'Jury — Marie L.', desc: 'Fin du film tronquée, demande de resubmission.', status: 'attente', date: '2026-11-23' }],
+};
+
+function getFilmConsensus(f) {
+  if (!f.juryDec) return { type: 'attente', label: '⏳ En attente', cls: 'sel-attente', score: 0, valide: 0, refuse: 0, aRevoir: 0, pending: 0 };
+  const decs = Object.values(f.juryDec);
+  const valide = decs.filter(d => d === 'valide').length;
+  const refuse = decs.filter(d => d === 'refuse').length;
+  const aRevoir = decs.filter(d => d === 'aRevoir').length;
+  const pending = decs.filter(d => d === null || d === undefined).length;
+  const total = decs.length;
+  const voted = total - pending;
+
+  if (voted === 0) return { type: 'attente', label: '⏳ En attente', cls: 'sel-attente', score: 0, valide, refuse, aRevoir, pending };
+
+  const score = (valide * 2 + aRevoir * 0.5 - refuse * 1.5) / voted;
+
+  if (valide === voted) return { type: 'unanime', label: '✅ Unanime', cls: 'sel-unanime', score, valide, refuse, aRevoir, pending };
+  if (valide > voted / 2) return { type: 'unanime', label: '✅ Majorité', cls: 'sel-unanime', score, valide, refuse, aRevoir, pending };
+  if (refuse > voted / 2) return { type: 'rejete', label: '❌ Rejeté', cls: 'sel-rejete', score, valide, refuse, aRevoir, pending };
+  return { type: 'partage', label: '⚠️ Partagé', cls: 'sel-partage', score, valide, refuse, aRevoir, pending };
+}
+
+function filterSelection(filter, btn) {
+  selFilter = filter;
+  document.querySelectorAll('.sel-filter').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderSelection();
+}
+
+function sortSelection(sort, btn) {
+  selSort = sort;
+  document.querySelectorAll('.sel-sort').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderSelection();
+}
+
+function adminDecide(filmId, decision) {
+  adminDecisions[filmId] = adminDecisions[filmId] === decision ? null : decision;
+  showToast(decision === 'valide' ? `✓ Film #${filmId} sélectionné` : `✕ Film #${filmId} retiré`, decision === 'valide' ? 'ok' : 'err');
+  renderSelection();
+}
+
+function toggleSelDetail(filmId) {
+  const row = document.getElementById('sel-detail-' + filmId);
+  if (row) row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
+}
+
+function renderSelection() {
+  const searchQ = (document.getElementById('sel-search')?.value || '').toLowerCase().trim();
+  const evaluated = films.filter(f => f.juryDec && Object.keys(f.juryDec).length > 0);
+  const enriched = evaluated.map(f => ({ ...f, consensus: getFilmConsensus(f), tickets: filmTickets[f.id] || [] }));
+
+  const unanimes = enriched.filter(f => f.consensus.type === 'unanime');
+  const partages = enriched.filter(f => f.consensus.type === 'partage');
+  const rejetes = enriched.filter(f => f.consensus.type === 'rejete');
+  const attente = enriched.filter(f => f.consensus.type === 'attente');
+  const totalTickets = enriched.reduce((s, f) => s + f.tickets.length, 0);
+  const withTickets = enriched.filter(f => f.tickets.length > 0);
+
+  document.getElementById('sel-unanime').textContent = unanimes.length;
+  document.getElementById('sel-partage').textContent = partages.length;
+  document.getElementById('sel-rejete').textContent = rejetes.length;
+  document.getElementById('sel-attente').textContent = attente.length;
+  document.getElementById('sel-tickets').textContent = totalTickets;
+  document.getElementById('count-selection').textContent = enriched.length;
+
+  document.getElementById('selfil-tous').textContent = `Tous (${enriched.length})`;
+  document.getElementById('selfil-unanime').textContent = `✅ Unanimes (${unanimes.length})`;
+  document.getElementById('selfil-partage').textContent = `⚠️ Partagés (${partages.length})`;
+  document.getElementById('selfil-rejete').textContent = `❌ Rejetés (${rejetes.length})`;
+  document.getElementById('selfil-attente').textContent = `⏳ En attente (${attente.length})`;
+  const sigBtn = document.getElementById('selfil-signale');
+  if (sigBtn) sigBtn.textContent = `🚩 Signalés (${withTickets.length})`;
+
+  let filtered = enriched;
+  if (selFilter === 'signale') filtered = filtered.filter(f => f.tickets.length > 0);
+  else if (selFilter !== 'tous') filtered = filtered.filter(f => f.consensus.type === selFilter);
+  if (searchQ) filtered = filtered.filter(f => (f.title + f.author + f.country).toLowerCase().includes(searchQ));
+
+  if (selSort === 'score') filtered.sort((a, b) => b.consensus.score - a.consensus.score);
+  else if (selSort === 'title') filtered.sort((a, b) => a.title.localeCompare(b.title));
+  else if (selSort === 'comments') filtered.sort((a, b) => (Object.keys(b.comments || {}).length + b.tickets.length) - (Object.keys(a.comments || {}).length + a.tickets.length));
+
+  const tbody = document.getElementById('selection-tbody');
+  const juryUsers = users.filter(u => u.role === 'jury');
+
+  tbody.innerHTML = filtered.map(f => {
+    const c = f.consensus;
+    const nComm = f.comments ? Object.keys(f.comments).length : 0;
+    const nTk = f.tickets.length;
+    const adm = adminDecisions[f.id];
+    const tv = c.valide + c.refuse + c.aRevoir;
+
+    const pV = tv > 0 ? Math.round((c.valide / tv) * 100) : 0;
+    const pR = tv > 0 ? Math.round((c.aRevoir / tv) * 100) : 0;
+    const pX = tv > 0 ? 100 - pV - pR : 0;
+    const voteBar = tv > 0
+      ? `<div style="display:flex;align-items:center;gap:8px;min-width:180px;">
+          <div style="flex:1;height:6px;border-radius:3px;background:rgba(255,255,255,0.06);overflow:hidden;display:flex;">
+            <div style="width:${pV}%;background:var(--aurora);"></div>
+            <div style="width:${pR}%;background:var(--solar);"></div>
+            <div style="width:${pX}%;background:var(--coral);"></div>
+          </div>
+          <span style="font-family:var(--font-mono);font-size:0.68rem;color:var(--mist);white-space:nowrap;">${c.valide}✓ ${c.aRevoir}↩ ${c.refuse}✕</span>
+        </div>`
+      : `<span style="font-size:0.72rem;color:var(--mist);opacity:0.5;">Aucun vote</span>`;
+
+    const badgeMap = {
+      'sel-unanime': 'background:rgba(78,255,206,0.1);border:1px solid rgba(78,255,206,0.3);color:var(--aurora);',
+      'sel-partage': 'background:rgba(245,230,66,0.1);border:1px solid rgba(245,230,66,0.3);color:var(--solar);',
+      'sel-rejete': 'background:rgba(255,107,107,0.1);border:1px solid rgba(255,107,107,0.3);color:var(--coral);',
+      'sel-attente': 'background:rgba(192,132,252,0.1);border:1px solid rgba(192,132,252,0.3);color:var(--lavande);',
+    };
+
+    const juryAv = Object.entries(f.juryDec || {}).map(([uid, dec]) => {
+      const u = juryUsers.find(x => x.id === parseInt(uid));
+      if (!u) return '';
+      const bc = dec === 'valide' ? 'var(--aurora)' : dec === 'refuse' ? 'var(--coral)' : dec === 'aRevoir' ? 'var(--solar)' : 'rgba(255,255,255,0.15)';
+      const ic = dec === 'valide' ? '✓' : dec === 'refuse' ? '✕' : dec === 'aRevoir' ? '↩' : '?';
+      return `<div title="${u.name}: ${dec || 'Pas voté'}" style="position:relative;display:inline-block;">
+        <img src="${u.avatar}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;border:2px solid ${bc};opacity:${dec ? 1 : 0.4};">
+        <span style="position:absolute;bottom:-3px;right:-3px;width:12px;height:12px;border-radius:50%;font-size:0.45rem;font-weight:900;display:flex;align-items:center;justify-content:center;background:${bc};color:var(--deep-sky);">${ic}</span>
+      </div>`;
+    }).join('');
+
+    const admBtns = `<div style="display:flex;gap:6px;">
+      <button onclick="event.stopPropagation();adminDecide(${f.id},'valide')" style="padding:5px 12px;border-radius:7px;font-size:0.72rem;font-weight:700;cursor:pointer;border:1.5px solid;transition:all .18s;display:flex;align-items:center;gap:4px;
+        ${adm === 'valide' ? 'background:rgba(78,255,206,0.2);border-color:rgba(78,255,206,0.6);color:var(--aurora);box-shadow:0 0 12px rgba(78,255,206,0.2);' : 'background:rgba(78,255,206,0.05);border-color:rgba(78,255,206,0.15);color:var(--aurora);'}">✓ ${adm === 'valide' ? 'Sélectionné' : 'Sélectionner'}</button>
+      <button onclick="event.stopPropagation();adminDecide(${f.id},'refuse')" style="padding:5px 12px;border-radius:7px;font-size:0.72rem;font-weight:700;cursor:pointer;border:1.5px solid;transition:all .18s;display:flex;align-items:center;gap:4px;
+        ${adm === 'refuse' ? 'background:rgba(255,107,107,0.2);border-color:rgba(255,107,107,0.6);color:var(--coral);box-shadow:0 0 12px rgba(255,107,107,0.2);' : 'background:rgba(255,107,107,0.05);border-color:rgba(255,107,107,0.15);color:var(--coral);'}">✕ ${adm === 'refuse' ? 'Retiré' : 'Retirer'}</button>
+    </div>`;
+
+    const commEntries = Object.entries(f.comments || {});
+    const gridCols = nTk > 0 ? '1fr 1fr 1fr' : '1fr 1fr';
+
+    const detailRow = `<tr id="sel-detail-${f.id}" style="display:none;">
+      <td colspan="7" style="padding:16px 20px;background:rgba(255,255,255,0.015);border-top:1px solid rgba(255,255,255,0.04);">
+        <div style="display:grid;grid-template-columns:${gridCols};gap:16px;">
+          <div>
+            <div style="font-size:0.68rem;font-weight:700;color:var(--mist);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">💬 Commentaires (${commEntries.length})</div>
+            ${commEntries.length > 0 ? commEntries.map(([uid, txt]) => {
+              const u = juryUsers.find(x => x.id === parseInt(uid));
+              const dec = f.juryDec?.[uid];
+              const dc = dec === 'valide' ? 'var(--aurora)' : dec === 'refuse' ? 'var(--coral)' : 'var(--solar)';
+              const dl = dec === 'valide' ? '✓ Validé' : dec === 'refuse' ? '✕ Refusé' : '↩ À revoir';
+              return `<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;padding:10px;background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.04);border-radius:8px;">
+                ${u?.avatar ? `<img src="${u.avatar}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;border:2px solid ${dc};">` : ''}
+                <div style="flex:1;min-width:0;">
+                  <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+                    <span style="font-weight:700;font-size:0.78rem;">${u ? u.name : 'Juré #' + uid}</span>
+                    <span style="font-size:0.62rem;padding:1px 6px;border-radius:4px;background:${dc}22;color:${dc};font-weight:600;">${dec ? dl : ''}</span>
+                  </div>
+                  <div style="font-size:0.78rem;color:rgba(240,244,255,0.7);line-height:1.5;">« ${txt} »</div>
+                </div>
+              </div>`;
+            }).join('') : '<div style="font-size:0.78rem;color:var(--mist);opacity:0.5;padding:8px;">Aucun commentaire</div>'}
+          </div>
+          <div>
+            <div style="font-size:0.68rem;font-weight:700;color:var(--mist);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">⚖️ Votes individuels</div>
+            ${Object.entries(f.juryDec || {}).map(([uid, dec]) => {
+              const u = juryUsers.find(x => x.id === parseInt(uid));
+              if (!u) return '';
+              const dc = dec === 'valide' ? 'var(--aurora)' : dec === 'refuse' ? 'var(--coral)' : dec === 'aRevoir' ? 'var(--solar)' : 'var(--mist)';
+              const dt = dec === 'valide' ? '✓ Validé' : dec === 'refuse' ? '✕ Refusé' : dec === 'aRevoir' ? '↩ À revoir' : '⏳ Pas voté';
+              return `<div style="display:flex;align-items:center;gap:8px;padding:6px 8px;margin-bottom:4px;background:rgba(255,255,255,0.02);border-radius:6px;">
+                <img src="${u.avatar}" style="width:22px;height:22px;border-radius:50%;object-fit:cover;flex-shrink:0;">
+                <span style="font-size:0.78rem;font-weight:600;flex:1;">${u.name}</span>
+                <span style="font-size:0.68rem;font-weight:700;color:${dc};">${dt}</span>
+              </div>`;
+            }).join('')}
+          </div>
+          ${nTk > 0 ? `<div>
+            <div style="font-size:0.68rem;font-weight:700;color:var(--solar);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">🚩 Signalements (${nTk})</div>
+            ${f.tickets.map(t => {
+              const stBadge = t.status === 'attente'
+                ? '<span style="font-size:0.62rem;padding:1px 6px;border-radius:4px;background:rgba(245,230,66,0.1);color:var(--solar);font-weight:600;">⏳ En attente</span>'
+                : '<span style="font-size:0.62rem;padding:1px 6px;border-radius:4px;background:rgba(78,255,206,0.1);color:var(--aurora);font-weight:600;">🔄 En cours</span>';
+              return `<div style="padding:10px;margin-bottom:8px;background:rgba(245,230,66,0.03);border:1px solid rgba(245,230,66,0.12);border-radius:8px;">
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;">
+                  <span style="font-size:0.72rem;font-weight:700;color:var(--solar);">${t.type}</span>
+                  ${stBadge}
+                </div>
+                <div style="font-size:0.75rem;color:rgba(240,244,255,0.65);line-height:1.5;margin-bottom:5px;">${t.desc}</div>
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                  <span style="font-size:0.65rem;color:var(--mist);">${t.reporter} · ${t.date}</span>
+                  <div style="display:flex;gap:4px;">
+                    <button onclick="event.stopPropagation();showToast('✓ Ticket ${t.id} résolu','ok')" style="padding:2px 8px;border-radius:4px;font-size:0.62rem;background:rgba(78,255,206,0.08);border:1px solid rgba(78,255,206,0.2);color:var(--aurora);cursor:pointer;">✓ Résoudre</button>
+                    <button onclick="event.stopPropagation();showToast('↩ Révision demandée','warn')" style="padding:2px 8px;border-radius:4px;font-size:0.62rem;background:rgba(192,132,252,0.08);border:1px solid rgba(192,132,252,0.2);color:var(--lavande);cursor:pointer;">↩ Réviser</button>
+                  </div>
+                </div>
+              </div>`;
+            }).join('')}
+          </div>` : ''}
+        </div>
+      </td>
+    </tr>`;
+
+    const rowBg = adm === 'valide' ? 'rgba(78,255,206,0.03)' : adm === 'refuse' ? 'rgba(255,107,107,0.03)' : '';
+    const infoBadges = `<div style="display:flex;align-items:center;gap:5px;">
+      ${nComm > 0 ? `<span style="font-size:0.75rem;color:var(--lavande);" title="${nComm} commentaire(s)">💬${nComm}</span>` : ''}
+      ${nTk > 0 ? `<span style="font-size:0.75rem;color:var(--solar);" title="${nTk} signalement(s)">🚩${nTk}</span>` : ''}
+      ${nComm === 0 && nTk === 0 ? '<span style="font-size:0.72rem;color:var(--mist);opacity:0.4;">—</span>' : ''}
+    </div>`;
+
+    return `<tr onclick="toggleSelDetail(${f.id})" style="cursor:pointer;transition:background .15s;background:${rowBg};" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='${rowBg}'">
+      <td style="font-family:var(--font-mono);font-size:0.72rem;color:var(--mist);">#${String(f.id).padStart(3, '0')}</td>
+      <td>
+        <div style="font-weight:700;font-size:0.88rem;">${f.title}</div>
+        <div style="font-size:0.72rem;color:var(--mist);">${f.author} · ${flags[f.country] || ''} ${f.country}</div>
+      </td>
+      <td>${voteBar}</td>
+      <td><span style="padding:4px 12px;border-radius:6px;font-size:0.72rem;font-weight:700;${badgeMap[c.cls] || ''}">${c.label}</span></td>
+      <td style="min-width:80px;"><div style="display:flex;align-items:center;gap:-4px;">${juryAv}</div></td>
+      <td>${infoBadges}</td>
+      <td>${admBtns}</td>
+    </tr>${detailRow}`;
+  }).join('');
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--mist);font-size:0.85rem;">Aucun film ne correspond à ce filtre.</td></tr>`;
+  }
+}
+
+
+function exportSelectionCSV() {
+  const evaluated = films.filter(f => f.juryDec && Object.keys(f.juryDec).length > 0);
+  const rows = [['#', 'Titre', 'Réalisateur', 'Pays', 'Validé', 'À revoir', 'Refusé', 'Consensus', 'Décision Admin']];
+  evaluated.forEach(f => {
+    const c = getFilmConsensus(f);
+    const adm = adminDecisions[f.id] || '';
+    rows.push([f.id, f.title, f.author, f.country, c.valide, c.aRevoir, c.refuse, c.label, adm]);
+  });
+  const csv = rows.map(r => r.join(';')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'selection-marsai-2026.csv'; a.click();
+  showToast('📤 Export CSV téléchargé', 'ok');
+}

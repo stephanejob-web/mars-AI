@@ -54,10 +54,10 @@
 
     <div class="nav-label" style="margin-top:8px;">Suivi</div>
 
-    <div class="nav-item" onclick="showView('moderation', this)">
-      <span class="icon">🎫</span>
-      Modération
-      <span class="nav-count nc-coral" id="count-moderation">3</span>
+    <div class="nav-item" onclick="showView('selection', this)">
+      <span class="icon">🏅</span>
+      Sélection & Modération
+      <span class="nav-count" style="background:rgba(192,132,252,0.15);color:var(--lavande);" id="count-selection">10</span>
     </div>
 
     <div class="nav-label" style="margin-top:8px;">Festival</div>
@@ -503,6 +503,83 @@
             </td>
           </tr>
         </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════ VUE SÉLECTION ══════ -->
+  <div class="content" id="view-selection" style="display:none;">
+    <div class="section-head" style="margin-bottom:20px;">
+      <div>
+        <h2>Sélection & Modération — Synthèse complète</h2>
+        <p>Votes, commentaires, signalements du jury — tout en un seul endroit pour faciliter vos décisions.</p>
+      </div>
+      <button class="btn-create" onclick="exportSelectionCSV()">📤 Exporter CSV</button>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row" style="margin-bottom:20px;">
+      <div class="stat-card">
+        <div class="stat-card-label">Unanimes ✅</div>
+        <div class="stat-card-val sv-aurora" id="sel-unanime">0</div>
+        <div class="stat-card-sub">validation directe</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Partagés ⚠️</div>
+        <div class="stat-card-val" style="color:var(--solar);" id="sel-partage">0</div>
+        <div class="stat-card-sub">nécessitent attention</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Rejetés ❌</div>
+        <div class="stat-card-val sv-coral" id="sel-rejete">0</div>
+        <div class="stat-card-sub">majorité refusé</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">En attente ⏳</div>
+        <div class="stat-card-val sv-lavande" id="sel-attente">0</div>
+        <div class="stat-card-sub">pas encore évalués</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Signalements 🚩</div>
+        <div class="stat-card-val" style="color:var(--solar);" id="sel-tickets">0</div>
+        <div class="stat-card-sub">tickets ouverts</div>
+      </div>
+    </div>
+
+    <!-- Filtres -->
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+      <button onclick="filterSelection('tous', this)" class="sel-filter active" id="selfil-tous">Tous</button>
+      <button onclick="filterSelection('unanime', this)" class="sel-filter" id="selfil-unanime">✅ Unanimes</button>
+      <button onclick="filterSelection('partage', this)" class="sel-filter" id="selfil-partage">⚠️ Partagés</button>
+      <button onclick="filterSelection('rejete', this)" class="sel-filter" id="selfil-rejete">❌ Rejetés</button>
+      <button onclick="filterSelection('attente', this)" class="sel-filter" id="selfil-attente">⏳ En attente</button>
+      <div style="flex:1;"></div>
+      <input type="text" id="sel-search" placeholder="🔍 Rechercher un film…" oninput="renderSelection()" style="background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.09);border-radius:8px;padding:7px 12px;font-family:var(--font-body);font-size:0.82rem;color:var(--white-soft);outline:none;min-width:200px;">
+    </div>
+
+    <!-- Tri -->
+    <div style="display:flex;gap:8px;margin-bottom:14px;align-items:center;">
+      <span style="font-size:0.72rem;color:var(--mist);font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Trier par :</span>
+      <button onclick="sortSelection('score', this)" class="sel-sort active" id="selsort-score">Score ↓</button>
+      <button onclick="sortSelection('title', this)" class="sel-sort" id="selsort-title">Titre A-Z</button>
+      <button onclick="sortSelection('comments', this)" class="sel-sort" id="selsort-comments">💬 Commentaires</button>
+    </div>
+
+    <!-- Tableau dynamique -->
+    <div class="user-table-wrap">
+      <table class="user-table" id="selection-table">
+        <thead>
+          <tr>
+            <th style="width:40px;">#</th>
+            <th>Film</th>
+            <th>Répartition votes</th>
+            <th>Consensus</th>
+            <th>Jurés</th>
+            <th>💬</th>
+            <th>Décision admin</th>
+          </tr>
+        </thead>
+        <tbody id="selection-tbody"></tbody>
       </table>
     </div>
   </div>
