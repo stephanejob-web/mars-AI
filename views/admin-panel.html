@@ -56,9 +56,11 @@
 
     <div class="nav-item" onclick="showView('selection', this)">
       <span class="icon">🏅</span>
-      Sélection & Modération
+      Sélection & Votes
       <span class="nav-count" style="background:rgba(192,132,252,0.15);color:var(--lavande);" id="count-selection">10</span>
+      <span class="nav-count" style="background:rgba(245,230,66,0.12);color:var(--solar);border:1px solid rgba(245,230,66,0.25);margin-left:2px;" id="nav-count-tickets">5</span>
     </div>
+
 
     <div class="nav-label" style="margin-top:8px;">Festival</div>
 
@@ -123,24 +125,20 @@
       </div>
     </div>
 
-    <!-- ══ GRAPHIQUE RÉPARTITION JURY ══ -->
-    <div class="chart-section">
-      <div class="chart-header">
+    <!-- ══ GRAPHIQUE PARTICIPATION JURY ══ -->
+    <div class="vote-chart-section">
+      <div class="vote-chart-header">
         <div>
-          <h2 class="chart-title">Répartition des films par juré</h2>
-          <p class="chart-sub">Charge de travail de chaque membre actif du jury</p>
+          <div class="vote-chart-title">Participation des jurés</div>
+          <div class="vote-chart-sub">Films évalués vs non évalués par chaque membre du jury</div>
         </div>
-        <div class="chart-legend">
-          <span class="cl-item cl-ok"><span class="cl-dot"></span>≤ 10 films</span>
-          <span class="cl-item cl-warn"><span class="cl-dot"></span>11–15</span>
-          <span class="cl-item cl-danger"><span class="cl-dot"></span>> 15</span>
+        <div class="vote-chart-legend">
+          <span class="vcl-item"><span class="vcl-dot" style="background:var(--aurora);"></span>≥ 80%</span>
+          <span class="vcl-item"><span class="vcl-dot" style="background:var(--solar);"></span>≥ 50%</span>
+          <span class="vcl-item"><span class="vcl-dot" style="background:var(--coral);"></span>< 50%</span>
         </div>
       </div>
-      <div class="chart-canvas-wrap">
-        <canvas id="jury-chart"></canvas>
-        <div class="chart-tooltip" id="chart-tooltip"></div>
-      </div>
-      <div class="chart-footer" id="chart-footer"></div>
+      <div id="vote-chart-bars"></div>
     </div>
 
     <!-- Tableau utilisateurs -->
@@ -341,170 +339,33 @@
   <div class="content" id="view-moderation" style="display:none;">
     <div class="section-head" style="margin-bottom:20px;">
       <div>
-        <h2>Modération — Tickets & Notifications</h2>
-        <p>Suivi des signalements et demandes liés aux films soumis.</p>
+        <h2>Tickets — Signalements jury</h2>
+        <p>Traitez chaque signalement un à un.</p>
       </div>
-      <button class="btn-create" onclick="showToast('Ticket créé', 'ok')">+ Créer un ticket</button>
     </div>
 
-    <!-- Stats tickets -->
-    <div class="stats-row" style="margin-bottom:20px;">
+    <!-- Stats compactes -->
+    <div class="stats-row" style="margin-bottom:24px;">
       <div class="stat-card">
-        <div class="stat-card-label">En attente</div>
-        <div class="stat-card-val" style="color:var(--solar);">3</div>
-        <div class="stat-card-sub">tickets ouverts</div>
+        <div class="stat-card-label">À traiter</div>
+        <div class="stat-card-val" style="color:var(--solar);" id="tk-count-attente">5</div>
+        <div class="stat-card-sub">signalements ouverts</div>
       </div>
       <div class="stat-card">
-        <div class="stat-card-label">En cours</div>
-        <div class="stat-card-val" style="color:var(--aurora);">2</div>
-        <div class="stat-card-sub">traitement en cours</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-card-label">Résolus</div>
-        <div class="stat-card-val sv-lavande">8</div>
+        <div class="stat-card-label">Traités</div>
+        <div class="stat-card-val sv-lavande" id="tk-count-resolu">3</div>
         <div class="stat-card-sub">ce mois</div>
       </div>
       <div class="stat-card">
-        <div class="stat-card-label">Demandes de révision</div>
-        <div class="stat-card-val sv-coral">1</div>
-        <div class="stat-card-sub">en attente réalisateur</div>
+        <div class="stat-card-label">Films signalés</div>
+        <div class="stat-card-val" id="tk-count-films">5</div>
+        <div class="stat-card-sub">films concernés</div>
       </div>
     </div>
 
-    <!-- Filtres -->
-    <div style="display:flex;gap:8px;margin-bottom:16px;">
-      <button onclick="filterTickets('tous', this)" style="padding:6px 14px;background:rgba(78,255,206,0.1);border:1px solid rgba(78,255,206,0.3);border-radius:8px;font-size:0.78rem;color:var(--aurora);cursor:pointer;font-family:var(--font-body);">Tous (5)</button>
-      <button onclick="filterTickets('droits', this)" style="padding:6px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;font-size:0.78rem;color:var(--mist);cursor:pointer;font-family:var(--font-body);">🎵 Droits musicaux (2)</button>
-      <button onclick="filterTickets('lisibilite', this)" style="padding:6px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;font-size:0.78rem;color:var(--mist);cursor:pointer;font-family:var(--font-body);">📋 Lisibilité (1)</button>
-      <button onclick="filterTickets('youtube', this)" style="padding:6px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;font-size:0.78rem;color:var(--mist);cursor:pointer;font-family:var(--font-body);">▶ YouTube (1)</button>
-      <button onclick="filterTickets('revision', this)" style="padding:6px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;font-size:0.78rem;color:var(--mist);cursor:pointer;font-family:var(--font-body);">↩ Révision (1)</button>
-    </div>
-
-    <!-- Tableau tickets -->
-    <div class="user-table-wrap">
-      <table class="user-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Film</th>
-            <th>Type</th>
-            <th>Signalé par</th>
-             <th>Statut</th>
-            <th>Décision</th>
-            <th>Date</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td style="font-family:var(--font-mono);font-size:0.72rem;color:var(--mist);">TK-001</td>
-            <td>
-              <div style="font-weight:600;font-size:0.85rem;">Rêves de Silicium</div>
-              <div style="font-size:0.72rem;color:var(--mist);">Léa Fontaine</div>
-            </td>
-            <td><span style="background:rgba(251,188,4,0.12);border:1px solid rgba(251,188,4,0.3);border-radius:6px;padding:2px 8px;font-size:0.72rem;color:#FBBC04;">🎵 Droits musicaux</span></td>
-            <td style="font-size:0.8rem;color:var(--mist);">Jury — Marie L.</td>
-            <td><span style="background:rgba(245,230,66,0.1);border:1px solid rgba(245,230,66,0.3);border-radius:6px;padding:2px 8px;font-size:0.72rem;color:var(--solar);">⏳ En attente</span></td>
-            <td>
-              <div style="display:flex;gap:4px;">
-                <button onclick="showToast('✓ Film validé', 'ok')" style="padding:4px 8px;background:rgba(78,255,206,0.08);border:1px solid rgba(78,255,206,0.2);border-radius:6px;font-size:0.68rem;color:var(--aurora);cursor:pointer;">✓ Validé</button>
-                <button onclick="showToast('✕ Film refusé', 'err')" style="padding:4px 8px;background:rgba(255,107,107,0.08);border:1px solid rgba(255,107,107,0.2);border-radius:6px;font-size:0.68rem;color:var(--coral);cursor:pointer;">✕ Refusé</button>
-                <button onclick="showToast('↩ Demande envoyée', 'warn')" style="padding:4px 8px;background:rgba(245,230,66,0.08);border:1px solid rgba(245,230,66,0.2);border-radius:6px;font-size:0.68rem;color:var(--solar);cursor:pointer;">↩ À modifier</button>
-              </div>
-            </td>
-            <td style="font-family:var(--font-mono);font-size:0.72rem;color:var(--mist);">2026-11-18</td>
-            <td>
-              <button onclick="showToast('Ticket traité', 'ok')" style="padding:4px 10px;background:rgba(78,255,206,0.08);border:1px solid rgba(78,255,206,0.2);border-radius:6px;font-size:0.72rem;color:var(--aurora);cursor:pointer;">Traiter</button>
-              <button onclick="showToast('Email envoyé au réalisateur', 'ok')" style="margin-left:4px;padding:4px 10px;background:rgba(192,132,252,0.08);border:1px solid rgba(192,132,252,0.2);border-radius:6px;font-size:0.72rem;color:var(--lavande);cursor:pointer;">↩ Demander révision</button>
-            </td>
-          </tr>
-          <tr>
-            <td style="font-family:var(--font-mono);font-size:0.72rem;color:var(--mist);">TK-002</td>
-            <td>
-              <div style="font-weight:600;font-size:0.85rem;">Fragments d'Horizon</div>
-              <div style="font-size:0.72rem;color:var(--mist);">Karim Mansouri</div>
-            </td>
-            <td><span style="background:rgba(251,188,4,0.12);border:1px solid rgba(251,188,4,0.3);border-radius:6px;padding:2px 8px;font-size:0.72rem;color:#FBBC04;">🎵 Droits musicaux</span></td>
-            <td style="font-size:0.8rem;color:var(--mist);">Admin</td>
-            <td><span style="background:rgba(78,255,206,0.08);border:1px solid rgba(78,255,206,0.22);border-radius:6px;padding:2px 8px;font-size:0.72rem;color:var(--aurora);">🔄 En cours</span></td>
-            <td>
-              <div style="display:flex;gap:4px;">
-                <button onclick="showToast('✓ Film validé', 'ok')" style="padding:4px 8px;background:rgba(78,255,206,0.08);border:1px solid rgba(78,255,206,0.2);border-radius:6px;font-size:0.68rem;color:var(--aurora);cursor:pointer;">✓ Validé</button>
-                <button onclick="showToast('✕ Film refusé', 'err')" style="padding:4px 8px;background:rgba(255,107,107,0.08);border:1px solid rgba(255,107,107,0.2);border-radius:6px;font-size:0.68rem;color:var(--coral);cursor:pointer;">✕ Refusé</button>
-                <button onclick="showToast('↩ Demande envoyée', 'warn')" style="padding:4px 8px;background:rgba(245,230,66,0.08);border:1px solid rgba(245,230,66,0.2);border-radius:6px;font-size:0.68rem;color:var(--solar);cursor:pointer;">↩ À modifier</button>
-              </div>
-            </td>
-            <td style="font-family:var(--font-mono);font-size:0.72rem;color:var(--mist);">2026-11-20</td>
-            <td>
-              <button onclick="showToast('Ticket résolu', 'ok')" style="padding:4px 10px;background:rgba(78,255,206,0.08);border:1px solid rgba(78,255,206,0.2);border-radius:6px;font-size:0.72rem;color:var(--aurora);cursor:pointer;">✓ Résoudre</button>
-            </td>
-          </tr>
-          <tr>
-            <td style="font-family:var(--font-mono);font-size:0.72rem;color:var(--mist);">TK-003</td>
-            <td>
-              <div style="font-weight:600;font-size:0.85rem;">Mémoire Vive</div>
-              <div style="font-size:0.72rem;color:var(--mist);">Sofia Peres</div>
-            </td>
-            <td><span style="background:rgba(255,107,107,0.1);border:1px solid rgba(255,107,107,0.25);border-radius:6px;padding:2px 8px;font-size:0.72rem;color:var(--coral);">▶ YouTube rejeté</span></td>
-            <td style="font-size:0.8rem;color:var(--mist);">Système</td>
-            <td><span style="background:rgba(245,230,66,0.1);border:1px solid rgba(245,230,66,0.3);border-radius:6px;padding:2px 8px;font-size:0.72rem;color:var(--solar);">⏳ En attente</span></td>
-            <td>
-              <div style="display:flex;gap:4px;">
-                <button onclick="showToast('✓ Film validé', 'ok')" style="padding:4px 8px;background:rgba(78,255,206,0.08);border:1px solid rgba(78,255,206,0.2);border-radius:6px;font-size:0.68rem;color:var(--aurora);cursor:pointer;">✓ Validé</button>
-                <button onclick="showToast('✕ Film refusé', 'err')" style="padding:4px 8px;background:rgba(255,107,107,0.08);border:1px solid rgba(255,107,107,0.2);border-radius:6px;font-size:0.68rem;color:var(--coral);cursor:pointer;">✕ Refusé</button>
-                <button onclick="showToast('↩ Demande envoyée', 'warn')" style="padding:4px 8px;background:rgba(245,230,66,0.08);border:1px solid rgba(245,230,66,0.2);border-radius:6px;font-size:0.68rem;color:var(--solar);cursor:pointer;">↩ À modifier</button>
-              </div>
-            </td>
-            <td style="font-family:var(--font-mono);font-size:0.72rem;color:var(--mist);">2026-11-21</td>
-            <td>
-              <button onclick="showToast('Email envoyé au réalisateur pour re-soumission', 'ok')" style="padding:4px 10px;background:rgba(192,132,252,0.08);border:1px solid rgba(192,132,252,0.2);border-radius:6px;font-size:0.72rem;color:var(--lavande);cursor:pointer;">↩ Demander révision</button>
-            </td>
-          </tr>
-          <tr>
-            <td style="font-family:var(--font-mono);font-size:0.72rem;color:var(--mist);">TK-004</td>
-            <td>
-              <div style="font-weight:600;font-size:0.85rem;">L'Algorithme du Futur</div>
-              <div style="font-size:0.72rem;color:var(--mist);">Alex Nguyen</div>
-            </td>
-            <td><span style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:2px 8px;font-size:0.72rem;color:var(--mist);">📋 Lisibilité</span></td>
-            <td style="font-size:0.8rem;color:var(--mist);">Jury — Thomas R.</td>
-            <td><span style="background:rgba(78,255,206,0.08);border:1px solid rgba(78,255,206,0.22);border-radius:6px;padding:2px 8px;font-size:0.72rem;color:var(--aurora);">🔄 En cours</span></td>
-            <td>
-              <div style="display:flex;gap:4px;">
-                <button onclick="showToast('✓ Film validé', 'ok')" style="padding:4px 8px;background:rgba(78,255,206,0.08);border:1px solid rgba(78,255,206,0.2);border-radius:6px;font-size:0.68rem;color:var(--aurora);cursor:pointer;">✓ Validé</button>
-                <button onclick="showToast('✕ Film refusé', 'err')" style="padding:4px 8px;background:rgba(255,107,107,0.08);border:1px solid rgba(255,107,107,0.2);border-radius:6px;font-size:0.68rem;color:var(--coral);cursor:pointer;">✕ Refusé</button>
-                <button onclick="showToast('↩ Demande envoyée', 'warn')" style="padding:4px 8px;background:rgba(245,230,66,0.08);border:1px solid rgba(245,230,66,0.2);border-radius:6px;font-size:0.68rem;color:var(--solar);cursor:pointer;">↩ À modifier</button>
-              </div>
-            </td>
-            <td style="font-family:var(--font-mono);font-size:0.72rem;color:var(--mist);">2026-11-22</td>
-            <td>
-              <button onclick="showToast('Ticket résolu', 'ok')" style="padding:4px 10px;background:rgba(78,255,206,0.08);border:1px solid rgba(78,255,206,0.2);border-radius:6px;font-size:0.72rem;color:var(--aurora);cursor:pointer;">✓ Résoudre</button>
-            </td>
-          </tr>
-          <tr>
-            <td style="font-family:var(--font-mono);font-size:0.72rem;color:var(--mist);">TK-005</td>
-            <td>
-              <div style="font-weight:600;font-size:0.85rem;">Neurones Bleus</div>
-              <div style="font-size:0.72rem;color:var(--mist);">Marie Dupont</div>
-            </td>
-            <td><span style="background:rgba(192,132,252,0.1);border:1px solid rgba(192,132,252,0.25);border-radius:6px;padding:2px 8px;font-size:0.72rem;color:var(--lavande);">↩ Révision demandée</span></td>
-            <td style="font-size:0.8rem;color:var(--mist);">Jury — Marie L.</td>
-            <td><span style="background:rgba(245,230,66,0.1);border:1px solid rgba(245,230,66,0.3);border-radius:6px;padding:2px 8px;font-size:0.72rem;color:var(--solar);">⏳ Attente réalisateur</span></td>
-            <td>
-              <div style="display:flex;gap:4px;">
-                <button onclick="showToast('✓ Film validé', 'ok')" style="padding:4px 8px;background:rgba(78,255,206,0.08);border:1px solid rgba(78,255,206,0.2);border-radius:6px;font-size:0.68rem;color:var(--aurora);cursor:pointer;">✓ Validé</button>
-                <button onclick="showToast('✕ Film refusé', 'err')" style="padding:4px 8px;background:rgba(255,107,107,0.08);border:1px solid rgba(255,107,107,0.2);border-radius:6px;font-size:0.68rem;color:var(--coral);cursor:pointer;">✕ Refusé</button>
-                <button onclick="showToast('↩ Demande envoyée', 'warn')" style="padding:4px 8px;background:rgba(245,230,66,0.08);border:1px solid rgba(245,230,66,0.2);border-radius:6px;font-size:0.68rem;color:var(--solar);cursor:pointer;">↩ À modifier</button>
-              </div>
-            </td>
-            <td style="font-family:var(--font-mono);font-size:0.72rem;color:var(--mist);">2026-11-23</td>
-            <td>
-              <button onclick="showToast('Relance envoyée au réalisateur', 'warn')" style="padding:4px 10px;background:rgba(245,230,66,0.08);border:1px solid rgba(245,230,66,0.2);border-radius:6px;font-size:0.72rem;color:var(--solar);cursor:pointer;">📧 Relancer</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <!-- Inbox -->
+    <div id="tk-inbox"></div>
+    <div class="tk-resolved-section" id="tk-resolved-section"></div>
   </div>
 
   <!-- ══════ VUE SÉLECTION ══════ -->
@@ -553,6 +414,8 @@
       <button onclick="filterSelection('partage', this)" class="sel-filter" id="selfil-partage">⚠️ Partagés</button>
       <button onclick="filterSelection('rejete', this)" class="sel-filter" id="selfil-rejete">❌ Rejetés</button>
       <button onclick="filterSelection('attente', this)" class="sel-filter" id="selfil-attente">⏳ En attente</button>
+      <button onclick="filterSelection('signale', this)" class="sel-filter" id="selfil-signale">🚩 Signalements <span id="selfil-signale-count" style="font-family:var(--font-mono);font-size:0.65rem;"></span></button>
+      <button onclick="filterSelection('selectionne', this)" class="sel-filter sel-filter-star" id="selfil-selectionne">★ Ma sélection <span id="selfil-selectionne-count" style="font-family:var(--font-mono);font-size:0.65rem;"></span></button>
       <div style="flex:1;"></div>
       <input type="text" id="sel-search" placeholder="🔍 Rechercher un film…" oninput="renderSelection()" style="background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.09);border-radius:8px;padding:7px 12px;font-family:var(--font-body);font-size:0.82rem;color:var(--white-soft);outline:none;min-width:200px;">
     </div>
@@ -999,6 +862,98 @@
       <button class="modal-close" onclick="closeCommentsModal()">✕</button>
     </div>
     <div class="mc-body" id="mc-body"></div>
+  </div>
+</div>
+
+<!-- ══ MODALE TICKET DÉTAIL ══ -->
+<div class="tk-modal-overlay" id="tk-modal-overlay" onclick="closeTkModal(event)">
+  <div class="tk-modal">
+    <div class="tk-modal-header">
+      <span class="tk-modal-id" id="tkm-id">TK-001</span>
+      <button class="tk-modal-close" onclick="closeTkModal()">✕</button>
+    </div>
+    <div class="tk-modal-film" id="tkm-film"></div>
+    <div class="tkm-film-row">
+      <span class="tk-modal-author" id="tkm-author"></span>
+      <button class="tkm-btn-film" id="tkm-btn-film" title="Aller à la fiche film">▶ Voir le film</button>
+    </div>
+
+    <div class="tk-modal-section">
+      <div class="tk-modal-label">Type de problème</div>
+      <span class="tc-badge" id="tkm-type-badge"></span>
+    </div>
+
+    <div class="tk-modal-section">
+      <div class="tk-modal-label">Signalé par</div>
+      <div class="tk-modal-reporter" id="tkm-reporter"></div>
+    </div>
+
+    <div class="tk-modal-section">
+      <div class="tk-modal-label">Description</div>
+      <div class="tk-modal-desc" id="tkm-desc"></div>
+    </div>
+
+    <div class="tk-modal-section">
+      <div class="tk-modal-label">Note interne admin</div>
+      <textarea class="tk-modal-note" id="tkm-note" placeholder="Ajouter une note..."></textarea>
+    </div>
+
+    <div class="tk-modal-actions" id="tkm-actions">
+      <button class="tk-btn-take" id="tkm-btn-take">→ Prendre en charge</button>
+      <button class="tk-btn-resolve" id="tkm-btn-resolve">✓ Résoudre</button>
+      <button class="tk-btn-revision" id="tkm-btn-revision">↩ Demander révision</button>
+      <button class="tk-btn-refuse" id="tkm-btn-refuse">✕ Refuser le film</button>
+    </div>
+    <button class="tk-btn-cancel" onclick="closeTkModal()" style="margin-top:8px;">Fermer</button>
+  </div>
+</div>
+
+<!-- ══ MODAL VIDÉO ══ -->
+<div class="vid-modal-overlay" id="vid-modal-overlay" onclick="closeVideoModal(event)">
+  <div class="vid-modal">
+    <div class="vid-modal-header">
+      <div>
+        <div class="vid-modal-title" id="vid-modal-title"></div>
+        <div class="vid-modal-sub" id="vid-modal-sub"></div>
+      </div>
+      <button class="vid-modal-close" onclick="closeVideoModal()">✕</button>
+    </div>
+    <video id="vid-modal-video" src="../assets/video.mp4" controls style="width:100%;border-radius:10px;display:block;background:#000;max-height:60vh;"></video>
+  </div>
+</div>
+
+<!-- ══ MODAL EMAIL RÉALISATEUR ══ -->
+<div class="email-modal-overlay" id="email-modal-overlay" onclick="closeEmailModal(event)">
+  <div class="email-modal">
+    <div class="email-modal-header">
+      <div>
+        <div class="email-modal-title">📧 Email au réalisateur</div>
+        <div class="email-modal-sub" id="em-ticket-info"></div>
+      </div>
+      <button class="email-modal-close" onclick="closeEmailModal()">✕</button>
+    </div>
+
+    <div class="email-field">
+      <span class="email-label">De</span>
+      <span class="email-value" style="color:var(--mist);">administration@marsai2026.fr</span>
+    </div>
+    <div class="email-field">
+      <span class="email-label">À</span>
+      <span class="email-value" id="em-to"></span>
+    </div>
+    <div class="email-field">
+      <span class="email-label">Objet</span>
+      <input class="email-input" id="em-subject" type="text">
+    </div>
+    <div style="margin-top:12px;">
+      <div class="email-label" style="margin-bottom:6px;">Message</div>
+      <textarea class="email-body" id="em-body"></textarea>
+    </div>
+
+    <div class="email-actions">
+      <button class="email-btn-cancel" onclick="closeEmailModal()">Annuler</button>
+      <button class="email-btn-send" onclick="sendEmailAction()">📧 Envoyer l'email</button>
+    </div>
   </div>
 </div>
 

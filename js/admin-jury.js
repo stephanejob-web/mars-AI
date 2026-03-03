@@ -237,6 +237,24 @@ function openModalReport() {
   document.getElementById('modal-report').classList.add('open');
 }
 
+function toggleReportSelect() {
+  document.getElementById('report-select').classList.toggle('open');
+}
+
+function selectReportType(el) {
+  document.getElementById('report-type').value = el.dataset.value;
+  document.getElementById('rsel-label').textContent = el.textContent.trim();
+  document.getElementById('rsel-dot').style.background = el.querySelector('.rsel-dot').style.background;
+  document.querySelectorAll('.rsel-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('report-select').classList.remove('open');
+}
+
+document.addEventListener('click', function(e) {
+  const sel = document.getElementById('report-select');
+  if (sel && !sel.contains(e.target)) sel.classList.remove('open');
+});
+
 function confirmReport() {
   const type = document.getElementById('report-type').value;
   const msg = document.getElementById('report-message').value.trim();

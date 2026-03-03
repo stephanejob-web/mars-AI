@@ -472,13 +472,33 @@
       <div class="modal-film-chip" id="report-chip">🎬 Titre du film</div>
 
       <div class="modal-label">Type de problème</div>
-      <select id="report-type" class="modal-textarea" style="min-height:auto; height:46px; margin-bottom:12px; padding:0 12px; appearance:auto; cursor:pointer;">
-        <option value="rights">🎵 Droits musicaux</option>
-        <option value="quality">📋 Lisibilité / Qualité</option>
-        <option value="content">🔞 Contenu inapproprié</option>
-        <option value="tech">▶ YouTube / Technique</option>
-        <option value="other">❓ Autre</option>
-      </select>
+      <input type="hidden" id="report-type" value="rights">
+      <div class="report-select" id="report-select">
+        <div class="report-select-trigger" onclick="toggleReportSelect()">
+          <span class="rsel-dot" id="rsel-dot" style="background:var(--aurora)"></span>
+          <span class="rsel-label" id="rsel-label">🎵 Droits musicaux</span>
+          <svg class="rsel-arrow" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="rsel-options">
+          <div class="rsel-option selected" data-value="rights" data-color="var(--aurora)" onclick="selectReportType(this)">
+            <span class="rsel-dot" style="background:var(--aurora)"></span>🎵 Droits musicaux
+          </div>
+          <div class="rsel-option" data-value="quality" data-color="var(--solar)" onclick="selectReportType(this)">
+            <span class="rsel-dot" style="background:var(--solar)"></span>📋 Lisibilité / Qualité
+          </div>
+          <div class="rsel-option" data-value="content" data-color="var(--coral)" onclick="selectReportType(this)">
+            <span class="rsel-dot" style="background:var(--coral)"></span>🔞 Contenu inapproprié
+          </div>
+          <div class="rsel-option" data-value="tech" data-color="var(--lavande)" onclick="selectReportType(this)">
+            <span class="rsel-dot" style="background:var(--lavande)"></span>▶ YouTube / Technique
+          </div>
+          <div class="rsel-option" data-value="other" data-color="var(--mist)" onclick="selectReportType(this)">
+            <span class="rsel-dot" style="background:var(--mist)"></span>❓ Autre
+          </div>
+        </div>
+      </div>
 
       <div class="modal-label">Description détaillée</div>
       <textarea id="report-message" class="modal-textarea" placeholder="Précisez le problème rencontré..." style="min-height:100px;"></textarea>

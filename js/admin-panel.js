@@ -510,12 +510,13 @@ function playFilm(filmId) {
 }
 
 /* ── VUES ── */
-const views = ['users', 'assign', 'phases', 'selection', 'awards', 'site'];
+const views = ['users', 'assign', 'phases', 'selection', 'moderation', 'awards', 'site'];
 const titles = {
   users: ['Gestion des utilisateurs', 'Jurys et modérateurs — accès par login/mot de passe ou Gmail'],
   assign: ['Films soumis', 'Visionnez et assignez chaque film au jury'],
   phases: ['Phases & Dates', 'Définissez les dates des sessions jury'],
-  selection: ['Sélection & Modération', 'Votes, commentaires et signalements du jury — tout en un'],
+  selection: ['Sélection & Votes', 'Votes, commentaires et signalements jury — tout en un seul endroit'],
+  moderation: ['Tickets', 'Signalements créés par le jury'],
   awards: ['Awards & Sponsors', 'Gérez les prix du festival et leurs sponsors associés'],
   site: ['Administration du site', 'Vidéo hero, informations et calendrier public'],
 };
@@ -529,8 +530,9 @@ function showView(name, el) {
   document.getElementById('topbar-info').textContent = titles[name][1];
   if (name === 'assign') renderAssignView();
   if (name === 'site') { renderJuryAdmin(); renderSponsorsAdmin(); }
-  if (name === 'users') { chartAnimProgress = 1; renderJuryChart(); }
+  if (name === 'users') { renderVoteChart(); }
   if (name === 'selection') renderSelection();
+  if (name === 'moderation') renderKanban();
 }
 
 /* ── DRAPEAUX PAYS ── */
@@ -1051,6 +1053,72 @@ function applyRepartition() {
   showToast(`✓ ${total} film${total > 1 ? 's' : ''} répartis équitablement`, 'ok');
 }
 
+/* ── GRAPHIQUE PARTICIPATION (anneaux avatar) ── */
+function renderVoteChart() {
+  const container = document.getElementById('vote-chart-bars');
+  if (!container) return;
+
+  const juryUsers = users.filter(u => u.role === 'jury' && u.active);
+  const evaluatedFilms = films.filter(f => f.juryDec && Object.keys(f.juryDec).length > 0);
+
+  const rows = juryUsers.map(u => {
+    const myFilms = evaluatedFilms.filter(f => String(u.id) in f.juryDec);
+    const voted  = myFilms.filter(f => f.juryDec[u.id] !== null).length;
+    const total  = myFilms.length;
+    return { u, voted, total, pct: total > 0 ? Math.round((voted / total) * 100) : 0 };
+  });
+
+  // SVG ring helper
+  const R = 44, STROKE = 5, CX = 50, CY = 50;
+  const circ = 2 * Math.PI * R;
+
+  function ring(pct) {
+    const done = (pct / 100) * circ;
+    const left = circ - done;
+    // couleur : vert si ≥80%, orange si ≥50%, rouge sinon
+    const color = pct >= 80 ? '#4EFFCE' : pct >= 50 ? '#F5E642' : '#FF6B6B';
+    const glowId = `glow-${Math.random().toString(36).slice(2,7)}`;
+    return `<svg viewBox="0 0 100 100" class="vcr-ring" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="${glowId}" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="2" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <clipPath id="clip-${glowId}"><circle cx="${CX}" cy="${CY}" r="${R - STROKE / 2}"/></clipPath>
+      </defs>
+      <!-- fond anneau -->
+      <circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="${STROKE}"/>
+      <!-- arc progression -->
+      <circle cx="${CX}" cy="${CY}" r="${R}" fill="none"
+        stroke="${color}" stroke-width="${STROKE}"
+        stroke-dasharray="${done} ${left}"
+        stroke-dashoffset="${circ / 4}"
+        stroke-linecap="round"
+        filter="url(#${glowId})"/>
+    </svg>`;
+  }
+
+  container.innerHTML = `<div class="vcr-grid">${rows.map(r => {
+    const statusColor = r.pct >= 80 ? 'var(--aurora)' : r.pct >= 50 ? 'var(--solar)' : 'var(--coral)';
+    const statusLabel = r.total === 0 ? '—'
+      : r.pct === 100 ? '✓ Complet'
+      : r.voted === 0  ? 'Pas commencé'
+      : `${r.pct}%`;
+
+    return `<div class="vcr-card">
+      <div class="vcr-ring-wrap">
+        ${ring(r.pct)}
+        <img class="vcr-face" src="${r.u.avatar}" alt="${r.u.name}">
+        <div class="vcr-pct" style="color:${statusColor};">${r.total > 0 ? r.pct + '%' : '—'}</div>
+      </div>
+      <div class="vcr-card-name">${r.u.name}</div>
+      <div class="vcr-card-label" style="color:var(--mist);">${r.u.label || ''}</div>
+      <div class="vcr-card-stat" style="color:${statusColor};">${statusLabel}</div>
+      <div class="vcr-card-count">${r.voted} / ${r.total} films</div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
 /* ── GRAPHIQUE RÉPARTITION JURY ── */
 let chartAnimProgress = 0;
 let chartAnimId = null;
@@ -1318,6 +1386,16 @@ function sortSelection(sort, btn) {
   renderSelection();
 }
 
+function selActTicket(tkId, action) {
+  const t = ticketsData.find(x => x.id === tkId);
+  if (!t) return;
+  t.status = 'resolu';
+  if (action === 'revision') showToast(`↩ Révision demandée au réalisateur de "${t.film}"`, 'warn');
+  else if (action === 'refuse') showToast(`✕ Film "${t.film}" refusé · Réalisateur notifié`, 'err');
+  else showToast(`↓ ${tkId} classé — film conservé`, 'ok');
+  renderSelection();
+}
+
 function adminDecide(filmId, decision) {
   adminDecisions[filmId] = adminDecisions[filmId] === decision ? null : decision;
   showToast(decision === 'valide' ? `✓ Film #${filmId} sélectionné` : `✕ Film #${filmId} retiré`, decision === 'valide' ? 'ok' : 'err');
@@ -1332,14 +1410,13 @@ function toggleSelDetail(filmId) {
 function renderSelection() {
   const searchQ = (document.getElementById('sel-search')?.value || '').toLowerCase().trim();
   const evaluated = films.filter(f => f.juryDec && Object.keys(f.juryDec).length > 0);
-  const enriched = evaluated.map(f => ({ ...f, consensus: getFilmConsensus(f), tickets: filmTickets[f.id] || [] }));
+  const enriched = evaluated.map(f => ({ ...f, consensus: getFilmConsensus(f), tickets: ticketsData.filter(t => t.filmId === f.id && t.status !== 'resolu') }));
 
   const unanimes = enriched.filter(f => f.consensus.type === 'unanime');
   const partages = enriched.filter(f => f.consensus.type === 'partage');
   const rejetes = enriched.filter(f => f.consensus.type === 'rejete');
   const attente = enriched.filter(f => f.consensus.type === 'attente');
   const totalTickets = enriched.reduce((s, f) => s + f.tickets.length, 0);
-  const withTickets = enriched.filter(f => f.tickets.length > 0);
 
   document.getElementById('sel-unanime').textContent = unanimes.length;
   document.getElementById('sel-partage').textContent = partages.length;
@@ -1353,11 +1430,60 @@ function renderSelection() {
   document.getElementById('selfil-partage').textContent = `⚠️ Partagés (${partages.length})`;
   document.getElementById('selfil-rejete').textContent = `❌ Rejetés (${rejetes.length})`;
   document.getElementById('selfil-attente').textContent = `⏳ En attente (${attente.length})`;
-  const sigBtn = document.getElementById('selfil-signale');
-  if (sigBtn) sigBtn.textContent = `🚩 Signalés (${withTickets.length})`;
+
+  // Filtre signalements : count + badge nav
+  const openTkCount = ticketsData.filter(t => t.status !== 'resolu').length;
+  const sigCount = document.getElementById('selfil-signale-count');
+  if (sigCount) sigCount.textContent = openTkCount > 0 ? `(${openTkCount})` : '';
+  const navTk = document.getElementById('nav-count-tickets');
+  if (navTk) { navTk.textContent = openTkCount; navTk.style.display = openTkCount > 0 ? '' : 'none'; }
+
+  // Compteur Ma Sélection
+  const admSelCount = films.filter(f => adminDecisions[f.id] === 'valide').length;
+  const selCountEl = document.getElementById('selfil-selectionne-count');
+  if (selCountEl) selCountEl.textContent = admSelCount > 0 ? `(${admSelCount})` : '';
+
+  // Si onglet "Ma sélection" actif : affichage spécial tous films (évalués ou non)
+  if (selFilter === 'selectionne') {
+    const admSelected = films.filter(f => adminDecisions[f.id] === 'valide');
+    const tbody = document.getElementById('selection-tbody');
+    if (admSelected.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:48px;color:var(--mist);font-size:0.85rem;">Aucun film sélectionné pour l'instant.<br><span style="font-size:0.75rem;opacity:0.6;">Cliquez sur "Sélectionner" dans la liste pour constituer votre palmarès.</span></td></tr>`;
+    } else {
+      const juryUsers = users.filter(u => u.role === 'jury');
+      tbody.innerHTML = admSelected.map((f, idx) => {
+        const c = getFilmConsensus(f);
+        const nComm = f.comments ? Object.keys(f.comments).length : 0;
+        const voteLabel = c.type === 'unanime' ? `<span style="color:var(--aurora);font-weight:700;">✅ Unanime</span>` : c.type === 'partage' ? `<span style="color:var(--solar);font-weight:700;">⚠️ Partagé</span>` : `<span style="color:var(--mist);">—</span>`;
+        const juryAv = Object.entries(f.juryDec || {}).map(([uid, dec]) => {
+          const u = juryUsers.find(x => x.id === parseInt(uid));
+          if (!u) return '';
+          const bc = dec === 'valide' ? 'var(--aurora)' : dec === 'refuse' ? 'var(--coral)' : dec === 'aRevoir' ? 'var(--solar)' : 'rgba(255,255,255,0.15)';
+          const ic = dec === 'valide' ? '✓' : dec === 'refuse' ? '✕' : dec === 'aRevoir' ? '↩' : '?';
+          return `<div title="${u.name}" style="position:relative;display:inline-block;">
+            <img src="${u.avatar}" style="width:22px;height:22px;border-radius:50%;object-fit:cover;border:2px solid ${bc};opacity:${dec ? 1 : 0.4};">
+            <span style="position:absolute;bottom:-3px;right:-3px;width:11px;height:11px;border-radius:50%;font-size:0.42rem;font-weight:900;display:flex;align-items:center;justify-content:center;background:${bc};color:var(--deep-sky);">${ic}</span>
+          </div>`;
+        }).join('');
+        return `<tr style="background:rgba(78,255,206,0.03);" onmouseover="this.style.background='rgba(78,255,206,0.06)'" onmouseout="this.style.background='rgba(78,255,206,0.03)'">
+          <td style="font-family:var(--font-mono);font-size:0.8rem;font-weight:700;color:var(--solar);">${String(idx + 1).padStart(2, '0')}</td>
+          <td>
+            <div style="font-weight:700;font-size:0.88rem;">${f.title}</div>
+            <div style="font-size:0.72rem;color:var(--mist);">${f.author} · ${flags[f.country] || ''} ${f.country || ''}</div>
+          </td>
+          <td>${voteLabel}</td>
+          <td><div style="display:flex;align-items:center;gap:3px;">${juryAv}</div></td>
+          <td>${nComm > 0 ? `<span style="font-size:0.78rem;color:var(--lavande);">💬 ${nComm}</span>` : '<span style="color:var(--mist);opacity:0.4;font-size:0.72rem;">—</span>'}</td>
+          <td><button onclick="event.stopPropagation();openVideoModal(${f.id})" style="padding:4px 10px;border-radius:6px;font-size:0.68rem;font-weight:600;cursor:pointer;border:1px solid rgba(78,255,206,0.25);background:rgba(78,255,206,0.06);color:var(--aurora);">▶ Voir</button></td>
+          <td><button onclick="event.stopPropagation();adminDecide(${f.id},'valide')" style="padding:4px 10px;border-radius:6px;font-size:0.68rem;font-weight:600;cursor:pointer;border:1px solid rgba(255,107,107,0.25);background:rgba(255,107,107,0.06);color:var(--coral);">✕ Retirer</button></td>
+        </tr>`;
+      }).join('');
+    }
+    return;
+  }
 
   let filtered = enriched;
-  if (selFilter === 'signale') filtered = filtered.filter(f => f.tickets.length > 0);
+  if (selFilter === 'signale') filtered = filtered.filter(f => f.tickets && f.tickets.length > 0);
   else if (selFilter !== 'tous') filtered = filtered.filter(f => f.consensus.type === selFilter);
   if (searchQ) filtered = filtered.filter(f => (f.title + f.author + f.country).toLowerCase().includes(searchQ));
 
@@ -1407,11 +1533,14 @@ function renderSelection() {
       </div>`;
     }).join('');
 
-    const admBtns = `<div style="display:flex;gap:6px;">
-      <button onclick="event.stopPropagation();adminDecide(${f.id},'valide')" style="padding:5px 12px;border-radius:7px;font-size:0.72rem;font-weight:700;cursor:pointer;border:1.5px solid;transition:all .18s;display:flex;align-items:center;gap:4px;
-        ${adm === 'valide' ? 'background:rgba(78,255,206,0.2);border-color:rgba(78,255,206,0.6);color:var(--aurora);box-shadow:0 0 12px rgba(78,255,206,0.2);' : 'background:rgba(78,255,206,0.05);border-color:rgba(78,255,206,0.15);color:var(--aurora);'}">✓ ${adm === 'valide' ? 'Sélectionné' : 'Sélectionner'}</button>
-      <button onclick="event.stopPropagation();adminDecide(${f.id},'refuse')" style="padding:5px 12px;border-radius:7px;font-size:0.72rem;font-weight:700;cursor:pointer;border:1.5px solid;transition:all .18s;display:flex;align-items:center;gap:4px;
-        ${adm === 'refuse' ? 'background:rgba(255,107,107,0.2);border-color:rgba(255,107,107,0.6);color:var(--coral);box-shadow:0 0 12px rgba(255,107,107,0.2);' : 'background:rgba(255,107,107,0.05);border-color:rgba(255,107,107,0.15);color:var(--coral);'}">✕ ${adm === 'refuse' ? 'Retiré' : 'Retirer'}</button>
+    const admBtns = `<div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start;">
+      <div style="display:flex;gap:6px;">
+        <button onclick="event.stopPropagation();adminDecide(${f.id},'valide')" style="padding:5px 12px;border-radius:7px;font-size:0.72rem;font-weight:700;cursor:pointer;border:1.5px solid;transition:all .18s;display:flex;align-items:center;gap:4px;
+          ${adm === 'valide' ? 'background:rgba(78,255,206,0.2);border-color:rgba(78,255,206,0.6);color:var(--aurora);box-shadow:0 0 12px rgba(78,255,206,0.2);' : 'background:rgba(78,255,206,0.05);border-color:rgba(78,255,206,0.15);color:var(--aurora);'}">✓ ${adm === 'valide' ? 'Sélectionné' : 'Sélectionner'}</button>
+        <button onclick="event.stopPropagation();adminDecide(${f.id},'refuse')" style="padding:5px 12px;border-radius:7px;font-size:0.72rem;font-weight:700;cursor:pointer;border:1.5px solid;transition:all .18s;display:flex;align-items:center;gap:4px;
+          ${adm === 'refuse' ? 'background:rgba(255,107,107,0.2);border-color:rgba(255,107,107,0.6);color:var(--coral);box-shadow:0 0 12px rgba(255,107,107,0.2);' : 'background:rgba(255,107,107,0.05);border-color:rgba(255,107,107,0.15);color:var(--coral);'}">✕ ${adm === 'refuse' ? 'Retiré' : 'Retirer'}</button>
+      </div>
+      <button onclick="event.stopPropagation();openVideoModal(${f.id})" style="padding:4px 12px;border-radius:7px;font-size:0.7rem;font-weight:600;cursor:pointer;border:1.5px solid rgba(78,255,206,0.25);background:rgba(78,255,206,0.06);color:var(--aurora);display:flex;align-items:center;gap:5px;transition:all .18s;" onmouseover="this.style.background='rgba(78,255,206,0.14)'" onmouseout="this.style.background='rgba(78,255,206,0.06)'">▶ Voir le film</button>
     </div>`;
 
     const commEntries = Object.entries(f.comments || {});
@@ -1454,23 +1583,22 @@ function renderSelection() {
             }).join('')}
           </div>
           ${nTk > 0 ? `<div>
-            <div style="font-size:0.68rem;font-weight:700;color:var(--solar);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">🚩 Signalements (${nTk})</div>
+            <div style="font-size:0.68rem;font-weight:700;color:var(--solar);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">🚩 Signalements jury (${nTk})</div>
             ${f.tickets.map(t => {
-              const stBadge = t.status === 'attente'
-                ? '<span style="font-size:0.62rem;padding:1px 6px;border-radius:4px;background:rgba(245,230,66,0.1);color:var(--solar);font-weight:600;">⏳ En attente</span>'
-                : '<span style="font-size:0.62rem;padding:1px 6px;border-radius:4px;background:rgba(78,255,206,0.1);color:var(--aurora);font-weight:600;">🔄 En cours</span>';
-              return `<div style="padding:10px;margin-bottom:8px;background:rgba(245,230,66,0.03);border:1px solid rgba(245,230,66,0.12);border-radius:8px;">
-                <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;">
-                  <span style="font-size:0.72rem;font-weight:700;color:var(--solar);">${t.type}</span>
-                  ${stBadge}
+              const tm = tkTypeMeta(t.typeKey);
+              const age = tkAge(t.date);
+              const urg = tkUrgency(t.date);
+              return `<div style="padding:12px;margin-bottom:8px;background:rgba(245,230,66,0.03);border:1px solid rgba(245,230,66,0.1);border-radius:10px;${urg ? `border-left:3px solid ${urg.dot};` : ''}">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                  <span style="font-size:0.7rem;font-weight:700;padding:2px 8px;border-radius:5px;background:${tm.bg};border:1px solid ${tm.border};color:${tm.color};">${t.type}</span>
+                  <span style="font-size:0.65rem;color:var(--mist);">${t.reporter}</span>
+                  <span style="font-size:0.62rem;color:${urg ? urg.dot : 'rgba(136,146,176,0.5)'};margin-left:auto;">${age}${urg ? ' ●' : ''}</span>
                 </div>
-                <div style="font-size:0.75rem;color:rgba(240,244,255,0.65);line-height:1.5;margin-bottom:5px;">${t.desc}</div>
-                <div style="display:flex;align-items:center;justify-content:space-between;">
-                  <span style="font-size:0.65rem;color:var(--mist);">${t.reporter} · ${t.date}</span>
-                  <div style="display:flex;gap:4px;">
-                    <button onclick="event.stopPropagation();showToast('✓ Ticket ${t.id} résolu','ok')" style="padding:2px 8px;border-radius:4px;font-size:0.62rem;background:rgba(78,255,206,0.08);border:1px solid rgba(78,255,206,0.2);color:var(--aurora);cursor:pointer;">✓ Résoudre</button>
-                    <button onclick="event.stopPropagation();showToast('↩ Révision demandée','warn')" style="padding:2px 8px;border-radius:4px;font-size:0.62rem;background:rgba(192,132,252,0.08);border:1px solid rgba(192,132,252,0.2);color:var(--lavande);cursor:pointer;">↩ Réviser</button>
-                  </div>
+                <div style="font-size:0.75rem;color:rgba(240,244,255,0.7);line-height:1.5;margin-bottom:10px;font-style:italic;">"${t.desc}"</div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                  <button onclick="event.stopPropagation();selActTicket('${t.id}','dismiss')" style="padding:4px 10px;border-radius:6px;font-size:0.68rem;font-weight:600;cursor:pointer;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:var(--mist);font-family:var(--font-body);">↓ Classer</button>
+                  <button onclick="event.stopPropagation();openEmailModal('${t.id}','revision')" style="padding:4px 10px;border-radius:6px;font-size:0.68rem;font-weight:600;cursor:pointer;background:rgba(192,132,252,0.08);border:1px solid rgba(192,132,252,0.22);color:var(--lavande);font-family:var(--font-body);">↩ Demander révision</button>
+                  <button onclick="event.stopPropagation();openEmailModal('${t.id}','refuse')" style="padding:4px 10px;border-radius:6px;font-size:0.68rem;font-weight:600;cursor:pointer;background:rgba(255,107,107,0.08);border:1px solid rgba(255,107,107,0.22);color:var(--coral);font-family:var(--font-body);">✕ Refuser le film</button>
                 </div>
               </div>`;
             }).join('')}
@@ -1520,4 +1648,379 @@ function exportSelectionCSV() {
   const a = document.createElement('a');
   a.href = url; a.download = 'selection-marsai-2026.csv'; a.click();
   showToast('📤 Export CSV téléchargé', 'ok');
+}
+
+/* ════════════════════════════════════════════
+   KANBAN TICKETS — données & fonctions
+   ════════════════════════════════════════════ */
+
+const ticketsData = [
+  { id: 'TK-001', filmId: 1,  film: 'Rêves de Silicium',    author: 'Léa Fontaine',   type: '🎵 Droits musicaux',   typeKey: 'droits',     reporter: 'Jury — Marie L.',  desc: 'Musique de fond potentiellement sous copyright. Le passage entre 1:20 et 2:45 semble utiliser une œuvre protégée.', status: 'attente',  date: '2026-11-18', adminNote: '' },
+  { id: 'TK-002', filmId: 6,  film: "Fragments d'Horizon",   author: 'Karim Mansouri', type: '🎵 Droits musicaux',   typeKey: 'droits',     reporter: 'Admin',            desc: "Vérification droits en cours avec l'auteur de la bande-son.", status: 'en_cours', date: '2026-11-20', adminNote: 'Contacté auteur le 20/11.' },
+  { id: 'TK-003', filmId: 3,  film: 'Mémoire Vive',          author: 'Sofia Peres',    type: '▶ YouTube rejeté',    typeKey: 'youtube',    reporter: 'Système',          desc: "Vidéo non accessible, lien YouTube invalide. Film non importé automatiquement.", status: 'attente',  date: '2026-11-21', adminNote: '' },
+  { id: 'TK-004', filmId: 4,  film: "L'Algorithme du Futur", author: 'Alex Nguyen',    type: '📋 Lisibilité',        typeKey: 'lisibilite', reporter: 'Jury — Thomas R.', desc: 'Sous-titres illisibles sur fond clair aux minutes 5 à 8. Police trop fine.', status: 'en_cours', date: '2026-11-22', adminNote: '' },
+  { id: 'TK-005', filmId: 7,  film: 'Neurones Bleus',        author: 'Marie Dupont',   type: '↩ Révision demandée', typeKey: 'revision',   reporter: 'Jury — Marie L.', desc: "La fin du film semble tronquée. La dernière séquence s'arrête abruptement à 12:45.", status: 'attente',  date: '2026-11-23', adminNote: '' },
+  { id: 'TK-006', filmId: 8,  film: 'Signal Perdu',          author: 'Hiro Tanaka',    type: '🎵 Droits musicaux',  typeKey: 'droits',     reporter: 'Jury — Jules V.', desc: 'Droits vérifiés et conformes.', status: 'resolu', date: '2026-11-10', adminNote: 'Licence Creative Commons confirmée.' },
+  { id: 'TK-007', filmId: 9,  film: 'Synthèse',             author: 'Emma Bernard',   type: '📋 Lisibilité',        typeKey: 'lisibilite', reporter: 'Jury — Thomas R.', desc: 'Sous-titres corrigés par le réalisateur.', status: 'resolu', date: '2026-11-12', adminNote: '' },
+  { id: 'TK-008', filmId: 10, film: "L'Éveil",              author: 'Pablo Ruiz',     type: '▶ YouTube rejeté',    typeKey: 'youtube',    reporter: 'Système',          desc: 'Lien YouTube mis à jour et fonctionnel.', status: 'resolu', date: '2026-11-15', adminNote: '' },
+];
+
+// Date de référence pour le calcul de l'âge (contexte festival déc. 2026)
+const TK_REF_DATE = new Date('2026-12-01');
+
+let activeTkId = null;
+let tkFilter = 'tous';
+let resolvedCollapsed = true;
+
+function tkAge(dateStr) {
+  const diff = Math.floor((TK_REF_DATE - new Date(dateStr)) / 86400000);
+  if (diff === 0) return "aujourd'hui";
+  if (diff === 1) return 'hier';
+  if (diff < 7)  return `il y a ${diff} j`;
+  if (diff < 30) return `il y a ${Math.floor(diff / 7)} sem.`;
+  return `il y a ${Math.floor(diff / 30)} mois`;
+}
+
+function tkUrgency(dateStr) {
+  const diff = Math.floor((TK_REF_DATE - new Date(dateStr)) / 86400000);
+  if (diff >= 10) return { dot: 'var(--coral)',  title: 'Urgent — en attente depuis plus de 10 jours' };
+  if (diff >= 5)  return { dot: 'var(--solar)', title: 'À traiter prochainement' };
+  return null;
+}
+
+function tkTypeMeta(typeKey) {
+  const map = {
+    droits:     { color: 'var(--solar)',   bg: 'rgba(245,230,66,0.1)',   border: 'rgba(245,230,66,0.25)' },
+    youtube:    { color: 'var(--coral)',   bg: 'rgba(255,107,107,0.1)',  border: 'rgba(255,107,107,0.25)' },
+    lisibilite: { color: 'var(--mist)',    bg: 'rgba(255,255,255,0.06)', border: 'rgba(255,255,255,0.12)' },
+    revision:   { color: 'var(--lavande)', bg: 'rgba(192,132,252,0.1)', border: 'rgba(192,132,252,0.25)' },
+    contenu:    { color: 'var(--coral)',   bg: 'rgba(255,107,107,0.1)',  border: 'rgba(255,107,107,0.25)' },
+  };
+  return map[typeKey] || { color: 'var(--mist)', bg: 'rgba(255,255,255,0.05)', border: 'rgba(255,255,255,0.1)' };
+}
+
+function setTkFilter(key, btn) {
+  tkFilter = key;
+  document.querySelectorAll('.tk-filter-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderKanban();
+}
+
+function toggleResolvedCol() {
+  resolvedCollapsed = !resolvedCollapsed;
+  renderKanban();
+}
+
+function renderKanban() {
+  const board = document.getElementById('kanban-board');
+  if (!board) return;
+
+  // Filtres par type
+  const typeFilters = [
+    { key: 'tous',       label: 'Tous' },
+    { key: 'droits',     label: '🎵 Droits' },
+    { key: 'youtube',    label: '▶ YouTube' },
+    { key: 'lisibilite', label: '📋 Lisibilité' },
+    { key: 'revision',   label: '↩ Révision' },
+  ];
+  const filtersHtml = `<div class="tk-filters">${
+    typeFilters.map(f => {
+      const count = f.key === 'tous'
+        ? ticketsData.filter(t => t.status !== 'resolu').length
+        : ticketsData.filter(t => t.typeKey === f.key && t.status !== 'resolu').length;
+      return `<button class="tk-filter-btn${tkFilter === f.key ? ' active' : ''}" onclick="setTkFilter('${f.key}', this)">${f.label}<span class="tk-filter-count">${count}</span></button>`;
+    }).join('')
+  }</div>`;
+
+  const filtered = t => tkFilter === 'tous' || t.typeKey === tkFilter;
+
+  const cols = [
+    { key: 'attente',  label: 'En attente', color: 'var(--solar)',   cntBg: 'rgba(245,230,66,0.12)',  cntBorder: 'rgba(245,230,66,0.3)',  collapsible: false },
+    { key: 'en_cours', label: 'En cours',   color: 'var(--aurora)',  cntBg: 'rgba(78,255,206,0.1)',   cntBorder: 'rgba(78,255,206,0.25)', collapsible: false },
+    { key: 'resolu',   label: 'Résolus',    color: 'var(--lavande)', cntBg: 'rgba(192,132,252,0.1)', cntBorder: 'rgba(192,132,252,0.25)', collapsible: true },
+  ];
+
+  const colsHtml = cols.map(col => {
+    const allCards = ticketsData.filter(t => t.status === col.key);
+    const cards    = allCards.filter(filtered);
+    const isCollapsed = col.collapsible && resolvedCollapsed;
+    const chevron = col.collapsible
+      ? `<button class="kanban-col-toggle" onclick="toggleResolvedCol()" title="${isCollapsed ? 'Afficher' : 'Masquer'}">${isCollapsed ? '▶' : '▼'}</button>`
+      : '';
+    const cardsHtml = isCollapsed
+      ? ''
+      : (cards.length ? cards.map(t => renderTkCard(t, col.key)).join('') : '<div class="kanban-empty">Aucun ticket</div>');
+    return `
+      <div class="kanban-col${isCollapsed ? ' collapsed' : ''}">
+        <div class="kanban-col-header" ${col.collapsible ? `onclick="toggleResolvedCol()" style="cursor:pointer;"` : ''}>
+          <span class="kanban-col-title" style="color:${col.color};">${col.label}</span>
+          <span class="kanban-col-count" style="background:${col.cntBg};border:1px solid ${col.cntBorder};color:${col.color};">${allCards.length}</span>
+          ${chevron}
+        </div>
+        ${isCollapsed ? '' : `<div class="kanban-cards">${cardsHtml}</div>`}
+      </div>`;
+  }).join('');
+
+  board.innerHTML = filtersHtml + `<div class="kanban-cols">${colsHtml}</div>`;
+
+  // stats counters
+  const el = id => document.getElementById(id);
+  if (el('tk-count-attente')) el('tk-count-attente').textContent = ticketsData.filter(t => t.status === 'attente').length;
+  if (el('tk-count-encours')) el('tk-count-encours').textContent = ticketsData.filter(t => t.status === 'en_cours').length;
+  if (el('tk-count-resolu'))  el('tk-count-resolu').textContent  = ticketsData.filter(t => t.status === 'resolu').length;
+  if (el('tk-count-total'))   el('tk-count-total').textContent   = ticketsData.length;
+  if (el('nav-count-tickets')) el('nav-count-tickets').textContent = ticketsData.filter(t => t.status !== 'resolu').length;
+}
+
+function renderTkCard(t, colKey) {
+  const m   = tkTypeMeta(t.typeKey);
+  const age = tkAge(t.date);
+  const urg = colKey !== 'resolu' ? tkUrgency(t.date) : null;
+  const urgDot = urg ? `<span class="tc-urg" style="background:${urg.dot};" title="${urg.title}"></span>` : '';
+  const badge = `<span class="tc-badge" style="background:${m.bg};border:1px solid ${m.border};color:${m.color};">${t.type}</span>`;
+  let action = '';
+  if (colKey === 'attente')
+    action = `<button class="tc-action tc-action-take" onclick="event.stopPropagation();treatTicket('${t.id}')">→ Prendre en charge</button>`;
+  else if (colKey === 'en_cours')
+    action = `<button class="tc-action tc-action-resolve" onclick="event.stopPropagation();resolveTicket('${t.id}')">✓ Résoudre</button>`;
+
+  return `
+    <div class="ticket-card" onclick="openTkModal('${t.id}')">
+      <div class="tc-top">
+        <span class="tc-id">${t.id} ${urgDot}</span>
+        <span class="tc-date">${age}</span>
+      </div>
+      <div class="tc-film">${t.film}</div>
+      <div class="tc-author">${t.author}</div>
+      ${badge}
+      <div class="tc-reporter">Signalé par ${t.reporter}</div>
+      ${action}
+    </div>`;
+}
+
+function treatTicket(id) {
+  const t = ticketsData.find(x => x.id === id);
+  if (!t) return;
+  t.status = 'en_cours';
+  renderKanban();
+  showToast(`🔄 ${id} pris en charge`, 'ok');
+}
+
+function resolveTicket(id) {
+  const t = ticketsData.find(x => x.id === id);
+  if (!t) return;
+  t.status = 'resolu';
+  renderKanban();
+  closeTkModal();
+  showToast(`✓ ${id} résolu`, 'ok');
+}
+
+function openTkModal(id) {
+  const t = ticketsData.find(x => x.id === id);
+  if (!t) return;
+  activeTkId = id;
+
+  const m   = tkTypeMeta(t.typeKey);
+  const age = tkAge(t.date);
+  const el  = i => document.getElementById(i);
+
+  el('tkm-id').textContent       = t.id;
+  el('tkm-film').textContent     = t.film;
+  el('tkm-author').textContent   = `${t.author} · ${age}`;
+  el('tkm-reporter').textContent = t.reporter;
+  el('tkm-desc').textContent     = t.desc;
+  el('tkm-note').value           = t.adminNote;
+
+  const badge = el('tkm-type-badge');
+  badge.textContent      = t.type;
+  badge.style.background = m.bg;
+  badge.style.border     = `1px solid ${m.border}`;
+  badge.style.color      = m.color;
+
+  // Bouton "Voir le film"
+  el('tkm-btn-film').onclick = () => {
+    closeTkModal();
+    showView('assign', document.querySelector('.nav-item[onclick*="assign"]'));
+    setTimeout(() => openDrawer(t.filmId), 300);
+  };
+
+  // Boutons d'action selon statut
+  const btnTake     = el('tkm-btn-take');
+  const btnResolve  = el('tkm-btn-resolve');
+  const btnRevision = el('tkm-btn-revision');
+  const btnRefuse   = el('tkm-btn-refuse');
+  const actionsWrap = el('tkm-actions');
+
+  const hide = b => { b.style.display = 'none'; };
+  const show = b => { b.style.display = ''; };
+  [btnTake, btnResolve, btnRevision, btnRefuse].forEach(show);
+
+  if (t.status === 'resolu') {
+    actionsWrap.style.display = 'none';
+  } else {
+    actionsWrap.style.display = '';
+    if (t.status === 'attente') {
+      hide(btnResolve);
+      btnTake.onclick     = () => { saveTkNote(id); treatTicket(id); closeTkModal(); };
+      btnRevision.onclick = () => { saveTkNote(id); askRevision(id); };
+      btnRefuse.onclick   = () => { saveTkNote(id); refuseFromTicket(id); };
+    } else {
+      hide(btnTake);
+      btnResolve.onclick  = () => { saveTkNote(id); resolveTicket(id); };
+      btnRevision.onclick = () => { saveTkNote(id); askRevision(id); };
+      btnRefuse.onclick   = () => { saveTkNote(id); refuseFromTicket(id); };
+    }
+  }
+
+  el('tk-modal-overlay').classList.add('open');
+}
+
+function saveTkNote(id) {
+  const t = ticketsData.find(x => x.id === id);
+  if (t) t.adminNote = document.getElementById('tkm-note').value;
+}
+
+function closeTkModal(e) {
+  if (e && e.target !== document.getElementById('tk-modal-overlay')) return;
+  document.getElementById('tk-modal-overlay').classList.remove('open');
+  activeTkId = null;
+}
+
+function askRevision(id) {
+  const t = ticketsData.find(x => x.id === id);
+  if (!t) return;
+  saveTkNote(id);
+  t.status = 'resolu';
+  renderKanban();
+  closeTkModal();
+  showToast(`↩ Révision demandée au réalisateur de "${t.film}"`, 'warn');
+}
+
+function refuseFromTicket(id) {
+  const t = ticketsData.find(x => x.id === id);
+  if (!t) return;
+  saveTkNote(id);
+  t.status = 'resolu';
+  renderKanban();
+  closeTkModal();
+  showToast(`✕ Film "${t.film}" refusé · Réalisateur notifié`, 'err');
+}
+
+/* ── VIDEO MODAL ── */
+function openVideoModal(filmId) {
+  const f = films.find(x => x.id === filmId);
+  if (!f) return;
+  document.getElementById('vid-modal-title').textContent = f.title;
+  document.getElementById('vid-modal-sub').textContent = (f.author || '') + (f.country ? ' · ' + f.country : '');
+  const vid = document.getElementById('vid-modal-video');
+  vid.currentTime = 0;
+  document.getElementById('vid-modal-overlay').classList.add('open');
+}
+
+function closeVideoModal(e) {
+  if (e && e.target !== document.getElementById('vid-modal-overlay')) return;
+  document.getElementById('vid-modal-video').pause();
+  document.getElementById('vid-modal-overlay').classList.remove('open');
+}
+
+/* ── EMAIL MODAL ── */
+let pendingEmailAction = null;
+
+const emailTemplates = {
+  droits: {
+    revision: {
+      subject: 'marsAI 2026 — Problème de droits musicaux · Révision requise',
+      body: (film, author) =>
+        `Bonjour ${author},\n\nNous avons bien visionné votre film "${film}" soumis au festival marsAI 2026.\n\nMalheureusement, nous avons identifié un problème concernant les droits musicaux dans votre œuvre. Une ou plusieurs pistes musicales utilisées ne semblent pas disposer des autorisations nécessaires pour une diffusion publique et festivalière.\n\nAfin de poursuivre la sélection de votre film, nous vous demandons de :\n• Remplacer la ou les pistes musicales concernées par des compositions libres de droits ou dont vous détenez les droits, ou\n• Nous fournir une preuve des licences ou autorisations correspondantes.\n\nVous disposez de 7 jours pour soumettre une version révisée via votre espace personnel.\n\nNous restons disponibles pour toute question.\n\nCordialement,\nL'équipe marsAI 2026`,
+    },
+    refuse: {
+      subject: 'marsAI 2026 — Décision de sélection · Film non retenu',
+      body: (film, author) =>
+        `Bonjour ${author},\n\nNous vous remercions de votre participation au festival marsAI 2026 et de la confiance accordée à notre manifestation.\n\nAprès examen de votre film "${film}", nous sommes dans l'impossibilité de le retenir en sélection. En raison d'un problème non résolu concernant les droits musicaux, le film ne peut être diffusé dans le cadre du festival sans risque d'infraction aux droits d'auteur.\n\nNous espérons avoir l'occasion de découvrir vos prochaines créations.\n\nCordialement,\nL'équipe marsAI 2026`,
+    },
+  },
+  qualite: {
+    revision: {
+      subject: 'marsAI 2026 — Qualité technique insuffisante · Révision requise',
+      body: (film, author) =>
+        `Bonjour ${author},\n\nMerci pour votre soumission au festival marsAI 2026.\n\nAprès visionnage de votre film "${film}", notre équipe a relevé des problèmes de lisibilité ou de qualité technique qui nous empêchent de le projeter dans les conditions attendues par le festival.\n\nIl peut s'agir de :\n• Une résolution vidéo insuffisante (minimum requis : 1080p)\n• Des sous-titres illisibles ou absents\n• Un son saturé, distordu ou inaudible\n• Des artefacts de compression importants\n\nNous vous invitons à soumettre une version corrigée dans un délai de 7 jours via votre espace personnel.\n\nN'hésitez pas à nous contacter si vous avez besoin de précisions techniques.\n\nCordialement,\nL'équipe marsAI 2026`,
+    },
+    refuse: {
+      subject: 'marsAI 2026 — Décision de sélection · Film non retenu',
+      body: (film, author) =>
+        `Bonjour ${author},\n\nNous vous remercions d'avoir soumis votre film "${film}" au festival marsAI 2026.\n\nMalgré l'intérêt porté à votre projet, la qualité technique du fichier reçu ne correspond pas aux standards de diffusion requis par le festival. Cette décision a été prise après examen attentif de votre œuvre.\n\nNous espérons vous voir participer à de prochaines éditions.\n\nCordialement,\nL'équipe marsAI 2026`,
+    },
+  },
+  youtube: {
+    revision: {
+      subject: 'marsAI 2026 — Rejet YouTube · Action requise',
+      body: (film, author) =>
+        `Bonjour ${author},\n\nVotre film "${film}" a été rejeté par la plateforme YouTube lors du processus d'upload automatique lié à notre diffusion en ligne.\n\nLes raisons possibles sont :\n• Contenu soumis à des réclamations ContentID (droits musicaux, visuels)\n• Métadonnées manquantes ou incorrectes\n• Format de fichier non conforme aux exigences de YouTube\n\nPour remédier à cette situation, merci de :\n• Vérifier les droits sur l'ensemble des éléments de votre film\n• Nous soumettre une version modifiée dans un délai de 5 jours\n\nSans retour de votre part, votre film ne pourra pas bénéficier d'une diffusion en ligne dans le cadre du festival.\n\nCordialement,\nL'équipe marsAI 2026`,
+    },
+    refuse: {
+      subject: 'marsAI 2026 — Décision de sélection · Film non retenu',
+      body: (film, author) =>
+        `Bonjour ${author},\n\nNous vous remercions pour votre participation au festival marsAI 2026.\n\nVotre film "${film}" n'a malheureusement pas pu être retenu en sélection. Le rejet de votre film par la plateforme de diffusion YouTube, combiné à des contraintes non résolues relatives aux droits, ne nous permet pas de garantir une diffusion conforme aux exigences du festival.\n\nNous espérons avoir l'occasion de recevoir votre travail lors d'une prochaine édition.\n\nCordialement,\nL'équipe marsAI 2026`,
+    },
+  },
+  contenu: {
+    revision: {
+      subject: 'marsAI 2026 — Contenu sensible signalé · Révision requise',
+      body: (film, author) =>
+        `Bonjour ${author},\n\nAprès visionnage de votre film "${film}", notre comité de sélection a identifié des séquences dont le contenu pourrait ne pas être compatible avec les conditions de diffusion du festival marsAI 2026 (public tout âge, diffusion publique et en ligne).\n\nNous vous demandons de revoir les séquences concernées et de nous soumettre une version modifiée dans un délai de 7 jours.\n\nSi vous estimez que ces éléments sont essentiels à votre démarche artistique, merci de nous adresser une note d'intention détaillée afin que nous puissions statuer en comité.\n\nCordialement,\nL'équipe marsAI 2026`,
+    },
+    refuse: {
+      subject: 'marsAI 2026 — Décision de sélection · Film non retenu',
+      body: (film, author) =>
+        `Bonjour ${author},\n\nNous vous remercions pour votre soumission au festival marsAI 2026.\n\nAprès examen de votre film "${film}", nous ne sommes pas en mesure de le retenir en sélection. Le contenu de votre œuvre ne répond pas aux critères de diffusion publique du festival.\n\nNous espérons que vous comprendrez cette décision et vous souhaitons bonne continuation dans vos projets créatifs.\n\nCordialement,\nL'équipe marsAI 2026`,
+    },
+  },
+  autre: {
+    revision: {
+      subject: 'marsAI 2026 — Signalement · Révision requise',
+      body: (film, author) =>
+        `Bonjour ${author},\n\nNous avons bien reçu et visionné votre film "${film}" soumis au festival marsAI 2026.\n\nSuite à l'examen de votre œuvre, notre équipe souhaite vous inviter à apporter certaines modifications avant de procéder à la sélection définitive.\n\nMerci de nous contacter ou de soumettre une version révisée dans un délai de 7 jours via votre espace personnel.\n\nNous restons disponibles pour échanger et vous accompagner.\n\nCordialement,\nL'équipe marsAI 2026`,
+    },
+    refuse: {
+      subject: 'marsAI 2026 — Décision de sélection · Film non retenu',
+      body: (film, author) =>
+        `Bonjour ${author},\n\nNous vous remercions pour votre participation au festival marsAI 2026 et la confiance que vous nous accordez.\n\nAprès délibération du comité de sélection, votre film "${film}" n'a malheureusement pas été retenu pour cette édition.\n\nCette décision n'est en aucun cas un jugement définitif sur la qualité de votre travail. Nous espérons vous voir participer aux prochaines éditions du festival.\n\nCordialement,\nL'équipe marsAI 2026`,
+    },
+  },
+};
+
+function openEmailModal(tkId, action) {
+  const t = ticketsData.find(x => x.id === tkId);
+  if (!t) return;
+  pendingEmailAction = { tkId, action };
+
+  const f = films.find(x => x.id === t.filmId);
+  const directorEmail = f
+    ? f.author.toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/\s+/g, '.') + '@exemple.fr'
+    : 'realisateur@exemple.fr';
+
+  const tplGroup = emailTemplates[t.typeKey] || emailTemplates.autre;
+  const tpl = tplGroup[action] || emailTemplates.autre[action];
+  const bodyText = tpl.body(t.film, t.author);
+
+  document.getElementById('em-ticket-info').textContent = `${t.id} · ${t.type} · ${t.film}`;
+  document.getElementById('em-to').textContent = directorEmail;
+  document.getElementById('em-subject').value = tpl.subject;
+  document.getElementById('em-body').value = bodyText;
+  document.getElementById('email-modal-overlay').classList.add('open');
+}
+
+function closeEmailModal(e) {
+  if (e && e.target !== document.getElementById('email-modal-overlay')) return;
+  document.getElementById('email-modal-overlay').classList.remove('open');
+  pendingEmailAction = null;
+}
+
+function sendEmailAction() {
+  if (!pendingEmailAction) return;
+  const { tkId, action } = pendingEmailAction;
+  closeEmailModal();
+  selActTicket(tkId, action);
 }
