@@ -746,25 +746,27 @@ section {
 /* --- Image IA Pinterest — haut à droite de la section Concept --- */
 .robot-wrap {
   position: absolute;
-  top: 30px;
-  right: 80px;
+  top: 0;
+  right: -20px;
   z-index: 3;
   pointer-events: none;
-  border-radius: 18px;
-  overflow: hidden;
 }
 .robot-wrap::before {
   display: none;
 }
-.robot-wrap video {
+.robot-wrap img {
   display: block;
-  width: 260px;
-  height: 360px;
-  object-fit: cover;
-  border-radius: 18px;
-  filter: brightness(1.05);
-  mask-image: linear-gradient(to bottom, #000 65%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, #000 65%, transparent 100%);
+  width: 370px;
+  height: auto;
+  filter: brightness(1.05) saturate(1.1);
+  mask-image:
+    radial-gradient(ellipse 85% 70% at 55% 35%, #000 45%, transparent 75%),
+    linear-gradient(to bottom, #000 55%, transparent 85%),
+    linear-gradient(to right, transparent, #000 15%, #000 100%);
+  -webkit-mask-image:
+    radial-gradient(ellipse 85% 70% at 55% 35%, #000 45%, transparent 75%),
+    linear-gradient(to bottom, #000 55%, transparent 85%),
+    linear-gradient(to right, transparent, #000 15%, #000 100%);
   mask-composite: intersect;
   -webkit-mask-composite: source-in;
 }
@@ -799,7 +801,7 @@ section {
 .particle {
   position: absolute;
   bottom: -10px;
-  width: 3px;
+  width: 4px;
   height: 3px;
   border-radius: 50%;
   background: var(--aurora);
@@ -818,9 +820,9 @@ section {
 }
 @keyframes particle-rise {
   0%   { opacity: 0; transform: translateY(0) translateX(0); }
-  15%  { opacity: 0.6; }
-  85%  { opacity: 0.4; }
-  100% { opacity: 0; transform: translateY(-600px) translateX(20px); }
+  10%  { opacity: 0.8; }
+  80%  { opacity: 0.6; }
+  100% { opacity: 0; transform: translateY(-900px) translateX(25px); }
 }
 
 .concept .section-inner {
@@ -848,6 +850,7 @@ section {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
+  padding-top: 46px;
   margin-top: 48px;
   position: relative;
   z-index: 1;
@@ -2558,7 +2561,7 @@ footer {
   section { padding: 0 24px; }
   .section-inner { padding: 60px 0; }
   .robot-wrap { right: 16px; top: 10px; }
-  .robot-wrap video { width: 220px; }
+  .robot-wrap img { width: 220px; }
   .concept-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
   .about-inner { grid-template-columns: 1fr; }
   .venue-overlay { min-width: 210px; }
@@ -2626,7 +2629,7 @@ footer {
   .section-title { font-size: clamp(1.5rem, 7vw, 2rem); }
   .section-desc { font-size: 0.9rem; }
   .robot-wrap { right: 10px; top: 5px; }
-  .robot-wrap video { width: 160px; }
+  .robot-wrap img { width: 160px; }
   .concept-grid { gap: 12px; }
   .how-steps { grid-template-columns: 1fr; gap: 14px; }
   .film-card { min-width: 200px; max-width: 240px; }
