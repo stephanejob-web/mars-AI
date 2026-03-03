@@ -58,6 +58,12 @@
         <span class="nav-count count-selected">2</span>
       </div>
 
+      <div class="nav-item" id="nav-discuter" onclick="switchView('discuter', this)">
+        <span class="icon">💬</span>
+        À discuter
+        <span class="nav-count count-neutral" id="nav-discuter-count">3</span>
+      </div>
+
       <div class="nav-item" onclick="switchView('delib', this)">
         <span class="icon">⚖️</span>
         Délibération
@@ -142,7 +148,6 @@
                 <div style="display:flex;gap:8px;align-items:center;">
                   <span class="yt-info"><span class="yt-check">✓</span> Copyright OK · YouTube API</span>
                   <span class="cc-btn">CC FR</span>
-                  <button class="cbtn" onclick="openModalReport()" title="Signaler un problème">🚩</button>
                   <button class="cbtn">⛶</button>
                 </div>
               </div>
@@ -251,24 +256,13 @@
 
         </div><!-- /detail-scroll -->
 
-        <!-- ══ PANNEAU DÉCISION — Validé / À revoir / Refusé ══ -->
+        <!-- ══ PANNEAU DÉCISION ══ -->
         <div class="notation-panel">
-          <!-- Annotation rapide intégrée -->
-          <div class="quick-annotate" style="position:static; margin-bottom:12px; background:rgba(255,255,255,0.03); border-color:rgba(255,255,255,0.08); box-shadow:none;">
-            <div class="qa-label">Mon avis rapide :</div>
-            <div class="qa-buttons">
-              <button class="qa-btn qa-like" onclick="quickAnnotate('like', this)">❤️ J'aime</button>
-              <button class="qa-btn qa-dislike" onclick="quickAnnotate('dislike', this)">👎 J'aime pas</button>
-              <button class="qa-btn qa-discuss" onclick="quickAnnotate('discuss', this)">💬 À discuter</button>
-              <button class="qa-btn qa-report" onclick="openModalReport()" title="Signaler" style="flex:0; padding:8px 12px; margin-left:4px; --btn-color:var(--solar);">🚩</button>
-            </div>
-          </div>
-
-          <!-- 3 boutons de décision -->
           <div class="decision-main">
             <button class="dbtn-main dbtn-valide"  id="btn-valide"  onclick="decide('valide')">✓ Valider</button>
             <button class="dbtn-main dbtn-arevoir" id="btn-arevoir" onclick="openModalARevoir()">↩ À revoir</button>
             <button class="dbtn-main dbtn-refuse"  id="btn-refuse"  onclick="openModalRefuse()">✕ Refuser</button>
+            <button class="dbtn-main dbtn-discuss" id="btn-discuss" onclick="quickAnnotate('discuss', this)">💬 À discuter</button>
           </div>
           <!-- Commentaire -->
           <div class="notation-bottom">
@@ -400,6 +394,67 @@
       </div>
     </div>
 
+    <!-- ══════ VUE À DISCUTER ══════ -->
+    <div class="discuss-view" id="view-discuter" style="display:none;">
+
+      <!-- Liste films à discuter (sidebar gauche) -->
+      <div class="discuss-films">
+        <div class="discuss-films-title">💬 Films à discuter</div>
+        <div id="discuss-film-list"></div>
+      </div>
+
+      <!-- Lecteur vidéo + infos film -->
+      <div class="discuss-player">
+        <div class="discuss-player-screen">
+          <video id="discuss-video" src="../assets/video.mp4" controls style="width:100%;height:100%;object-fit:contain;border-radius:10px;background:#000;display:block;"></video>
+        </div>
+        <div class="discuss-film-details" id="discuss-film-details"></div>
+      </div>
+
+      <!-- Chat -->
+      <div class="discuss-chat">
+        <div class="discuss-chat-header">
+          <span>💬 Discussion jury</span>
+          <span class="discuss-online"><span class="discuss-dot"></span>4 jurés connectés</span>
+        </div>
+        <div class="discuss-messages" id="discuss-messages">
+          <div class="chat-msg">
+            <img class="chat-avatar" src="https://i.pravatar.cc/150?img=47" alt="Marie">
+            <div class="chat-bubble">
+              <div class="chat-name">Marie L. <span class="chat-time">14:12</span></div>
+              <div class="chat-text">J'aime beaucoup l'usage de l'IA dans la scène 3, très subtil. Mais la fin m'a semblé précipitée.</div>
+            </div>
+          </div>
+          <div class="chat-msg">
+            <img class="chat-avatar" src="https://i.pravatar.cc/150?img=12" alt="Pierre">
+            <div class="chat-bubble">
+              <div class="chat-name">Pierre D. <span class="chat-time">14:15</span></div>
+              <div class="chat-text">D'accord sur la fin. Par contre le traitement sonore entre 2:30 et 4:00 est vraiment remarquable.</div>
+            </div>
+          </div>
+          <div class="chat-msg chat-msg-me">
+            <div class="chat-bubble chat-bubble-me">
+              <div class="chat-name">Moi <span class="chat-time">14:18</span></div>
+              <div class="chat-text">À revoir pour la sélection finale ? Je penche pour un oui conditionnel.</div>
+            </div>
+            <img class="chat-avatar" src="https://i.pravatar.cc/150?img=47" alt="Moi" style="opacity:0.5;">
+          </div>
+          <div class="chat-msg">
+            <img class="chat-avatar" src="https://i.pravatar.cc/150?img=44" alt="Sofia">
+            <div class="chat-bubble">
+              <div class="chat-name">Sofia E. <span class="chat-time">14:22</span></div>
+              <div class="chat-text">Je suis d'accord, le potentiel est là. On vote ?</div>
+            </div>
+          </div>
+        </div>
+        <div class="discuss-input-wrap">
+          <input class="discuss-input" id="discuss-input" type="text" placeholder="Écrire un message au jury…" onkeydown="if(event.key==='Enter') sendChatMsg()">
+          <button class="discuss-send" onclick="sendChatMsg()">↑</button>
+        </div>
+      </div>
+
+    </div>
+
     <!-- ══════ VUE DÉLIBÉRATION ══════ -->
     <div class="delib-view" id="view-delib">
       <div class="delib-header">
@@ -432,7 +487,15 @@
         Précisez pourquoi ce film mérite une attention particulière. Ce message sera visible par les autres membres du jury.
       </div>
       <div class="modal-film-chip" id="arevoir-chip">—</div>
-      <div class="modal-label">Votre message</div>
+      <div class="modal-label">Raison</div>
+      <div class="modal-tags" id="arevoir-tags">
+        <button class="mtag" data-key="rights"  style="--mt-c:var(--aurora);"  onclick="selectModalTag('arevoir','rights')"><span class="mtag-dot" style="background:var(--aurora);"></span>🎵 Droits musicaux</button>
+        <button class="mtag" data-key="quality" style="--mt-c:var(--solar);"   onclick="selectModalTag('arevoir','quality')"><span class="mtag-dot" style="background:var(--solar);"></span>📋 Qualité</button>
+        <button class="mtag" data-key="content" style="--mt-c:var(--coral);"   onclick="selectModalTag('arevoir','content')"><span class="mtag-dot" style="background:var(--coral);"></span>⚠️ Contenu</button>
+        <button class="mtag" data-key="tech"    style="--mt-c:var(--lavande);" onclick="selectModalTag('arevoir','tech')"><span class="mtag-dot" style="background:var(--lavande);"></span>📺 YouTube</button>
+        <button class="mtag" data-key="other"   style="--mt-c:var(--mist);"    onclick="selectModalTag('arevoir','other')"><span class="mtag-dot" style="background:var(--mist);"></span>❓ Autre</button>
+      </div>
+      <div class="modal-label" style="margin-top:12px;">Votre message</div>
       <textarea class="modal-textarea" id="arevoir-message"
         placeholder="Ex : Le traitement sonore est inhabituel, mérite une seconde écoute attentive. Les premiers plans sont visuellement forts…"></textarea>
       <div class="modal-hint" id="arevoir-hint">⚠ Veuillez écrire un message avant de continuer.</div>
@@ -452,14 +515,46 @@
         Ce message sera envoyé au réalisateur. Vous pouvez le personnaliser avant l'envoi.
       </div>
       <div class="modal-film-chip" id="refuse-chip">—</div>
-      <div class="modal-label">Message au réalisateur</div>
-      <textarea class="modal-textarea" id="refuse-message" style="min-height:180px;"></textarea>
+      <div class="modal-label">Raison</div>
+      <div class="modal-tags" id="refuse-tags">
+        <button class="mtag" data-key="rights"  style="--mt-c:var(--aurora);"  onclick="selectModalTag('refuse','rights')"><span class="mtag-dot" style="background:var(--aurora);"></span>🎵 Droits musicaux</button>
+        <button class="mtag" data-key="quality" style="--mt-c:var(--solar);"   onclick="selectModalTag('refuse','quality')"><span class="mtag-dot" style="background:var(--coral);"></span>📋 Qualité</button>
+        <button class="mtag" data-key="content" style="--mt-c:var(--coral);"   onclick="selectModalTag('refuse','content')"><span class="mtag-dot" style="background:var(--coral);"></span>⚠️ Contenu</button>
+        <button class="mtag" data-key="tech"    style="--mt-c:var(--lavande);" onclick="selectModalTag('refuse','tech')"><span class="mtag-dot" style="background:var(--lavande);"></span>📺 YouTube</button>
+        <button class="mtag" data-key="other"   style="--mt-c:var(--mist);"    onclick="selectModalTag('refuse','other')"><span class="mtag-dot" style="background:var(--mist);"></span>❓ Autre</button>
+      </div>
+      <div class="modal-label" style="margin-top:12px;">Message au réalisateur</div>
+      <textarea class="modal-textarea" id="refuse-message" style="min-height:140px;"></textarea>
       <hr class="modal-separator">
       <div class="modal-actions">
         <button class="modal-btn-cancel" onclick="closeModal('modal-refuse')">Annuler</button>
         <button class="modal-btn-refuse" onclick="confirmRefuse()">✕ Confirmer le refus →</button>
       </div>
     </div>
+  </div>
+
+  <!-- ══ POPOVER SIGNALEMENT RAPIDE ══ -->
+  <div class="rp-popover" id="report-popover">
+    <div class="rp-popover-title">🚩 Signaler rapidement</div>
+    <div class="rp-chips">
+      <button class="rp-chip" style="--chip-color:var(--aurora);" onclick="quickReport('rights')">
+        <span class="rp-dot" style="background:var(--aurora);"></span>🎵 Droits musicaux
+      </button>
+      <button class="rp-chip" style="--chip-color:var(--solar);" onclick="quickReport('quality')">
+        <span class="rp-dot" style="background:var(--solar);"></span>📋 Qualité
+      </button>
+      <button class="rp-chip" style="--chip-color:var(--coral);" onclick="quickReport('content')">
+        <span class="rp-dot" style="background:var(--coral);"></span>⚠️ Contenu
+      </button>
+      <button class="rp-chip" style="--chip-color:var(--lavande);" onclick="quickReport('tech')">
+        <span class="rp-dot" style="background:var(--lavande);"></span>📺 YouTube
+      </button>
+      <button class="rp-chip" style="--chip-color:var(--mist);" onclick="quickReport('other')">
+        <span class="rp-dot" style="background:var(--mist);"></span>❓ Autre
+      </button>
+    </div>
+    <div class="rp-divider"></div>
+    <button class="rp-detail-btn" onclick="closeReportPopover(); openModalReport();">✎ Détailler le signalement</button>
   </div>
 
   <!-- ══ MODALE : SIGNALEMENT (Ticket) ══ -->
