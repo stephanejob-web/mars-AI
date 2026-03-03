@@ -1690,7 +1690,22 @@ section {
     #161C48 100%
   );
 }
+.how-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 950px;
+  height: 100%;
+  background: url('../assets/visage-couleur-sans.png') left center / cover no-repeat;
+  opacity: 0.4;
+  z-index: 0;
+  pointer-events: none;
+}
 .how-section .section-inner {
+  position: relative;
+  z-index: 1;
   padding: 40px 0 70px;
 }
 .how-header {
@@ -1723,7 +1738,7 @@ section {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 28px 20px 32px;
+  padding: 22px 18px 24px;
   position: relative;
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(255,255,255,0.06);
@@ -1731,24 +1746,8 @@ section {
   transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease), border-color 0.4s, background 0.4s;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  animation: how-float 5s ease-in-out infinite;
   overflow: hidden;
 }
-.how-card:nth-child(2) { animation-delay: 0.8s; }
-.how-card:nth-child(3) { animation-delay: 1.6s; }
-.how-card:nth-child(4) { animation-delay: 2.4s; }
-
-/* Float — légère lévitation décalée */
-@keyframes how-float {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-8px); }
-}
-
-/* Pulse glow — bordure qui pulse avec la couleur */
-.how-card:nth-child(1) { animation-name: how-float, how-pulse-1; animation-duration: 5s, 3s; }
-.how-card:nth-child(2) { animation-name: how-float, how-pulse-2; animation-duration: 5s, 3.5s; }
-.how-card:nth-child(3) { animation-name: how-float, how-pulse-3; animation-duration: 5s, 4s; }
-.how-card:nth-child(4) { animation-name: how-float, how-pulse-4; animation-duration: 5s, 3.2s; }
 
 @keyframes how-pulse-1 {
   0%, 100% { box-shadow: 0 4px 20px rgba(78,255,206,0.05); }
@@ -1767,35 +1766,8 @@ section {
   50%      { box-shadow: 0 4px 35px rgba(255,107,107,0.18); }
 }
 
-/* Shimmer — reflet lumineux qui glisse en boucle */
-.how-card::after {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -60%;
-  width: 40%;
-  height: 200%;
-  background: linear-gradient(
-    105deg,
-    transparent 0%,
-    rgba(255,255,255,0.04) 40%,
-    rgba(255,255,255,0.08) 50%,
-    rgba(255,255,255,0.04) 60%,
-    transparent 100%
-  );
-  transform: skewX(-15deg);
-  animation: how-shimmer 6s ease-in-out infinite;
-  pointer-events: none;
-}
-.how-card:nth-child(2)::after { animation-delay: 1.5s; }
-.how-card:nth-child(3)::after { animation-delay: 3s; }
-.how-card:nth-child(4)::after { animation-delay: 4.5s; }
-@keyframes how-shimmer {
-  0%, 100% { left: -60%; opacity: 0; }
-  10%      { opacity: 1; }
-  90%      { opacity: 1; }
-  100%     { left: 120%; opacity: 0; }
-}
+/* Shimmer désactivé */
+.how-card::after { display: none; }
 .how-card:hover {
   transform: translateY(-6px);
   background: rgba(255,255,255,0.06);
