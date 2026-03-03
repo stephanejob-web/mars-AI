@@ -83,6 +83,25 @@
       Déconnexion
     </div>
   </nav>
+
+  <!-- ── Sidebar Chat Jury ── -->
+  <div class="sc-wrap" id="sc-wrap">
+    <button class="sc-toggle" id="sc-toggle-btn" onclick="toggleSidebarChat()">
+      <span class="sc-icon">💬</span>
+      Chat jury
+      <span class="sc-unread" id="sc-badge">3</span>
+      <span class="sc-arrow" id="sc-arrow">▲</span>
+    </button>
+    <div class="sc-panel" id="sc-panel">
+      <div class="sc-contacts-row" id="sc-contacts-row"></div>
+      <div class="sc-messages" id="sc-messages"></div>
+      <div class="sc-input-wrap">
+        <input class="sc-input" id="sc-input" placeholder="Message au jury…"
+          onkeydown="if(event.key==='Enter')sendSidebarMsg()">
+        <button class="sc-send" onclick="sendSidebarMsg()">↑</button>
+      </div>
+    </div>
+  </div>
 </aside>
 
 <!-- ══════════ ZONE PRINCIPALE ══════════ -->

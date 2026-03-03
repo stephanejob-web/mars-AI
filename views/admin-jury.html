@@ -58,12 +58,6 @@
         <span class="nav-count count-selected">2</span>
       </div>
 
-      <div class="nav-item" id="nav-discuter" onclick="switchView('discuter', this)">
-        <span class="icon">💬</span>
-        À discuter
-        <span class="nav-count count-neutral" id="nav-discuter-count">3</span>
-      </div>
-
       <div class="nav-item" onclick="switchView('delib', this)">
         <span class="icon">⚖️</span>
         Délibération
@@ -77,6 +71,25 @@
         Se déconnecter
       </div>
     </nav>
+
+    <!-- ── Sidebar Chat Jury ── -->
+    <div class="sc-wrap" id="sc-wrap">
+      <button class="sc-toggle" id="sc-toggle-btn" onclick="toggleJuryChat()">
+        <span class="sc-icon">💬</span>
+        Chat jury
+        <span class="sc-unread" id="sc-badge">2</span>
+        <span class="sc-arrow" id="sc-arrow">▲</span>
+      </button>
+      <div class="sc-panel" id="sc-panel">
+        <div class="sc-contacts-row" id="sc-contacts-row"></div>
+        <div class="sc-messages" id="sc-messages"></div>
+        <div class="sc-input-wrap">
+          <input class="sc-input" id="sc-input" placeholder="Message au jury…"
+            onkeydown="if(event.key==='Enter')sendJuryMsg()">
+          <button class="sc-send" onclick="sendJuryMsg()">↑</button>
+        </div>
+      </div>
+    </div>
 
     <div class="sidebar-progress">
       <div class="prog-label">Ma progression · Films assignés</div>
