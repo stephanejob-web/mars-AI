@@ -510,11 +510,13 @@ function playFilm(filmId) {
 }
 
 /* ── VUES ── */
-const views = ['users', 'assign', 'phases', 'site'];
+const views = ['users', 'assign', 'phases', 'moderation', 'awards', 'site'];
 const titles = {
-  users: ['Gestion des utilisateurs', 'Jurys et modérateurs — accès par token permanent'],
+  users: ['Gestion des utilisateurs', 'Jurys et modérateurs — accès par login/mot de passe ou Gmail'],
   assign: ['Films soumis', 'Visionnez et assignez chaque film au jury'],
   phases: ['Phases & Dates', 'Définissez les dates des sessions jury'],
+  moderation: ['Modération — Tickets & Notifications', 'Suivi des signalements et demandes liés aux films'],
+  awards: ['Awards & Sponsors', 'Gérez les prix du festival et leurs sponsors associés'],
   site: ['Administration du site', 'Vidéo hero, informations et calendrier public'],
 };
 

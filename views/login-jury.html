@@ -22,9 +22,9 @@
   <!-- Carte de connexion -->
   <div class="card">
     <div class="card-header">
-      <div class="card-icon">🔗</div>
+      <div class="card-icon">🔐</div>
       <div class="card-title">Connexion sécurisée</div>
-      <div class="card-subtitle">Aucun mot de passe requis — votre lien d'accès permanent vous est envoyé par email</div>
+      <div class="card-subtitle">Espace réservé au jury et aux administrateurs — accès par email/mot de passe ou via Gmail</div>
     </div>
 
     <!-- Sélecteur de rôle -->
@@ -33,42 +33,44 @@
       <button class="role-btn" onclick="switchRole('admin', this)">🛡️ Administrateur</button>
     </div>
 
-    <!-- Info token -->
+    <!-- Info compte -->
     <div style="background:rgba(78,255,206,0.05);border:1px solid rgba(78,255,206,0.15);border-radius:10px;padding:11px 14px;margin-bottom:18px;font-size:0.78rem;color:var(--mist);line-height:1.55;">
       <span style="color:var(--aurora);font-weight:600;">Votre compte est créé par l'administrateur.</span><br>
-      Un lien de connexion permanent (sans expiration) vous a été envoyé à votre adresse email lors de la création de votre profil.
+      Vous recevrez vos identifiants par email lors de la création de votre profil. Les réalisateurs n'ont pas besoin de se connecter.
     </div>
 
     <!-- Message d'erreur -->
-    <div class="error-msg" id="error-msg">Aucun compte associé à cette adresse. Contactez l'administrateur.</div>
+    <div class="error-msg" id="error-msg">Email ou mot de passe incorrect. Contactez l'administrateur.</div>
 
-    <!-- État normal : saisie email -->
+    <!-- Formulaire login/password -->
     <div id="form-state">
       <form onsubmit="handleLogin(event)">
         <div class="field">
           <label>Adresse e-mail</label>
           <input type="email" id="email" value="jury@marsai.fr" required autocomplete="email" placeholder="votre@email.com">
         </div>
-        <button type="submit" class="btn-submit">Recevoir mon lien de connexion →</button>
-      </form>
-    </div>
-
-    <!-- État après envoi -->
-    <div id="sent-state" style="display:none;">
-      <div style="text-align:center;padding:12px 0 8px;">
-        <div style="font-size:2.5rem;margin-bottom:14px;">📬</div>
-        <div style="font-family:var(--font-display);font-size:1.1rem;font-weight:800;color:var(--white-soft);margin-bottom:8px;">Lien envoyé !</div>
-        <div style="font-size:0.82rem;color:var(--mist);line-height:1.6;margin-bottom:20px;">
-          Vérifiez votre boîte mail.<br>
-          Ce lien est <strong style="color:var(--white-soft);">permanent</strong> — conservez-le précieusement.
+        <div class="field">
+          <label>Mot de passe</label>
+          <input type="password" id="password" required autocomplete="current-password" placeholder="••••••••" style="letter-spacing:0.1em;">
         </div>
-        <div style="background:rgba(78,255,206,0.06);border:1px solid rgba(78,255,206,0.18);border-radius:8px;padding:10px 14px;font-family:var(--font-mono);font-size:0.72rem;color:var(--aurora);margin-bottom:20px;" id="sent-email-display">jury@marsai.fr</div>
-        <button id="btn-access" onclick="goToSpace()" style="width:100%;padding:12px;background:var(--aurora);color:var(--deep-sky);border:none;border-radius:10px;font-family:var(--font-display);font-size:0.9rem;font-weight:800;cursor:pointer;letter-spacing:0.02em;">
-          Accéder à l'espace jury (démo) →
-        </button>
-        <button onclick="document.getElementById('sent-state').style.display='none';document.getElementById('form-state').style.display='block';" style="margin-top:10px;background:none;border:none;font-size:0.78rem;color:var(--mist);cursor:pointer;text-decoration:underline;">
-          Modifier mon adresse email
-        </button>
+        <button type="submit" class="btn-submit">Se connecter →</button>
+      </form>
+
+      <!-- Séparateur -->
+      <div style="display:flex;align-items:center;gap:10px;margin:16px 0;">
+        <div style="flex:1;height:1px;background:rgba(255,255,255,0.08);"></div>
+        <span style="font-size:0.72rem;color:var(--mist);">ou</span>
+        <div style="flex:1;height:1px;background:rgba(255,255,255,0.08);"></div>
+      </div>
+
+      <!-- Bouton Google/Gmail -->
+      <button onclick="goToSpace()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:11px 16px;background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.12);border-radius:10px;font-family:var(--font-body);font-size:0.88rem;font-weight:600;color:var(--white-soft);cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.09)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.64 9.205c0-.638-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 01-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
+        Se connecter avec Gmail
+      </button>
+
+      <div style="margin-top:12px;text-align:center;">
+        <a href="#" style="font-size:0.75rem;color:var(--mist);text-decoration:underline;cursor:pointer;" onclick="showToast('Un email de réinitialisation vous sera envoyé','ok');return false;">Mot de passe oublié ?</a>
       </div>
     </div>
   </div>

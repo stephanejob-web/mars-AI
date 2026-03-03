@@ -332,22 +332,43 @@ function setTab(el, label) {
 function switchView(view, navEl) {
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   if (navEl) navEl.classList.add('active');
+  const evalEl  = document.getElementById('view-eval');
+  const delibEl = document.getElementById('view-delib');
+  const listesEl = document.getElementById('view-listes');
+  evalEl.style.display = 'none';
+  delibEl.classList.remove('active');
+  if (listesEl) listesEl.style.display = 'none';
+
   if (view === 'eval') {
-    document.getElementById('view-eval').style.display = 'flex';
-    document.getElementById('view-delib').classList.remove('active');
+    evalEl.style.display = 'flex';
     document.getElementById('topbar-title').textContent = 'Films assignés';
     document.getElementById('topbar-info').textContent  = 'Films assignés par l\'administrateur — évaluation individuelle';
     document.getElementById('phase-badge').textContent  = 'Phase 1 · Top 50 · 12/12/26';
     document.getElementById('phase-badge').className    = 'phase-badge phase-1';
+  } else if (view === 'listes') {
+    if (listesEl) listesEl.style.display = 'block';
+    document.getElementById('topbar-title').textContent = 'Mes listes';
+    document.getElementById('topbar-info').textContent  = 'Vos listes et annotations personnelles — privées';
+    document.getElementById('phase-badge').textContent  = 'Phase 1 · Top 50 · 12/12/26';
+    document.getElementById('phase-badge').className    = 'phase-badge phase-1';
   } else {
-    document.getElementById('view-eval').style.display = 'none';
-    document.getElementById('view-delib').classList.add('active');
+    delibEl.classList.add('active');
     document.getElementById('topbar-title').textContent = 'Délibération';
     document.getElementById('topbar-info').textContent  = 'Récapitulatif des décisions du jury';
     document.getElementById('phase-badge').textContent  = 'Phase 1 · Top 50 · 12/12/26';
     document.getElementById('phase-badge').className    = 'phase-badge phase-1';
     renderDelib();
   }
+}
+
+function addListe() {
+  showToast('Nouvelle liste créée', 'ok');
+}
+
+function removeFromListe(btn) {
+  const row = btn.closest('div[style*="justify-content:space-between"]');
+  if (row) row.remove();
+  showToast('Film retiré de la liste', 'ok');
 }
 
 /* ── DÉLIBÉRATION ── */
@@ -405,6 +426,18 @@ function setPhaseTab(el, phase) {
       rows.forEach((r, i) => r.style.display = i < 5 ? '' : 'none');
     }
   }
+}
+
+/* ── ANNOTATION RAPIDE (J'aime / J'aime pas / À discuter) ── */
+function quickAnnotate(type, btn) {
+  // Toggle active on buttons
+  document.querySelectorAll('.qa-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  // Map annotation to decision
+  const map = { like: 'valide', dislike: 'refuse', discuss: 'aRevoir' };
+  const labels = { like: '❤️ J\'aime', dislike: '👎 J\'aime pas', discuss: '💬 À discuter' };
+  showToast(`${labels[type]} — annotation enregistrée`, 'ok');
+  decide(map[type]);
 }
 
 /* ── TOAST ── */
