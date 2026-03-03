@@ -137,28 +137,42 @@ function loadFilm(id) {
   renderList();
 }
 
-/* ── PLAYER ── */
+/* ── PLAYER (vidéo réelle) ── */
 function togglePlay(el) {
-  isPlaying = !isPlaying; el.textContent = isPlaying ? '⏸' : '▶'; el.style.paddingLeft = isPlaying ? '0' : '4px';
+  const vid = document.getElementById('jury-video');
+  if (!vid) return;
+  isPlaying = !isPlaying;
+  el.textContent = isPlaying ? '⏸' : '▶';
+  el.style.paddingLeft = isPlaying ? '0' : '4px';
   const b2 = document.querySelector('.cbtn.play-btn');
   if (b2) { b2.textContent = isPlaying ? '⏸' : '▶'; b2.style.paddingLeft = isPlaying ? '0' : '2px'; }
-  if (isPlaying) startProgress(); else stopPlayer();
+  if (isPlaying) { vid.play(); startProgress(); } else { vid.pause(); stopPlayer(); }
 }
 function togglePlay2(el) {
-  isPlaying = !isPlaying; el.textContent = isPlaying ? '⏸' : '▶'; el.style.paddingLeft = isPlaying ? '0' : '2px';
+  const vid = document.getElementById('jury-video');
+  if (!vid) return;
+  isPlaying = !isPlaying;
+  el.textContent = isPlaying ? '⏸' : '▶';
+  el.style.paddingLeft = isPlaying ? '0' : '2px';
   const bb = document.querySelector('.play-center');
   if (bb) { bb.textContent = isPlaying ? '⏸' : '▶'; bb.style.paddingLeft = isPlaying ? '0' : '4px'; }
-  if (isPlaying) startProgress(); else stopPlayer();
+  if (isPlaying) { vid.play(); startProgress(); } else { vid.pause(); stopPlayer(); }
+}
+function fmtTime(s) {
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return m + ':' + String(sec).padStart(2, '0');
 }
 function startProgress() {
   if (playInterval) clearInterval(playInterval);
   playInterval = setInterval(() => {
-    progress = Math.min(100, progress + 0.4);
-    document.getElementById('pbar').style.width = progress + '%';
-    const s = Math.round(progress * 0.6);
-    document.getElementById('ptime').textContent = `0:${String(s).padStart(2,'0')} / 1:00`;
-    if (progress >= 100) { isPlaying = false; clearInterval(playInterval); }
-  }, 150);
+    const vid = document.getElementById('jury-video');
+    if (!vid || !vid.duration) return;
+    const pct = (vid.currentTime / vid.duration) * 100;
+    document.getElementById('pbar').style.width = pct + '%';
+    document.getElementById('ptime').textContent = fmtTime(vid.currentTime) + ' / ' + fmtTime(vid.duration);
+    if (vid.ended) { isPlaying = false; clearInterval(playInterval); }
+  }, 250);
 }
 function stopPlayer() { if (playInterval) clearInterval(playInterval); isPlaying = false; }
 
@@ -212,6 +226,25 @@ function confirmARevoir() {
 function confirmRefuse() {
   closeModal('modal-refuse');
   decide('refuse');
+}
+
+/* ── SIGNALEMENT (Ticket) ── */
+function openModalReport() {
+  const f = films.find(x => x.id === activeFilm);
+  if (!f) return;
+  document.getElementById('report-chip').textContent = '🎬 ' + f.title;
+  document.getElementById('report-message').value = '';
+  document.getElementById('modal-report').classList.add('open');
+}
+
+function confirmReport() {
+  const type = document.getElementById('report-type').value;
+  const msg = document.getElementById('report-message').value.trim();
+  const f = films.find(x => x.id === activeFilm);
+  
+  // Dans la réalité, cela créerait une entrée dans la table 'tickets' de l'admin
+  showToast('🚩 Signalement envoyé à l\'administration', 'warn');
+  closeModal('modal-report');
 }
 
 /* ── DÉCISION ── */
