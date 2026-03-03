@@ -117,6 +117,22 @@ nav.nav-scrolled .lang-btn {
   background: var(--aurora);
 }
 
+/* --- Lien Espace Admin — subtil mais reconnaissable --- */
+.nav-item-admin {
+  color: var(--mist) !important;
+  font-size: 0.82rem;
+  padding: 4px 12px;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 9999px;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.nav-item-admin:hover {
+  color: var(--solar) !important;
+  border-color: rgba(245,230,66,0.25);
+  background: rgba(245,230,66,0.05);
+}
+.nav-item-admin::after { display: none !important; }
+
 /* --- Lien Espace Jury — discret mais identifiable --- */
 .nav-jury {
   display: flex;
