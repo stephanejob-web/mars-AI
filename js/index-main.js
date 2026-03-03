@@ -311,3 +311,87 @@ function renderSponsors() {
   document.getElementById('sponsors-display').innerHTML = html;
 }
 renderSponsors();
+
+  // Carousel films — boucle infinie fluide + drag
+  document.querySelectorAll('.films-carousel').forEach(el => {
+    // Retirer fade-in des cartes carousel (elles sont visibles directement)
+    el.querySelectorAll('.film-card').forEach(card => {
+      card.classList.remove('fade-in');
+      card.style.opacity = '1';
+      card.style.transform = 'none';
+    });
+
+    // Dupliquer les cartes pour boucle infinie sans saut
+    const cards = Array.from(el.children);
+    cards.forEach(card => {
+      const clone = card.cloneNode(true);
+      clone.style.opacity = '1';
+      clone.style.transform = 'none';
+      el.appendChild(clone);
+    });
+
+    const speed = el.classList.contains('films-row-1') ? 0.6 : -0.6;
+    let paused = false, isDragging = false, startX = 0, scrollStart = 0;
+    let halfScroll = 0;
+
+    // Attendre un frame pour que le layout soit calculé après le clonage
+    requestAnimationFrame(() => {
+      halfScroll = el.scrollWidth / 2;
+      // Rangée 2 : démarrer à la fin pour scroll inverse
+      if (speed < 0) el.scrollLeft = halfScroll;
+      // Lancer l'auto-scroll
+      requestAnimationFrame(step);
+    });
+
+    // Auto-scroll fluide avec boucle
+    function step() {
+      if (!paused && !isDragging) {
+        el.scrollLeft += speed;
+      }
+      // Boucle infinie sans saut
+      if (halfScroll > 0) {
+        if (el.scrollLeft >= halfScroll) {
+          el.scrollLeft -= halfScroll;
+        } else if (el.scrollLeft <= 0) {
+          el.scrollLeft += halfScroll;
+        }
+      }
+      requestAnimationFrame(step);
+    }
+
+    // Pause au survol
+    el.addEventListener('mouseenter', () => paused = true);
+    el.addEventListener('mouseleave', () => { if (!isDragging) paused = false; });
+
+    // Drag to scroll
+    el.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      paused = true;
+      startX = e.pageX;
+      scrollStart = el.scrollLeft;
+      el.classList.add('is-dragging');
+      e.preventDefault();
+    });
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      el.scrollLeft = scrollStart - (e.pageX - startX);
+    });
+    window.addEventListener('mouseup', () => {
+      if (!isDragging) return;
+      isDragging = false;
+      paused = false;
+      el.classList.remove('is-dragging');
+    });
+
+    // Touch support
+    el.addEventListener('touchstart', (e) => {
+      paused = true;
+      startX = e.touches[0].pageX;
+      scrollStart = el.scrollLeft;
+    }, { passive: true });
+    el.addEventListener('touchmove', (e) => {
+      el.scrollLeft = scrollStart - (e.touches[0].pageX - startX);
+    }, { passive: true });
+    el.addEventListener('touchend', () => { paused = false; });
+  });
+

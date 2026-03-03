@@ -405,3 +405,48 @@ Le GPU Intel UHD 620 était saturé à 100%. Optimisations appliquées :
 - `css/index.css` — styles #hero-video, overlay supprimé, commentaire mis à jour
 - `js/index-main.js` — référence vidéo, suppression _restartSphereAnim
 - `SESSION.md` — mise à jour
+
+---
+
+## Session 9 — Harmonisation des couleurs et transition hero → sections
+**Date** : 2 mars 2026
+
+### Problème
+- Cassure visuelle brutale entre le hero (vidéo colorée) et la section Concept (bleu très sombre)
+- Toutes les sections utilisaient `rgba(10,15,46,...)` — quasi-noir, trop uniforme et sombre
+- Pas de transition progressive entre le hero et le contenu scrollé
+
+### 1. Transition dégradée hero → concept
+- **Ajout `::after` sur `.hero`** : gradient vertical de 220px (transparent → `rgba(13,18,50,0.85)`)
+- Crée un fondu progressif depuis la vidéo vers le fond des sections
+- **Section `.concept`** : background changé en `linear-gradient` progressif (0.82 → 0.92 d'opacité)
+- Plus de cassure de couleur au scroll
+
+### 2. Palette de fond éclaircies — `rgba(10,15,46)` → `rgba(14,19,52)`
+Toutes les sections ont été éclaircies vers un bleu plus vivant :
+| Élément | Avant | Après |
+|---------|-------|-------|
+| `--deep-sky` (token) | `#0A0F2E` | `#0D1232` |
+| `.concept` | `rgba(10,15,46,0.92)` | gradient `rgba(14,19,52, 0.82→0.92)` |
+| `.about` | `rgba(10,15,46,0.97)` | `rgba(14,19,52,0.94)` |
+| `.gallery-section` | `rgba(10,15,46,0.95)` | `rgba(14,19,52,0.92)` |
+| `.how-section` | `rgba(10,15,46,0.92)` | `rgba(14,19,52,0.90)` |
+| `.player-section` | `rgba(6,9,30,0.95)` | `rgba(10,14,42,0.92)` |
+| `.palmares-section` | `rgba(10,15,46,0.95)` | `rgba(14,19,52,0.92)` |
+| `.jury-section` | `rgba(8,12,38,0.95)` | `rgba(14,19,52,0.92)` |
+| `.sponsors-section` | `rgba(8,12,38,0.92)` | `rgba(14,19,52,0.90)` |
+| `footer` | `rgba(10,15,46,0.97)` | `rgba(14,19,52,0.95)` |
+| `.counters-section` | `rgba(10,15,46,0.95)` | `rgba(14,19,52,0.92)` |
+| `.marsnight-bg` | `rgba(10,15,46,0.94)` | `rgba(14,19,52,0.92)` |
+| `nav` | `rgba(10,15,46,0.6/0.95)` | `rgba(14,19,52,0.55/0.92)` |
+| Cartes (film, jury, nav-btn) | `rgba(10,15,46,...)` | `rgba(14,19,52,...)` |
+
+### 3. Visibilité images améliorée
+- **Image Friches Belle de Mai** : `brightness(0.65)` → `0.72`, `saturate(0.4)` → `0.5`
+- **Voile bleu section about** : opacité réduite (0.75→0.70, 0.4→0.35)
+- **Concept-cards** : fond légèrement plus visible (`0.03→0.04`), bordure renforcée (`0.06→0.08`)
+
+### Fichiers modifiés
+- `css/tokens.css` — `--deep-sky` éclairci (`#0A0F2E` → `#0D1232`)
+- `css/index.css` — transition hero, fonds sections éclaircis, visibilité images
+- `SESSION.md` — mise à jour
