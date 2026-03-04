@@ -1043,5 +1043,19 @@
       <span class="dn-lbl">User Stories</span>
     </a>
 </div>
+<script>
+(function(){
+  var nav = document.getElementById('dev-nav');
+  if (!nav) return;
+  nav.addEventListener('touchstart', function(e) {
+    if (e.target.closest('a')) return;
+    e.preventDefault();
+    nav.classList.toggle('open');
+  }, { passive: false });
+  document.addEventListener('touchstart', function(e) {
+    if (!nav.contains(e.target)) nav.classList.remove('open');
+  }, { passive: true });
+})();
+</script>
 </body>
 </html>
