@@ -52,6 +52,7 @@ const thumbVideoObserver = new IntersectionObserver((entries) => {
         video.autoplay = true;
         video.playsInline = true;
         video.preload = 'none';
+        video.setAttribute('aria-hidden', 'true');
         const source = document.createElement('source');
         source.src = '../assets/video.mp4';
         source.type = 'video/mp4';
