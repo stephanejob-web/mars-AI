@@ -1342,15 +1342,15 @@ section {
   content: '';
   position: absolute;
   inset: 0;
-  background: url('../assets/bande-pellicule.png') center / contain no-repeat;
-  z-index: 2;
+  background: url('../assets/bande-pellicule-droite.jpg') center / 100% 200% no-repeat;
+  z-index: 0;
   pointer-events: none;
-  opacity: 0.45;
+  filter: brightness(0.45);
 }
 .gallery-section .section-inner {
   position: relative;
   z-index: 1;
-  padding-bottom: 0;
+  padding: 60px 0 30px;
 }
 .gallery-header {
   margin-bottom: 40px;
@@ -1358,6 +1358,17 @@ section {
 }
 .gallery-header-top {
   margin-bottom: 24px;
+}
+.gallery-section .section-label {
+  color: var(--aurora);
+  text-shadow: 0 0 20px rgba(78, 255, 206, 0.4);
+  font-size: 0.95rem;
+  letter-spacing: 0.15em;
+}
+.gallery-section .section-title {
+  color: #fff;
+  text-shadow: 0 2px 15px rgba(0, 0, 0, 0.7);
+  font-size: clamp(1.6rem, 3.5vw, 2.4rem);
 }
 .gallery-header-bottom {
   display: flex;
@@ -1379,26 +1390,28 @@ section {
   flex-wrap: wrap;
 }
 .filter-chip {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 9999px;
-  padding: 8px 22px;
-  font-size: 0.8rem;
+  padding: 10px 26px;
+  font-size: 0.85rem;
   font-weight: 600;
-  color: var(--mist);
+  color: rgba(255, 255, 255, 0.85);
   cursor: pointer;
-  transition: all 0.25s var(--ease);
+  transition: all 0.3s var(--ease);
+  backdrop-filter: blur(6px);
+  letter-spacing: 0.03em;
 }
 .filter-chip:hover {
-  background: rgba(255,255,255,0.08);
-  border-color: rgba(255,255,255,0.15);
-  color: var(--white-soft);
+  background: rgba(0, 0, 0, 0.65);
+  border-color: rgba(255, 255, 255, 0.5);
+  color: #fff;
 }
 .filter-chip.active {
-  background: rgba(78,255,206,0.12);
-  border-color: rgba(78,255,206,0.4);
-  color: var(--aurora);
-  box-shadow: 0 0 20px rgba(78,255,206,0.10);
+  background: var(--aurora);
+  border-color: var(--aurora);
+  color: #0a0a1a;
+  box-shadow: 0 0 18px rgba(78, 255, 206, 0.35);
 }
 
 /* --- Film vedette (Grand Prix) --- */
