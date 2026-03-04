@@ -99,11 +99,232 @@ const decBadge = { valide: 'fdb-valide', aRevoir: 'fdb-arevoir', refuse: 'fdb-re
 /* ── LISTE FILMS ── */
 let activeFilm = 1;
 let playInterval = null, isPlaying = false, progress = 42;
-
 const MOBILE_BREAKPOINT = 980;
-let isMobileView = false;
-let mobileEvalPane = 'list';
-let sidebarOpenedMobile = false;
+let mobilePane = 'list';
+let mobileSidebarOpen = false;
+
+function isMobileViewport() {
+  return window.innerWidth <= MOBILE_BREAKPOINT;
+}
+
+function isEvalViewVisible() {
+  const evalEl = document.getElementById('view-eval');
+  return !!evalEl && evalEl.style.display !== 'none';
+}
+
+function setMobileSidebar(open) {
+  mobileSidebarOpen = !!open;
+  document.body.classList.toggle('jury-mobile-sidebar-open', mobileSidebarOpen);
+}
+
+function toggleMobileSidebar() {
+  if (!isMobileViewport()) return;
+  setMobileSidebar(!mobileSidebarOpen);
+}
+
+function setMobilePane(pane) {
+  if (!isMobileViewport()) return;
+  mobilePane = pane === 'detail' ? 'detail' : 'list';
+  document.body.classList.toggle('jury-mobile-pane-list', mobilePane === 'list');
+  document.body.classList.toggle('jury-mobile-pane-detail', mobilePane === 'detail');
+}
+
+function ensureMobileControls() {
+  const topbar = document.querySelector('.topbar');
+  if (!topbar) return;
+
+  if (!document.getElementById('aj-mobile-menu-btn')) {
+    const menuBtn = document.createElement('button');
+    menuBtn.id = 'aj-mobile-menu-btn';
+    menuBtn.className = 'mobile-nav-btn';
+    menuBtn.type = 'button';
+    menuBtn.textContent = '☰';
+    menuBtn.setAttribute('aria-label', 'Ouvrir le menu');
+    menuBtn.onclick = toggleMobileSidebar;
+    topbar.insertBefore(menuBtn, topbar.firstChild);
+  }
+
+  if (!document.getElementById('aj-mobile-back-btn')) {
+    const backBtn = document.createElement('button');
+    backBtn.id = 'aj-mobile-back-btn';
+    backBtn.className = 'mobile-back-btn';
+    backBtn.type = 'button';
+    backBtn.textContent = '← Liste';
+    backBtn.setAttribute('aria-label', 'Retour à la liste des films');
+    backBtn.onclick = function () { setMobilePane('list'); };
+    topbar.insertBefore(backBtn, topbar.firstChild);
+  }
+
+  if (!document.getElementById('aj-mobile-overlay')) {
+    const overlay = document.createElement('div');
+    overlay.id = 'aj-mobile-overlay';
+    overlay.onclick = function () { setMobileSidebar(false); };
+    document.body.appendChild(overlay);
+  }
+}
+
+function injectMobileStyles() {
+  if (document.getElementById('aj-mobile-style')) return;
+  const style = document.createElement('style');
+  style.id = 'aj-mobile-style';
+  style.textContent = `
+    .mobile-nav-btn,
+    .mobile-back-btn {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.04);
+      color: var(--white-soft);
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 6px 10px;
+      cursor: pointer;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    #aj-mobile-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(4,6,14,0.58);
+      backdrop-filter: blur(2px);
+    }
+    @media (max-width: 980px) {
+      html, body {
+        overflow: auto;
+      }
+      body {
+        display: block;
+      }
+      .main {
+        height: 100dvh;
+      }
+      .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 120;
+        transform: translateX(-104%);
+        transition: transform 0.22s ease;
+      }
+      body.jury-mobile-sidebar-open .sidebar {
+        transform: translateX(0);
+      }
+      body.jury-mobile-sidebar-open #aj-mobile-overlay {
+        display: block;
+      }
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 110;
+        padding: 0 10px;
+        gap: 8px;
+      }
+      .topbar-sep,
+      .topbar-info,
+      .phase-badge {
+        display: none;
+      }
+      .topbar-right {
+        margin-left: auto;
+      }
+      .topbar-right > button {
+        margin-left: 0 !important;
+        font-size: 0.72rem !important;
+        padding: 5px 9px !important;
+      }
+      .mobile-nav-btn,
+      .mobile-back-btn {
+        display: inline-flex;
+      }
+      .view {
+        display: block;
+      }
+      .film-list,
+      .detail {
+        width: 100%;
+        min-width: 0;
+      }
+      .film-list {
+        border-right: none;
+        height: calc(100dvh - 52px);
+      }
+      .detail {
+        height: calc(100dvh - 52px);
+      }
+      .detail-scroll {
+        padding: 12px;
+      }
+      .player-ctrl {
+        padding: 10px 10px 12px;
+      }
+      .ctrl-buttons,
+      .ctrl-left {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .notation-panel {
+        position: sticky;
+        bottom: 0;
+        z-index: 5;
+        padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+        background: color-mix(in srgb, var(--surface) 92%, transparent);
+        backdrop-filter: blur(6px);
+      }
+      .decision-main {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .dbtn-main {
+        width: 100%;
+        min-height: 38px;
+        font-size: 0.76rem;
+      }
+      .notation-bottom {
+        gap: 8px;
+        align-items: stretch;
+      }
+      .btn-publish {
+        height: 44px;
+      }
+      body.jury-mobile-pane-list #view-eval .detail {
+        display: none;
+      }
+      body.jury-mobile-pane-detail #view-eval .film-list {
+        display: none;
+      }
+      body.jury-mobile-pane-list #aj-mobile-back-btn {
+        display: none;
+      }
+      body.jury-mobile-pane-detail #aj-mobile-back-btn {
+        display: inline-flex;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+function applyResponsiveLayout() {
+  const mobile = isMobileViewport();
+  document.body.classList.toggle('jury-mobile', mobile);
+  if (!mobile) {
+    setMobileSidebar(false);
+    document.body.classList.remove('jury-mobile-pane-list', 'jury-mobile-pane-detail');
+    return;
+  }
+  if (isEvalViewVisible() && !mobilePane) {
+    mobilePane = 'list';
+  }
+  if (isEvalViewVisible()) {
+    setMobilePane(mobilePane || 'list');
+  }
+}
 
 function renderList(filterFn) {
   const el = document.getElementById('film-list-scroll');
@@ -160,7 +381,10 @@ function loadFilm(id) {
   document.getElementById('pbar').style.width = '0%';
   document.getElementById('ptime').textContent = '0:00 / 1:00';
   renderList();
-  if (isMobileView) setMobileEvalPane('detail');
+  if (isMobileViewport() && isEvalViewVisible()) {
+    setMobilePane('detail');
+    setMobileSidebar(false);
+  }
 }
 
 /* ── PLAYER (vidéo réelle) ── */
@@ -468,7 +692,6 @@ function switchView(view, navEl) {
     document.getElementById('topbar-info').textContent = 'Films assignés par l\'administrateur — évaluation individuelle';
     document.getElementById('phase-badge').textContent = 'Phase 1 · Top 50 · 12/12/26';
     document.getElementById('phase-badge').className = 'phase-badge phase-1';
-    if (isMobileView) setMobileEvalPane('list');
   } else if (view === 'listes') {
     if (listesEl) listesEl.style.display = 'block';
     document.getElementById('topbar-title').textContent = 'Mes listes';
@@ -490,200 +713,10 @@ function switchView(view, navEl) {
     document.getElementById('phase-badge').className = 'phase-badge phase-1';
     renderDelib();
   }
-}
 
-function isEvalVisible() {
-  const evalEl = document.getElementById('view-eval');
-  if (!evalEl) return false;
-  return evalEl.style.display !== 'none';
-}
-
-function ensureSidebarOverlay() {
-  if (document.getElementById('sidebar-overlay')) return;
-  const overlay = document.createElement('div');
-  overlay.id = 'sidebar-overlay';
-  overlay.style.position = 'fixed';
-  overlay.style.inset = '0';
-  overlay.style.background = 'rgba(4, 9, 20, 0.55)';
-  overlay.style.backdropFilter = 'blur(2px)';
-  overlay.style.zIndex = '1090';
-  overlay.style.display = 'none';
-  overlay.addEventListener('click', () => setSidebarOpen(false));
-  document.body.appendChild(overlay);
-}
-
-function ensureMobileEvalToggle() {
-  if (document.getElementById('mobile-eval-toggle')) return;
-  const topbar = document.querySelector('.topbar-right');
-  if (!topbar) return;
-  const wrap = document.createElement('div');
-  wrap.id = 'mobile-eval-toggle';
-  wrap.style.display = 'none';
-  wrap.style.alignItems = 'center';
-  wrap.style.gap = '6px';
-
-  const makeBtn = (label, pane) => {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.textContent = label;
-    btn.dataset.pane = pane;
-    btn.style.height = '30px';
-    btn.style.padding = '0 10px';
-    btn.style.borderRadius = '9999px';
-    btn.style.border = '1px solid rgba(255,255,255,0.14)';
-    btn.style.background = 'rgba(255,255,255,0.04)';
-    btn.style.color = 'var(--mist)';
-    btn.style.fontFamily = 'var(--font-body)';
-    btn.style.fontSize = '0.72rem';
-    btn.style.fontWeight = '700';
-    btn.style.cursor = 'pointer';
-    btn.addEventListener('click', () => setMobileEvalPane(pane));
-    return btn;
-  };
-
-  wrap.appendChild(makeBtn('Liste', 'list'));
-  wrap.appendChild(makeBtn('Détail', 'detail'));
-  topbar.prepend(wrap);
-}
-
-function updateMobileEvalToggle() {
-  const wrap = document.getElementById('mobile-eval-toggle');
-  if (!wrap) return;
-  wrap.querySelectorAll('button').forEach(btn => {
-    const active = btn.dataset.pane === mobileEvalPane;
-    btn.style.background = active ? 'rgba(78, 255, 206, 0.14)' : 'rgba(255,255,255,0.04)';
-    btn.style.borderColor = active ? 'rgba(78, 255, 206, 0.35)' : 'rgba(255,255,255,0.14)';
-    btn.style.color = active ? 'var(--aurora)' : 'var(--mist)';
-  });
-}
-
-function applyEvalResponsivePane() {
-  const list = document.querySelector('#view-eval .film-list');
-  const detail = document.querySelector('#view-eval .detail');
-  if (!list || !detail) return;
-
-  if (!isMobileView) {
-    list.style.display = '';
-    detail.style.display = '';
-    list.style.width = '';
-    list.style.minWidth = '';
-    list.style.borderRight = '';
-    list.style.borderBottom = '';
-    detail.style.minWidth = '';
-    return;
-  }
-
-  list.style.width = '100%';
-  list.style.minWidth = '0';
-  list.style.borderRight = 'none';
-  list.style.borderBottom = '1px solid rgba(255,255,255,0.06)';
-  detail.style.minWidth = '0';
-
-  if (!isEvalVisible()) {
-    list.style.display = 'none';
-    detail.style.display = 'none';
-    return;
-  }
-
-  if (mobileEvalPane === 'list') {
-    list.style.display = 'flex';
-    detail.style.display = 'none';
-  } else {
-    list.style.display = 'none';
-    detail.style.display = 'flex';
-  }
-}
-
-function setMobileEvalPane(pane) {
-  if (!isMobileView) return;
-  mobileEvalPane = pane === 'detail' ? 'detail' : 'list';
-  applyEvalResponsivePane();
-  updateMobileEvalToggle();
-}
-
-function setSidebarOpen(open) {
-  const overlay = document.getElementById('sidebar-overlay');
-  const shouldOpen = Boolean(open);
-
-  if (isMobileView) {
-    sidebarOpenedMobile = shouldOpen;
-    document.body.classList.toggle('sidebar-collapsed', !shouldOpen);
-    if (overlay) overlay.style.display = shouldOpen ? 'block' : 'none';
-  } else {
-    document.body.classList.toggle('sidebar-collapsed', !shouldOpen);
-    if (overlay) overlay.style.display = 'none';
-  }
-}
-
-function toggleSidebar() {
-  const currentlyCollapsed = document.body.classList.contains('sidebar-collapsed');
-  setSidebarOpen(currentlyCollapsed);
-}
-
-function applyResponsiveLayout() {
-  const mobileNow = window.innerWidth <= MOBILE_BREAKPOINT;
-  isMobileView = mobileNow;
-
-  const sidebar = document.querySelector('.sidebar');
-  const main = document.querySelector('.main');
-  const toggle = document.getElementById('sidebar-toggle');
-  const topbarInfo = document.getElementById('topbar-info');
-  const topbarSep = document.querySelector('.topbar-sep');
-
-  ensureSidebarOverlay();
-  ensureMobileEvalToggle();
-
-  const mobileToggle = document.getElementById('mobile-eval-toggle');
-
-  if (mobileNow) {
-    if (sidebar) {
-      sidebar.style.position = 'fixed';
-      sidebar.style.left = '0';
-      sidebar.style.top = '0';
-      sidebar.style.height = '100vh';
-      sidebar.style.zIndex = '1200';
-    }
-    if (main) {
-      main.style.width = '100vw';
-      main.style.maxWidth = '100vw';
-    }
-    if (toggle) {
-      toggle.style.top = '14px';
-      toggle.style.transform = 'none';
-      toggle.style.height = '40px';
-      toggle.style.zIndex = '1210';
-    }
-    if (topbarInfo) topbarInfo.style.display = 'none';
-    if (topbarSep) topbarSep.style.display = 'none';
-    if (mobileToggle) mobileToggle.style.display = isEvalVisible() ? 'flex' : 'none';
-    document.body.classList.add('sidebar-collapsed');
-    if (sidebarOpenedMobile) setSidebarOpen(true);
-    applyEvalResponsivePane();
-    updateMobileEvalToggle();
-  } else {
-    if (sidebar) {
-      sidebar.style.position = '';
-      sidebar.style.left = '';
-      sidebar.style.top = '';
-      sidebar.style.height = '';
-      sidebar.style.zIndex = '';
-    }
-    if (main) {
-      main.style.width = '';
-      main.style.maxWidth = '';
-    }
-    if (toggle) {
-      toggle.style.top = '';
-      toggle.style.transform = '';
-      toggle.style.height = '';
-      toggle.style.zIndex = '';
-    }
-    if (topbarInfo) topbarInfo.style.display = '';
-    if (topbarSep) topbarSep.style.display = '';
-    if (mobileToggle) mobileToggle.style.display = 'none';
-    document.body.classList.remove('sidebar-collapsed');
-    sidebarOpenedMobile = false;
-    applyEvalResponsivePane();
+  if (isMobileViewport()) {
+    setMobileSidebar(false);
+    if (view === 'eval') setMobilePane('list');
   }
 }
 
@@ -929,11 +962,6 @@ updateCounts();
 renderVotes(films[0]);
 renderComments(films[0]);
 document.getElementById('comment-input').value = films[0].comments?.['ML'] || '';
-applyResponsiveLayout();
-window.addEventListener('resize', applyResponsiveLayout);
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && isMobileView && sidebarOpenedMobile) setSidebarOpen(false);
-});
 
 /* ════════════════════════════════════════════
    SIDEBAR CHAT JURY
@@ -1061,3 +1089,8 @@ function sendJuryMsg() {
 
 // Init badge au chargement
 updateSCBadge();
+
+injectMobileStyles();
+ensureMobileControls();
+applyResponsiveLayout();
+window.addEventListener('resize', applyResponsiveLayout);
