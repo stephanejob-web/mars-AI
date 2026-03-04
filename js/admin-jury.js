@@ -1095,7 +1095,11 @@ ensureMobileControls();
 applyResponsiveLayout();
 window.addEventListener('resize', applyResponsiveLayout);
 
-// Toggle sidebar gauche (masquer / afficher)
+// Toggle sidebar gauche — délègue au système mobile si viewport étroit
 function toggleSidebar() {
-  document.body.classList.toggle('sidebar-collapsed');
+  if (isMobileViewport()) {
+    toggleMobileSidebar();
+  } else {
+    document.body.classList.toggle('sidebar-collapsed');
+  }
 }
