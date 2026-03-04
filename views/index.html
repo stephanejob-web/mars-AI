@@ -16,7 +16,7 @@
   <!-- ============================================================
        SCRIPTS EXTERNES — GSAP + Three.js ImportMap
        ============================================================ -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script type="importmap">
   {
     "imports": {
@@ -31,7 +31,7 @@
   <!-- ============================================================
        VIDÉO — Arrière-plan hero (remplace la sphère 3D)
        ============================================================ -->
-  <video id="hero-video" autoplay muted loop playsinline preload="auto" aria-hidden="true">
+  <video id="hero-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true">
     <source src="../assets/Création_Vidéo_IA_pour_MarsAI_Marseille.mp4" type="video/mp4">
   </video>
 
@@ -326,9 +326,9 @@
   </section>
 
   <!-- Shader WebGL du manifeste (chargé paresseusement, mis en pause hors écran) -->
-  <script src="../js/index-shader.js"></script>
+  <script defer src="../js/index-shader.js"></script>
   <!-- Carousel vidéo + scanner du manifeste -->
-  <script src="../js/manifeste-carousel.js"></script>
+  <script defer src="../js/manifeste-carousel.js"></script>
 
   <div class="divider"></div>
 
@@ -482,8 +482,8 @@
        ============================================================ -->
   <!-- Section titre films -->
   <section class="gallery-section" id="films">
-    <img src="../assets/pop-corn.png" alt="Popcorn" class="gallery-deco gallery-deco-left">
-    <img src="../assets/camera-cinema.png" alt="Caméra cinéma" class="gallery-deco gallery-deco-right">
+    <img src="../assets/pop-corn.png" alt="Popcorn" class="gallery-deco gallery-deco-left" loading="lazy">
+    <img src="../assets/camera-cinema.png" alt="Caméra cinéma" class="gallery-deco gallery-deco-right" loading="lazy">
     <div class="section-inner">
       <div class="gallery-header">
         <div class="gallery-header-top">
