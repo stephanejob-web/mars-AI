@@ -480,11 +480,10 @@
   <!-- ============================================================
        GALERIE FILMS — Sélection officielle marsAI 2026
        ============================================================ -->
+  <!-- Section titre films -->
   <section class="gallery-section" id="films">
-    <video class="gallery-bg-video" autoplay muted loop playsinline>
-      <source src="../assets/how-bg-video.mp4" type="video/mp4">
-    </video>
-    <div class="gallery-overlay"></div>
+    <img src="../assets/pop-corn.png" alt="Popcorn" class="gallery-deco gallery-deco-left">
+    <img src="../assets/camera-cinema.png" alt="Caméra cinéma" class="gallery-deco gallery-deco-right">
     <div class="section-inner">
       <div class="gallery-header">
         <div class="gallery-header-top">
@@ -499,7 +498,11 @@
           </div>
         </div>
       </div>
+    </div>
+  </section>
 
+  <!-- Section carousel films avec image cinéma en fond -->
+  <section class="films-cinema-section">
       <!-- Rangée 1 — défilement automatique vers la droite -->
       <div class="films-carousel-wrap">
         <div class="films-carousel films-row-1">
@@ -751,7 +754,6 @@
         </div>
       </div>
       </div><!-- /films-carousel-wrap row 2 -->
-    </div>
   </section>
 
   <div class="divider"></div>
@@ -759,11 +761,83 @@
   <!-- ============================================================
        JURY — Président(e) et membres du jury international
        ============================================================ -->
+  <!-- ============================================================
+       SECTION GALA — Night + Palmarès + Sponsors fusionnés
+       ============================================================ -->
+  <section class="gala" id="palmares">
+    <div class="gala-bg"></div>
+    <canvas class="fireworks-canvas" id="fireworks-canvas"></canvas>
+
+    <div class="section-inner gala-inner">
+
+      <!-- ── En-tête ── -->
+      <div class="gala-header" id="marsnight">
+        <div class="gala-eyebrow">
+          <span class="gala-dot"></span> Mars.AI Night · Marseille 2026
+        </div>
+        <h2 class="gala-title">
+          La nuit où le cinéma bascule<br>dans l'<span class="glow-coral">ère IA</span>.
+        </h2>
+        <p class="gala-desc">
+          Dimanche soir, Marseille s'illumine. Gala de clôture aux Friches Belle de Mai : prix, DJ set génératif et créateurs sur scène.
+        </p>
+      </div>
+
+      <!-- ── 2 colonnes : Prix gauche + Sponsors droite ── -->
+      <div class="gala-columns">
+
+        <!-- Gauche : Prix + CTA -->
+        <div class="gala-col">
+          <div class="award-grand reveal">
+            <div class="award-grand-shine"></div>
+            <div class="award-grand-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M5 3h14c.55 0 1 .45 1 1v3c0 2.21-1.79 4-4 4h-.26A5.01 5.01 0 0112 14.74 5.01 5.01 0 018.26 11H8c-2.21 0-4-1.79-4-4V4c0-.55.45-1 1-1z" fill="rgba(245,230,66,0.85)"/><path d="M4 7h2v1c0 1.1.9 2 2 2h.26c.25.58.59 1.11 1 1.57A3.99 3.99 0 014 8V7zM20 7h-2v1c0 1.1-.9 2-2 2h-.26c-.25.58-.59 1.11-1 1.57A3.99 3.99 0 0020 8V7z" fill="rgba(245,230,66,0.6)"/><rect x="9" y="14" width="6" height="3" rx="1" fill="rgba(245,230,66,0.85)"/><rect x="7" y="17" width="10" height="2" rx="1" fill="rgba(245,230,66,0.7)"/></svg>
+            </div>
+            <div class="award-eyebrow">Prix Principal</div>
+            <div class="award-grand-name">Grand Prix</div>
+            <div class="award-grand-desc">Meilleur film toutes catégories — décerné par le jury international.</div>
+            <div class="award-bourse">Bourse de création · Remise lors du Gala</div>
+          </div>
+          <div class="awards-secondary">
+            <div class="award-card award-jury reveal">
+              <div class="award-icon">⚖️</div>
+              <div class="award-name">Prix du Jury</div>
+              <div class="award-desc">Coup de cœur artistique du jury international.</div>
+            </div>
+            <div class="award-card award-public reveal">
+              <div class="award-icon">🌍</div>
+              <div class="award-name">Prix du Public</div>
+              <div class="award-desc">Vote ouvert en ligne pendant le festival.</div>
+            </div>
+            <div class="award-card award-innov reveal">
+              <div class="award-icon">🤖</div>
+              <div class="award-name">Prix Innovation IA</div>
+              <div class="award-desc">Usage le plus créatif de l'intelligence artificielle.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Droite : Sponsors -->
+        <div class="gala-col gala-sponsors" id="sponsors-section">
+          <h3 class="gala-subtitle">Ils soutiennent marsAI</h3>
+          <div id="sponsors-display"></div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================================
+       JURY — Président(e) et membres du jury international
+       ============================================================ -->
   <section class="jury-section" id="jury">
     <div class="section-inner">
-      <div class="section-label reveal">Jury International · marsAI 2026</div>
-      <h2 class="section-title reveal" data-delay="1">Le Jury</h2>
-      <p class="section-desc reveal" data-delay="2" style="margin-bottom:52px;">Des créateurs, artistes et personnalités du cinéma venus du monde entier pour évaluer les œuvres en compétition.</p>
+      <div class="jury-header">
+        <div class="section-label reveal">Jury International · marsAI 2026</div>
+        <h2 class="section-title reveal" data-delay="1">Le Jury</h2>
+        <p class="section-desc reveal" data-delay="2">Des créateurs, artistes et personnalités du cinéma venus du monde entier pour évaluer les œuvres en compétition.</p>
+      </div>
 
       <!-- Carte vedette (président·e) -->
       <div id="jury-featured-wrap" class="reveal" data-delay="3"></div>
@@ -773,112 +847,20 @@
     </div>
   </section>
 
-  <div class="divider"></div>
-
-  <!-- ============================================================
-       SECTION GALA — Night + Palmarès + Sponsors en un seul bloc
-       ============================================================ -->
-  <section class="gala" id="palmares">
-    <div class="gala-bg"></div>
-
-    <div class="gala-inner">
-
-      <!-- ── En-tête : Mars.AI Night ── -->
-      <div class="gala-header" id="marsnight">
-        <div class="gala-eyebrow">
-          <span class="gala-dot"></span> Mars.AI Night · Marseille 2026
-        </div>
-        <h2 class="gala-title">
-          La nuit où le cinéma bascule<br>dans l'<span class="glow-coral">ère IA</span>.
-        </h2>
-        <p class="gala-desc">
-          Dimanche soir, Marseille s'illumine. Le jury délibère, les prix sont remis, les créateurs montent sur scène.
-        </p>
-        <div class="gala-tags">
-          <span class="gala-tag">🌙 Gala de clôture</span>
-          <span class="gala-tag">📍 Friches Belle de Mai</span>
-          <span class="gala-tag">🎬 Cérémonie des Prix</span>
-          <span class="gala-tag">🎶 DJ set génératif</span>
-          <span class="gala-tag">🌍 Jury international</span>
-        </div>
-      </div>
-
-      <div class="gala-sep"></div>
-
-      <!-- ── Palmarès ── -->
-      <div class="gala-awards">
-        <h3 class="gala-subtitle">Les Prix marsAI</h3>
-        <p class="gala-awards-intro">Bourses et récompenses décernées à l'issue des délibérations du jury international.</p>
-
-        <!-- Grand Prix -->
-        <div class="award-grand reveal">
-          <div class="award-grand-shine"></div>
-          <div class="award-grand-icon">
-            <svg width="36" height="36" viewBox="0 0 36 36" fill="none"><path d="M18 3L21.8 13.1H32.6L24 19.4L27.2 29.5L18 23.2L8.8 29.5L12 19.4L3.4 13.1H14.2L18 3Z" fill="rgba(245,230,66,0.85)"/></svg>
-          </div>
-          <div>
-            <div class="award-eyebrow">✦ Prix Principal</div>
-            <div class="award-grand-name">Grand Prix</div>
-            <div class="award-grand-desc">Meilleur film toutes catégories — décerné par le jury international lors de la cérémonie de clôture.</div>
-            <div class="award-bourse">✦ Bourse de création · Remise lors du Gala</div>
-            <div class="award-sponsor-link" style="margin-top:10px;">
-              <span style="font-size:0.72rem;font-weight:600;color:#4285F4;background:rgba(66,133,244,0.1);border:1px solid rgba(66,133,244,0.25);border-radius:6px;padding:3px 10px;">Sponsorisé par Google</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Prix secondaires -->
-        <div class="awards-secondary">
-          <div class="award-card award-jury reveal">
-            <div class="award-icon">⚖️</div>
-            <div class="award-name">Prix du Jury</div>
-            <div class="award-desc">Coup de cœur artistique du jury international.</div>
-            <div class="award-sponsor-link">
-              <span style="font-size:0.7rem;color:var(--mist);font-style:italic;">En recherche de sponsor</span>
-            </div>
-          </div>
-          <div class="award-card award-public reveal">
-            <div class="award-icon">🌍</div>
-            <div class="award-name">Prix du Public</div>
-            <div class="award-desc">Vote ouvert en ligne pendant le festival.</div>
-            <div class="award-sponsor-link">
-              <span style="font-size:0.7rem;color:var(--mist);font-style:italic;">En recherche de sponsor</span>
-            </div>
-          </div>
-          <div class="award-card award-innov reveal">
-            <div class="award-icon">🤖</div>
-            <div class="award-name">Prix Innovation IA</div>
-            <div class="award-desc">Usage le plus créatif de l'intelligence artificielle.</div>
-            <div class="award-sponsor-link">
-              <span style="font-size:0.7rem;color:var(--mist);font-style:italic;">En recherche de sponsor</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="gala-sep"></div>
-
-      <!-- ── Sponsors ── -->
-      <div class="gala-sponsors" id="sponsors-section">
-        <h3 class="gala-subtitle">Ils soutiennent marsAI</h3>
-        <div id="sponsors-display"></div>
-      </div>
-
-      <!-- CTA -->
-      <div class="gala-cta-wrap">
-        <a href="formulaire-depot.html" class="gala-cta">Soumettre mon film</a>
-        <p class="gala-footnote">Les 50 finalistes sont invités à la cérémonie · Participation gratuite</p>
-      </div>
-
-    </div>
-  </section>
-
   <!-- ============================================================
        PIED DE PAGE — Liens, co-organisateurs et mentions
        ============================================================ -->
   <footer id="presse">
     <div class="footer-inner">
       <div class="footer-brand">
+        <div class="footer-partners">
+          <span class="footer-partners-label">Co-organisé par</span>
+          <a href="https://laplateforme.io/coding-school/" target="_blank" rel="noopener" class="footer-partners-logo">
+            <img src="../assets/logo-laplateforme.png" alt="La Plateforme · Coding School">
+          </a>
+          <span class="footer-partners-sep">×</span>
+          <span class="footer-partners-name">Mobile Film Festival</span>
+        </div>
         <span class="logo">mars<span class="ai">AI</span></span>
         <p class="footer-desc">Le premier concours international de courts-métrages d'une minute intégralement générés par IA. 120+ pays. "Imaginez des futurs souhaitables."</p>
       </div>
@@ -910,15 +892,6 @@
           <li><a href="#">Mentions légales</a></li>
         </ul>
       </div>
-    </div>
-    <!-- Co-organisateurs -->
-    <div class="footer-partners">
-      <span class="footer-partners-label">Co-organisé par</span>
-      <a href="https://laplateforme.io/coding-school/" target="_blank" rel="noopener" class="footer-partners-logo">
-        <img src="../assets/logo-laplateforme.png" alt="La Plateforme · Coding School">
-      </a>
-      <span class="footer-partners-sep">×</span>
-      <span class="footer-partners-name">Mobile Film Festival</span>
     </div>
     <div class="footer-bottom">
       <span>© 2026 marsAI · Une co-création La Plateforme × Mobile Film Festival</span>
