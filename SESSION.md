@@ -131,3 +131,53 @@ Sessions précédentes documentées : correction performances GPU, suppression U
 - `assets/view-3d-cinema-theatre-room.jpg` — salle de cinéma (nouveau)
 - `assets/bande-pellicule.png` — pellicule cinéma décoration (nouveau)
 - `SESSION.md` — mise à jour session 11
+
+---
+
+## Session 12 — Galerie pellicule, Gala refonte, Jury uniforme, Footer noir
+**Date** : 4 mars 2026
+
+### 1. Section Galerie Films — pellicule cinéma + décorations
+- Fond pellicule `bande-pellicule-droite.jpg` en `::after` (`background-size: 100% 200%`, `filter: brightness(0.65)`)
+- Filtres (Tous/France/International) redesignés : fond sombre semi-transparent, état actif aurora
+- Images décoratives : popcorn (gauche) et caméra cinéma (droite) en PNG fond transparent
+- Conversion JPG → PNG via Python/Pillow + scipy (suppression fond blanc/checkered)
+- Pellicule éclaircie avec dégradé plus doux
+
+### 2. Section Gala — fusion Night + Prix + Sponsors + feux d'artifice
+- 3 sous-sections (Mars.AI Night, Les Prix, Sponsors) fusionnées en une seule `<section class="gala">`
+- Layout 2 colonnes : Prix à gauche (Grand Prix + 3 cards), Sponsors à droite
+- **Feux d'artifice** : animation canvas déclenchée au scroll (IntersectionObserver), particules colorées avec gravité
+- Trophée SVG remplace l'étoile dans la card Grand Prix
+- Cards éclairées : backgrounds `rgba(255,255,255,0.08)`, bordures `0.15–0.35` opacité
+- Textes éclaircis : `rgba(240,244,255,0.7–0.85)` au lieu de `var(--mist)`
+- Polices harmonisées : tout en `var(--font-body)` (Inter)
+- Bouton "Soumettre mon film" supprimé de la section
+- Sponsors en grille `repeat(3, 1fr)` alignés avec les cards prix
+
+### 3. Section Jury — 6 membres, cards uniformes verticales
+- Jury réduit de 10 à 6 membres (Marie, Pierre, Kenji, Sofia, Amara, Carlos)
+- Layout vedette supprimé : tous les membres en cards verticales uniformes
+- Badges (`Présidence du Jury` / `Membre du Jury`) et citations ajoutés à chaque membre
+- Grille 3 colonnes (`repeat(3, 1fr)`)
+- Header centré (`text-align: center`)
+- Photos proportionnelles : `aspect-ratio: 3/2`, `object-position: center top`
+- Texte agrandi et éclairci : nom `1.15rem #fff`, rôle `0.88rem aurora`, citation `0.82rem rgba(220,225,240,0.85)`
+- Padding section réduit : `120px 0` → `40px 0 60px`, inner `10px 0 20px`
+
+### 4. Footer — refonte fond noir + texte blanc
+- Fond changé : gradient bleu → `#000` noir pur
+- Texte en blanc avec hiérarchie d'opacité (0.8 titres, 0.55 liens, 0.3 copyright)
+- Bloc partenaires (Co-organisé par La Plateforme × Mobile Film Festival) déplacé au-dessus du logo marsAI
+- Tailles réduites : partenaires `0.62–0.72rem`, logo partenaire `22px`
+- Grille rééquilibrée : `1.4fr 1fr 1fr 1fr` (avant `2fr 1fr 1fr 1fr`), gap `32px`
+- Tous les textes réduits : description `0.75rem`, titres colonnes `0.7rem`, liens `0.78rem`, copyright `0.68rem`
+
+### Fichiers modifiés
+- `css/index.css` — refonte galerie, gala, jury, footer (~300 lignes modifiées)
+- `views/index.html` — restructuration gala, jury header centré, footer avec partenaires déplacés
+- `js/index-main.js` — jury 6 membres avec badges/citations, rendu cards uniformes, animation feux d'artifice
+- `assets/bande-pellicule-droite.jpg` — pellicule droite (nouveau)
+- `assets/pop-corn.png` — popcorn fond transparent (nouveau)
+- `assets/camera-cinema.png` — caméra cinéma fond transparent (nouveau)
+- `SESSION.md` — mise à jour session 12
