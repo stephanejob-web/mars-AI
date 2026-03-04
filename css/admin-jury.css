@@ -1750,3 +1750,51 @@
   transition: opacity 0.15s;
 }
 .sc-send:hover { opacity: 0.85; }
+
+/* ── Film card dans le chat sidebar ── */
+.sc-film-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 5px;
+  padding: 7px 10px;
+  background: rgba(78,255,206,0.06);
+  border: 1px solid rgba(78,255,206,0.2);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  max-width: 88%;
+}
+.sc-film-card:hover {
+  background: rgba(78,255,206,0.12);
+  border-color: rgba(78,255,206,0.4);
+}
+.sc-film-icon {
+  font-size: 0.75rem;
+  color: var(--aurora);
+  flex-shrink: 0;
+}
+.sc-film-info {
+  flex: 1;
+  min-width: 0;
+}
+.sc-film-title {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--white-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sc-film-sub {
+  font-size: 0.56rem;
+  color: var(--mist);
+  margin-top: 1px;
+}
+.sc-film-cta {
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: var(--aurora);
+  font-family: var(--font-mono);
+  flex-shrink: 0;
+}

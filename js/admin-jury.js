@@ -543,10 +543,19 @@ function quickAnnotate(type, btn) {
       if (!f.discussedBy) f.discussedBy = [];
       if (!f.discussedBy.includes('ML')) f.discussedBy.push('ML');
     }
-    showToast('💬 Film ajouté à "À discuter" — rejoignez le chat jury', 'ok');
-    setTimeout(() => {
-      switchView('discuter', document.getElementById('nav-discuter'));
-    }, 800);
+    // Ouvrir le sidebar chat sur le canal "Tous" avec le titre du film pré-rempli
+    pendingFilmId = f ? f.id : null;
+    if (!scOpen) {
+      scOpen = true;
+      document.getElementById('sc-panel').classList.add('open');
+      document.getElementById('sc-toggle-btn').classList.add('open');
+    }
+    selectSCContact('all');
+    const inp = document.getElementById('sc-input');
+    if (inp) {
+      inp.value = f ? `📽️ ${f.title} — quelqu'un pour en discuter ?` : '📽️ Film — quelqu\'un pour en discuter ?';
+      inp.focus();
+    }
   }
 }
 
@@ -733,6 +742,7 @@ const chatHistory = {
 
 let scOpen = false;
 let scContact = 'all';
+let pendingFilmId = null;
 
 function toggleJuryChat() {
   scOpen = !scOpen;
@@ -786,8 +796,21 @@ function renderSCMessages(contactId) {
     ? msgs.map(m => {
         const isMe = m.from === 'me';
         const who = isMe ? 'Moi' : (m.name || '?');
+        const filmCard = m.filmId ? (() => {
+          const f = films.find(x => x.id === m.filmId);
+          if (!f) return '';
+          return `<div class="sc-film-card" onclick="loadFilm(${f.id});switchView('eval',document.querySelectorAll('.nav-item')[0])">
+            <span class="sc-film-icon">▶</span>
+            <div class="sc-film-info">
+              <div class="sc-film-title">${f.title}</div>
+              <div class="sc-film-sub">${f.author} · ${f.country}</div>
+            </div>
+            <span class="sc-film-cta">Voir</span>
+          </div>`;
+        })() : '';
         return `<div class="sc-msg ${isMe ? 'sc-msg-me' : ''}">
           <div class="sc-bubble">${m.text.replace(/</g,'&lt;')}</div>
+          ${filmCard}
           <div class="sc-meta">${who} · ${m.time}</div>
         </div>`;
       }).join('')
@@ -802,7 +825,9 @@ function sendJuryMsg() {
   const now = new Date();
   const time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
   if (!chatHistory[scContact]) chatHistory[scContact] = [];
-  chatHistory[scContact].push({ from: 'me', text, time });
+  const msg = { from: 'me', text, time };
+  if (pendingFilmId) { msg.filmId = pendingFilmId; pendingFilmId = null; }
+  chatHistory[scContact].push(msg);
   inp.value = '';
   renderSCMessages(scContact);
 }
