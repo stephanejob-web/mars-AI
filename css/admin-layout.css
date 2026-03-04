@@ -64,6 +64,11 @@ body.sidebar-collapsed .sidebar {
 body.sidebar-collapsed .sidebar-toggle { left: 0; }
 body.sidebar-collapsed .sidebar-toggle-icon { transform: rotate(180deg); }
 
+/* Sur mobile, le ☰ de la topbar prend le relais — cacher la languette ‹ */
+@media (max-width: 980px) {
+  .sidebar-toggle { display: none; }
+}
+
 .sidebar-header {
   padding: 20px 18px 16px;
   border-bottom: 1px solid rgba(255,255,255,0.05);
