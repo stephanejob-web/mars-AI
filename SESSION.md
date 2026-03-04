@@ -4,449 +4,84 @@
 
 ---
 
-## Problème initial
-Depuis l'intégration d'un arrière-plan UnicornStudio WebGL dans la section Manifeste, tout le site buggait (freeze / lag).
+## Résumé des sessions 1–9
+
+Sessions précédentes documentées : correction performances GPU, suppression UnicornStudio, optimisation Three.js/shader/carousel, refonte hero vidéo, harmonisation couleurs, robot IA détouré, globe 3D wikiglobe, section Événement avec Friches Belle de Mai.
 
 ---
 
-## Diagnostic
-- **2 contextes WebGL simultanés** : Three.js (sphère hero, fixed full-page) + UnicornStudio (manifeste) = surcharge GPU
-- **25 `backdrop-filter: blur()`** sur la page, dont 6 ajoutés par le dernier commit sur des éléments répétés (film-cards, jury-cards, nav-btns...)
-- **UnicornStudio** chargé immédiatement au démarrage sans lazy-loading ni gestion d'erreur
-- **Boucle Three.js** tournait à 60fps même quand la sphère était invisible (opacity: 0)
-- **Overlay SVG grain** (`body::before`) avec filtre SVG en `position: fixed` z-index 9999
-
----
-
-## Corrections appliquées
-
-### 1. Suppression de UnicornStudio
-- Supprimé le div `#manifeste-us-bg` + `data-us-project`
-- Supprimé le div `.manifeste-overlay` (lié à UnicornStudio)
-- Supprimé le script loader UnicornStudio (CDN jsdelivr)
-- Supprimé le CSS associé (`#manifeste-us-bg`, `#manifeste-us-bg canvas`)
-
-### 2. Optimisation des backdrop-filter (25 → 9)
-Supprimé les `backdrop-filter: blur()` sur :
-- `.film-card` (x9 cards) — remplacé par `background: rgba(10,15,46,0.85)`
-- `.film-nav-btn` — remplacé par `background: rgba(10,15,46,0.85)`
-- `.counters-section` — remplacé par `background: rgba(10,15,46,0.95)`
-- `.marsnight-detail` — supprimé
-- `.jury-featured` — supprimé
-- `.jury-card` (x6 cards) — remplacé par `background: rgba(10,15,46,0.9)`
-- `.concept` — remplacé par `background: rgba(10,15,46,0.92)`
-- `.about` — remplacé par `background: rgba(10,15,46,0.92)`
-- `.gallery-section` — remplacé par `background: rgba(10,15,46,0.95)`
-- `.how-section` — remplacé par `background: rgba(10,15,46,0.92)`
-- `.player-section` — remplacé par `background: rgba(6,9,30,0.95)`
-- `.palmares-section` — remplacé par `background: rgba(10,15,46,0.95)`
-- `.jury-section` — remplacé par `background: rgba(8,12,38,0.95)`
-- `footer` — remplacé par `background: rgba(10,15,46,0.97)`
-- `.featured-play` — supprimé
-- `.film-thumb-play` — supprimé
-
-### 3. Optimisation de la boucle Three.js
-- `requestAnimationFrame` s'arrête complètement quand la sphère est invisible (`animFrameId = null`)
-- Fonction `window._restartSphereAnim()` exposée pour relancer la boucle
-- Le scroll handler redémarre l'animation quand `sphereOpacity > 0`
-
-### 4. Optimisation du grain overlay
-- Ajout de `background-size: 256px 256px` pour éviter le re-calcul du filtre SVG
-- Ajout de `transform: translateZ(0)` pour forcer le compositing GPU
-
-### 5. Nouveau fond Manifeste — Shader WebGL custom
-Remplacement de UnicornStudio par un shader WebGL léger :
-- **Image de fond** : visage futuriste (`manifeste-bg-img`, opacity 0.5)
-- **Canvas shader** : lignes animées violet/bleu (`#manifeste-shader-canvas`, mix-blend-mode: screen, opacity 0.7)
-- **Overlay gradient** : `.manifeste-overlay` pour la lisibilité du texte
-- **Lazy-loading** via `IntersectionObserver` : le shader ne démarre que quand la section est visible
-- **Auto-pause** : `cancelAnimationFrame` quand la section sort du viewport
-- **`powerPreference: 'low-power'`** + `precision mediump` pour réduire la charge GPU
-- Couleurs adaptées au thème marsAI (bg1: deep blue, bg2: deep purple, lineColor: violet)
-
-### 6. Refonte visuelle du texte Manifeste
-- **Lignes dim** : taille réduite (`clamp(1.3rem, 2.8vw, 3.2rem)`), italic, plus translucides
-- **Lignes principales** : `text-shadow` renforcé pour se détacher du fond
-- **Mots clés `.hl-aurora`** : glow vert (`text-shadow: 0 0 20px rgba(78,255,206,0.5)`)
-- **Mots clés `.hl-solar`** : glow jaune (`text-shadow: 0 0 20px rgba(245,230,66,0.5)`)
-- **Séparateur** : plus large (80px) avec glow aurora
-- **Sous-texte** : taille réduite (0.88rem), couleur plus douce
-- **Outils** : centrés, hover interactif
-
----
-
-## Fichiers modifiés
-- `index.html` — toutes les modifications ci-dessus
-
----
-
-## Statut
-Site fluide, plus de freeze/lag. Fond shader manifeste fonctionnel avec lazy-loading.
-
----
-
-## Session 2 — Amélioration du design de la page d'accueil
-**Date** : 25 février 2026
-
-### 1. Suppression du lecteur vidéo HUD
-- **HTML** (`views/index.html`) : supprimé le bloc `.hud-frame` (coins HUD, cinema-wrap, vidéo, overlay, hud-bar)
-- **CSS** (`css/index.css`) : supprimé ~165 lignes de styles (`.hud-frame`, `.hud-corner`, `.hud-bar`, `.cinema-wrap`, `.cinema-scan`, `.cinema-overlay`, `.cinema-play`, `.cinema-ia-badge`, `@keyframes hud-scan`)
-- **JS** (`js/index-main.js`) : supprimé `fmtTime()`, `startDemo()`, timecode IIFE, `@keyframes pulse-dot` inline (~46 lignes)
-
-### 2. Bouton Démo rouge avec effet laser
-- Ajout d'un bloc `.hero-right-cta` dans la colonne droite du hero (bouton "Soumettre un film" + bouton "Démo")
-- Bouton `.btn-demo` : bordure rouge (coral), fond transparent, `border-radius: 9999px`
-- Effet laser au survol : barre lumineuse `.btn-demo-laser` traversant le bouton via `@keyframes laser-sweep`
-- Hover : `box-shadow` rouge, couleur texte blanche
-- Responsive : taille réduite à 480px, centrage à 1024px
-
-### 3. Améliorations de design mineures
-- **Espacement sections** : `.section-inner` padding augmenté de `100px 60px` à `120px 60px`
-- **Countdown mobile** : gap 12px, label taille et espacement améliorés (480px)
-- **Galerie films** : overlay semi-transparent aurora au survol des `.film-thumb` (pseudo-élément `::after`)
-
-### Fichiers modifiés
-- `views/index.html` — suppression HUD, ajout bouton Démo
-- `css/index.css` — suppression styles HUD, ajout `.btn-demo` + laser, améliorations design
-- `js/index-main.js` — suppression code cinéma player
-- `SESSION.md` — mise à jour
-
----
-
-## Session 3 — Refonte hero, animations reveal, harmonisation sections
-**Date** : 25 février 2026 (suite)
-
-### 1. Explosion sphère 3D au scroll
-- **JS** (`js/index-sphere.js`) : extraction de `triggerExplosion()` en fonction réutilisable
-- Clic sur la sphère → explosion (inchangé)
-- Scroll vers le bas depuis le haut de page → explosion automatique (`scrollY > 30`)
-- Reset du déclencheur quand l'utilisateur revient en haut (`scrollY <= 5`)
-- Scroll handler avec `{ passive: true }`
-
-### 2. Restructuration du hero
-- **Suppression** du sous-texte "Aucune caméra. Aucun acteur..." (`.hero-accroche-sub`)
-- **Déplacement** des boutons CTA ("Soumettre un film" + "Démo") dans `.hero-accroche` sous le texte d'accroche
-- **Countdown** déplacé dans la colonne droite du hero (`.hero-right`), aligné en bas à droite
-- **Suppression** de `.hero-bottom-bar` (plus nécessaire)
-- **Boutons agrandis** : padding `16px 34px`, font-size `1rem`
-- **Laser continu** : animation `laser-sweep` en boucle infinie (2.5s), plus intense au hover (0.5s)
-
-### 3. Texte "Marseille" en haut à droite du hero
-- Police display, uppercase, `letter-spacing: 0.08em`
-- Effet shimmer : dégradé aurora/blanc/lavande glissant (animation 8s)
-- Style watermark subtil : texte transparent + stroke léger
-- Étiré verticalement (`scaleY(1.3)`) et compressé horizontalement (`scaleX(0.65)`)
-- Ancré en haut à droite (`transform-origin: right top`)
-
-### 4. Navbar — effet shrink au scroll
-- Classe `.nav-scrolled` ajoutée via JS quand `scrollY > 60`
-- Réduction du padding, tailles de police, logo, boutons via transitions CSS
-- Fond renforcé + `box-shadow` au scroll
-
-### 5. Harmonisation section Concept
-- **Titre section** : réduit à `clamp(1.4rem, 2.5vw, 2.2rem)` (était 4.5rem max)
-- **Label "Le Concept"** : agrandi à `1rem`, poids 700
-- **Description** : `1rem`, max-width `580px`
-- **Cartes concept** : padding `28px 24px`, gap `20px`, chiffres réduits (`clamp(1.5rem, 2.5vw, 2.2rem)`)
-- **Hover** plus subtil (`translateY(-4px)`)
-
-### 6. Alignement gauche sections corrigé
-- Padding horizontal déplacé de `.section-inner` vers les `<section>` parentes
-- `.section-inner` ne gère plus que le padding vertical + `max-width: 1400px`
-- Alignement cohérent entre hero-content et toutes les sections
-
-### 7. Agrandissement partenaires et badge
-- **Bandeau partenaires** : padding `10px 24px`, logo `30px`, textes agrandis
-- **Badge festival** : padding `8px 20px`, font `0.8rem`, point vert `8px`
-
-### 8. Suppression dev-nav
-- Supprimé le HTML des boutons MAQUETTE/Accueil/Espace Admin/Espace Jury
-- Supprimé le lien `dev-nav.css` du HTML
-- Supprimé les styles `.dev-nav`, `.dev-btn` de `index.css` (~40 lignes)
-
-### 9. Animations reveal en cascade au scroll
-- **Nouveau système** : observer sur les `<section>`, classe `.section-visible` déclenchée
-- Les `.reveal` enfants apparaissent en cascade via `data-delay="1"` à `"5"` (150ms entre chaque)
-- Animation : `translateY(50px)` → `0` + fade, courbe `cubic-bezier(0.16, 1, 0.3, 1)`
-- **Dividers** animés : `scaleX(0)` → `scaleX(1)` quand ils entrent dans le viewport
-- **`::before` concept** : ligne verte animée avec `@keyframes line-reveal`
-- Sections couvertes : Concept, À propos, Appel à projets, Comment ça marche, Galerie films, Jury, Palmarès
-- **Accessibilité** : `prefers-reduced-motion` désactive toutes les animations
-
-### 10. Nettoyage CSS
-- Supprimé styles orphelins : `.countdown-inner`, `.countdown-top-line`, `.hero-accroche-sub`
-- Supprimé responsive orphelins pour éléments supprimés
-- Supprimé les styles dev-nav (~40 lignes)
-
-### Fichiers modifiés
-- `views/index.html` — restructuration hero, ajout reveal/data-delay sur toutes les sections, ajout "Marseille"
-- `css/index.css` — refonte hero, harmonisation tailles, animations reveal/divider/shimmer, nettoyage
-- `js/index-main.js` — observer cascade par section, suppression code cinéma player
-- `js/index-sphere.js` — triggerExplosion(), explosion au scroll avec reset
-- `SESSION.md` — mise à jour
-
----
-
-## Session 4 — Robot IA détouré dans la section Concept
-**Date** : 25 février 2026 (suite)
-
-### 1. Ajout d'un robot IA dans la section Concept
-- **Objectif** : image de robot IA en haut à droite de la section Concept pour renforcer l'identité visuelle
-- **Tentatives** : SVG animé → vidéo MP4 (`ia1.mp4`, blend mode) → image JPG (`Robot2.jpg`, blend mode) → **PNG détouré**
-- **Problème** : les formats JPG/MP4 avec fond sombre ne s'intègrent pas proprement malgré `mix-blend-mode: screen` et masques CSS
-
-### 2. Suppression du fond avec rembg (IA)
-- **Outil** : `rembg` (Python, modèle U2Net) — équivalent local de remove.bg
-- **Entrée** : `assets/Robot2.jpg` (1280×960, fond sombre avec circuits)
-- **Sortie** : `assets/Robot2.png` (1280×960, RGBA, fond 100% transparent)
-- Détourage propre du buste du robot
-
-### 3. Intégration CSS propre
-- **Avant** : `mix-blend-mode: screen`, `opacity: 0.9`, `mask-image: radial-gradient(...)` — résultat approximatif
-- **Après** : fond transparent natif, `opacity: 0.88`, `filter: drop-shadow(0 0 30px rgba(78,255,206,0.15))` — intégration naturelle
-- Plus besoin de hacks CSS pour cacher le fond
-
-### Fichiers modifiés
-- `views/index.html` — source image changée (`.jpg` → `.png`)
-- `css/index.css` — suppression blend-mode/mask, ajout drop-shadow aurora
-- `assets/Robot2.png` — nouveau fichier (PNG détouré)
-- `assets/Robot2.jpg` — fichier source original ajouté
-- `SESSION.md` — mise à jour
-
----
-
-## Session 5 — Carousel Evervault + Optimisation GPU massive
-**Date** : 26 février 2026
-
-### 1. Carousel Evervault — correction chemins vidéo
-- **Bug critique** : les vidéos du carousel ne s'affichaient jamais (cartes vides à droite du scanner)
-- **Cause** : chemins `../assets/videos/ia2.mp4` au lieu de `../assets/ia2.mp4` (dossier `videos/` inexistant)
-- **Fix** : correction des 4 chemins vidéo dans le tableau `VIDEOS`
-
-### 2. Correction clip-path inline
-- **Problème** : le clipping CSS via variables custom (`--clip-right`, `--clip-left`) ne fonctionnait pas sur les vidéos
-- **Fix** : suppression des `clip-path` CSS sur `.ev-card-normal` et `.ev-card-ascii`, remplacement par `style.clipPath` inline dans le JS (`_updateClipping()`)
-
-### 3. Optimisation GPU — Shader WebGL (`index-shader.js`)
-Le GPU Intel UHD 620 était saturé à 100%. Optimisations appliquées :
-- **Résolution rendu ÷2** : canvas à 50% de la taille réelle (CSS upscale) → 4x moins de pixels
-- **Lignes shader réduites** : `linesPerGroup` de 16 à 8 → 2x moins de calculs/pixel
-- **Throttle 30fps** au lieu de 60fps → 2x moins de frames
-- **Gain estimé** : ~16x moins de charge GPU
-
-### 4. Optimisation GPU — Carousel (`manifeste-carousel.js`)
-- **Cartes réduites** : 12 → 6 (moins de vidéos à décoder)
-- **Vidéos simultanées** : max 3 en lecture (les plus proches du scanner), reste en pause
-- **ia.mp4 (53Mo) exclu** : rotation sur 3 vidéos légères uniquement
-- **Particules** : 400 → 60
-- **Canvas particules** : résolution ÷2
-- **Throttle particules** : 30fps
-- **DOM queries cachées** : `querySelector` remplacé par refs `wrapper._normal`, `wrapper._ascii`
-- **Gestion vidéos throttlée** : toutes les 500ms au lieu de chaque frame
-- **ASCII refresh** : 800ms (1 carte aléatoire) au lieu de 250ms (toutes les cartes)
-- `preload="metadata"` au lieu de `"auto"`
-
-### 5. Optimisation GPU — Sphère Three.js (`index-sphere.js`)
-- **UnrealBloomPass SUPPRIMÉ** : élimine 5-8 passes GPU supplémentaires par frame → rendu direct `renderer.render()`
-- **Lumière violette → verte** : `secondary` changé de `0xC084FC` à `0x4EFFCE` (uniforme avec primary)
-- **pixelRatio plafonné à 1** (au lieu de 2) → 4x moins de pixels sur écran hi-DPI
-- **Throttle 30fps**
-- **Géométrie sphère** : detail 10 → 6 (~10K → ~2.5K vertices)
-- **MeshPhysicalMaterial → MeshStandardMaterial** (clearcoat supprimé)
-- **Explosion** : 5000 → 2000 particules
-- **Lumières** : intensité 400 → 150
-- **Émissivité renforcée** (0.05 → 0.15) et wireframe opacity (0.15 → 0.25) pour compenser l'absence de bloom
-- **powerPreference** : `"high-performance"` → `"low-power"`
-- Imports postprocessing (EffectComposer, RenderPass, UnrealBloomPass) supprimés
-
-### Résultat performance
-- **GPU** : de 100% → ~25-30% (Intel UHD Graphics 620)
-- **RAM** : de 75% → ~56%
-- **CPU** : de 48% → ~35%
-- Site fluide, pas de freeze/lag
-
-### Fichiers modifiés
-- `js/index-shader.js` — résolution ÷2, 8 lignes, 30fps
-- `js/index-sphere.js` — bloom supprimé, rendu direct, violet → vert, 30fps, géométrie allégée
-- `js/manifeste-carousel.js` — chemins vidéo corrigés, 6 cartes, 60 particules, clip-path inline, DOM caché
-- `css/index.css` — suppression clip-path CSS sur `.ev-card-normal` et `.ev-card-ascii`
-- `SESSION.md` — mise à jour
-
----
-
-## Session 6 — Amélioration robot IA + fond manifeste
-**Date** : 27 février 2026
-
-### 1. Nettoyage image Robot2.png
-- **Problème** : contours de découpe visibles (halo blanc/gris du fond original), rectangle de l'image apparent sur fond sombre
-- **Script Python (Pillow)** : érosion 2px de la frange alpha, suppression des pixels blancs de bordure, blur doux (0.8px) pour lisser les bords
-- **Backup** conservé dans `assets/Robot2_backup.png`
-
-### 2. Suppression du contour rectangulaire
-- **Cause** : `mask-image: linear-gradient(to bottom)` ne masquait que le bas → contour rectangulaire visible sur les côtés et le haut
-- **Fix** : masque double combiné avec `mask-composite: intersect` :
-  - `radial-gradient(ellipse 80% 100% at 50% 30%)` — fondu sur les côtés et le haut
-  - `linear-gradient(to bottom, #000 55%, transparent 100%)` — fondu progressif en bas
-- `drop-shadow` déplacé de `.robot-img` vers `.robot-wrap` (parent) pour éviter le halo rectangulaire
-- `opacity: 1` + `background: transparent; border: none; outline: none;` pour supprimer tout rendu parasite
-
-### 3. Animation robot plus vivante
-- **Vitesse** : `6s` → `4s` (plus rapide)
-- **Amplitude** : `22px` → `20px`
-- **Résultat** : mouvement flottant bien visible et vivant
-
-### 4. Lumière bleue au-dessus de la tête renforcée
-- **Taille** : `40x40px` → `90x90px`
-- **Position** remontée (`top: 30px` → `top: 10px`)
-- **Couleur** plus bleue intense (`rgba(80,160,255,0.9)`)
-- **Opacité min** : `0` → `0.3` (toujours visible, ne disparaît plus)
-- **Pulsation** plus ample (`scale 0.8→1.1`)
-
-### 5. Luminosité du robot
-- Ajout `filter: brightness(1.23)` sur `.robot-img` pour éclaircir le visage trop sombre
-
-### 6. Image de fond section Manifeste
-- **Opacité** augmentée : `0.5` → `0.7`
-- **Luminosité** : ajout `filter: brightness(1.2)`
-- Image de fond (visage futuriste) plus visible et colorée
-
-### Fichiers modifiés
-- `assets/Robot2.png` — image re-nettoyée (frange supprimée, bords lissés)
-- `assets/Robot2_backup.png` — backup de l'original
-- `css/index.css` — masque radial+linéaire, animation 4s, lumière bleue renforcée, brightness robot et manifeste
-- `SESSION.md` — mise à jour
-
----
-
-## Session 7 — Refonte section "L'Événement" + Globe 3D wikiglobe
-**Date** : 27 février 2026
-
-### 1. Globe 3D interactif (style wikiglobe)
-- **Nouveau fichier** `js/index-globe.js` — ES module Three.js (~280 lignes)
-- **Basé sur** [vrandezo/wikiglobe](https://github.com/vrandezo/wikiglobe) (dat.globe), porté vers Three.js 0.160
-- **Shaders GLSL identiques** au wikiglobe original :
-  - Shader Terre : texture `world.jpg` + lueur blanche Fresnel sur les bords
-  - Shader Atmosphère : halo bleu `vec4(0.1, 0.2, 0.5, 0.7)` avec `pow(..., 12.0)` (backside)
-- **Données Wikipedia FR** : `assets/globe-data.json` (265 Ko, ~26 000 points) chargées en async
-- **Fonction couleur** fidèle au wikiglobe : HSV `hue = 0.6 - val * 0.25` (bleu → cyan → vert)
-- **Points lumineux** : `PointsMaterial`, `AdditiveBlending`, `vertexColors`
-- **Marqueur Marseille** : dot coral pulsant + anneau animé (43.2964°N, 5.3736°E)
-- **Drag souris** : rotation orbitale avec easing 0.1 (identique wikiglobe) + support tactile mobile
-- **Auto-rotation** lente (0.003 rad/frame), reprend après 3s d'inactivité
-- **Performance** : throttle 20fps, `IntersectionObserver` pause/resume, `pixelRatio: 1`, `powerPreference: low-power`
-- **Texture placeholder** : canvas 1x1 sombre au démarrage pour éviter le noir avant chargement
-- **Fallback** : si WebGL indisponible, canvas masqué
-
-### 2. Restructuration HTML section #programme
-- **Supprimé** : timeline longue (4 items + speakers), iframe OpenStreetMap, overlay carte, stat-chips gros
-- **Colonne gauche** : description raccourcie, programme compact 3 lignes (Ven/Sam/Dim avec dots colorés), stats mini en ligne (50 films / 120+ pays / Gratuit)
-- **Colonne droite** : `<canvas id="globe-canvas">` + carte venue compacte superposée (nom, adresse, coordonnées, bouton itinéraire)
-
-### 3. Refonte CSS section
-- **Supprimé** (~160 lignes) : `.venue-map`, `.venue-map iframe`, `.venue-map-overlay`, `.venue-pin`, `@keyframes bounce`, `.venue-coords-badge`, `.venue-info`, `.venue-name`, `.venue-address`, `.venue-tags`, `.venue-tag`, `.venue-btn`, `.venue-card`, `.about-stats`, `.event-programme`, `.prog-item`, `.prog-dot`, `.prog-day`, `.prog-desc`, `.stat-chip`, `.stat-value`, `.stat-label`
-- **Ajouté** : `.globe-container`, `.globe-wrap` (aspect-ratio 1, max-width 460px), `.venue-overlay` compact (glassmorphism, 10px padding), `.prog-compact`, `.prog-line`, `.prog-dot-mini`, `.stat-row`, `.stat-chip-mini`
-- **Layout** : grid gap réduit 80→40px, `align-items: center`, colonne globe centrée en flexbox
-- **Responsive** : globe max-width 380px (1024px), 280px (480px)
-
-### 4. Image de fond Friches Belle de Mai
-- **Image** : `assets/friche-belle-mai-toit-terrasse.jpg` — photo toit-terrasse des Friches
-- **Intégration** : `div.about-bg` en position absolue, déborde ±60px en haut/bas pour couvrir les transitions
-- **Filtre** : `brightness(0.65)`, `saturate(0.4)` — image visible mais intégrée au thème sombre
-- **Masque CSS double** (`mask-composite: intersect`) :
-  - Vertical : fondu transparent en haut/bas → pas de cassure de couleur au scroll
-  - Horizontal : transparent à gauche (texte lisible) → visible à droite (zone globe)
-- **Voile bleu** (`::after`) : dégradé gauche→droite `rgba(10,15,46,0.75)` → transparent pour garantir la lisibilité du texte
-- **Dividers** : `z-index: 3` pour rester visibles au-dessus du fond
-
-### 5. Assets ajoutés
-- `assets/world.jpg` — texture Terre (94 Ko, du repo wikiglobe)
-- `assets/globe-data.json` — données Wikipedia FR résolution 3 (265 Ko)
-- `assets/friche-belle-mai-toit-terrasse.jpg` — photo Friches Belle de Mai
-
-### Fichiers modifiés
-- `js/index-globe.js` — **CRÉÉ** (globe 3D wikiglobe, ~280 lignes)
-- `views/index.html` — section #programme restructurée, ajout canvas globe + about-bg
-- `css/index.css` — suppression anciens styles venue/programme, ajout globe/compact/fond image
-- `SESSION.md` — mise à jour
-
----
-
-## Session 8 — Remplacement sphère hero par vidéo + clarté vidéo
-**Date** : 27 février 2026
-
-### 1. Remplacement de la sphère 3D hero par une vidéo
-- **Supprimé** : `<canvas id="webgl-canvas">` (sphère wireframe Three.js)
-- **Supprimé** : `<script type="module" src="../js/index-sphere.js">` (plus chargé)
-- **Ajouté** : `<video id="hero-video">` en arrière-plan fixe (autoplay, muted, loop, playsinline)
-- **Source** : `assets/Création_Vidéo_IA_pour_MarsAI_Marseille.mp4` (9.3 Mo)
-- Le globe 3D wikiglobe (section Événement) est **conservé intact**
-
-### 2. Adaptation CSS #webgl-canvas → #hero-video
-- **Position** : `fixed`, centré via `top:50%; left:50%; transform:translate(-50%,-50%)`
-- **Couverture** : `min-width:100%; min-height:100%; object-fit:cover`
-- **z-index** : 0 (derrière tout le contenu)
-- **Accessibilité** : `prefers-reduced-motion` → `display: none`
-- Commentaire section mis à jour : "CANVAS THREE.JS" → "VIDÉO HERO"
-
-### 3. Nettoyage index-main.js
-- Référence `#webgl-canvas` → `#hero-video` (scroll fade)
-- Suppression de `window._restartSphereAnim` (plus nécessaire pour une vidéo)
-- Guard `if (heroVideo)` pour éviter les erreurs si l'élément est absent
-
-### 4. Clarté vidéo — suppression des filtres
-- **Problème** : vidéo voilée/bleue, couleurs pas nettes
-- **Cause** : 3 couches d'overlay cumulées — `opacity: 0.35` + `filter: saturate/brightness` + `.hero-canvas-bg::after` (3 gradients bleu foncé)
-- **Itération progressive** : opacity 0.35→0.55→0.65→0.9→**1**, filtre saturate/brightness → **none**
-- **Overlay `.hero-canvas-bg::after`** : 3 gradients bleu foncé → `display: none`
-- **Résultat** : vidéo à 100% de qualité native, aucun filtre, fade 1→0 au scroll
-
-### Fichiers modifiés
-- `views/index.html` — canvas hero → video, script sphere supprimé
-- `css/index.css` — styles #hero-video, overlay supprimé, commentaire mis à jour
-- `js/index-main.js` — référence vidéo, suppression _restartSphereAnim
-- `SESSION.md` — mise à jour
-
----
-
-## Session 9 — Harmonisation des couleurs et transition hero → sections
+## Session 10 — Refonte visuelle majeure de la page d'accueil
 **Date** : 2 mars 2026
 
-### Problème
-- Cassure visuelle brutale entre le hero (vidéo colorée) et la section Concept (bleu très sombre)
-- Toutes les sections utilisaient `rgba(10,15,46,...)` — quasi-noir, trop uniforme et sombre
-- Pas de transition progressive entre le hero et le contenu scrollé
+### 1. Section Concept — cartes glassmorphism + animations
+- **Orbes décoratives** animées (3 gradients) — désactivées par l'utilisateur
+- **Cartes concept** : glassmorphism (`backdrop-filter: blur(12px)`), bordure colorée en haut (aurora/lavande/solar), halo diffus au hover
+- **Chiffres néon** : `text-shadow` lumineux par carte (vert, violet, jaune)
+- **Particules flottantes** : 20 spans positionnées aléatoirement, animation `particle-rise`
+- **Label décoratif** : ligne dégradée aurora après "Le Concept"
 
-### 1. Transition dégradée hero → concept
-- **Ajout `::after` sur `.hero`** : gradient vertical de 220px (transparent → `rgba(13,18,50,0.85)`)
-- Crée un fondu progressif depuis la vidéo vers le fond des sections
-- **Section `.concept`** : background changé en `linear-gradient` progressif (0.82 → 0.92 d'opacité)
-- Plus de cassure de couleur au scroll
+### 2. Section Manifeste — texte reécrit + police Inter
+- Texte du manifeste réécrit : 4 lignes + sous-texte plus punchy
+- Police changée de `var(--font-display)` (Syne) à `var(--font-body)` (Inter)
+- Taille texte augmentée pour équilibrer avec le carousel YouTube
+- Fond manifeste : opacité 0.85, brightness 1.3, saturate 1.2, overlay réduit
 
-### 2. Palette de fond éclaircies — `rgba(10,15,46)` → `rgba(14,19,52)`
-Toutes les sections ont été éclaircies vers un bleu plus vivant :
-| Élément | Avant | Après |
-|---------|-------|-------|
-| `--deep-sky` (token) | `#0A0F2E` | `#0D1232` |
-| `.concept` | `rgba(10,15,46,0.92)` | gradient `rgba(14,19,52, 0.82→0.92)` |
-| `.about` | `rgba(10,15,46,0.97)` | `rgba(14,19,52,0.94)` |
-| `.gallery-section` | `rgba(10,15,46,0.95)` | `rgba(14,19,52,0.92)` |
-| `.how-section` | `rgba(10,15,46,0.92)` | `rgba(14,19,52,0.90)` |
-| `.player-section` | `rgba(6,9,30,0.95)` | `rgba(10,14,42,0.92)` |
-| `.palmares-section` | `rgba(10,15,46,0.95)` | `rgba(14,19,52,0.92)` |
-| `.jury-section` | `rgba(8,12,38,0.95)` | `rgba(14,19,52,0.92)` |
-| `.sponsors-section` | `rgba(8,12,38,0.92)` | `rgba(14,19,52,0.90)` |
-| `footer` | `rgba(10,15,46,0.97)` | `rgba(14,19,52,0.95)` |
-| `.counters-section` | `rgba(10,15,46,0.95)` | `rgba(14,19,52,0.92)` |
-| `.marsnight-bg` | `rgba(10,15,46,0.94)` | `rgba(14,19,52,0.92)` |
-| `nav` | `rgba(10,15,46,0.6/0.95)` | `rgba(14,19,52,0.55/0.92)` |
-| Cartes (film, jury, nav-btn) | `rgba(10,15,46,...)` | `rgba(14,19,52,...)` |
+### 3. Fonds éclaircis + gradients par section
+- `--deep-sky` : `#0D1232` → `#141A42`
+- Toutes les sections : fonds convertis en `linear-gradient` opaques (angles variés 135–180°)
+- Tons : `#141A42` → `#1E255A` selon les sections
 
-### 3. Visibilité images améliorée
-- **Image Friches Belle de Mai** : `brightness(0.65)` → `0.72`, `saturate(0.4)` → `0.5`
-- **Voile bleu section about** : opacité réduite (0.75→0.70, 0.4→0.35)
-- **Concept-cards** : fond légèrement plus visible (`0.03→0.04`), bordure renforcée (`0.06→0.08`)
+### 4. Section Événement
+- Image Friches : `saturate(0.85) brightness(0.82)` (plus colorée)
+- Globe 3D : curseur `grab` / `grabbing` (CSS + fix JS)
+
+### 5. Section "Comment ça marche" — refonte complète
+- Cartes glassmorphism avec `backdrop-filter: blur(8px)`
+- Hover coloré par carte (aurora, lavande, solar, coral)
+- Cercles numérotés plus grands, colorés
+- 3 animations combinées : `how-float` + pulse glow + shimmer
+- Police Inter pour les titres
+
+### 6. Appel à Projets fusionné dans Concept
+- Section "Appel à Projets" supprimée entièrement
+- Infos redistribuées dans les 4 cards concept :
+  - Card 1' : 60s pile, MP4/MOV, 200-300 Mo, Ratio 16:9
+  - Card IA : IA entière/hybride, documentée, multi-films, groupes
+  - Card 50 : 120+ pays, gratuit, sous-titres FR/EN
+  - Card 30.09 : date limite 30 septembre 2026 (couleur coral)
+- Grille concept : 3 → 4 colonnes
+
+### 7. Galerie films — carousel infini double rangée
+- Grille films convertie en 2 carousels horizontaux (`.films-row-1`, `.films-row-2`)
+- Défilement automatique sens opposés (0.6px/frame)
+- Boucle infinie : clonage des cartes, reset à `halfScroll`
+- Drag-to-scroll : curseur grab/grabbing, events mouse + touch
+- Fix : `fade-in` retiré des cartes carousel (opacity 0 bloquait les clones)
+- Fix : `halfScroll` calculé après un frame (layout correct après clonage)
+- Compteur "50 films · 20 par page" supprimé
+
+### 8. Vidéo robot IA (Pinterest)
+- Image `Robot2.png` remplacée par vidéo `robot-ia.mp4` (2.3 Mo)
+- Vidéo extraite depuis Pinterest (pin 1115626138963790195) via curl
+- `<video autoplay muted loop playsinline>` — lecture auto en boucle
+- Fondu bas : `mask-image: linear-gradient(to bottom, #000 65%, transparent 100%)`
+- Positionnement : aligné avec la 4ème card concept (`right: 80px`)
+
+### 9. Bloc Gala unifié (Night + Palmarès + Sponsors)
+- Jury déplacé avant Mars.AI Night
+- 3 sections fusionnées dans un `<section class="gala">` unique
+- Un seul fond dégradé (coral/violet → doré → vert)
+- Un conteneur centré `.gala-inner` (max-width 760px)
+- Séparateurs subtils `.gala-sep` entre sous-parties
+- Sous-titres partagés `.gala-subtitle` (Inter, 1.2–1.6rem)
+- CTA commun en bas du bloc
+- Typographie harmonisée (0.78–0.95rem corps)
 
 ### Fichiers modifiés
-- `css/tokens.css` — `--deep-sky` éclairci (`#0A0F2E` → `#0D1232`)
-- `css/index.css` — transition hero, fonds sections éclaircis, visibilité images
+- `css/tokens.css` — `--deep-sky` éclairci
+- `css/index.css` — refonte massive (~400 lignes modifiées)
+- `views/index.html` — restructuration sections, carousel, gala, vidéo robot
+- `js/index-main.js` — carousel infini, fix fade-in, globe cursor
+- `js/index-globe.js` — fix cursor grab/grabbing
+- `assets/robot-ia.mp4` — vidéo robot IA (nouveau)
 - `SESSION.md` — mise à jour

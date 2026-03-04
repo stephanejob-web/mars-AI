@@ -48,6 +48,7 @@
         <li><a href="#jury"      class="nav-item" data-section="jury">Le Jury</a></li>
         <li><a href="#palmares"  class="nav-item" data-section="palmares">Les Prix</a></li>
         <li><a href="#presse"    class="nav-item" data-section="presse">Contact</a></li>
+        <li><a href="login-jury.html" class="nav-item nav-item-admin">Espace Admin</a></li>
         <li><a class="btn-nav" href="formulaire-depot.html">Soumettre un film</a></li>
         <li>
           <div class="lang-switch">
@@ -85,6 +86,10 @@
     <a href="login-jury.html" class="nav-panel-link nav-panel-jury">
       <span style="width:5px;height:5px;border-radius:50%;background:var(--aurora);display:inline-block;flex-shrink:0;"></span>
       Espace Jury
+    </a>
+    <a href="login-jury.html" class="nav-panel-link" style="color:var(--solar);">
+      <span style="width:5px;height:5px;border-radius:50%;background:var(--solar);display:inline-block;flex-shrink:0;"></span>
+      Espace Admin
     </a>
     <a href="formulaire-depot.html" class="nav-panel-cta" onclick="closeMenu()">
       Soumettre un film →
@@ -219,11 +224,9 @@
       <span class="particle" style="left:97%; animation-delay:4.2s; animation-duration:9s"></span>
     </div>
 
-    <!-- Vidéo IA — haut à droite -->
+    <!-- Image IA — haut à droite -->
     <div class="robot-wrap reveal" data-delay="2">
-      <video autoplay muted loop playsinline>
-        <source src="../assets/robot-ia.mp4" type="video/mp4">
-      </video>
+      <img src="../assets/femme-robot2.png" alt="Femme robot IA" loading="lazy">
     </div>
 
     <div class="section-inner">
@@ -425,8 +428,8 @@
             <div class="how-step-num">01</div>
           </div>
           <div class="how-title">Profil réalisateur</div>
-          <p class="how-desc">Renseignez votre identité, pays de résidence et email de contact. Un seul référent pour les droits d'auteur.</p>
-          <span class="how-tag ht-1">Identité & contact</span>
+          <p class="how-desc">Renseignez votre identité, pays de résidence et email de contact. <strong>Aucun compte à créer</strong> — formulaire simple et direct.</p>
+          <span class="how-tag ht-1">Sans inscription · Accès direct</span>
         </div>
 
         <div class="how-card reveal" data-delay="2">
@@ -478,6 +481,10 @@
        GALERIE FILMS — Sélection officielle marsAI 2026
        ============================================================ -->
   <section class="gallery-section" id="films">
+    <video class="gallery-bg-video" autoplay muted loop playsinline>
+      <source src="../assets/how-bg-video.mp4" type="video/mp4">
+    </video>
+    <div class="gallery-overlay"></div>
     <div class="section-inner">
       <div class="gallery-header">
         <div class="gallery-header-top">
@@ -487,8 +494,8 @@
         <div class="gallery-header-bottom">
           <div class="gallery-filters">
             <span class="filter-chip active" onclick="setFilter(this)">Tous</span>
-            <span class="filter-chip" onclick="setFilter(this)">IA Pure</span>
-            <span class="filter-chip" onclick="setFilter(this)">Hybride</span>
+            <span class="filter-chip" onclick="setFilter(this)">France</span>
+            <span class="filter-chip" onclick="setFilter(this)">International</span>
           </div>
         </div>
       </div>
@@ -505,7 +512,7 @@
           <div class="film-meta">
             <div class="film-author"><span class="film-flag">🇫🇷</span> Léa Fontaine</div>
             <div style="font-size:0.82rem;font-weight:700;color:var(--white-soft);margin-bottom:6px;line-height:1.3;">Rêves de Silicium</div>
-            <div class="film-badges"><span class="badge badge-image">IA Pure</span></div>
+            <div class="film-badges"><span class="badge badge-country">🇫🇷 France</span></div>
           </div>
         </div>
         <!-- Film 2 -->
@@ -517,7 +524,7 @@
           <div class="film-meta">
             <div class="film-author"><span class="film-flag">🇹🇳</span> Amira Ben Said</div>
             <div style="font-size:0.82rem;font-weight:700;color:var(--white-soft);margin-bottom:6px;line-height:1.3;">L'Enfant-Pixel</div>
-            <div class="film-badges"><span class="badge badge-hybride">Hybride</span></div>
+            <div class="film-badges"><span class="badge badge-country">🇹🇳 Tunisie</span></div>
           </div>
         </div>
         <!-- Film 3 -->
@@ -529,7 +536,7 @@
           <div class="film-meta">
             <div class="film-author"><span class="film-flag">🇯🇵</span> Kenji Ito</div>
             <div style="font-size:0.82rem;font-weight:700;color:var(--white-soft);margin-bottom:6px;line-height:1.3;">Archipel 2048</div>
-            <div class="film-badges"><span class="badge badge-image">IA Pure</span></div>
+            <div class="film-badges"><span class="badge badge-country">🇯🇵 Japon</span></div>
           </div>
         </div>
         <!-- Film 4 -->
@@ -541,7 +548,7 @@
           <div class="film-meta">
             <div class="film-author"><span class="film-flag">🇪🇸</span> Carlos Ruiz</div>
             <div style="font-size:0.82rem;font-weight:700;color:var(--white-soft);margin-bottom:6px;line-height:1.3;">Mémoire Vive</div>
-            <div class="film-badges"><span class="badge badge-hybride">Hybride</span></div>
+            <div class="film-badges"><span class="badge badge-country">🇪🇸 Espagne</span></div>
           </div>
         </div>
         <!-- Film 5 -->
@@ -553,7 +560,7 @@
           <div class="film-meta">
             <div class="film-author"><span class="film-flag">🇮🇳</span> Priya Mehta</div>
             <div style="font-size:0.82rem;font-weight:700;color:var(--white-soft);margin-bottom:6px;line-height:1.3;">Les Nouveaux Soleils</div>
-            <div class="film-badges"><span class="badge badge-image">IA Pure</span></div>
+            <div class="film-badges"><span class="badge badge-country">🇮🇳 Inde</span></div>
           </div>
         </div>
         <!-- Film 6 -->
@@ -565,7 +572,7 @@
           <div class="film-meta">
             <div class="film-author"><span class="film-flag">🇸🇳</span> Omar Diallo</div>
             <div style="font-size:0.82rem;font-weight:700;color:var(--white-soft);margin-bottom:6px;line-height:1.3;">Frontières Douces</div>
-            <div class="film-badges"><span class="badge badge-hybride">Hybride</span></div>
+            <div class="film-badges"><span class="badge badge-country">🇸🇳 Sénégal</span></div>
           </div>
         </div>
         <!-- Film 7 -->
@@ -577,7 +584,7 @@
           <div class="film-meta">
             <div class="film-author"><span class="film-flag">🇸🇪</span> Sofia Ek</div>
             <div style="font-size:0.82rem;font-weight:700;color:var(--white-soft);margin-bottom:6px;line-height:1.3;">Vague Numérique</div>
-            <div class="film-badges"><span class="badge badge-hybride">Hybride</span></div>
+            <div class="film-badges"><span class="badge badge-country">🇸🇪 Suède</span></div>
           </div>
         </div>
         <!-- Film 8 -->
@@ -589,7 +596,7 @@
           <div class="film-meta">
             <div class="film-author"><span class="film-flag">🇨🇳</span> Lin Wei</div>
             <div style="font-size:0.82rem;font-weight:700;color:var(--white-soft);margin-bottom:6px;line-height:1.3;">Jardin des Codes</div>
-            <div class="film-badges"><span class="badge badge-image">IA Pure</span></div>
+            <div class="film-badges"><span class="badge badge-country">🇨🇳 Chine</span></div>
           </div>
         </div>
         <!-- Film 9 -->
@@ -601,7 +608,7 @@
           <div class="film-meta">
             <div class="film-author"><span class="film-flag">🇧🇷</span> Yuki Tanaka</div>
             <div style="font-size:0.82rem;font-weight:700;color:var(--white-soft);margin-bottom:6px;line-height:1.3;">Cartographie</div>
-            <div class="film-badges"><span class="badge badge-hybride">Hybride</span></div>
+            <div class="film-badges"><span class="badge badge-country">🇧🇷 Brésil</span></div>
           </div>
         </div>
         <!-- Film 10 -->
@@ -613,7 +620,7 @@
           <div class="film-meta">
             <div class="film-author"><span class="film-flag">🇩🇪</span> Mia Schultz</div>
             <div style="font-size:0.82rem;font-weight:700;color:var(--white-soft);margin-bottom:6px;line-height:1.3;">Horizon Zéro</div>
-            <div class="film-badges"><span class="badge badge-image">IA Pure</span></div>
+            <div class="film-badges"><span class="badge badge-country">🇩🇪 Allemagne</span></div>
           </div>
         </div>
       </div>
@@ -631,7 +638,7 @@
           <div class="film-meta">
             <div class="film-author"><span class="film-flag">🇰🇷</span> Ji-young Park</div>
             <div style="font-size:0.82rem;font-weight:700;color:var(--white-soft);margin-bottom:6px;line-height:1.3;">Résonance Digitale</div>
-            <div class="film-badges"><span class="badge badge-image">IA Pure</span></div>
+            <div class="film-badges"><span class="badge badge-country">🇰🇷 Corée du Sud</span></div>
           </div>
         </div>
         <!-- Film 12 -->
@@ -643,7 +650,7 @@
           <div class="film-meta">
             <div class="film-author"><span class="film-flag">🇧🇷</span> Valentina Costa</div>
             <div style="font-size:0.82rem;font-weight:700;color:var(--white-soft);margin-bottom:6px;line-height:1.3;">Archipel d'Âmes</div>
-            <div class="film-badges"><span class="badge badge-hybride">Hybride</span></div>
+            <div class="film-badges"><span class="badge badge-country">🇧🇷 Brésil</span></div>
           </div>
         </div>
         <!-- Film 13 -->
@@ -655,7 +662,7 @@
           <div class="film-meta">
             <div class="film-author"><span class="film-flag">🇲🇦</span> Yasmine El Fassi</div>
             <div style="font-size:0.82rem;font-weight:700;color:var(--white-soft);margin-bottom:6px;line-height:1.3;">Lumière Artificielle</div>
-            <div class="film-badges"><span class="badge badge-image">IA Pure</span></div>
+            <div class="film-badges"><span class="badge badge-country">🇲🇦 Maroc</span></div>
           </div>
         </div>
         <!-- Film 14 -->
@@ -667,7 +674,7 @@
           <div class="film-meta">
             <div class="film-author"><span class="film-flag">🇺🇸</span> Alex Chen</div>
             <div style="font-size:0.82rem;font-weight:700;color:var(--white-soft);margin-bottom:6px;line-height:1.3;">Demain Commence</div>
-            <div class="film-badges"><span class="badge badge-hybride">Hybride</span></div>
+            <div class="film-badges"><span class="badge badge-country">🇺🇸 États-Unis</span></div>
           </div>
         </div>
         <!-- Film 15 -->
@@ -679,7 +686,7 @@
           <div class="film-meta">
             <div class="film-author"><span class="film-flag">🇮🇹</span> Marco Ferretti</div>
             <div style="font-size:0.82rem;font-weight:700;color:var(--white-soft);margin-bottom:6px;line-height:1.3;">Ombres Portées</div>
-            <div class="film-badges"><span class="badge badge-image">IA Pure</span></div>
+            <div class="film-badges"><span class="badge badge-country">🇮🇹 Italie</span></div>
           </div>
         </div>
         <!-- Film 16 -->
@@ -691,7 +698,7 @@
           <div class="film-meta">
             <div class="film-author"><span class="film-flag">🇳🇬</span> Chioma Adeyemi</div>
             <div style="font-size:0.82rem;font-weight:700;color:var(--white-soft);margin-bottom:6px;line-height:1.3;">Racines Futures</div>
-            <div class="film-badges"><span class="badge badge-hybride">Hybride</span></div>
+            <div class="film-badges"><span class="badge badge-country">🇳🇬 Nigéria</span></div>
           </div>
         </div>
         <!-- Film 17 -->
@@ -703,7 +710,7 @@
           <div class="film-meta">
             <div class="film-author"><span class="film-flag">🇷🇺</span> Anastasia Volkov</div>
             <div style="font-size:0.82rem;font-weight:700;color:var(--white-soft);margin-bottom:6px;line-height:1.3;">Code Vivant</div>
-            <div class="film-badges"><span class="badge badge-image">IA Pure</span></div>
+            <div class="film-badges"><span class="badge badge-country">🇷🇺 Russie</span></div>
           </div>
         </div>
         <!-- Film 18 -->
@@ -715,7 +722,7 @@
           <div class="film-meta">
             <div class="film-author"><span class="film-flag">🇦🇺</span> Noah Williams</div>
             <div style="font-size:0.82rem;font-weight:700;color:var(--white-soft);margin-bottom:6px;line-height:1.3;">Le Dernier Pixel</div>
-            <div class="film-badges"><span class="badge badge-hybride">Hybride</span></div>
+            <div class="film-badges"><span class="badge badge-country">🇦🇺 Australie</span></div>
           </div>
         </div>
         <!-- Film 19 -->
@@ -727,7 +734,7 @@
           <div class="film-meta">
             <div class="film-author"><span class="film-flag">🇵🇱</span> Maja Kowalski</div>
             <div style="font-size:0.82rem;font-weight:700;color:var(--white-soft);margin-bottom:6px;line-height:1.3;">Entre les Lignes</div>
-            <div class="film-badges"><span class="badge badge-image">IA Pure</span></div>
+            <div class="film-badges"><span class="badge badge-country">🇵🇱 Pologne</span></div>
           </div>
         </div>
         <!-- Film 20 -->
@@ -739,7 +746,7 @@
           <div class="film-meta">
             <div class="film-author"><span class="film-flag">🇲🇽</span> Diego Hernández</div>
             <div style="font-size:0.82rem;font-weight:700;color:var(--white-soft);margin-bottom:6px;line-height:1.3;">Futur Passé</div>
-            <div class="film-badges"><span class="badge badge-hybride">Hybride</span></div>
+            <div class="film-badges"><span class="badge badge-country">🇲🇽 Mexique</span></div>
           </div>
         </div>
       </div>
@@ -814,6 +821,9 @@
             <div class="award-grand-name">Grand Prix</div>
             <div class="award-grand-desc">Meilleur film toutes catégories — décerné par le jury international lors de la cérémonie de clôture.</div>
             <div class="award-bourse">✦ Bourse de création · Remise lors du Gala</div>
+            <div class="award-sponsor-link" style="margin-top:10px;">
+              <span style="font-size:0.72rem;font-weight:600;color:#4285F4;background:rgba(66,133,244,0.1);border:1px solid rgba(66,133,244,0.25);border-radius:6px;padding:3px 10px;">Sponsorisé par Google</span>
+            </div>
           </div>
         </div>
 
@@ -823,16 +833,25 @@
             <div class="award-icon">⚖️</div>
             <div class="award-name">Prix du Jury</div>
             <div class="award-desc">Coup de cœur artistique du jury international.</div>
+            <div class="award-sponsor-link">
+              <span style="font-size:0.7rem;color:var(--mist);font-style:italic;">En recherche de sponsor</span>
+            </div>
           </div>
           <div class="award-card award-public reveal">
             <div class="award-icon">🌍</div>
             <div class="award-name">Prix du Public</div>
             <div class="award-desc">Vote ouvert en ligne pendant le festival.</div>
+            <div class="award-sponsor-link">
+              <span style="font-size:0.7rem;color:var(--mist);font-style:italic;">En recherche de sponsor</span>
+            </div>
           </div>
           <div class="award-card award-innov reveal">
             <div class="award-icon">🤖</div>
             <div class="award-name">Prix Innovation IA</div>
             <div class="award-desc">Usage le plus créatif de l'intelligence artificielle.</div>
+            <div class="award-sponsor-link">
+              <span style="font-size:0.7rem;color:var(--mist);font-style:italic;">En recherche de sponsor</span>
+            </div>
           </div>
         </div>
       </div>

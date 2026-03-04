@@ -3,7 +3,8 @@
     "allow": [
       "mcp__ide__getDiagnostics",
       "WebFetch(domain:fr.pinterest.com)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(python:*)"
     ]
   }
 }
