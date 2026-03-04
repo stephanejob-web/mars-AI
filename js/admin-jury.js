@@ -272,6 +272,15 @@ function injectMobileStyles() {
         bottom: 0;
         z-index: 5;
       }
+      .decision-main {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+      .dbtn-main {
+        min-width: 0;
+        height: 42px;
+      }
       body.jury-mobile-pane-list #view-eval .detail {
         display: none;
       }
