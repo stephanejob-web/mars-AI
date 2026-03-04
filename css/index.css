@@ -1345,12 +1345,33 @@ section {
   background: url('../assets/bande-pellicule-droite.jpg') center / 100% 200% no-repeat;
   z-index: 0;
   pointer-events: none;
-  filter: brightness(0.45);
+  filter: brightness(0.65);
 }
 .gallery-section .section-inner {
   position: relative;
   z-index: 1;
   padding: 60px 0 30px;
+}
+/* Décorations cinéma : popcorn à gauche, caméra à droite */
+.gallery-deco {
+  position: absolute;
+  z-index: 3;
+  pointer-events: none;
+  height: 100%;
+  width: auto;
+  object-fit: contain;
+}
+.gallery-deco-left {
+  left: 40px;
+  top: 50%;
+  transform: translateY(-50%);
+  max-height: 75%;
+}
+.gallery-deco-right {
+  right: 40px;
+  top: 50%;
+  transform: translateY(-50%);
+  max-height: 70%;
 }
 .gallery-header {
   margin-bottom: 40px;
