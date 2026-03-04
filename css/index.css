@@ -2386,104 +2386,97 @@ section {
 
 /* ================================================================
    PIED DE PAGE (FOOTER)
-   Grille : marque, liens, partenaires, mentions legales
+   Fond noir, texte blanc, compact
    ================================================================ */
 footer {
-  background: linear-gradient(
-    180deg,
-    #161C48 0%,
-    #111535 100%
-  );
-  border-top: 1px solid rgba(255,255,255,0.06);
-  padding: 60px;
+  background: #000;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding: 32px 60px 24px;
 }
 .footer-inner {
   max-width: 1200px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: 48px;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 32px;
+  align-items: start;
 }
-.footer-brand .logo { font-size: 1.5rem; margin-bottom: 16px; display: block; }
+.footer-brand .logo { font-size: 1.3rem; margin-bottom: 10px; display: block; }
 .footer-desc {
-  font-size: 0.85rem;
-  color: var(--mist);
-  line-height: 1.65;
-  max-width: 280px;
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.6;
+  max-width: 260px;
 }
 .footer-col h4 {
-  font-size: 0.78rem;
+  font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--mist);
-  margin-bottom: 20px;
+  color: rgba(255,255,255,0.8);
+  margin-bottom: 14px;
 }
 .footer-links {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 .footer-links a {
-  font-size: 0.88rem;
-  color: rgba(240,244,255,0.6);
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.55);
   transition: color 0.2s;
 }
-.footer-links a:hover { color: var(--white-soft); }
+.footer-links a:hover { color: #fff; }
 
-/* --- Logos partenaires du footer --- */
+/* --- Logos partenaires du footer (au-dessus du logo) --- */
 .footer-partners {
-  max-width: 1200px;
-  margin: 36px auto 0;
-  padding-top: 32px;
-  border-top: 1px solid rgba(255,255,255,0.06);
   display: flex;
-  gap: 20px;
+  align-items: center;
+  gap: 10px;
   flex-wrap: wrap;
+  margin-bottom: 12px;
 }
 .footer-partners-label {
-  font-size: 0.72rem;
+  font-size: 0.62rem;
   font-weight: 600;
-  letter-spacing: 0.10em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--mist);
-  padding-right: 20px;
-  border-right: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.45);
+  padding-right: 10px;
+  border-right: 1px solid rgba(255,255,255,0.12);
 }
 .footer-partners-logo img {
-  height: 32px;
+  height: 22px;
   width: auto;
   filter: brightness(0) invert(1);
-  opacity: 0.65;
+  opacity: 0.6;
   transition: opacity 0.2s;
   display: block;
 }
 .footer-partners-logo:hover img { opacity: 1; }
 .footer-partners-sep {
-  color: var(--mist);
-  font-size: 1rem;
-  opacity: 0.35;
+  color: rgba(255,255,255,0.3);
+  font-size: 0.75rem;
 }
 .footer-partners-name {
-  font-size: 0.88rem;
+  font-size: 0.72rem;
   font-weight: 600;
-  color: var(--white-soft);
-  opacity: 0.55;
-  transition: opacity 0.2s;
+  color: rgba(255,255,255,0.5);
+  transition: color 0.2s;
 }
-.footer-partners-name:hover { opacity: 0.9; }
+.footer-partners-name:hover { color: #fff; }
 
 /* --- Barre de copyright en bas --- */
 .footer-bottom {
   max-width: 1200px;
-  margin: 28px auto 0;
-  padding-top: 24px;
-  border-top: 1px solid rgba(255,255,255,0.05);
+  margin: 16px auto 0;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.08);
   display: flex;
   justify-content: space-between;
-  font-size: 0.78rem;
-  color: var(--mist);
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.3);
 }
 
 /* ================================================================
