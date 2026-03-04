@@ -1094,3 +1094,8 @@ injectMobileStyles();
 ensureMobileControls();
 applyResponsiveLayout();
 window.addEventListener('resize', applyResponsiveLayout);
+
+// Toggle sidebar gauche (masquer / afficher)
+function toggleSidebar() {
+  document.body.classList.toggle('sidebar-collapsed');
+}

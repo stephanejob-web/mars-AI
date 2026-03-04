@@ -2140,3 +2140,8 @@ function sendSidebarMsg() {
 
 // Init badge au chargement
 updateSCBadge();
+
+// Toggle sidebar gauche (masquer / afficher)
+function toggleSidebar() {
+  document.body.classList.toggle('sidebar-collapsed');
+}

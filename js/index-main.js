@@ -496,3 +496,18 @@ renderSponsors();
   }
 })();
 
+// Globe 3D — chargé seulement quand visible (Three.js ~500KB évité au démarrage)
+(function () {
+  const globeCanvas = document.getElementById('globe-canvas');
+  if (!globeCanvas) return;
+  let loaded = false;
+  const globeObs = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting && !loaded) {
+      loaded = true;
+      globeObs.disconnect();
+      import('../js/index-globe.js').catch(() => {});
+    }
+  }, { rootMargin: '300px' });
+  globeObs.observe(globeCanvas);
+})();
+

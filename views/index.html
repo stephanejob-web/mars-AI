@@ -5,13 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>marsAI — Concours International de Courts-Métrages IA</title>
 
+  <!-- Preconnect — ressources externes critiques -->
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+  <link rel="preconnect" href="https://i.pravatar.cc" crossorigin>
+  <link rel="preconnect" href="https://hoirqrkdgbmvpwutwuwj.supabase.co" crossorigin>
+  <link rel="dns-prefetch" href="https://unpkg.com">
+
   <!-- ============================================================
        FEUILLES DE STYLES
        ============================================================ -->
   <link rel="stylesheet" href="../css/tokens.css">
   <link rel="stylesheet" href="../css/reset.css">
-  <link rel="stylesheet" href="../css/grain.css">
   <link rel="stylesheet" href="../css/index.css">
+  <!-- grain.css : effet décoratif, chargé en non-bloquant -->
+  <link rel="stylesheet" href="../css/grain.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="../css/grain.css"></noscript>
 
   <!-- ============================================================
        SCRIPTS EXTERNES — GSAP + Three.js ImportMap
@@ -31,7 +39,7 @@
   <!-- ============================================================
        VIDÉO — Arrière-plan hero (remplace la sphère 3D)
        ============================================================ -->
-  <video id="hero-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true">
+  <video id="hero-video" autoplay muted loop playsinline preload="metadata" poster="../assets/hero-poster.jpg" aria-hidden="true">
     <source src="../assets/Création_Vidéo_IA_pour_MarsAI_Marseille.mp4" type="video/mp4">
   </video>
 
@@ -112,7 +120,10 @@
         <div class="hero-partners">
           <span class="hero-partners-label">Une co-création</span>
           <a href="https://laplateforme.io/coding-school/" target="_blank" rel="noopener" class="hero-partners-logo">
-            <img src="../assets/logo-laplateforme.png" alt="La Plateforme · Coding School">
+            <picture>
+              <source srcset="../assets/logo-laplateforme.webp" type="image/webp">
+              <img src="../assets/logo-laplateforme.png" alt="La Plateforme · Coding School" width="725" height="120">
+            </picture>
           </a>
           <span class="hero-partners-sep">&</span>
           <span class="hero-partners-name">Mobile Film Festival</span>
@@ -226,7 +237,10 @@
 
     <!-- Image IA — haut à droite -->
     <div class="robot-wrap reveal" data-delay="2">
-      <img src="../assets/femme-robot2.png" alt="Femme robot IA" loading="lazy">
+      <picture>
+        <source srcset="../assets/femme-robot2.webp" type="image/webp">
+        <img src="../assets/femme-robot2.png" alt="Femme robot IA" loading="lazy" width="800" height="1399">
+      </picture>
     </div>
 
     <div class="section-inner">
@@ -267,7 +281,7 @@
   <section class="manifeste-section">
 
     <!-- Image d'arrière-plan + Canvas shader WebGL (chargé paresseusement) -->
-    <img src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/5b2b94ae-4a0b-458d-b838-58b0fb5fadfd_3840w.webp" alt="" class="manifeste-bg-img">
+    <img src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/5b2b94ae-4a0b-458d-b838-58b0fb5fadfd_3840w.webp" alt="" class="manifeste-bg-img" loading="lazy" width="3840" height="2160">
     <canvas id="manifeste-shader-canvas"></canvas>
     <div class="manifeste-overlay"></div>
 
@@ -403,9 +417,6 @@
     </div>
   </section>
 
-  <!-- Globe 3D — module ES -->
-  <script type="module" src="../js/index-globe.js"></script>
-
   <div class="divider"></div>
 
   <!-- ============================================================
@@ -482,8 +493,14 @@
        ============================================================ -->
   <!-- Section titre films -->
   <section class="gallery-section" id="films">
-    <img src="../assets/pop-corn.png" alt="Popcorn" class="gallery-deco gallery-deco-left" loading="lazy">
-    <img src="../assets/camera-cinema.png" alt="Caméra cinéma" class="gallery-deco gallery-deco-right" loading="lazy">
+    <picture>
+      <source srcset="../assets/pop-corn.webp" type="image/webp">
+      <img src="../assets/pop-corn.png" alt="Popcorn" class="gallery-deco gallery-deco-left" loading="lazy" width="700" height="700">
+    </picture>
+    <picture>
+      <source srcset="../assets/camera-cinema.webp" type="image/webp">
+      <img src="../assets/camera-cinema.png" alt="Caméra cinéma" class="gallery-deco gallery-deco-right" loading="lazy" width="700" height="708">
+    </picture>
     <div class="section-inner">
       <div class="gallery-header">
         <div class="gallery-header-top">
@@ -856,7 +873,10 @@
         <div class="footer-partners">
           <span class="footer-partners-label">Co-organisé par</span>
           <a href="https://laplateforme.io/coding-school/" target="_blank" rel="noopener" class="footer-partners-logo">
-            <img src="../assets/logo-laplateforme.png" alt="La Plateforme · Coding School">
+            <picture>
+              <source srcset="../assets/logo-laplateforme.webp" type="image/webp">
+              <img src="../assets/logo-laplateforme.png" alt="La Plateforme · Coding School" width="725" height="120" loading="lazy">
+            </picture>
           </a>
           <span class="footer-partners-sep">×</span>
           <span class="footer-partners-name">Mobile Film Festival</span>
