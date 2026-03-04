@@ -182,16 +182,12 @@
 
   // ─── JURY SECTION ──────────────────────────────────────
   const defaultJury = [
-    { id:1,  name:"Marie Lefebvre", label:"Présidente · Réalisatrice",  quote:"Figure incontournable du cinéma d'auteur, trois fois primée au Festival de Cannes. Elle préside le jury marsAI 2026 avec l'ambition d'élever la création IA au rang d'art majeur.", avatar:"https://i.pravatar.cc/400?img=47", featured:true },
-    { id:2,  name:"Pierre Dubois",  label:"Directeur artistique",       avatar:"https://i.pravatar.cc/400?img=12"  },
-    { id:3,  name:"Kenji Ito",      label:"Artiste numérique",          avatar:"https://i.pravatar.cc/400?img=68"  },
-    { id:4,  name:"Sofia Eriksson", label:"Critique de cinéma",         avatar:"https://i.pravatar.cc/400?img=44"  },
-    { id:7,  name:"Amara Touré",    label:"Productrice",                avatar:"https://i.pravatar.cc/400?img=32"  },
-    { id:8,  name:"Elena Petrov",   label:"Compositrice",               avatar:"https://i.pravatar.cc/400?img=29"  },
-    { id:9,  name:"Yuki Nakamura",  label:"Réalisatrice",               avatar:"https://i.pravatar.cc/400?img=56"  },
-    { id:10, name:"Carlos Ruiz",    label:"Chef opérateur",             avatar:"https://i.pravatar.cc/400?img=18"  },
-    { id:11, name:"Priya Mehta",    label:"Scénariste",                 avatar:"https://i.pravatar.cc/400?img=36"  },
-    { id:12, name:"Omar Diallo",    label:"Directeur photo",            avatar:"https://i.pravatar.cc/400?img=11"  },
+    { id:1,  name:"Marie Lefebvre", label:"Présidente · Réalisatrice",  badge:"Présidence du Jury", quote:"Figure incontournable du cinéma d'auteur, trois fois primée au Festival de Cannes. Elle préside le jury marsAI 2026 avec l'ambition d'élever la création IA au rang d'art majeur.", avatar:"https://i.pravatar.cc/400?img=47", featured:true },
+    { id:2,  name:"Pierre Dubois",  label:"Directeur artistique",       badge:"Membre du Jury", quote:"Directeur artistique visionnaire, il a collaboré avec les plus grands studios européens. Son regard esthétique unique apporte une dimension singulière aux délibérations.", avatar:"https://i.pravatar.cc/400?img=12"  },
+    { id:3,  name:"Kenji Ito",      label:"Artiste numérique",          badge:"Membre du Jury", quote:"Pionnier de l'art génératif au Japon, ses œuvres mêlent tradition et technologie. Il explore les frontières entre créativité humaine et intelligence artificielle.", avatar:"https://i.pravatar.cc/400?img=68"  },
+    { id:4,  name:"Sofia Eriksson", label:"Critique de cinéma",         badge:"Membre du Jury", quote:"Critique influente basée à Stockholm, elle écrit pour les plus grands magazines cinématographiques. Spécialiste des nouvelles formes narratives numériques.", avatar:"https://i.pravatar.cc/400?img=44"  },
+    { id:7,  name:"Amara Touré",    label:"Productrice",                badge:"Membre du Jury", quote:"Productrice primée originaire de Dakar, elle défend un cinéma engagé et innovant. Elle a produit plusieurs courts-métrages sélectionnés dans des festivals internationaux.", avatar:"https://i.pravatar.cc/400?img=32"  },
+    { id:10, name:"Carlos Ruiz",    label:"Chef opérateur",             badge:"Membre du Jury", quote:"Chef opérateur de renom basé à Madrid, il a signé la photographie de nombreux films récompensés. Son expertise technique enrichit l'évaluation des œuvres.", avatar:"https://i.pravatar.cc/400?img=18"  },
   ];
 
   function renderJury() {
@@ -209,29 +205,19 @@
       return;
     }
 
-    // Premier membre visible = vedette
-    const president = visible[0];
-    const members   = visible.slice(1);
+    // Tous les membres en cards verticales uniformes
+    featuredWrap.innerHTML = '';
 
-    featuredWrap.innerHTML = `
-      <div class="jury-featured">
-        <img class="jury-featured-photo" src="${president.avatar}" alt="${president.name}">
-        <div class="jury-featured-body">
-          <div class="jury-featured-badge">✦ Présidence du jury</div>
-          <div class="jury-featured-name">${president.name}</div>
-          <div class="jury-featured-role">${president.label}</div>
-          ${president.quote ? `<p class="jury-featured-quote">${president.quote}</p>` : ''}
-        </div>
-      </div>`;
-
-    grid.innerHTML = members.map(j => `
+    grid.innerHTML = visible.map(j => `
       <div class="jury-card">
         <div class="jury-card-photo-wrap">
           <img class="jury-card-photo" src="${j.avatar}" alt="${j.name}">
         </div>
         <div class="jury-card-info">
+          <div class="jury-card-badge">${j.badge || 'Membre du Jury'}</div>
           <div class="jury-card-name">${j.name}</div>
           <div class="jury-card-role">${j.label}</div>
+          ${j.quote ? `<p class="jury-card-quote">${j.quote}</p>` : ''}
         </div>
       </div>`).join('');
   }

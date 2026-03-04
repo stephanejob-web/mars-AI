@@ -2256,8 +2256,8 @@ section {
 .award-grand {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, rgba(245,230,66,0.06) 0%, rgba(245,230,66,0.02) 60%, rgba(245,230,66,0.06) 100%);
-  border: 1px solid rgba(245,230,66,0.22);
+  background: linear-gradient(135deg, rgba(245,230,66,0.12) 0%, rgba(245,230,66,0.06) 60%, rgba(245,230,66,0.12) 100%);
+  border: 1px solid rgba(245,230,66,0.35);
   border-radius: 14px;
   padding: 22px 20px;
   text-align: center;
@@ -2304,7 +2304,7 @@ section {
 }
 .award-grand-desc {
   font-size: 0.8rem;
-  color: var(--mist);
+  color: rgba(240, 244, 255, 0.75);
   line-height: 1.6;
   margin-bottom: 12px;
   max-width: 400px;
@@ -2333,8 +2333,8 @@ section {
   gap: 8px;
 }
 .award-card {
-  background: rgba(255,255,255,0.025);
-  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
   border-radius: 14px;
   padding: 20px 16px;
   display: flex;
@@ -2380,7 +2380,7 @@ section {
 
 .award-desc {
   font-size: 0.75rem;
-  color: var(--mist);
+  color: rgba(240, 244, 255, 0.7);
   line-height: 1.55;
 }
 
@@ -3280,7 +3280,7 @@ footer {
     #1D2558 65%,
     #161C48 100%
   );
-  padding: 120px 0;
+  padding: 40px 0 60px;
   overflow: hidden;
 }
 .jury-section::before {
@@ -3297,6 +3297,19 @@ footer {
   position: absolute; top: 0; left: 0; right: 0;
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(78,255,206,0.3), transparent);
+}
+
+/* --- Header jury centré --- */
+.jury-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.jury-header .section-desc {
+  max-width: 500px;
+  margin: 0 auto;
+}
+.jury-section .section-inner {
+  padding: 10px 0 20px !important;
 }
 
 /* --- Carte vedette — President(e) du jury --- */
@@ -3377,8 +3390,11 @@ footer {
 /* --- Grille des membres du jury --- */
 .jury-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0;
 }
 .jury-card {
   background: rgba(21,27,70,0.85);
@@ -3405,8 +3421,9 @@ footer {
 }
 .jury-card-photo {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 3 / 2;
   object-fit: cover;
+  object-position: center top;
   display: block;
   transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
 }
@@ -3414,16 +3431,37 @@ footer {
   transform: scale(1.05);
 }
 .jury-card-info {
-  padding: 18px 20px 22px;
+  padding: 16px 18px 20px;
+}
+.jury-card-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-body);
+  font-size: 0.65rem; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--aurora);
+  background: rgba(78,255,206,0.08);
+  border: 1px solid rgba(78,255,206,0.2);
+  border-radius: 20px;
+  padding: 4px 12px;
+  margin-bottom: 10px;
 }
 .jury-card-name {
-  font-family: var(--font-display);
-  font-size: 1rem; font-weight: 800;
-  color: var(--white-soft);
+  font-family: var(--font-body);
+  font-size: 1.15rem; font-weight: 800;
+  color: #fff;
   margin-bottom: 6px; line-height: 1.2;
 }
 .jury-card-role {
-  font-size: 0.76rem; color: var(--mist-light); line-height: 1.5;
+  font-size: 0.88rem; color: var(--aurora); line-height: 1.5;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+.jury-card-quote {
+  font-size: 0.82rem; color: rgba(220,225,240,0.85); line-height: 1.6;
+  font-style: italic;
+  border-left: 2px solid rgba(78,255,206,0.25);
+  padding-left: 12px;
+  margin: 0;
 }
 
 /* ================================================================
@@ -3437,7 +3475,7 @@ footer {
 .sponsors-tier-label {
   font-size: 0.68rem; font-weight: 600;
   letter-spacing: 0.12em; text-transform: uppercase;
-  color: rgba(136,146,176,0.45);
+  color: rgba(136,146,176,0.7);
   text-align: center; margin-bottom: 12px;
 }
 .sponsors-row {
@@ -3448,8 +3486,8 @@ footer {
 }
 .sponsor-card {
   display: flex; align-items: center; justify-content: center;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.18);
   border-radius: 14px;
   padding: 16px 12px;
   width: 100%;
@@ -3465,8 +3503,8 @@ footer {
 .sponsor-card.tier-principal {
   grid-column: 1 / -1;
   padding: 18px 20px;
-  border-color: rgba(245,230,66,0.14);
-  background: rgba(245,230,66,0.03);
+  border-color: rgba(245,230,66,0.30);
+  background: rgba(245,230,66,0.08);
 }
 .sponsor-card.tier-principal:hover {
   border-color: rgba(245,230,66,0.28);
@@ -3483,12 +3521,12 @@ footer {
 .sponsor-name-text {
   font-family: var(--font-body);
   font-size: 0.92rem; font-weight: 600;
-  color: rgba(240,244,255,0.45); letter-spacing: 0.02em;
+  color: rgba(240,244,255,0.8); letter-spacing: 0.02em;
   text-align: center; transition: color 0.2s;
 }
 .sponsor-card:hover .sponsor-name-text { color: rgba(240,244,255,0.7); }
 .sponsor-card.tier-principal .sponsor-name-text {
-  font-size: 1rem; color: rgba(245,230,66,0.55);
+  font-size: 1rem; color: rgba(245,230,66,0.85);
 }
 .sponsor-card.tier-principal:hover .sponsor-name-text { color: rgba(245,230,66,0.85); }
 
