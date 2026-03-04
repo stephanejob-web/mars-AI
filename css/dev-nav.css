@@ -1,17 +1,18 @@
 /* ================================================================
    FICHIER — dev-nav.css
    Panneau de navigation maquette — rail vertical fixé à droite,
-   toujours visible. Commun à toutes les pages du prototype.
+   apparaît au survol du bord droit de l'écran.
+   Commun à toutes les pages du prototype.
    ================================================================ */
 
 #dev-nav {
   position: fixed;
   right: 0;
   top: 50%;
-  transform: translateY(-50%);
-  background: rgba(4, 7, 22, .96);
+  transform: translateY(-50%) translateX(calc(100% - 22px));
+  background: rgba(4, 7, 22, 0.96);
   backdrop-filter: blur(24px);
-  border: 1px solid rgba(255,255,255,.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-right: none;
   border-radius: 16px 0 0 16px;
   padding: 10px 0 12px;
@@ -21,8 +22,14 @@
   gap: 2px;
   z-index: 99999;
   font-family: Inter, sans-serif;
-  box-shadow: -6px 0 32px rgba(0,0,0,.5);
+  box-shadow: -6px 0 32px rgba(0, 0, 0, 0.5);
   min-width: 78px;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Afficher le panneau au survol */
+#dev-nav:hover {
+  transform: translateY(-50%) translateX(0);
 }
 
 /* ── En-tête ───────────────────────────────────────────────────── */
@@ -32,7 +39,7 @@
   align-items: center;
   gap: 4px;
   padding: 4px 10px 10px;
-  border-bottom: 1px solid rgba(255,255,255,.07);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
   width: 100%;
   margin-bottom: 4px;
 }
@@ -43,9 +50,9 @@
 #dev-nav .dn-header .dn-title {
   font-size: 7.5px;
   font-weight: 700;
-  letter-spacing: .13em;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
-  color: rgba(255,255,255,.2);
+  color: rgba(255, 255, 255, 0.2);
 }
 
 /* ── Boutons ───────────────────────────────────────────────────── */
@@ -57,20 +64,20 @@
   padding: 10px 8px;
   width: calc(100% - 8px);
   text-decoration: none;
-  color: rgba(255,255,255,.38);
+  color: rgba(255, 255, 255, 0.38);
   border-radius: 10px;
-  transition: all .18s;
+  transition: all 0.18s;
   border: 1px solid transparent;
 }
 #dev-nav .dn-btn:hover {
-  background: rgba(255,255,255,.07);
-  color: rgba(255,255,255,.9);
-  border-color: rgba(255,255,255,.1);
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 #dev-nav .dn-btn.active {
-  background: rgba(78,255,206,.08);
+  background: rgba(78, 255, 206, 0.08);
   color: #4effce;
-  border-color: rgba(78,255,206,.22);
+  border-color: rgba(78, 255, 206, 0.22);
 }
 
 #dev-nav .dn-btn .dn-icon {
@@ -80,7 +87,7 @@
 #dev-nav .dn-btn .dn-lbl {
   font-size: 10px;
   font-weight: 600;
-  letter-spacing: .03em;
+  letter-spacing: 0.03em;
   text-align: center;
   line-height: 1.2;
 }
@@ -89,32 +96,36 @@
 #dev-nav .dn-sep {
   width: calc(100% - 16px);
   height: 1px;
-  background: rgba(255,255,255,.07);
+  background: rgba(255, 255, 255, 0.07);
   margin: 3px 0;
 }
 
 /* ── Espace Admin ──────────────────────────────────────────────── */
-#dev-nav .dn-btn.espace-admin { color: rgba(192,132,252,.55); }
+#dev-nav .dn-btn.espace-admin {
+  color: rgba(192, 132, 252, 0.55);
+}
 #dev-nav .dn-btn.espace-admin:hover {
-  background: rgba(192,132,252,.1);
+  background: rgba(192, 132, 252, 0.1);
   color: #c084fc;
-  border-color: rgba(192,132,252,.25);
+  border-color: rgba(192, 132, 252, 0.25);
 }
 #dev-nav .dn-btn.espace-admin.active {
-  background: rgba(192,132,252,.1);
+  background: rgba(192, 132, 252, 0.1);
   color: #c084fc;
-  border-color: rgba(192,132,252,.3);
+  border-color: rgba(192, 132, 252, 0.3);
 }
 
 /* ── Espace Jury ───────────────────────────────────────────────── */
-#dev-nav .dn-btn.espace-jury { color: rgba(245,230,66,.5); }
+#dev-nav .dn-btn.espace-jury {
+  color: rgba(245, 230, 66, 0.5);
+}
 #dev-nav .dn-btn.espace-jury:hover {
-  background: rgba(245,230,66,.07);
+  background: rgba(245, 230, 66, 0.07);
   color: #f5e642;
-  border-color: rgba(245,230,66,.22);
+  border-color: rgba(245, 230, 66, 0.22);
 }
 #dev-nav .dn-btn.espace-jury.active {
-  background: rgba(245,230,66,.07);
+  background: rgba(245, 230, 66, 0.07);
   color: #f5e642;
-  border-color: rgba(245,230,66,.25);
+  border-color: rgba(245, 230, 66, 0.25);
 }
