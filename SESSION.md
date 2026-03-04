@@ -85,3 +85,49 @@ Sessions précédentes documentées : correction performances GPU, suppression U
 - `js/index-globe.js` — fix cursor grab/grabbing
 - `assets/robot-ia.mp4` — vidéo robot IA (nouveau)
 - `SESSION.md` — mise à jour
+
+---
+
+## Session 11 — Améliorations visuelles : Concept, Événement, Comment ça marche, Galerie Films
+**Date** : 3 mars 2026
+
+### 1. Section Concept — vidéo robot remplacée par image femme-robot IA
+- Vidéo `robot-ia.mp4` remplacée par image `femme-robot2.jpg`
+- Conversion JPG → PNG avec fond blanc supprimé (Python/Pillow)
+- Masque radial + linear-gradient pour fondu harmonieux sur tous les bords (gauche, bas)
+- Image agrandie (370px), positionnée bord droit (`right: -20px`)
+- Particules : plus visibles (opacité 0.8, taille 4px), montent plus haut (-900px)
+- Cards concept : `padding-top: 46px` pour espacement avec l'image
+
+### 2. Section Événement — image de fond plus lumineuse + texte agrandi
+- Image Friches : `brightness` 0.82 → 0.95, `saturate` 0.85 → 0.95
+- Overlay bleu réduit (0.65 → 0.55, 0.30 → 0.20)
+- Description section : blanc pur `#fff`, taille 1.25rem, `text-shadow`
+- Programme (Ven/Sam/Dim) : texte blanc, 0.95rem, ombre portée
+- Stats : valeurs 1.15rem, labels 0.82rem
+
+### 3. Section "Comment ça marche" — simplification + visage IA en fond
+- Animations supprimées : `how-float`, `how-pulse`, `how-shimmer` retirés
+- Cards : padding réduit (28/32px → 22/24px) pour voir le CTA en bas
+- Image `visage-couleur-sans.png` en fond à gauche (fond blanc supprimé)
+- Image couvre toute la hauteur de la section, opacité 40%
+
+### 4. Section Galerie Films — séparation en 2 sections + image cinéma
+- Section scindée en deux :
+  - `gallery-section` : titre "Sélection Officielle" + filtres (Tous/IA Pure/Hybride)
+  - `films-cinema-section` : carousel double rangée + image cinéma en fond
+- Image `view-3d-cinema-theatre-room.jpg` en fond du carousel (salle de cinéma)
+- Overlay semi-transparent (40%), image centrée à 40% vertical
+- Titre et filtres centrés (`text-align: center`, `justify-content: center`)
+- Pellicule de cinéma `bande-pellicule.png` en décoration autour du titre (en cours)
+
+### Fichiers modifiés
+- `css/index.css` — refonte styles sections Concept, Événement, Comment ça marche, Galerie
+- `views/index.html` — image robot, séparation galerie en 2 sections, pellicule
+- `assets/femme-robot2.jpg` — image femme-robot IA (nouveau)
+- `assets/femme-robot2.png` — version PNG fond transparent (nouveau)
+- `assets/visage-couleur-sans.jpg` — visage IA lignes néon (nouveau)
+- `assets/visage-couleur-sans.png` — version PNG fond transparent (nouveau)
+- `assets/view-3d-cinema-theatre-room.jpg` — salle de cinéma (nouveau)
+- `assets/bande-pellicule.png` — pellicule cinéma décoration (nouveau)
+- `SESSION.md` — mise à jour session 11
