@@ -17,7 +17,10 @@ body { font-size: 14px; display: flex; }
   display: flex;
   flex-direction: column;
   height: 100vh;
-  transition: margin-left 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.25s ease;
+  overflow: hidden;
+  transition: width 0.35s cubic-bezier(0.4,0,0.2,1),
+              min-width 0.35s cubic-bezier(0.4,0,0.2,1),
+              opacity 0.25s ease;
 }
 
 /* ── SIDEBAR TOGGLE BUTTON ───────────────────────────────────── */
@@ -57,7 +60,8 @@ body { font-size: 14px; display: flex; }
 
 /* ── SIDEBAR COLLAPSED STATE ─────────────────────────────────── */
 body.sidebar-collapsed .sidebar {
-  margin-left: calc(-1 * var(--sidebar-w));
+  width: 0;
+  min-width: 0;
   opacity: 0;
   pointer-events: none;
 }
