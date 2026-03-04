@@ -197,3 +197,88 @@ body.sidebar-collapsed .sidebar-toggle-icon { transform: rotate(180deg); }
   justify-content: space-between;
   margin-bottom: 14px;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Bouton hamburger mobile (injecté par JS) ───────────────── */
+.ap-mobile-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  color: var(--white-soft);
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* ── TABLET ≤ 1100px ────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .content { padding: 16px; }
+  .topbar-sep,
+  .topbar-info { display: none; }
+}
+
+/* ── MOBILE ≤ 768px ─────────────────────────────────────────── */
+@media (max-width: 768px) {
+  html, body { overflow: auto; }
+  body { display: block; }
+
+  /* Sidebar : fixed, cachée par défaut, slide au tap */
+  .sidebar {
+    position: fixed !important;
+    left: 0; top: 0; bottom: 0;
+    z-index: 500;
+    width: var(--sidebar-w) !important;
+    min-width: var(--sidebar-w) !important;
+    transform: translateX(-110%);
+    transition: transform 0.25s ease, opacity 0.2s ease !important;
+  }
+  body.panel-sidebar-open .sidebar {
+    transform: translateX(0);
+  }
+  /* Désactiver sidebar-collapsed sur mobile */
+  body.sidebar-collapsed .sidebar {
+    width: var(--sidebar-w) !important;
+    min-width: var(--sidebar-w) !important;
+    opacity: 1 !important;
+  }
+
+  /* Overlay */
+  #ap-mobile-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 490;
+    background: rgba(4,6,14,0.62);
+    backdrop-filter: blur(2px);
+  }
+  body.panel-sidebar-open #ap-mobile-overlay { display: block; }
+
+  /* Toggle sidebar-collapse button caché (hamburger JS utilisé) */
+  .sidebar-toggle { display: none !important; }
+
+  /* Topbar */
+  .main { height: auto; }
+  .topbar { padding: 0 10px; gap: 8px; }
+  .topbar-sep,
+  .topbar-info { display: none; }
+  .topbar-title { font-size: 0.82rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; }
+  .ap-mobile-btn { display: flex; }
+
+  /* Contenu */
+  .content { padding: 12px; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+  .stat-card { padding: 12px 14px; }
+  .stat-card-val { font-size: 1.35rem; }
+
+  /* Section header */
+  .section-head { flex-wrap: wrap; gap: 8px; }
+}
