@@ -52,6 +52,23 @@
       Phases & Dates
     </div>
 
+    <div class="nav-label" style="margin-top:8px;">Suivi</div>
+
+    <div class="nav-item" onclick="showView('selection', this)">
+      <span class="icon">🏅</span>
+      Sélection & Votes
+      <span class="nav-count" style="background:rgba(192,132,252,0.15);color:var(--lavande);" id="count-selection">10</span>
+      <span class="nav-count" style="background:rgba(245,230,66,0.12);color:var(--solar);border:1px solid rgba(245,230,66,0.25);margin-left:2px;" id="nav-count-tickets">5</span>
+    </div>
+
+
+    <div class="nav-label" style="margin-top:8px;">Festival</div>
+
+    <div class="nav-item" onclick="showView('awards', this)">
+      <span class="icon">🏆</span>
+      Awards & Sponsors
+    </div>
+
     <div class="nav-label" style="margin-top:8px;">Site</div>
 
     <div class="nav-item" onclick="showView('site', this)">
@@ -66,6 +83,25 @@
       Déconnexion
     </div>
   </nav>
+
+  <!-- ── Sidebar Chat Jury ── -->
+  <div class="sc-wrap" id="sc-wrap">
+    <button class="sc-toggle" id="sc-toggle-btn" onclick="toggleSidebarChat()">
+      <span class="sc-icon">💬</span>
+      Chat jury
+      <span class="sc-unread" id="sc-badge">3</span>
+      <span class="sc-arrow" id="sc-arrow">▲</span>
+    </button>
+    <div class="sc-panel" id="sc-panel">
+      <div class="sc-contacts-row" id="sc-contacts-row"></div>
+      <div class="sc-messages" id="sc-messages"></div>
+      <div class="sc-input-wrap">
+        <input class="sc-input" id="sc-input" placeholder="Message au jury…"
+          onkeydown="if(event.key==='Enter')sendSidebarMsg()">
+        <button class="sc-send" onclick="sendSidebarMsg()">↑</button>
+      </div>
+    </div>
+  </div>
 </aside>
 
 <!-- ══════════ ZONE PRINCIPALE ══════════ -->
@@ -75,7 +111,7 @@
   <div class="topbar">
     <span class="topbar-title" id="topbar-title">Gestion des utilisateurs</span>
     <div class="topbar-sep"></div>
-    <span class="topbar-info" id="topbar-info">Jurys et modérateurs — accès par token permanent</span>
+    <span class="topbar-info" id="topbar-info">Jurys et modérateurs — accès par login/mot de passe ou Gmail</span>
     <div class="topbar-right">
       <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--mist);background:rgba(245,230,66,0.07);border:1px solid rgba(245,230,66,0.2);border-radius:6px;padding:4px 10px;">🛡️ Admin</span>
     </div>
@@ -102,10 +138,26 @@
         <div class="stat-card-sub">accès révoqué</div>
       </div>
       <div class="stat-card">
-        <div class="stat-card-label">Tokens envoyés</div>
+        <div class="stat-card-label">Comptes créés</div>
         <div class="stat-card-val sv-solar">6</div>
-        <div class="stat-card-sub">liens permanents</div>
+        <div class="stat-card-sub">invitations envoyées</div>
       </div>
+    </div>
+
+    <!-- ══ GRAPHIQUE PARTICIPATION JURY ══ -->
+    <div class="vote-chart-section">
+      <div class="vote-chart-header">
+        <div>
+          <div class="vote-chart-title">Participation des jurés</div>
+          <div class="vote-chart-sub">Films évalués vs non évalués par chaque membre du jury</div>
+        </div>
+        <div class="vote-chart-legend">
+          <span class="vcl-item"><span class="vcl-dot" style="background:var(--aurora);"></span>≥ 80%</span>
+          <span class="vcl-item"><span class="vcl-dot" style="background:var(--solar);"></span>≥ 50%</span>
+          <span class="vcl-item"><span class="vcl-dot" style="background:var(--coral);"></span>< 50%</span>
+        </div>
+      </div>
+      <div id="vote-chart-bars"></div>
     </div>
 
     <!-- Tableau utilisateurs -->
@@ -138,7 +190,7 @@
             <th>Utilisateur</th>
             <th>Rôle</th>
             <th>Films assignés</th>
-            <th>Token d'accès</th>
+            <th>Accès</th>
             <th>Statut</th>
             <th>Actions</th>
           </tr>
@@ -157,6 +209,17 @@
         <p>Visionnez chaque film et assignez-le au jury de votre choix.</p>
       </div>
     </div>
+
+    <button id="btn-repartir" onclick="openRepartirModal()" class="btn-repartir-main">
+      <div class="brm-left">
+        <span class="brm-icon">⚡</span>
+        <div>
+          <div class="brm-title">Répartir équitablement</div>
+          <div class="brm-sub">Distribuer automatiquement les <span id="brm-count">500</span> films entre tous les jurés actifs</div>
+        </div>
+      </div>
+      <span class="brm-arrow">→</span>
+    </button>
 
     <!-- Barre de recherche films -->
     <div style="position:relative;margin-bottom:16px;">
@@ -190,19 +253,48 @@
       </div>
     </div>
 
-    <!-- Onglets -->
-    <div class="film-tabs">
-      <button class="film-tab pending-tab active" id="tab-pending" onclick="switchFilmTab('pending')">
-        🎬 À assigner
-        <span class="tab-count" id="count-pending">—</span>
-      </button>
-      <button class="film-tab assigned-tab" id="tab-assigned" onclick="switchFilmTab('assigned')">
-        ✓ Assignés
-        <span class="tab-count" id="count-assigned">—</span>
-      </button>
+    <!-- Onglets + Toggle de vue -->
+    <div class="tabs-toolbar">
+      <div class="film-tabs">
+        <button class="film-tab pending-tab active" id="tab-pending" onclick="switchFilmTab('pending')">
+          🎬 À assigner
+          <span class="tab-count" id="count-pending">—</span>
+        </button>
+        <button class="film-tab assigned-tab" id="tab-assigned" onclick="switchFilmTab('assigned')">
+          ✓ Assignés
+          <span class="tab-count" id="count-assigned">—</span>
+        </button>
+      </div>
+      <div class="view-mode-toggle">
+        <button class="vmt-btn active" id="vmt-list" onclick="setViewMode('list')" title="Vue liste">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="2" width="12" height="1.5" rx="0.75" fill="currentColor"/><rect x="1" y="6" width="12" height="1.5" rx="0.75" fill="currentColor"/><rect x="1" y="10" width="12" height="1.5" rx="0.75" fill="currentColor"/></svg>
+          Liste
+        </button>
+        <button class="vmt-btn" id="vmt-grid" onclick="setViewMode('grid')" title="Vue grille">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" fill="currentColor"/><rect x="8" y="1" width="5" height="5" rx="1" fill="currentColor"/><rect x="1" y="8" width="5" height="5" rx="1" fill="currentColor"/><rect x="8" y="8" width="5" height="5" rx="1" fill="currentColor"/></svg>
+          Grille
+        </button>
+      </div>
     </div>
 
-    <div id="assign-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;"></div>
+    <!-- Vue Liste -->
+    <div class="film-list-wrap" id="film-list-wrap">
+      <table class="film-list-table">
+        <thead>
+          <tr>
+            <th class="flt-num">#</th>
+            <th>Film</th>
+            <th>Pays</th>
+            <th>Jury assigné</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="assign-grid"></tbody>
+      </table>
+    </div>
+
+    <!-- Vue Grille -->
+    <div id="assign-cards" class="assign-cards-grid" style="display:none;"></div>
 
     <!-- État vide -->
     <div id="assign-empty" style="display:none;text-align:center;padding:60px 20px;">
@@ -212,7 +304,7 @@
     </div>
 
     <!-- Pagination -->
-    <div id="pagination" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:24px;"></div>
+    <div id="pagination"></div>
   </div>
 
   <!-- ══════ VUE PHASES ══════ -->
@@ -259,6 +351,282 @@
         </div>
         <button onclick="showToast('Phase 2 sauvegardée', 'ok')" style="margin-top:14px;width:100%;padding:9px;background:rgba(192,132,252,0.1);border:1px solid rgba(192,132,252,0.3);border-radius:8px;font-family:var(--font-body);font-size:0.82rem;font-weight:600;color:var(--lavande);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='rgba(192,132,252,0.18)'" onmouseout="this.style.background='rgba(192,132,252,0.1)'">Enregistrer les dates</button>
       </div>
+    </div>
+  </div>
+
+  <!-- ══════ VUE MODÉRATION ══════ -->
+  <div class="content" id="view-moderation" style="display:none;">
+    <div class="section-head" style="margin-bottom:20px;">
+      <div>
+        <h2>Tickets — Signalements jury</h2>
+        <p>Traitez chaque signalement un à un.</p>
+      </div>
+    </div>
+
+    <!-- Stats compactes -->
+    <div class="stats-row" style="margin-bottom:24px;">
+      <div class="stat-card">
+        <div class="stat-card-label">À traiter</div>
+        <div class="stat-card-val" style="color:var(--solar);" id="tk-count-attente">5</div>
+        <div class="stat-card-sub">signalements ouverts</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Traités</div>
+        <div class="stat-card-val sv-lavande" id="tk-count-resolu">3</div>
+        <div class="stat-card-sub">ce mois</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Films signalés</div>
+        <div class="stat-card-val" id="tk-count-films">5</div>
+        <div class="stat-card-sub">films concernés</div>
+      </div>
+    </div>
+
+    <!-- Inbox -->
+    <div id="tk-inbox"></div>
+    <div class="tk-resolved-section" id="tk-resolved-section"></div>
+  </div>
+
+  <!-- ══════ VUE SÉLECTION ══════ -->
+  <div class="content" id="view-selection" style="display:none;">
+    <div class="section-head" style="margin-bottom:20px;">
+      <div>
+        <h2>Sélection & Modération — Synthèse complète</h2>
+        <p>Votes, commentaires, signalements du jury — tout en un seul endroit pour faciliter vos décisions.</p>
+      </div>
+      <button class="btn-create" onclick="exportSelectionCSV()">📤 Exporter CSV</button>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row" style="margin-bottom:20px;">
+      <div class="stat-card">
+        <div class="stat-card-label">Unanimes ✅</div>
+        <div class="stat-card-val sv-aurora" id="sel-unanime">0</div>
+        <div class="stat-card-sub">validation directe</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Partagés ⚠️</div>
+        <div class="stat-card-val" style="color:var(--solar);" id="sel-partage">0</div>
+        <div class="stat-card-sub">nécessitent attention</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Rejetés ❌</div>
+        <div class="stat-card-val sv-coral" id="sel-rejete">0</div>
+        <div class="stat-card-sub">majorité refusé</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">En attente ⏳</div>
+        <div class="stat-card-val sv-lavande" id="sel-attente">0</div>
+        <div class="stat-card-sub">pas encore évalués</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Signalements 🚩</div>
+        <div class="stat-card-val" style="color:var(--solar);" id="sel-tickets">0</div>
+        <div class="stat-card-sub">tickets ouverts</div>
+      </div>
+    </div>
+
+    <!-- Filtres -->
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+      <button onclick="filterSelection('tous', this)" class="sel-filter active" id="selfil-tous">Tous</button>
+      <button onclick="filterSelection('unanime', this)" class="sel-filter" id="selfil-unanime">✅ Unanimes</button>
+      <button onclick="filterSelection('partage', this)" class="sel-filter" id="selfil-partage">⚠️ Partagés</button>
+      <button onclick="filterSelection('rejete', this)" class="sel-filter" id="selfil-rejete">❌ Rejetés</button>
+      <button onclick="filterSelection('attente', this)" class="sel-filter" id="selfil-attente">⏳ En attente</button>
+      <button onclick="filterSelection('signale', this)" class="sel-filter" id="selfil-signale">🚩 Signalements <span id="selfil-signale-count" style="font-family:var(--font-mono);font-size:0.65rem;"></span></button>
+      <button onclick="filterSelection('selectionne', this)" class="sel-filter sel-filter-star" id="selfil-selectionne">★ Ma sélection <span id="selfil-selectionne-count" style="font-family:var(--font-mono);font-size:0.65rem;"></span></button>
+      <div style="flex:1;"></div>
+      <input type="text" id="sel-search" placeholder="🔍 Rechercher un film…" oninput="renderSelection()" style="background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.09);border-radius:8px;padding:7px 12px;font-family:var(--font-body);font-size:0.82rem;color:var(--white-soft);outline:none;min-width:200px;">
+    </div>
+
+    <!-- Tri -->
+    <div style="display:flex;gap:8px;margin-bottom:14px;align-items:center;">
+      <span style="font-size:0.72rem;color:var(--mist);font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Trier par :</span>
+      <button onclick="sortSelection('score', this)" class="sel-sort active" id="selsort-score">Score ↓</button>
+      <button onclick="sortSelection('title', this)" class="sel-sort" id="selsort-title">Titre A-Z</button>
+      <button onclick="sortSelection('comments', this)" class="sel-sort" id="selsort-comments">💬 Commentaires</button>
+    </div>
+
+    <!-- Tableau dynamique -->
+    <div class="user-table-wrap">
+      <table class="user-table" id="selection-table">
+        <thead>
+          <tr>
+            <th style="width:40px;">#</th>
+            <th>Film</th>
+            <th>Répartition votes</th>
+            <th>Consensus</th>
+            <th>Jurés</th>
+            <th>💬</th>
+            <th>Décision admin</th>
+          </tr>
+        </thead>
+        <tbody id="selection-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════ VUE AWARDS & SPONSORS ══════ -->
+  <div class="content" id="view-awards" style="display:none;">
+    <div class="section-head" style="margin-bottom:20px;">
+      <div>
+        <h2>Awards & Sponsors</h2>
+        <p>Gérez les prix du festival et leurs sponsors associés.</p>
+      </div>
+      <button class="btn-create" onclick="showToast('Award ajouté', 'ok')">+ Ajouter un award</button>
+    </div>
+
+    <!-- ── Table Awards ── -->
+    <div style="margin-bottom:28px;">
+      <h3 style="font-family:var(--font-display);font-size:1rem;font-weight:700;margin-bottom:12px;color:var(--white-soft);">🏆 Table Awards</h3>
+      <div class="user-table-wrap">
+        <table class="user-table">
+          <thead>
+            <tr>
+              <th>Award</th>
+              <th>Description</th>
+              <th>Sponsor associé</th>
+              <th>Doté</th>
+              <th>Lauréat</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span style="font-size:1.2rem;">🥇</span>
+                  <div>
+                    <div style="font-weight:600;font-size:0.85rem;">Grand Prix marsAI</div>
+                    <div style="font-size:0.7rem;color:var(--mist);">Prix principal</div>
+                  </div>
+                </div>
+              </td>
+              <td style="font-size:0.78rem;color:var(--mist);max-width:200px;">Meilleur film de la compétition officielle</td>
+              <td>
+                <span style="background:rgba(66,133,244,0.12);border:1px solid rgba(66,133,244,0.3);border-radius:6px;padding:3px 10px;font-size:0.75rem;color:#4285F4;font-weight:600;">Google</span>
+              </td>
+              <td style="font-family:var(--font-mono);font-size:0.8rem;color:var(--solar);">5 000 €</td>
+              <td style="font-size:0.78rem;color:var(--mist);">— À définir</td>
+              <td>
+                <button onclick="showToast('Award mis à jour', 'ok')" style="padding:4px 10px;background:rgba(78,255,206,0.08);border:1px solid rgba(78,255,206,0.2);border-radius:6px;font-size:0.72rem;color:var(--aurora);cursor:pointer;">Éditer</button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span style="font-size:1.2rem;">🥈</span>
+                  <div>
+                    <div style="font-weight:600;font-size:0.85rem;">Prix Meilleure Réalisation</div>
+                    <div style="font-size:0.7rem;color:var(--mist);">Technique & artistique</div>
+                  </div>
+                </div>
+              </td>
+              <td style="font-size:0.78rem;color:var(--mist);max-width:200px;">Excellence dans la direction artistique et la réalisation</td>
+              <td>
+                <span style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:3px 10px;font-size:0.75rem;color:var(--mist);">— Non sponsorisé</span>
+              </td>
+              <td style="font-family:var(--font-mono);font-size:0.8rem;color:var(--solar);">2 000 €</td>
+              <td style="font-size:0.78rem;color:var(--mist);">— À définir</td>
+              <td>
+                <button onclick="showToast('Award mis à jour', 'ok')" style="padding:4px 10px;background:rgba(78,255,206,0.08);border:1px solid rgba(78,255,206,0.2);border-radius:6px;font-size:0.72rem;color:var(--aurora);cursor:pointer;">Éditer</button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span style="font-size:1.2rem;">🌟</span>
+                  <div>
+                    <div style="font-weight:600;font-size:0.85rem;">Prix du Public</div>
+                    <div style="font-size:0.7rem;color:var(--mist);">Vote en ligne</div>
+                  </div>
+                </div>
+              </td>
+              <td style="font-size:0.78rem;color:var(--mist);max-width:200px;">Film le plus apprécié par le public via vote en ligne</td>
+              <td>
+                <span style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:3px 10px;font-size:0.75rem;color:var(--mist);">Partenaire à définir</span>
+              </td>
+              <td style="font-family:var(--font-mono);font-size:0.8rem;color:var(--solar);">1 000 €</td>
+              <td style="font-size:0.78rem;color:var(--mist);">— À définir</td>
+              <td>
+                <button onclick="showToast('Award mis à jour', 'ok')" style="padding:4px 10px;background:rgba(78,255,206,0.08);border:1px solid rgba(78,255,206,0.2);border-radius:6px;font-size:0.72rem;color:var(--aurora);cursor:pointer;">Éditer</button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span style="font-size:1.2rem;">🎞️</span>
+                  <div>
+                    <div style="font-weight:600;font-size:0.85rem;">Prix Coup de Cœur Jury</div>
+                    <div style="font-size:0.7rem;color:var(--mist);">Mention spéciale</div>
+                  </div>
+                </div>
+              </td>
+              <td style="font-size:0.78rem;color:var(--mist);max-width:200px;">Mention spéciale décernée librement par le jury</td>
+              <td>
+                <span style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:3px 10px;font-size:0.75rem;color:var(--mist);">— Non sponsorisé</span>
+              </td>
+              <td style="font-family:var(--font-mono);font-size:0.8rem;color:var(--mist);">Trophée</td>
+              <td style="font-size:0.78rem;color:var(--mist);">— À définir</td>
+              <td>
+                <button onclick="showToast('Award mis à jour', 'ok')" style="padding:4px 10px;background:rgba(78,255,206,0.08);border:1px solid rgba(78,255,206,0.2);border-radius:6px;font-size:0.72rem;color:var(--aurora);cursor:pointer;">Éditer</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── Table Sponsors ── -->
+    <div class="section-head" style="margin-bottom:12px;">
+      <div>
+        <h3 style="font-family:var(--font-display);font-size:1rem;font-weight:700;color:var(--white-soft);">🤝 Sponsors & Partenaires</h3>
+        <p style="font-size:0.78rem;color:var(--mist);">Associez chaque sponsor à un ou plusieurs awards</p>
+      </div>
+      <button class="btn-create" onclick="showToast('Sponsor ajouté', 'ok')">+ Ajouter un sponsor</button>
+    </div>
+    <div class="user-table-wrap">
+      <table class="user-table">
+        <thead>
+          <tr>
+            <th>Sponsor</th>
+            <th>Niveau</th>
+            <th>Award(s) sponsorisé(s)</th>
+            <th>Logo</th>
+            <th>Lien</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:600;font-size:0.88rem;color:#4285F4;">Google</td>
+            <td><span style="background:rgba(245,230,66,0.1);border:1px solid rgba(245,230,66,0.3);border-radius:6px;padding:2px 8px;font-size:0.72rem;color:var(--solar);font-weight:700;">Principal</span></td>
+            <td style="font-size:0.78rem;color:var(--aurora);">🥇 Grand Prix marsAI</td>
+            <td>
+              <div onclick="showToast('Uploader un logo image', 'ok')" style="width:36px;height:36px;background:rgba(66,133,244,0.1);border:1px dashed rgba(66,133,244,0.3);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:0.65rem;color:#4285F4;">Logo</div>
+            </td>
+            <td style="font-family:var(--font-mono);font-size:0.72rem;color:var(--mist);">google.com</td>
+            <td>
+              <button onclick="showToast('Sponsor mis à jour', 'ok')" style="padding:4px 10px;background:rgba(78,255,206,0.08);border:1px solid rgba(78,255,206,0.2);border-radius:6px;font-size:0.72rem;color:var(--aurora);cursor:pointer;">Éditer</button>
+            </td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;font-size:0.88rem;color:var(--white-soft);">Partenaire B</td>
+            <td><span style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:2px 8px;font-size:0.72rem;color:var(--mist);">Partenaire</span></td>
+            <td style="font-size:0.78rem;color:var(--mist);">— À associer</td>
+            <td>
+              <div onclick="showToast('Uploader un logo image', 'ok')" style="width:36px;height:36px;background:rgba(255,255,255,0.04);border:1px dashed rgba(255,255,255,0.12);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:0.65rem;color:var(--mist);">Logo</div>
+            </td>
+            <td style="font-family:var(--font-mono);font-size:0.72rem;color:var(--mist);">—</td>
+            <td>
+              <button onclick="showToast('Sponsor mis à jour', 'ok')" style="padding:4px 10px;background:rgba(78,255,206,0.08);border:1px solid rgba(78,255,206,0.2);border-radius:6px;font-size:0.72rem;color:var(--aurora);cursor:pointer;">Éditer</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:12px;font-size:0.75rem;color:var(--mist);line-height:1.55;">
+      💡 L'affichage des awards est principalement visuel — chaque sponsor est lié à son prix via une image ou un logo éditable sur la page d'accueil.
     </div>
   </div>
 
@@ -433,14 +801,30 @@
       </div>
     </div>
 
+    <div class="form-field">
+      <label>Méthode d'authentification</label>
+      <div class="role-picker" style="gap:8px;">
+        <div class="role-opt selected" id="opt-auth-pass" onclick="selectAuthMethod('password')" style="flex:1;">
+          <span class="ro-icon">🔑</span>
+          <span class="ro-label">Email / Mot de passe</span>
+        </div>
+        <div class="role-opt" id="opt-auth-gmail" onclick="selectAuthMethod('gmail')" style="flex:1;">
+          <span class="ro-icon">
+            <svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M17.64 9.205c0-.638-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 01-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
+          </span>
+          <span class="ro-label">Gmail</span>
+        </div>
+      </div>
+    </div>
+
     <div class="modal-info">
-      <strong>Lien de connexion permanent</strong> généré automatiquement à la création.<br>
-      Il sera envoyé à l'adresse email renseignée. Aucun mot de passe requis.
+      Un <strong>email d'invitation</strong> sera envoyé automatiquement à la création du compte.<br>
+      Le membre pourra se connecter via ses identifiants ou son compte Gmail.
     </div>
 
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal('create')">Annuler</button>
-      <button class="btn-confirm" onclick="createUser()">Créer & envoyer le lien →</button>
+      <button class="btn-confirm" onclick="createUser()">Créer le compte & envoyer l'invitation →</button>
     </div>
   </div>
 </div>
@@ -500,18 +884,154 @@
   </div>
 </div>
 
+<!-- ══ MODALE TICKET DÉTAIL ══ -->
+<div class="tk-modal-overlay" id="tk-modal-overlay" onclick="closeTkModal(event)">
+  <div class="tk-modal">
+    <div class="tk-modal-header">
+      <span class="tk-modal-id" id="tkm-id">TK-001</span>
+      <button class="tk-modal-close" onclick="closeTkModal()">✕</button>
+    </div>
+    <div class="tk-modal-film" id="tkm-film"></div>
+    <div class="tkm-film-row">
+      <span class="tk-modal-author" id="tkm-author"></span>
+      <button class="tkm-btn-film" id="tkm-btn-film" title="Aller à la fiche film">▶ Voir le film</button>
+    </div>
+
+    <div class="tk-modal-section">
+      <div class="tk-modal-label">Type de problème</div>
+      <span class="tc-badge" id="tkm-type-badge"></span>
+    </div>
+
+    <div class="tk-modal-section">
+      <div class="tk-modal-label">Signalé par</div>
+      <div class="tk-modal-reporter" id="tkm-reporter"></div>
+    </div>
+
+    <div class="tk-modal-section">
+      <div class="tk-modal-label">Description</div>
+      <div class="tk-modal-desc" id="tkm-desc"></div>
+    </div>
+
+    <div class="tk-modal-section">
+      <div class="tk-modal-label">Note interne admin</div>
+      <textarea class="tk-modal-note" id="tkm-note" placeholder="Ajouter une note..."></textarea>
+    </div>
+
+    <div class="tk-modal-actions" id="tkm-actions">
+      <button class="tk-btn-take" id="tkm-btn-take">→ Prendre en charge</button>
+      <button class="tk-btn-resolve" id="tkm-btn-resolve">✓ Résoudre</button>
+      <button class="tk-btn-revision" id="tkm-btn-revision">↩ Demander révision</button>
+      <button class="tk-btn-refuse" id="tkm-btn-refuse">✕ Refuser le film</button>
+    </div>
+    <button class="tk-btn-cancel" onclick="closeTkModal()" style="margin-top:8px;">Fermer</button>
+  </div>
+</div>
+
+<!-- ══ MODAL VIDÉO ══ -->
+<div class="vid-modal-overlay" id="vid-modal-overlay" onclick="closeVideoModal(event)">
+  <div class="vid-modal">
+    <div class="vid-modal-header">
+      <div>
+        <div class="vid-modal-title" id="vid-modal-title"></div>
+        <div class="vid-modal-sub" id="vid-modal-sub"></div>
+      </div>
+      <button class="vid-modal-close" onclick="closeVideoModal()">✕</button>
+    </div>
+    <video id="vid-modal-video" src="../assets/video.mp4" controls style="width:100%;border-radius:10px;display:block;background:#000;max-height:60vh;"></video>
+  </div>
+</div>
+
+<!-- ══ MODAL EMAIL RÉALISATEUR ══ -->
+<div class="email-modal-overlay" id="email-modal-overlay" onclick="closeEmailModal(event)">
+  <div class="email-modal">
+    <div class="email-modal-header">
+      <div>
+        <div class="email-modal-title">📧 Email au réalisateur</div>
+        <div class="email-modal-sub" id="em-ticket-info"></div>
+      </div>
+      <button class="email-modal-close" onclick="closeEmailModal()">✕</button>
+    </div>
+
+    <div class="email-field">
+      <span class="email-label">De</span>
+      <span class="email-value" style="color:var(--mist);">administration@marsai2026.fr</span>
+    </div>
+    <div class="email-field">
+      <span class="email-label">À</span>
+      <span class="email-value" id="em-to"></span>
+    </div>
+    <div class="email-field">
+      <span class="email-label">Objet</span>
+      <input class="email-input" id="em-subject" type="text">
+    </div>
+    <div style="margin-top:12px;">
+      <div class="email-label" style="margin-bottom:6px;">Message</div>
+      <textarea class="email-body" id="em-body"></textarea>
+    </div>
+
+    <div class="email-actions">
+      <button class="email-btn-cancel" onclick="closeEmailModal()">Annuler</button>
+      <button class="email-btn-send" onclick="sendEmailAction()">📧 Envoyer l'email</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
+
+<!-- ══ MODALE RÉPARTITION ÉQUITABLE ══ -->
+<div class="modal-overlay" id="modal-repartir">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Répartition équitable</div>
+        <div style="font-size:0.75rem;color:var(--mist);margin-top:3px;" id="repartir-sub">Aperçu avant application</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('repartir')">✕</button>
+    </div>
+
+    <!-- Aperçu par jury -->
+    <div id="repartir-preview" style="margin:4px 0 8px;display:flex;flex-direction:column;gap:10px;"></div>
+
+    <!-- Résumé total -->
+    <div id="repartir-summary" style="padding:10px 14px;background:rgba(78,255,206,0.06);border:1px solid rgba(78,255,206,0.18);border-radius:10px;font-size:0.8rem;color:var(--aurora);margin-bottom:4px;"></div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('repartir')">Annuler</button>
+      <button class="btn-confirm" id="btn-confirm-repartir" onclick="applyRepartition()">⚡ Appliquer la répartition →</button>
+    </div>
+  </div>
+</div>
 
 <!-- Script principal du panneau d'administration -->
 <script src="../js/admin-panel.js"></script>
 
 <!-- ─── NAV MAQUETTE ─── -->
   <div id="dev-nav">
-    <span class="dn-label">Maquette</span>
-    <a href="index.html" class="dn-btn">🏠 Accueil</a>
+    <div class="dn-header">
+      <span class="dn-icon-main">🧭</span>
+      <span class="dn-title">Maquette</span>
+    </div>
+    <a href="index.html" class="dn-btn">
+      <span class="dn-icon">🏠</span>
+      <span class="dn-lbl">Accueil</span>
+    </a>
     <div class="dn-sep"></div>
-    <a href="admin-panel.html" class="dn-btn espace-admin active">🛡️ Espace Admin</a>
-    <a href="admin-jury.html"  class="dn-btn espace-jury">⚖️ Espace Jury</a>
-  </div>
+    <a href="admin-panel.html" class="dn-btn espace-admin active">
+      <span class="dn-icon">🛡️</span>
+      <span class="dn-lbl">Admin</span>
+    </a>
+    <a href="admin-jury.html" class="dn-btn espace-jury">
+      <span class="dn-icon">⚖️</span>
+      <span class="dn-lbl">Jury</span>
+    </a>
+    <a href="cahier-des-charges.html" class="dn-btn">
+      <span class="dn-icon">📄</span>
+      <span class="dn-lbl">CDC</span>
+    </a>
+      <a href="https://dylan-blanc.github.io/UserStory-MarsAI/" class="dn-btn" target="_blank">
+      <span class="dn-icon">📋</span>
+      <span class="dn-lbl">User Stories</span>
+    </a>
+</div>
 </body>
 </html>
