@@ -38,27 +38,37 @@ const observer = new IntersectionObserver((entries) => {
 
 document.querySelectorAll('.fade-in, .divider').forEach(el => observer.observe(el));
 
-// Vidéo sur chaque vignette film
-document.querySelectorAll('.film-thumb').forEach((thumb) => {
-  const mediaHost = thumb.querySelector('.film-thumb-bg') || thumb;
-  if (mediaHost.querySelector('.film-thumb-video')) return;
+// Vidéo sur chaque vignette film — lazy : uniquement quand visible
+const thumbVideoObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    const thumb = entry.target;
+    const mediaHost = thumb.querySelector('.film-thumb-bg') || thumb;
+    if (entry.isIntersecting) {
+      if (!mediaHost.querySelector('.film-thumb-video')) {
+        const video = document.createElement('video');
+        video.className = 'film-thumb-video';
+        video.muted = true;
+        video.loop = true;
+        video.autoplay = true;
+        video.playsInline = true;
+        video.preload = 'none';
+        const source = document.createElement('source');
+        source.src = '../assets/video.mp4';
+        source.type = 'video/mp4';
+        video.appendChild(source);
+        mediaHost.prepend(video);
+        video.play().catch(() => { });
+      } else {
+        mediaHost.querySelector('.film-thumb-video').play().catch(() => { });
+      }
+    } else {
+      const v = mediaHost.querySelector('.film-thumb-video');
+      if (v) v.pause();
+    }
+  });
+}, { rootMargin: '100px' });
 
-  const video = document.createElement('video');
-  video.className = 'film-thumb-video';
-  video.muted = true;
-  video.loop = true;
-  video.autoplay = true;
-  video.playsInline = true;
-  video.preload = 'metadata';
-
-  const source = document.createElement('source');
-  source.src = '../assets/video.mp4';
-  source.type = 'video/mp4';
-
-  video.appendChild(source);
-  mediaHost.prepend(video);
-  video.play().catch(() => { });
-});
+document.querySelectorAll('.film-thumb').forEach(thumb => thumbVideoObserver.observe(thumb));
 
 // Scroll reveal — cascade par section
 // Quand une section entre dans le viewport, tous ses .reveal enfants
@@ -178,29 +188,38 @@ const navSections = [
 navSections.forEach(s => { s.el = document.getElementById(s.id); });
 
 const heroEl = document.querySelector('.hero');
+const nav = document.querySelector('nav');
+const heroVideo = document.getElementById('hero-video');
+let scrollTicking = false;
+
 window.addEventListener('scroll', () => {
-  const nav = document.querySelector('nav');
-  const y = window.scrollY;
+  if (scrollTicking) return;
+  scrollTicking = true;
+  requestAnimationFrame(() => {
+    const y = window.scrollY;
 
-  // fond de nav — classe scrolled pour le glassmorphism
-  nav.classList.toggle('nav-scrolled', y > 60);
+    // fond de nav — classe scrolled pour le glassmorphism
+    nav.classList.toggle('nav-scrolled', y > 60);
 
-  // Vidéo hero : opacity 1→0 sur 70% de la hauteur hero
-  const heroHeight = heroEl.offsetHeight;
-  const videoOpacity = Math.max(0, 1 - (y / (heroHeight * 0.7)));
-  const heroVideo = document.getElementById('hero-video');
-  if (heroVideo) heroVideo.style.opacity = videoOpacity;
+    // Vidéo hero : opacity 1→0 sur 70% de la hauteur hero
+    if (heroVideo) {
+      const heroHeight = heroEl.offsetHeight;
+      heroVideo.style.opacity = Math.max(0, 1 - (y / (heroHeight * 0.7)));
+    }
 
-  // scrollspy — section active = celle dont le top est la plus proche au-dessus du centre écran
-  const mid = y + window.innerHeight * 0.35;
-  let active = null;
-  navSections.forEach(s => {
-    if (s.el && s.el.offsetTop <= mid) active = s.id;
+    // scrollspy — section active = celle dont le top est la plus proche au-dessus du centre écran
+    const mid = y + window.innerHeight * 0.35;
+    let active = null;
+    navSections.forEach(s => {
+      if (s.el && s.el.offsetTop <= mid) active = s.id;
+    });
+    document.querySelectorAll('.nav-item').forEach(a => {
+      a.classList.toggle('nav-active', a.dataset.section === active);
+    });
+
+    scrollTicking = false;
   });
-  document.querySelectorAll('.nav-item').forEach(a => {
-    a.classList.toggle('nav-active', a.dataset.section === active);
-  });
-});
+}, { passive: true });
 
   // ─── JURY SECTION ──────────────────────────────────────
   const defaultJury = [
