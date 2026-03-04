@@ -2866,3 +2866,86 @@
   transition: opacity 0.15s;
 }
 .sc-send:hover { opacity: 0.85; }
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE ADMIN PANEL
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── TABLET ≤ 1100px ────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  /* Tableaux scrollables */
+  .user-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .film-list-wrap  { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  /* Toolbar onglets films */
+  .tabs-toolbar { flex-wrap: wrap; gap: 8px; }
+  .tabs-toolbar .film-tabs { width: 100%; }
+  .view-mode-toggle { margin-left: auto; }
+
+  /* Jury / sponsors : wrap */
+  .jury-admin-row   { flex-wrap: wrap; }
+  .sponsor-admin-row { flex-wrap: wrap; gap: 8px; }
+  .sponsor-admin-fields { width: 100%; }
+}
+
+/* ── MOBILE ≤ 768px ─────────────────────────────────────────── */
+@media (max-width: 768px) {
+  /* Tableaux : masquer colonnes secondaires */
+  .fl-td-country,
+  .fl-td-jury,
+  .fl-td-comments { display: none; }
+  .film-list-table { min-width: 0; width: 100%; }
+
+  /* Onglets films scrollables */
+  .film-tabs {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 2px;
+  }
+  .film-tab { flex: 0 0 auto; white-space: nowrap; padding: 8px 14px; }
+
+  /* Grille cartes films : 1 colonne */
+  .assign-cards-grid { grid-template-columns: 1fr !important; gap: 10px; }
+
+  /* Toolbar films */
+  .tabs-toolbar { flex-direction: column; align-items: stretch; gap: 8px; }
+  .view-mode-toggle { width: 100%; justify-content: center; }
+
+  /* Jury rows : empiler */
+  .jury-admin-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .jury-admin-photo { width: 40px; height: 50px; }
+  .jury-admin-fields { width: 100%; }
+  .jury-admin-top { flex-wrap: wrap; gap: 6px; }
+
+  /* Sponsors rows */
+  .sponsor-admin-row { flex-direction: column; align-items: flex-start; }
+  .sponsor-admin-fields { width: 100%; }
+  .sponsor-admin-top { flex-wrap: wrap; }
+
+  /* Modales plein écran */
+  .modal-overlay .modal,
+  .modal-overlay .modal-comments {
+    width: 95vw !important;
+    max-width: 95vw !important;
+    margin: 0;
+    border-radius: 14px;
+    max-height: 88vh;
+    overflow-y: auto;
+  }
+
+  /* Boutons touch */
+  .btn, .cbtn { min-height: 40px; }
+  .btn-icon { padding: 8px 10px; }
+
+  /* Pagination */
+  .pagination { flex-wrap: wrap; gap: 4px; }
+  .page-btn { min-width: 36px; height: 36px; }
+
+  /* Section head wrap */
+  .section-head { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .section-head .btn { align-self: flex-start; }
+
+  /* Chat sidebar : plein largeur sur mobile */
+  .sc-wrap { width: 100% !important; }
+}

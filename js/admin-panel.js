@@ -2141,7 +2141,49 @@ function sendSidebarMsg() {
 // Init badge au chargement
 updateSCBadge();
 
-// Toggle sidebar gauche (masquer / afficher)
+// ── Responsive mobile panel ─────────────────────────────────────
+const AP_MOBILE_BP = 768;
+function apIsMobile() { return window.innerWidth <= AP_MOBILE_BP; }
+
+function injectMobilePanelUI() {
+  const topbar = document.querySelector('.topbar');
+  if (topbar && !document.getElementById('ap-burger')) {
+    const btn = document.createElement('button');
+    btn.id = 'ap-burger';
+    btn.className = 'ap-mobile-btn';
+    btn.type = 'button';
+    btn.innerHTML = '☰';
+    btn.setAttribute('aria-label', 'Menu');
+    btn.onclick = function () { document.body.classList.toggle('panel-sidebar-open'); };
+    topbar.insertBefore(btn, topbar.firstChild);
+  }
+  if (!document.getElementById('ap-mobile-overlay')) {
+    const ov = document.createElement('div');
+    ov.id = 'ap-mobile-overlay';
+    ov.onclick = function () { document.body.classList.remove('panel-sidebar-open'); };
+    document.body.appendChild(ov);
+  }
+}
+
+function applyPanelResponsive() {
+  if (apIsMobile()) {
+    injectMobilePanelUI();
+    document.getElementById('ap-burger').style.display = 'flex';
+    document.body.classList.remove('sidebar-collapsed');
+  } else {
+    const b = document.getElementById('ap-burger');
+    if (b) b.style.display = 'none';
+    document.body.classList.remove('panel-sidebar-open');
+  }
+}
+applyPanelResponsive();
+window.addEventListener('resize', applyPanelResponsive);
+
+// Toggle sidebar gauche — desktop collapse / mobile drawer
 function toggleSidebar() {
-  document.body.classList.toggle('sidebar-collapsed');
+  if (apIsMobile()) {
+    document.body.classList.toggle('panel-sidebar-open');
+  } else {
+    document.body.classList.toggle('sidebar-collapsed');
+  }
 }
