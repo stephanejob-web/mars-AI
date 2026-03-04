@@ -2126,22 +2126,42 @@ section {
 }
 .gala-inner {
   position: relative; z-index: 2;
-  max-width: 760px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 100px 40px 80px;
+  padding: 40px 40px 24px;
   text-align: center;
+}
+/* 2 colonnes : Prix + Sponsors */
+.gala-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  align-items: center;
+}
+.gala-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.fireworks-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
 }
 
 /* --- Séparateur subtil entre sous-parties --- */
 .gala-sep {
   width: 80px;
   height: 1px;
-  margin: 52px auto;
+  margin: 24px auto;
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
 }
 
 /* --- En-tête Night --- */
-.gala-header { margin-bottom: 0; }
+.gala-header { margin-bottom: 0; padding-top: 0; }
 .gala-eyebrow {
   display: inline-flex; align-items: center; gap: 8px;
   font-size: 0.78rem; font-weight: 700;
@@ -2150,7 +2170,7 @@ section {
   background: rgba(255,107,107,0.10);
   border: 1px solid rgba(255,107,107,0.25);
   border-radius: 999px; padding: 6px 20px;
-  margin-bottom: 28px;
+  margin-bottom: 14px;
 }
 .gala-dot {
   width: 6px; height: 6px; border-radius: 50%;
@@ -2158,17 +2178,17 @@ section {
   animation: pulse-dot 1.6s ease-in-out infinite;
 }
 .gala-title {
-  font-family: var(--font-display);
-  font-size: clamp(1.8rem, 4vw, 2.8rem);
-  font-weight: 800; line-height: 1.12;
+  font-family: var(--font-body);
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 800; line-height: 1.15;
   letter-spacing: -0.02em;
   color: var(--white-soft);
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 .gala-desc {
-  font-size: 0.92rem; color: var(--mist-light);
-  line-height: 1.75; max-width: 500px;
-  margin: 0 auto 28px;
+  font-size: 0.82rem; color: var(--mist-light);
+  line-height: 1.6; max-width: 500px;
+  margin: 0 auto 30px;
 }
 .gala-tags {
   display: flex; align-items: center; justify-content: center;
@@ -2190,7 +2210,7 @@ section {
 /* --- Sous-titre partagé (prix & sponsors) --- */
 .gala-subtitle {
   font-family: var(--font-body);
-  font-size: clamp(1.2rem, 2vw, 1.6rem);
+  font-size: clamp(1.3rem, 2vw, 1.6rem);
   font-weight: 700;
   color: var(--white-soft);
   margin-bottom: 10px;
@@ -2203,14 +2223,14 @@ section {
 
 /* --- CTA en bas du bloc --- */
 .gala-cta-wrap {
-  margin-top: 52px; text-align: center;
+  margin-top: 16px; text-align: center;
 }
 .gala-cta {
   display: inline-flex; align-items: center; gap: 10px;
   background: linear-gradient(135deg, var(--coral), var(--lavande));
   color: #fff; font-family: var(--font-display);
-  font-size: 0.95rem; font-weight: 800;
-  padding: 16px 40px; border-radius: 14px;
+  font-size: 0.85rem; font-weight: 800;
+  padding: 12px 32px; border-radius: 12px;
   letter-spacing: 0.02em; text-decoration: none;
   transition: transform 0.25s var(--ease), box-shadow 0.25s;
   box-shadow: 0 0 40px rgba(255,107,107,0.20), 0 0 80px rgba(192,132,252,0.08);
@@ -2225,20 +2245,25 @@ section {
 }
 
 /* --- Sponsors dans le bloc gala --- */
-.gala-sponsors { margin-top: 0; }
+.gala-sponsors {
+  margin-top: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 
 /* --- Grand Prix --- */
 .award-grand {
   position: relative;
   overflow: hidden;
-  max-width: 680px;
-  margin: 0 auto 20px;
   background: linear-gradient(135deg, rgba(245,230,66,0.06) 0%, rgba(245,230,66,0.02) 60%, rgba(245,230,66,0.06) 100%);
   border: 1px solid rgba(245,230,66,0.22);
-  border-radius: 24px;
-  padding: 44px 48px;
+  border-radius: 14px;
+  padding: 22px 20px;
+  text-align: center;
   display: flex;
-  gap: 36px;
+  flex-direction: column;
+  justify-content: center;
 }
 .award-grand-shine {
   position: absolute; top: 0; bottom: 0; left: 0;
@@ -2252,15 +2277,16 @@ section {
   50% { transform: translateX(500%); }
 }
 .award-grand-icon {
-  width: 80px; height: 80px; flex-shrink: 0;
-  border-radius: 20px;
+  width: 50px; height: 50px;
+  border-radius: 14px;
+  margin: 0 auto 10px;
   background: rgba(245,230,66,0.07);
   border: 1px solid rgba(245,230,66,0.18);
   display: flex; align-items: center; justify-content: center;
 }
 .award-eyebrow {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-family: var(--font-body);
+  font-size: 0.6rem;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -2268,23 +2294,26 @@ section {
   margin-bottom: 10px;
 }
 .award-grand-name {
-  font-family: var(--font-display);
-  font-size: 1.8rem;
+  font-family: var(--font-body);
+  font-size: 1.5rem;
   font-weight: 800;
   letter-spacing: -0.03em;
   color: var(--solar);
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   line-height: 1;
 }
 .award-grand-desc {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: var(--mist);
-  line-height: 1.7;
-  margin-bottom: 18px;
+  line-height: 1.6;
+  margin-bottom: 12px;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
 }
 .award-bourse {
   display: inline-flex; align-items: center; gap: 7px;
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 0.75rem;
   font-weight: 600;
   color: var(--solar);
@@ -2297,17 +2326,20 @@ section {
 
 /* --- Prix secondaires --- */
 .awards-secondary {
-  max-width: 680px;
+  max-width: 100%;
   margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
+  gap: 8px;
 }
 .award-card {
   background: rgba(255,255,255,0.025);
   border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 18px;
-  padding: 28px 22px;
+  border-radius: 14px;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   position: relative;
   overflow: hidden;
   transition: transform 0.25s, border-color 0.25s;
@@ -2326,11 +2358,11 @@ section {
 .award-innov:hover   { border-color: rgba(255,107,107,0.2); }
 
 .award-icon {
-  width: 38px; height: 38px;
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1rem;
-  margin-bottom: 18px;
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 0.8rem;
+  margin-bottom: 6px;
 }
 .award-jury  .award-icon { background: rgba(192,132,252,0.08); }
 .award-public .award-icon { background: rgba(78,255,206,0.08); }
@@ -2338,18 +2370,18 @@ section {
 
 .award-name {
   font-family: var(--font-body);
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 700;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 .award-jury  .award-name { color: var(--lavande); }
 .award-public .award-name { color: var(--aurora); }
 .award-innov .award-name { color: var(--coral); }
 
 .award-desc {
-  font-size: 0.82rem;
+  font-size: 0.75rem;
   color: var(--mist);
-  line-height: 1.65;
+  line-height: 1.55;
 }
 
 /* ================================================================
@@ -3270,8 +3302,8 @@ footer {
 /* --- Carte vedette — President(e) du jury --- */
 .jury-featured {
   display: grid;
-  grid-template-columns: 260px 1fr;
-  gap: 48px;
+  grid-template-columns: 180px 1fr;
+  gap: 36px;
   align-items: center;
   background: linear-gradient(135deg, rgba(78,255,206,0.06) 0%, rgba(192,132,252,0.03) 50%, transparent 100%);
   border: 1px solid rgba(78,255,206,0.22);
@@ -3290,7 +3322,7 @@ footer {
   pointer-events: none;
 }
 .jury-featured-photo {
-  width: 260px; height: 320px;
+  width: 180px; height: 220px;
   object-fit: cover;
   border-radius: 18px;
   display: block;
@@ -3373,7 +3405,7 @@ footer {
 }
 .jury-card-photo {
   width: 100%;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 4 / 3;
   object-fit: cover;
   display: block;
   transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
@@ -3400,7 +3432,7 @@ footer {
    ================================================================ */
 /* --- Sponsors (intégré au bloc gala) --- */
 .sponsors-eyebrow { display: none; }
-.sponsors-tier-block { margin-bottom: 24px; }
+.sponsors-tier-block { margin-bottom: 14px; }
 .sponsors-tier-block:last-child { margin-bottom: 0; }
 .sponsors-tier-label {
   font-size: 0.68rem; font-weight: 600;
@@ -3409,15 +3441,19 @@ footer {
   text-align: center; margin-bottom: 12px;
 }
 .sponsors-row {
-  display: flex; justify-content: center;
-  align-items: center; flex-wrap: wrap; gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  width: 100%;
 }
 .sponsor-card {
   display: flex; align-items: center; justify-content: center;
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(255,255,255,0.07);
   border-radius: 14px;
-  padding: 14px 28px; min-width: 130px;
+  padding: 16px 12px;
+  width: 100%;
+  box-sizing: border-box;
   text-decoration: none;
   transition: border-color 0.22s, background 0.22s, transform 0.2s;
 }
@@ -3427,7 +3463,8 @@ footer {
   transform: translateY(-2px);
 }
 .sponsor-card.tier-principal {
-  padding: 20px 44px; min-width: 200px;
+  grid-column: 1 / -1;
+  padding: 18px 20px;
   border-color: rgba(245,230,66,0.14);
   background: rgba(245,230,66,0.03);
 }
@@ -3445,7 +3482,7 @@ footer {
 .sponsor-card.tier-principal .sponsor-logo-img { max-height: 40px; max-width: 170px; opacity: 0.7; }
 .sponsor-name-text {
   font-family: var(--font-body);
-  font-size: 0.88rem; font-weight: 600;
+  font-size: 0.92rem; font-weight: 600;
   color: rgba(240,244,255,0.45); letter-spacing: 0.02em;
   text-align: center; transition: color 0.2s;
 }

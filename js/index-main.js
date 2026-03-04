@@ -373,3 +373,99 @@
     el.addEventListener('touchend', () => { paused = false; });
   });
 
+/* ================================================================
+   Feux d'artifice — canvas animé déclenché au scroll sur la section gala
+   ================================================================ */
+(function () {
+  const canvas = document.getElementById('fireworks-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  let animId = null;
+  let active = false;
+
+  function resize() {
+    const section = canvas.parentElement;
+    canvas.width = section.offsetWidth;
+    canvas.height = section.offsetHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Couleurs feu d'artifice
+  const colors = ['#FF6B6B', '#C084FC', '#4EFFCE', '#F5E642', '#FF9F43', '#54A0FF', '#FF6B9D'];
+
+  function randomColor() { return colors[Math.floor(Math.random() * colors.length)]; }
+
+  // Particule
+  function Particle(x, y, color) {
+    this.x = x;
+    this.y = y;
+    this.color = color;
+    const angle = Math.random() * Math.PI * 2;
+    const speed = Math.random() * 4 + 1.5;
+    this.vx = Math.cos(angle) * speed;
+    this.vy = Math.sin(angle) * speed;
+    this.alpha = 1;
+    this.decay = Math.random() * 0.02 + 0.008;
+    this.size = Math.random() * 2.5 + 1;
+  }
+
+  // Explosion
+  function explode(x, y) {
+    const color = randomColor();
+    const count = 40 + Math.floor(Math.random() * 30);
+    for (let i = 0; i < count; i++) {
+      particles.push(new Particle(x, y, color));
+    }
+  }
+
+  // Lancer un feu aléatoire
+  function launchRandom() {
+    if (!active) return;
+    const x = Math.random() * canvas.width * 0.8 + canvas.width * 0.1;
+    const y = Math.random() * canvas.height * 0.5 + canvas.height * 0.1;
+    explode(x, y);
+    // Prochain feu entre 300ms et 900ms
+    setTimeout(launchRandom, 300 + Math.random() * 600);
+  }
+
+  function animate() {
+    if (!active && particles.length === 0) { animId = null; return; }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.04; // gravité
+      p.alpha -= p.decay;
+      if (p.alpha <= 0) { particles.splice(i, 1); continue; }
+      ctx.globalAlpha = p.alpha;
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    animId = requestAnimationFrame(animate);
+  }
+
+  // Observer : activer quand la section est visible
+  const section = document.querySelector('.gala');
+  if (section) {
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting && !active) {
+          active = true;
+          resize();
+          launchRandom();
+          if (!animId) animate();
+        } else if (!e.isIntersecting) {
+          active = false;
+        }
+      });
+    }, { threshold: 0.15 });
+    obs.observe(section);
+  }
+})();
+
