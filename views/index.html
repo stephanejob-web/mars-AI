@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>marsAI — Concours International de Courts-Métrages IA</title>
+  <meta name="description" content="marsAI est le premier concours international de courts-métrages d'une minute intégralement générés par IA. Co-organisé par La Plateforme et le Mobile Film Festival. 120+ pays, clôture des dépôts le 30 septembre 2026.">
 
   <!-- Preconnect — ressources externes critiques -->
   <link rel="preconnect" href="https://cdnjs.cloudflare.com">
@@ -41,6 +42,7 @@
        ============================================================ -->
   <video id="hero-video" autoplay muted loop playsinline preload="metadata" poster="../assets/hero-poster.jpg" aria-hidden="true">
     <source src="../assets/Création_Vidéo_IA_pour_MarsAI_Marseille.mp4" type="video/mp4">
+    <track kind="captions" src="" label="Français" srclang="fr" default>
   </video>
 
   <!-- ============================================================
@@ -103,6 +105,8 @@
       Soumettre un film →
     </a>
   </div>
+
+  <main>
 
   <!-- ============================================================
        HERO — Section d'accueil avec titre, partenaires et player
@@ -508,10 +512,10 @@
           <h2 class="section-title reveal" data-delay="1" style="margin-bottom:0">50 Films · Imaginez des futurs souhaitables</h2>
         </div>
         <div class="gallery-header-bottom">
-          <div class="gallery-filters">
-            <span class="filter-chip active" onclick="setFilter(this)">Tous</span>
-            <span class="filter-chip" onclick="setFilter(this)">France</span>
-            <span class="filter-chip" onclick="setFilter(this)">International</span>
+          <div class="gallery-filters" role="group" aria-label="Filtres de sélection">
+            <span class="filter-chip active" role="button" tabindex="0" onclick="setFilter(this)" onkeydown="if(event.key==='Enter'||event.key===' ')setFilter(this)">Tous</span>
+            <span class="filter-chip" role="button" tabindex="0" onclick="setFilter(this)" onkeydown="if(event.key==='Enter'||event.key===' ')setFilter(this)">France</span>
+            <span class="filter-chip" role="button" tabindex="0" onclick="setFilter(this)" onkeydown="if(event.key==='Enter'||event.key===' ')setFilter(this)">International</span>
           </div>
         </div>
       </div>
@@ -863,6 +867,8 @@
       <div class="jury-grid reveal" data-delay="4" id="jury-grid"></div>
     </div>
   </section>
+
+  </main>
 
   <!-- ============================================================
        PIED DE PAGE — Liens, co-organisateurs et mentions
