@@ -698,3 +698,114 @@ updateCounts();
 renderVotes(films[0]);
 renderComments(films[0]);
 document.getElementById('comment-input').value = films[0].comments?.['ML'] || '';
+
+/* ════════════════════════════════════════════
+   SIDEBAR CHAT JURY
+   ════════════════════════════════════════════ */
+const chatContacts = [
+  { id: 'all', name: 'Tout le jury', sub: '8 membres actifs', avatar: null, online: true, unread: 0 },
+  { id: 1,  name: 'Marie Lefebvre',  sub: 'Présidente · Réalisatrice',   avatar: 'https://i.pravatar.cc/150?img=47', online: true,  unread: 2 },
+  { id: 2,  name: 'Pierre Dubois',   sub: 'Directeur artistique',         avatar: 'https://i.pravatar.cc/150?img=12', online: true,  unread: 0 },
+  { id: 3,  name: 'Kenji Ito',       sub: 'Artiste numérique',            avatar: 'https://i.pravatar.cc/150?img=68', online: false, unread: 0 },
+  { id: 4,  name: 'Sofia Eriksson',  sub: 'Critique de cinéma',           avatar: 'https://i.pravatar.cc/150?img=44', online: true,  unread: 1 },
+  { id: 7,  name: 'Amara Touré',     sub: 'Productrice',                  avatar: 'https://i.pravatar.cc/150?img=32', online: false, unread: 0 },
+  { id: 8,  name: 'Elena Petrov',    sub: 'Compositrice',                 avatar: 'https://i.pravatar.cc/150?img=29', online: true,  unread: 0 },
+  { id: 9,  name: 'Yuki Nakamura',   sub: 'Réalisatrice',                 avatar: 'https://i.pravatar.cc/150?img=56', online: false, unread: 0 },
+  { id: 10, name: 'Carlos Ruiz',     sub: 'Chef opérateur',               avatar: 'https://i.pravatar.cc/150?img=18', online: true,  unread: 0 },
+];
+
+const chatHistory = {
+  all: [
+    { from: 'admin', name: 'Admin', text: 'Bonjour à tous, rappel : les évaluations de la phase 1 sont à finaliser avant le 12/12/26.', time: '09:00' },
+    { from: 1, name: 'Marie L.', text: 'Bien reçu ! J\'ai encore 3 films à visionner.', time: '09:14' },
+    { from: 4, name: 'Sofia E.', text: 'Pareil, je les termine ce soir.', time: '09:22' },
+    { from: 2, name: 'Pierre D.', text: 'J\'ai une question sur le film "Frontières Douces" — peut-on en discuter ?', time: '10:05' },
+  ],
+  1: [
+    { from: 1, name: 'Marie L.', text: 'Bonjour, tu as eu le temps de voir le film n°12 ?', time: '11:30' },
+    { from: 'me', text: 'Oui ! Je l\'ai trouvé très fort. Je penche pour "Validé".', time: '11:45' },
+    { from: 1, name: 'Marie L.', text: 'Pareil, le traitement sonore est remarquable.', time: '11:47' },
+  ],
+  4: [
+    { from: 4, name: 'Sofia E.', text: 'Bonsoir, je ne vois pas le film "Signal Perdu" dans ma liste — tu as eu ça aussi ?', time: '18:10' },
+  ],
+};
+
+let scOpen = false;
+let scContact = 'all';
+
+function toggleJuryChat() {
+  scOpen = !scOpen;
+  document.getElementById('sc-panel').classList.toggle('open', scOpen);
+  document.getElementById('sc-toggle-btn').classList.toggle('open', scOpen);
+  if (scOpen) {
+    renderSCContacts();
+    renderSCMessages(scContact);
+  }
+}
+
+function updateSCBadge() {
+  const total = chatContacts.filter(c => c.id !== 'all').reduce((s, c) => s + c.unread, 0);
+  const b = document.getElementById('sc-badge');
+  if (b) { b.textContent = total; b.style.display = total > 0 ? '' : 'none'; }
+}
+
+function renderSCContacts() {
+  const row = document.getElementById('sc-contacts-row');
+  if (!row) return;
+  row.innerHTML = chatContacts.map(c => {
+    const isActive = c.id === scContact;
+    const avHtml = c.id === 'all'
+      ? `<div class="sc-av sc-av-all">📢</div>`
+      : `<div class="sc-av">
+           <img src="${c.avatar}" alt="${c.name}">
+           ${c.online ? '<div class="sc-dot"></div>' : ''}
+           ${c.unread > 0 ? `<div class="sc-cb-unread">${c.unread}</div>` : ''}
+         </div>`;
+    const label = c.id === 'all' ? 'Tous' : c.name.split(' ')[0];
+    return `<div class="sc-cb ${isActive ? 'active' : ''}" onclick="selectSCContact(${JSON.stringify(c.id)})">
+      ${avHtml}
+      <div class="sc-lbl">${label}</div>
+    </div>`;
+  }).join('');
+}
+
+function selectSCContact(id) {
+  scContact = id;
+  const c = chatContacts.find(x => x.id === id);
+  if (c) c.unread = 0;
+  renderSCContacts();
+  renderSCMessages(id);
+}
+
+function renderSCMessages(contactId) {
+  const msgs = chatHistory[contactId] || [];
+  const el = document.getElementById('sc-messages');
+  if (!el) return;
+  el.innerHTML = msgs.length
+    ? msgs.map(m => {
+        const isMe = m.from === 'me';
+        const who = isMe ? 'Moi' : (m.name || '?');
+        return `<div class="sc-msg ${isMe ? 'sc-msg-me' : ''}">
+          <div class="sc-bubble">${m.text.replace(/</g,'&lt;')}</div>
+          <div class="sc-meta">${who} · ${m.time}</div>
+        </div>`;
+      }).join('')
+    : `<div style="text-align:center;color:var(--mist);font-size:0.68rem;padding:16px 0;opacity:0.6;">Aucun message</div>`;
+  el.scrollTop = el.scrollHeight;
+}
+
+function sendJuryMsg() {
+  const inp = document.getElementById('sc-input');
+  const text = inp.value.trim();
+  if (!text) return;
+  const now = new Date();
+  const time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+  if (!chatHistory[scContact]) chatHistory[scContact] = [];
+  chatHistory[scContact].push({ from: 'me', text, time });
+  inp.value = '';
+  renderSCMessages(scContact);
+}
+
+// Init badge au chargement
+updateSCBadge();
