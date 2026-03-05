@@ -1040,9 +1040,18 @@ Thèmes intéressants mais traitement inégal — à peser lors de la délibéra
           Décisions du jury · 4 membres · Films assignés par l'administrateur
         </div>
 
+        <!-- Switcher juré connecté -->
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:10px 16px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:10px;flex-wrap:wrap;">
+          <span style="font-size:0.68rem;font-weight:700;color:var(--mist);text-transform:uppercase;letter-spacing:0.08em;white-space:nowrap;">Voter en tant que :</span>
+          <div id="delib-juror-switcher" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
+        </div>
+
+        <!-- Bannière incitative -->
+        <div id="delib-incentive" style="margin-bottom:12px;"></div>
+
         <!-- 2 phases de sélection -->
         <div class="phase-tabs">
-          <div class="ptab active" onclick="setPhaseTab(this, 1)">
+          <div class="ptab active" data-phase="1" onclick="setPhaseTab(this, 1)">
             Phase 1 · Présélection Top 50 · 12/12/26
           </div>
           <div class="ptab ptab-2" onclick="setPhaseTab(this, 2)">
