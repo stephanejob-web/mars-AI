@@ -865,12 +865,15 @@ function renderDelib() {
     }).join('');
   }
 
+  // Films nommés par l'admin pour Top 5 (précalculé pour bannière + liste)
+  const phase2Films = top50Films.filter(f => (fv[f.id] || []).includes(0));
+
   // ── Bandeau d'incitation ──
   const incentiveEl = document.getElementById('delib-incentive');
   if (incentiveEl) {
     if (activePhase === '2') {
-      const myFinCount = films.filter(f => (fv[f.id]||[]).includes(uid)).length;
-      const almostTop5 = top50Films.filter(f => !isFilmInTop5(f.id) && finalistVoteCount(f.id) === JURY_VOTE_THRESHOLD - 1 && !(fv[f.id]||[]).includes(uid));
+      const myFinCount = phase2Films.filter(f => (fv[f.id]||[]).includes(uid)).length;
+      const almostTop5 = phase2Films.filter(f => !isFilmInTop5(f.id) && finalistVoteCount(f.id) === JURY_VOTE_THRESHOLD - 1 && !(fv[f.id]||[]).includes(uid));
       let msg, msgColor = 'var(--lavande)', bg = 'rgba(192,132,252,0.06)', border = 'rgba(192,132,252,0.18)';
       if (myFinCount >= 5) {
         msg = `🎉 Vous avez voté pour <strong>${myFinCount} finaliste${myFinCount > 1 ? 's' : ''}</strong> — merci pour votre contribution !`;
@@ -902,12 +905,12 @@ function renderDelib() {
       </div>
     </td></tr>`;
 
-    if (top50Films.length === 0) {
-      table.innerHTML = `<tbody><tr><td colspan="4" style="text-align:center;padding:48px;color:var(--mist);font-size:0.85rem;">Aucun film dans le Top 50.<br><span style="font-size:0.75rem;opacity:0.6;">L'administrateur n'a pas encore sélectionné les films.</span></td></tr></tbody>`;
+    if (phase2Films.length === 0) {
+      table.innerHTML = `<tbody><tr><td colspan="4" style="text-align:center;padding:48px;color:var(--mist);font-size:0.85rem;">L'administrateur n'a pas encore nommé de candidats Top 5.<br><span style="font-size:0.75rem;opacity:0.6;">La liste apparaîtra ici dès que l'admin aura sélectionné ses films dans son panel.</span></td></tr></tbody>`;
       return;
     }
 
-    const rows = top50Films.map((f, idx) => {
+    const rows = phase2Films.map((f, idx) => {
       const cnt    = finalistVoteCount(f.id);
       const inTop5 = isFilmInTop5(f.id);
       const voted  = myFinalistVote(f.id);
