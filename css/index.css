@@ -1357,6 +1357,69 @@ section {
   position: relative;
   z-index: 1;
 }
+/* Décorations caméra cinéma — effet projecteur dans chaque rangée */
+.films-carousel-wrap {
+  position: relative;
+}
+.cinema-deco-wrap {
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  width: 220px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.cinema-deco-wrap img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 20px rgba(255, 179, 71, 0.6));
+}
+/* Boule de lumière devant l'objectif de la caméra */
+.cinema-beam {
+  position: absolute;
+  pointer-events: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0%, rgba(255, 220, 130, 0.9) 25%, rgba(255, 179, 71, 0.6) 50%, rgba(255, 140, 50, 0.2) 75%, transparent 100%);
+  box-shadow:
+    0 0 20px 10px rgba(255, 200, 100, 0.6),
+    0 0 50px 20px rgba(255, 179, 71, 0.4),
+    0 0 80px 40px rgba(255, 140, 50, 0.2);
+  animation: beam-glow 2s ease-in-out infinite alternate;
+}
+@keyframes beam-glow {
+  0%   { transform: translate(-50%, -50%) scale(0.9); opacity: 0.7; }
+  50%  { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.8; }
+}
+/* Rangée 1 : caméra à droite, pointe vers la gauche */
+.cinema-deco-wrap.row-left {
+  right: 0;
+}
+.films-row-1 {
+  margin-right: 210px;
+}
+.cinema-deco-wrap.row-left img {
+  transform: scaleX(-1);
+}
+.cinema-deco-wrap.row-left .cinema-beam {
+  left: 13%;
+  top: 53%;
+}
+/* Rangée 2 : caméra à gauche, pointe vers la droite */
+.cinema-deco-wrap.row-right {
+  left: 0;
+}
+.films-row-2 {
+  margin-left: 210px;
+}
+.cinema-deco-wrap.row-right .cinema-beam {
+  right: -6%;
+  top: 53%;
+}
 .gallery-section::after {
   content: '';
   position: absolute;
@@ -1389,8 +1452,8 @@ section {
 .gallery-deco-right {
   right: 40px;
   top: 50%;
-  transform: translateY(-50%);
-  max-height: 70%;
+  transform: translateY(-50%) scaleX(-1);
+  max-height: 75%;
 }
 .gallery-header {
   margin-bottom: 40px;
@@ -1400,15 +1463,19 @@ section {
   margin-bottom: 24px;
 }
 .gallery-section .section-label {
-  color: var(--aurora);
-  text-shadow: 0 0 20px rgba(78, 255, 206, 0.4);
+  color: #FFB347;
+  text-shadow: 0 0 20px rgba(255, 179, 71, 0.5);
   font-size: 0.95rem;
   letter-spacing: 0.15em;
+  font-family: var(--font-display);
 }
 .gallery-section .section-title {
   color: #fff;
   text-shadow: 0 2px 15px rgba(0, 0, 0, 0.7);
   font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+  font-family: var(--font-display);
+  max-width: 600px;
+  margin: 0 auto;
 }
 .gallery-header-bottom {
   display: flex;
@@ -1448,10 +1515,10 @@ section {
   color: #fff;
 }
 .filter-chip.active {
-  background: var(--aurora);
-  border-color: var(--aurora);
-  color: #0a0a1a;
-  box-shadow: 0 0 18px rgba(78, 255, 206, 0.35);
+  background: linear-gradient(135deg, #FFB347, #FF8C42);
+  border-color: #FFB347;
+  color: #1a0a00;
+  box-shadow: 0 0 18px rgba(255, 179, 71, 0.4);
 }
 
 /* --- Film vedette (Grand Prix) --- */
@@ -1571,6 +1638,7 @@ section {
   width: 60px;
   z-index: 2;
   pointer-events: none;
+  display: none;
 }
 .films-carousel-wrap::before {
   left: 0;
@@ -1585,17 +1653,17 @@ section {
   animation-play-state: paused;
 }
 .film-card {
-  border-radius: 16px;
+  border-radius: 14px;
   overflow: hidden;
   cursor: pointer;
   transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease), border-color 0.4s;
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(255,255,255,0.06);
-  padding-bottom: 14px;
+  padding-bottom: 10px;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  min-width: 260px;
-  max-width: 300px;
+  min-width: 200px;
+  max-width: 230px;
   flex-shrink: 0;
 }
 .film-card:hover {
@@ -2656,7 +2724,9 @@ footer {
   .venue-overlay { min-width: 210px; }
   .how-steps { grid-template-columns: 1fr 1fr; gap: 16px; }
   .how-steps::before { display: none; }
-  .film-card { min-width: 220px; max-width: 260px; }
+  .film-card { min-width: 180px; max-width: 210px; }
+  .cinema-deco-wrap { width: 90px; }
+  .cinema-deco-wrap .cinema-beam { width: 150px; height: 100px; }
   .cta-block { grid-template-columns: 1fr; padding: 40px 24px; }
   .cta-section { padding: 0 24px 60px; }
   .player-section { padding: 60px 24px; }
@@ -2772,8 +2842,9 @@ footer {
   .robot-wrap img { width: 160px; }
   .concept-grid { gap: 12px; }
   .how-steps { grid-template-columns: 1fr; gap: 14px; }
-  .film-card { min-width: 200px; max-width: 240px; }
-  .film-card { border-radius: 10px; }
+  .film-card { min-width: 160px; max-width: 190px; border-radius: 10px; }
+  .cinema-deco-wrap { width: 70px; }
+  .cinema-deco-wrap .cinema-beam { display: none; }
   .awards-secondary { grid-template-columns: 1fr; }
   .footer-inner { grid-template-columns: 1fr; gap: 28px; }
   .cta-block { padding: 32px 20px; }

@@ -18,9 +18,7 @@
   <link rel="stylesheet" href="../css/tokens.css">
   <link rel="stylesheet" href="../css/reset.css">
   <link rel="stylesheet" href="../css/index.css">
-  <!-- grain.css : effet décoratif, chargé en non-bloquant -->
-  <link rel="stylesheet" href="../css/grain.css" media="print" onload="this.media='all'">
-  <noscript><link rel="stylesheet" href="../css/grain.css"></noscript>
+  <link rel="stylesheet" href="../css/mobile.css">
 
   <!-- ============================================================
        SCRIPTS EXTERNES — GSAP + Three.js ImportMap
@@ -497,14 +495,8 @@
        ============================================================ -->
   <!-- Section titre films -->
   <section class="gallery-section" id="films">
-    <picture>
-      <source srcset="../assets/pop-corn.webp" type="image/webp">
-      <img src="../assets/pop-corn.png" alt="Popcorn" class="gallery-deco gallery-deco-left" loading="lazy" width="700" height="700">
-    </picture>
-    <picture>
-      <source srcset="../assets/camera-cinema.webp" type="image/webp">
-      <img src="../assets/camera-cinema.png" alt="Caméra cinéma" class="gallery-deco gallery-deco-right" loading="lazy" width="700" height="708">
-    </picture>
+    <img src="../assets/pop-corn.png" alt="Popcorn" class="gallery-deco gallery-deco-left" loading="lazy">
+    <img src="../assets/pop-corn.png" alt="Popcorn" class="gallery-deco gallery-deco-right" loading="lazy">
     <div class="section-inner">
       <div class="gallery-header">
         <div class="gallery-header-top">
@@ -526,6 +518,10 @@
   <section class="films-cinema-section">
       <!-- Rangée 1 — défilement automatique vers la droite -->
       <div class="films-carousel-wrap">
+        <div class="cinema-deco-wrap row-left">
+          <img src="../assets/camera-cinema.png" alt="Caméra cinéma" loading="lazy">
+          <div class="cinema-beam"></div>
+        </div>
         <div class="films-carousel films-row-1">
         <!-- Film 1 -->
         <div class="film-card fade-in">
@@ -652,6 +648,10 @@
 
       <!-- Rangée 2 — défilement automatique vers la gauche -->
       <div class="films-carousel-wrap" style="margin-top:18px;">
+        <div class="cinema-deco-wrap row-right">
+          <img src="../assets/camera-cinema.png" alt="Caméra cinéma" loading="lazy">
+          <div class="cinema-beam"></div>
+        </div>
         <div class="films-carousel films-row-2">
         <!-- Film 11 -->
         <div class="film-card fade-in">

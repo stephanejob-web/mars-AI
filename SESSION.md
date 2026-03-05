@@ -131,3 +131,160 @@ Sessions précédentes documentées : correction performances GPU, suppression U
 - `assets/view-3d-cinema-theatre-room.jpg` — salle de cinéma (nouveau)
 - `assets/bande-pellicule.png` — pellicule cinéma décoration (nouveau)
 - `SESSION.md` — mise à jour session 11
+
+---
+
+## Session 12 — Galerie pellicule, Gala refonte, Jury uniforme, Footer noir
+**Date** : 4 mars 2026
+
+### 1. Section Galerie Films — pellicule cinéma + décorations
+- Fond pellicule `bande-pellicule-droite.jpg` en `::after` (`background-size: 100% 200%`, `filter: brightness(0.65)`)
+- Filtres (Tous/France/International) redesignés : fond sombre semi-transparent, état actif aurora
+- Images décoratives : popcorn (gauche) et caméra cinéma (droite) en PNG fond transparent
+- Conversion JPG → PNG via Python/Pillow + scipy (suppression fond blanc/checkered)
+- Pellicule éclaircie avec dégradé plus doux
+
+### 2. Section Gala — fusion Night + Prix + Sponsors + feux d'artifice
+- 3 sous-sections (Mars.AI Night, Les Prix, Sponsors) fusionnées en une seule `<section class="gala">`
+- Layout 2 colonnes : Prix à gauche (Grand Prix + 3 cards), Sponsors à droite
+- **Feux d'artifice** : animation canvas déclenchée au scroll (IntersectionObserver), particules colorées avec gravité
+- Trophée SVG remplace l'étoile dans la card Grand Prix
+- Cards éclairées : backgrounds `rgba(255,255,255,0.08)`, bordures `0.15–0.35` opacité
+- Textes éclaircis : `rgba(240,244,255,0.7–0.85)` au lieu de `var(--mist)`
+- Polices harmonisées : tout en `var(--font-body)` (Inter)
+- Bouton "Soumettre mon film" supprimé de la section
+- Sponsors en grille `repeat(3, 1fr)` alignés avec les cards prix
+
+### 3. Section Jury — 6 membres, cards uniformes verticales
+- Jury réduit de 10 à 6 membres (Marie, Pierre, Kenji, Sofia, Amara, Carlos)
+- Layout vedette supprimé : tous les membres en cards verticales uniformes
+- Badges (`Présidence du Jury` / `Membre du Jury`) et citations ajoutés à chaque membre
+- Grille 3 colonnes (`repeat(3, 1fr)`)
+- Header centré (`text-align: center`)
+- Photos proportionnelles : `aspect-ratio: 3/2`, `object-position: center top`
+- Texte agrandi et éclairci : nom `1.15rem #fff`, rôle `0.88rem aurora`, citation `0.82rem rgba(220,225,240,0.85)`
+- Padding section réduit : `120px 0` → `40px 0 60px`, inner `10px 0 20px`
+
+### 4. Footer — refonte fond noir + texte blanc
+- Fond changé : gradient bleu → `#000` noir pur
+- Texte en blanc avec hiérarchie d'opacité (0.8 titres, 0.55 liens, 0.3 copyright)
+- Bloc partenaires (Co-organisé par La Plateforme × Mobile Film Festival) déplacé au-dessus du logo marsAI
+- Tailles réduites : partenaires `0.62–0.72rem`, logo partenaire `22px`
+- Grille rééquilibrée : `1.4fr 1fr 1fr 1fr` (avant `2fr 1fr 1fr 1fr`), gap `32px`
+- Tous les textes réduits : description `0.75rem`, titres colonnes `0.7rem`, liens `0.78rem`, copyright `0.68rem`
+
+### Fichiers modifiés
+- `css/index.css` — refonte galerie, gala, jury, footer (~300 lignes modifiées)
+- `views/index.html` — restructuration gala, jury header centré, footer avec partenaires déplacés
+- `js/index-main.js` — jury 6 membres avec badges/citations, rendu cards uniformes, animation feux d'artifice
+- `assets/bande-pellicule-droite.jpg` — pellicule droite (nouveau)
+- `assets/pop-corn.png` — popcorn fond transparent (nouveau)
+- `assets/camera-cinema.png` — caméra cinéma fond transparent (nouveau)
+- `SESSION.md` — mise à jour session 12
+
+---
+
+## Session 13 — Galerie & Carousel : refonte visuelle cinéma
+**Date** : 5 mars 2026
+
+### 1. Section Galerie — popcorn x2 + couleurs chaudes
+- Caméra cinéma (droite) remplacée par un 2e popcorn en miroir (`scaleX(-1)`)
+- Couleur verte aurora remplacée par doré chaud (`#FFB347` → `#FF8C42`) :
+  - Label "Sélection Officielle" en doré avec halo chaud
+  - Bouton filtre actif en dégradé orangé
+- Police changée en `var(--font-display)` (Syne) pour le label et le titre
+- Titre "50 Films · Imaginez des futurs souhaitables" limité à `max-width: 600px`
+
+### 2. Carousel — cards réduites + caméras projecteurs
+- Cards vidéo réduites : `min-width: 200px, max-width: 230px` (avant 260/300)
+- Caméras cinéma ajoutées dans chaque rangée du carousel :
+  - Rangée 1 : caméra à droite, pointe vers la gauche
+  - Rangée 2 : caméra à gauche, pointe vers la droite
+- Caméras agrandies à `220px`
+- Carousel décalé (`margin-right/left: 210px`) pour que les vidéos commencent après la caméra
+- Masques de fondu bleus supprimés (`display: none`)
+
+### 3. Effet lumière projecteur — boule lumineuse sur l'objectif
+- Boule de lumière blanche/dorée devant l'objectif de chaque caméra
+- Dégradé radial : blanc au centre → doré → transparent
+- Triple `box-shadow` pour halo lumineux diffus
+- Animation `beam-glow` pulsante (scale + opacity)
+- Positionnement ajusté sur l'objectif de chaque caméra
+
+### Fichiers modifiés
+- `css/index.css` — refonte galerie, carousel, caméras, effet lumière
+- `views/index.html` — popcorn miroir, caméras dans chaque rangée du carousel
+- `SESSION.md` — mise à jour session 13
+
+---
+
+## Session 14 — Responsive mobile (max-width: 480px)
+**Date** : 5 mars 2026
+
+### 1. Architecture — fichier mobile.css dédié
+- Nouveau fichier `css/mobile.css` séparé d'`index.css` pour tous les styles mobile
+- Chargé après `index.css` dans `views/index.html`
+- Structure en 6 sections numérotées et commentées
+
+### 2. Section Hero — réordonnancement mobile
+- `display: contents` sur `.hero-left` pour éclater les enfants dans le grid parent
+- Réordonnancement via `order` : partenaires → badge → titre → desc → tags → **countdown** → accroche + CTA
+- Countdown remonté au-dessus de "Voici ce qu'une IA peut créer..."
+- "Marseille" masqué sur mobile (`display: none`)
+- Padding et espaces réduits, `min-height: auto`
+
+### 3. Section Manifeste — carousel horizontal + image recadrée
+- Carousel passé en horizontal sur mobile (`flex-direction: row`, `translateX`)
+- JS modifié (`manifeste-carousel.js`) : détection `isMobile()`, `translateX` au lieu de `translateY`, drag horizontal tactile
+- Texte remonté au-dessus du carousel (`order: -1`)
+- Scanner/particules masqués sur mobile
+- Image de fond : `object-position: 80% 20%`, `scale(1.15)`, opacité `0.55`
+- Overlay allégé (`0.35` aux bords)
+
+### 4. Section Concept — centré + cards compactes
+- Texte centré (label, titre, description)
+- Robot et particules masqués (`display: none`)
+- Grille 2 colonnes compacte (gap `6px`)
+- Cards : padding `12px 10px`, titre `0.75rem`, paragraphe `0.65rem`
+
+### 5. Section Événement — centré + programme aligné
+- Texte centré (label, titre, description)
+- Programme : `width: fit-content` + `margin: auto` pour centrage, alignement `flex-start`
+- Dots avec `margin-top: 5px` pour alignement vertical
+- Stats centrées, tailles réduites
+- Globe réduit (`220px`), venue overlay compact
+
+### 6. Section Comment ça marche — 2 colonnes + fond adapté
+- Fond `::before` : largeur `100%` (au lieu de `950px`), opacité `0.25`
+- Texte centré, titre réduit
+- Grille 2 colonnes compacte (gap `8px`)
+- Cards : cercles `52px`, titres `0.78rem`, tags `0.55rem`
+
+### 7. Section Galerie Films — décorations masquées + cards réduites
+- Caméras, popcorn masqués (`display: none`)
+- Marges carousel supprimées
+- Titre réduit, filtres compacts
+- Film cards : `130-155px`, meta/badges/durée réduits
+
+### 8. Section Gala — 1 colonne + prix 2 colonnes
+- Header centré, titre/desc réduits
+- Layout 1 colonne (au lieu de 2)
+- Grand Prix compact (icône `36px`, nom `1.1rem`)
+- Prix secondaires : 2 colonnes compactes centrées
+- Sponsors : 2 colonnes, logos réduits
+
+### 9. Section Jury — centré + grille 2 colonnes
+- Texte centré (label, titre, description)
+- Carte vedette : 1 colonne, photo `200px`, texte centré
+- Grille membres : 2 colonnes compactes (gap `8px`)
+- Cards : border-radius `12px`, tailles réduites
+
+### 10. Footer — masqué sur mobile
+- `display: none` sur mobile
+
+### Fichiers modifiés
+- `css/mobile.css` — nouveau fichier dédié responsive mobile (~400 lignes)
+- `css/index.css` — inchangé (styles mobile retirés)
+- `views/index.html` — ajout lien `mobile.css`
+- `js/manifeste-carousel.js` — mode horizontal mobile (translateX, drag tactile)
+- `SESSION.md` — mise à jour session 14

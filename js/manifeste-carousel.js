@@ -37,6 +37,9 @@
   var PARTICLE_MAX  = 40;
   var FADE_ZONE     = 50;
 
+  /* Détection mode mobile (horizontal) */
+  function isMobile() { return window.innerWidth <= 480; }
+
   /* ----------------------------------------------------------------
      Générateur de code ASCII (thème IA/vidéo)
      ---------------------------------------------------------------- */
@@ -175,15 +178,24 @@
   };
 
   CardStream.prototype._calcDims = function () {
-    this.containerH = this.viewport.offsetHeight || 560;
-    if (this.wrappers.length > 0) {
-      this.cardH = this.wrappers[0].offsetHeight || 200;
+    this.horizontal = isMobile();
+    if (this.horizontal) {
+      this.containerW = this.viewport.offsetWidth || 360;
+      if (this.wrappers.length > 0) {
+        this.cardW = this.wrappers[0].offsetWidth || 140;
+      } else {
+        this.cardW = 140;
+      }
+      this.lineH = (this.cardW + CARD_GAP) * CARD_COUNT;
     } else {
-      this.cardH = 200;
+      this.containerH = this.viewport.offsetHeight || 560;
+      if (this.wrappers.length > 0) {
+        this.cardH = this.wrappers[0].offsetHeight || 200;
+      } else {
+        this.cardH = 200;
+      }
+      this.lineH = (this.cardH + CARD_GAP) * CARD_COUNT;
     }
-    // hauteur totale d'un jeu de cartes (la moitié puisqu'on a doublé)
-    this.lineH = (this.cardH + CARD_GAP) * CARD_COUNT;
-    // démarrer avec le 2e jeu visible pour permettre le défilement vers le bas
     this.position = -this.lineH;
   };
 
@@ -219,7 +231,11 @@
       this._wrap();
     }
 
-    this.cardLine.style.transform = 'translateY(' + this.position + 'px)';
+    if (this.horizontal) {
+      this.cardLine.style.transform = 'translateX(' + this.position + 'px)';
+    } else {
+      this.cardLine.style.transform = 'translateY(' + this.position + 'px)';
+    }
     this._updateClipping();
 
     requestAnimationFrame(function () { self._loop(); });
@@ -275,24 +291,29 @@
     }
   };
 
-  /* drag souris + tactile VERTICAL */
+  /* drag souris + tactile (vertical desktop / horizontal mobile) */
   CardStream.prototype._bindDrag = function () {
     var self = this;
     var line = this.cardLine;
 
-    function startDrag(y) {
+    function getCoord(e) {
+      return self.horizontal ? (e.clientX || e.touches[0].clientX) : (e.clientY || e.touches[0].clientY);
+    }
+
+    function startDrag(coord) {
       self.dragging = true;
-      self.lastMouseY = y;
+      self.lastMouseY = coord;
       self.mouseVel = 0;
       line.classList.add('dragging');
     }
-    function onDrag(y) {
+    function onDrag(coord) {
       if (!self.dragging) return;
-      var dy = y - self.lastMouseY;
-      self.position += dy;
-      self.mouseVel = dy * 60;
-      self.lastMouseY = y;
-      line.style.transform = 'translateY(' + self.position + 'px)';
+      var d = coord - self.lastMouseY;
+      self.position += d;
+      self.mouseVel = d * 60;
+      self.lastMouseY = coord;
+      var axis = self.horizontal ? 'translateX' : 'translateY';
+      line.style.transform = axis + '(' + self.position + 'px)';
       self._updateClipping();
     }
     function endDrag() {
@@ -308,30 +329,35 @@
 
     // souris
     line.addEventListener('mousedown', function (e) {
-      e.preventDefault(); startDrag(e.clientY);
+      e.preventDefault();
+      startDrag(self.horizontal ? e.clientX : e.clientY);
     });
-    document.addEventListener('mousemove', function (e) { onDrag(e.clientY); });
+    document.addEventListener('mousemove', function (e) {
+      onDrag(self.horizontal ? e.clientX : e.clientY);
+    });
     document.addEventListener('mouseup', endDrag);
 
     // tactile
     line.addEventListener('touchstart', function (e) {
-      startDrag(e.touches[0].clientY);
+      startDrag(self.horizontal ? e.touches[0].clientX : e.touches[0].clientY);
     }, { passive: true });
     document.addEventListener('touchmove', function (e) {
-      if (self.dragging) onDrag(e.touches[0].clientY);
+      if (self.dragging) onDrag(self.horizontal ? e.touches[0].clientX : e.touches[0].clientY);
     }, { passive: true });
     document.addEventListener('touchend', endDrag);
 
     // molette
     line.addEventListener('wheel', function (e) {
       e.preventDefault();
-      self.position += (e.deltaY > 0 ? -30 : 30);
+      var delta = self.horizontal ? e.deltaX : e.deltaY;
+      self.position += (delta > 0 ? -30 : 30);
       self._wrap();
-      line.style.transform = 'translateY(' + self.position + 'px)';
+      var axis = self.horizontal ? 'translateX' : 'translateY';
+      line.style.transform = axis + '(' + self.position + 'px)';
       self._updateClipping();
     }, { passive: false });
 
-    // resize
+    // resize — recalculer les dimensions et le mode
     window.addEventListener('resize', function () {
       self._calcDims();
     });
