@@ -959,6 +959,22 @@
       <span class="dn-lbl">User Stories</span>
     </a>
 </div>
+<script>
+(function(){
+  var nav = document.getElementById('dev-nav');
+  if (!nav) return;
+  nav.addEventListener('touchstart', function(e) {
+    // Si on touche un lien, laisser naviguer normalement
+    if (e.target.closest('a')) return;
+    e.preventDefault();
+    nav.classList.toggle('open');
+  }, { passive: false });
+  // Fermer en cliquant en dehors
+  document.addEventListener('touchstart', function(e) {
+    if (!nav.contains(e.target)) nav.classList.remove('open');
+  }, { passive: true });
+})();
+</script>
 
 </body>
 </html>
