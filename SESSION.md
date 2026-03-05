@@ -215,3 +215,76 @@ Sessions précédentes documentées : correction performances GPU, suppression U
 - `css/index.css` — refonte galerie, carousel, caméras, effet lumière
 - `views/index.html` — popcorn miroir, caméras dans chaque rangée du carousel
 - `SESSION.md` — mise à jour session 13
+
+---
+
+## Session 14 — Responsive mobile (max-width: 480px)
+**Date** : 5 mars 2026
+
+### 1. Architecture — fichier mobile.css dédié
+- Nouveau fichier `css/mobile.css` séparé d'`index.css` pour tous les styles mobile
+- Chargé après `index.css` dans `views/index.html`
+- Structure en 6 sections numérotées et commentées
+
+### 2. Section Hero — réordonnancement mobile
+- `display: contents` sur `.hero-left` pour éclater les enfants dans le grid parent
+- Réordonnancement via `order` : partenaires → badge → titre → desc → tags → **countdown** → accroche + CTA
+- Countdown remonté au-dessus de "Voici ce qu'une IA peut créer..."
+- "Marseille" masqué sur mobile (`display: none`)
+- Padding et espaces réduits, `min-height: auto`
+
+### 3. Section Manifeste — carousel horizontal + image recadrée
+- Carousel passé en horizontal sur mobile (`flex-direction: row`, `translateX`)
+- JS modifié (`manifeste-carousel.js`) : détection `isMobile()`, `translateX` au lieu de `translateY`, drag horizontal tactile
+- Texte remonté au-dessus du carousel (`order: -1`)
+- Scanner/particules masqués sur mobile
+- Image de fond : `object-position: 80% 20%`, `scale(1.15)`, opacité `0.55`
+- Overlay allégé (`0.35` aux bords)
+
+### 4. Section Concept — centré + cards compactes
+- Texte centré (label, titre, description)
+- Robot et particules masqués (`display: none`)
+- Grille 2 colonnes compacte (gap `6px`)
+- Cards : padding `12px 10px`, titre `0.75rem`, paragraphe `0.65rem`
+
+### 5. Section Événement — centré + programme aligné
+- Texte centré (label, titre, description)
+- Programme : `width: fit-content` + `margin: auto` pour centrage, alignement `flex-start`
+- Dots avec `margin-top: 5px` pour alignement vertical
+- Stats centrées, tailles réduites
+- Globe réduit (`220px`), venue overlay compact
+
+### 6. Section Comment ça marche — 2 colonnes + fond adapté
+- Fond `::before` : largeur `100%` (au lieu de `950px`), opacité `0.25`
+- Texte centré, titre réduit
+- Grille 2 colonnes compacte (gap `8px`)
+- Cards : cercles `52px`, titres `0.78rem`, tags `0.55rem`
+
+### 7. Section Galerie Films — décorations masquées + cards réduites
+- Caméras, popcorn masqués (`display: none`)
+- Marges carousel supprimées
+- Titre réduit, filtres compacts
+- Film cards : `130-155px`, meta/badges/durée réduits
+
+### 8. Section Gala — 1 colonne + prix 2 colonnes
+- Header centré, titre/desc réduits
+- Layout 1 colonne (au lieu de 2)
+- Grand Prix compact (icône `36px`, nom `1.1rem`)
+- Prix secondaires : 2 colonnes compactes centrées
+- Sponsors : 2 colonnes, logos réduits
+
+### 9. Section Jury — centré + grille 2 colonnes
+- Texte centré (label, titre, description)
+- Carte vedette : 1 colonne, photo `200px`, texte centré
+- Grille membres : 2 colonnes compactes (gap `8px`)
+- Cards : border-radius `12px`, tailles réduites
+
+### 10. Footer — masqué sur mobile
+- `display: none` sur mobile
+
+### Fichiers modifiés
+- `css/mobile.css` — nouveau fichier dédié responsive mobile (~400 lignes)
+- `css/index.css` — inchangé (styles mobile retirés)
+- `views/index.html` — ajout lien `mobile.css`
+- `js/manifeste-carousel.js` — mode horizontal mobile (translateX, drag tactile)
+- `SESSION.md` — mise à jour session 14
