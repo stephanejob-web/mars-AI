@@ -633,13 +633,85 @@ function renderComments(f) {
   }).join('');
 }
 
+/* ── CONSENSUS FILM ── */
+function getFilmConsensus(f) {
+  if (!f.juryDec) return { type: 'attente', valide: 0, refuse: 0, aRevoir: 0, pending: 0, score: 0 };
+  const decs    = Object.values(f.juryDec);
+  const valide  = decs.filter(d => d === 'valide').length;
+  const refuse  = decs.filter(d => d === 'refuse').length;
+  const aRevoir = decs.filter(d => d === 'aRevoir').length;
+  const pending = decs.filter(d => d === null || d === undefined).length;
+  const voted   = decs.length - pending;
+  if (voted === 0) return { type: 'attente', valide, refuse, aRevoir, pending, score: 0 };
+  const score = (valide * 2 + aRevoir * 0.5 - refuse * 1.5) / voted;
+  if (valide === voted || valide > voted / 2) return { type: 'unanime', valide, refuse, aRevoir, pending, score };
+  if (refuse > voted / 2)                    return { type: 'rejete',  valide, refuse, aRevoir, pending, score };
+  return                                             { type: 'partage', valide, refuse, aRevoir, pending, score };
+}
+
 /* ── VOTES JURY ── */
+const ADMIN_VOTER = { id: 0, initials: 'Ad', name: 'Administrateur', avatar: 'https://i.pravatar.cc/150?img=25' };
 const jurors = [
-  { key: 'ML', initials: 'ML', name: 'Marie Lefebvre', role: 'Présidente · Réalisatrice', cls: 'va-1' },
-  { key: 'PD', initials: 'PD', name: 'Pierre Dubois', role: 'Directeur artistique', cls: 'va-2' },
-  { key: 'KI', initials: 'KI', name: 'Kenji Ito', role: 'Artiste numérique', cls: 'va-3' },
-  { key: 'SE', initials: 'SE', name: 'Sofia Eriksson', role: 'Critique de cinéma', cls: 'va-4' },
+  { key: 'ML', id: 1, initials: 'ML', name: 'Marie Lefebvre',  role: 'Présidente · Réalisatrice', cls: 'va-1', avatar: 'https://i.pravatar.cc/150?img=47' },
+  { key: 'PD', id: 2, initials: 'PD', name: 'Pierre Dubois',   role: 'Directeur artistique',      cls: 'va-2', avatar: 'https://i.pravatar.cc/150?img=12' },
+  { key: 'KI', id: 3, initials: 'KI', name: 'Kenji Ito',       role: 'Artiste numérique',          cls: 'va-3', avatar: 'https://i.pravatar.cc/150?img=68' },
+  { key: 'SE', id: 4, initials: 'SE', name: 'Sofia Eriksson',  role: 'Critique de cinéma',         cls: 'va-4', avatar: 'https://i.pravatar.cc/150?img=44' },
 ];
+
+// ── Phase 1 : admin seul sélectionne les 50 films (lecture seule pour le jury)
+// ── Phase 2 : admin + jury votent collectivement pour le Top 5 ──
+let currentJurorKey = 'ML';
+const JURY_VOTE_THRESHOLD = 3; // ceil(5/2) — majorité pour Top 5
+
+function getVotesFromStorage() {
+  try {
+    return {
+      sel: JSON.parse(localStorage.getItem('marsai_adminSelected') || '[]'), // Top 50 — admin seul
+      fv:  JSON.parse(localStorage.getItem('marsai_finalistVotes') || '{}'), // Top 5  — collectif
+    };
+  } catch(e) { return { sel: [], fv: {} }; }
+}
+function saveFinalistVotes(fv) {
+  localStorage.setItem('marsai_finalistVotes', JSON.stringify(fv));
+}
+function currentJurorId() { return jurors.find(j => j.key === currentJurorKey)?.id || 1; }
+
+function isFilmInTop50(filmId) {
+  const { sel } = getVotesFromStorage();
+  return sel.includes(filmId);
+}
+function myFinalistVote(filmId) {
+  const { fv } = getVotesFromStorage();
+  return (fv[filmId] || []).includes(currentJurorId());
+}
+function finalistVoteCount(filmId) {
+  const { fv } = getVotesFromStorage();
+  return (fv[filmId] || []).length;
+}
+function isFilmInTop5(filmId) { return finalistVoteCount(filmId) >= JURY_VOTE_THRESHOLD; }
+
+function toggleJuryFinalist(filmId) {
+  if (!isFilmInTop50(filmId)) { showToast('⚠️ Ce film n\'est pas dans le Top 50', 'warn'); return; }
+  const { fv } = getVotesFromStorage();
+  const uid = currentJurorId();
+  if (!fv[filmId]) fv[filmId] = [];
+  const idx = fv[filmId].indexOf(uid);
+  if (idx >= 0) {
+    fv[filmId].splice(idx, 1);
+    showToast('Vote Top 5 retiré', 'warn');
+  } else {
+    const myCount = films.filter(f => (fv[f.id] || []).includes(uid)).length;
+    if (myCount >= 5) { showToast('⚠️ Vous avez déjà voté pour 5 finalistes', 'warn'); return; }
+    fv[filmId].push(uid);
+    showToast('🏆 Vote Top 5 enregistré', 'ok');
+  }
+  saveFinalistVotes(fv);
+  renderDelib();
+}
+function switchJuror(key) {
+  currentJurorKey = key;
+  renderDelib();
+}
 
 function renderVotes(f) {
   const el = document.getElementById('votes-list');
@@ -733,58 +805,223 @@ function removeFromListe(btn) {
 /* ── DÉLIBÉRATION ── */
 function renderDelib() {
   const table = document.getElementById('delib-table');
-  const pill = (dec) => {
-    if (!dec) return `<span style="color:rgba(136,146,176,0.35);font-size:0.72rem;">—</span>`;
-    const cls = { valide: 'sp-valide', aRevoir: 'sp-arevoir', refuse: 'sp-refuse' }[dec];
-    const txt = decLabel[dec];
-    return `<span class="status-pill ${cls}">${txt}</span>`;
+  if (!table) return;
+  const activePhase = document.querySelector('.ptab.active')?.dataset?.phase || '1';
+  const uid = currentJurorId();
+  const { sel, fv } = getVotesFromStorage();
+
+  const top50Films = films.filter(f => sel.includes(f.id));
+  const top50count = top50Films.length;
+  const top5count  = films.filter(f => isFilmInTop5(f.id)).length;
+
+  // ── Couleurs consensus ──
+  const consensusStyle = {
+    unanime: { border: 'rgba(78,255,206,0.5)',  bg: 'rgba(78,255,206,0.04)',  color: 'var(--aurora)', label: '✅ Unanime' },
+    partage: { border: 'rgba(245,200,66,0.5)',  bg: 'rgba(245,200,66,0.03)',  color: 'var(--solar)',  label: '⚠️ Partagé' },
+    rejete:  { border: 'rgba(255,107,107,0.5)', bg: 'rgba(255,107,107,0.03)', color: 'var(--coral)',  label: '❌ Rejeté'  },
+    attente: { border: 'rgba(255,255,255,0.06)', bg: '',                      color: 'var(--mist)',   label: '⏳ En attente' },
   };
-  const tbody = films.map((f, i) => {
-    const overall = f.juryDec;
-    const vals = Object.values(overall).filter(d => d === 'valide').length;
-    const tot = Object.values(overall).filter(d => d !== null).length;
-    const sp = tot === 0 ? 'sp-none' :
-      vals >= 3 ? 'sp-valide' :
-        Object.values(overall).filter(d => d === 'refuse').length >= 2 ? 'sp-refuse' : 'sp-arevoir';
-    const spTxt = { 'sp-valide': 'Validé', 'sp-arevoir': 'À revoir', 'sp-refuse': 'Refusé', 'sp-none': 'En attente' }[sp];
-    const rk = i < 3 ? 'gold' : '';
-    return `<tr onclick="switchView('eval');loadFilm(${f.id})">
-      <td><span class="rank ${rk}">${i + 1}</span></td>
-      <td><strong>${f.title}</strong></td>
-      <td style="color:var(--mist);font-size:0.78rem;">${f.author}</td>
-      <td>${pill(overall.ML)}</td>
-      <td>${pill(overall.PD)}</td>
-      <td>${pill(overall.KI)}</td>
-      <td>${pill(overall.SE)}</td>
-      <td><span class="status-pill ${sp}">${spTxt}</span></td>
-    </tr>`;
-  }).join('');
-  table.innerHTML = `
-    <thead><tr>
-      <th>#</th><th>Film</th><th>Réalisateur</th>
-      <th>ML</th><th>PD</th><th>KI</th><th>SE</th>
-      <th>Décision</th>
-    </tr></thead>
-    <tbody>${tbody}</tbody>`;
+  const decColor = { valide: 'var(--aurora)', aRevoir: 'var(--solar)', refuse: 'var(--coral)' };
+  const decIcon  = { valide: '✓', aRevoir: '↩', refuse: '✕' };
+
+  // ── Avatars photo "qui a voté" pour Top 5 (admin id=0 + jurés id=1-4) ──
+  const allVoters = [ADMIN_VOTER, ...jurors];
+  const voteAvatars = (votedIds) => {
+    const circles = allVoters.map(v => {
+      const voted  = votedIds.includes(v.id);
+      const isMe   = v.id === uid;
+      const border = voted
+        ? (isMe ? '2.5px solid var(--lavande)' : '2.5px solid rgba(192,132,252,0.55)')
+        : '2px solid rgba(255,255,255,0.1)';
+      const checkBadge = voted
+        ? `<span style="position:absolute;bottom:-1px;right:-1px;width:13px;height:13px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.42rem;font-weight:900;background:${isMe ? 'var(--lavande)' : 'rgba(192,132,252,0.85)'};color:#fff;border:1.5px solid var(--deep-sky);">✓</span>`
+        : isMe
+          ? `<span style="position:absolute;bottom:-1px;right:-1px;width:13px;height:13px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.5rem;font-weight:900;background:rgba(245,200,66,0.9);color:#1a1a2e;border:1.5px solid var(--deep-sky);">!</span>`
+          : '';
+      return `<span style="position:relative;display:inline-block;" title="${v.name}${voted ? ' — a voté ✓' : (isMe ? ' — à vous de voter !' : ' — pas encore voté')}">
+        <img src="${v.avatar}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:${border};opacity:${voted ? 1 : 0.35};display:block;transition:all 0.15s;">
+        ${checkBadge}
+      </span>`;
+    }).join('');
+    const count = votedIds.length;
+    return `<div style="display:flex;gap:4px;align-items:center;">${circles}<span style="font-family:monospace;font-size:0.72rem;font-weight:800;color:${count >= JURY_VOTE_THRESHOLD ? 'var(--lavande)' : 'var(--mist)'};margin-left:5px;">${count}/${JURY_VOTE_THRESHOLD}</span></div>`;
+  };
+
+  // ── Switcher juré (Phase 2 uniquement) ──
+  const switcherWrap = document.getElementById('delib-juror-switcher')?.closest('div[style*="align-items:center"]');
+  const switcher = document.getElementById('delib-juror-switcher');
+  if (switcherWrap) switcherWrap.style.display = activePhase === '2' ? '' : 'none';
+  if (switcher && activePhase === '2') {
+    switcher.innerHTML = jurors.map(j => {
+      const active = j.key === currentJurorKey;
+      const myFinVotes = films.filter(f => (fv[f.id]||[]).includes(j.id)).length;
+      return `<button onclick="switchJuror('${j.key}')" style="padding:6px 12px;border-radius:10px;cursor:pointer;border:1.5px solid ${active ? 'var(--lavande)' : 'rgba(255,255,255,0.07)'};background:${active ? 'rgba(192,132,252,0.12)' : 'rgba(255,255,255,0.02)'};transition:all 0.15s;display:flex;align-items:center;gap:8px;">
+        <img src="${j.avatar}" style="width:26px;height:26px;border-radius:50%;object-fit:cover;border:2px solid ${active ? 'var(--lavande)' : 'rgba(255,255,255,0.15)'};">
+        <span style="display:flex;flex-direction:column;align-items:flex-start;gap:1px;">
+          <span style="font-size:0.72rem;font-weight:${active ? 700 : 500};color:${active ? 'var(--lavande)' : 'var(--mist)'};">${j.name.split(' ')[0]}</span>
+          <span style="font-size:0.58rem;font-weight:600;color:${active ? 'rgba(192,132,252,0.8)' : 'rgba(136,146,176,0.4)'};">🏆 ${myFinVotes} vote${myFinVotes !== 1 ? 's' : ''}</span>
+        </span>
+      </button>`;
+    }).join('');
+  }
+
+  // Films nommés par l'admin pour Top 5 (précalculé pour bannière + liste)
+  const phase2Films = top50Films.filter(f => (fv[f.id] || []).includes(0));
+
+  // ── Bandeau d'incitation ──
+  const incentiveEl = document.getElementById('delib-incentive');
+  if (incentiveEl) {
+    if (activePhase === '2') {
+      const myFinCount = phase2Films.filter(f => (fv[f.id]||[]).includes(uid)).length;
+      const almostTop5 = phase2Films.filter(f => !isFilmInTop5(f.id) && finalistVoteCount(f.id) === JURY_VOTE_THRESHOLD - 1 && !(fv[f.id]||[]).includes(uid));
+      let msg, msgColor = 'var(--lavande)', bg = 'rgba(192,132,252,0.06)', border = 'rgba(192,132,252,0.18)';
+      if (myFinCount >= 5) {
+        msg = `🎉 Vous avez voté pour <strong>${myFinCount} finaliste${myFinCount > 1 ? 's' : ''}</strong> — merci pour votre contribution !`;
+      } else if (almostTop5.length > 0) {
+        msg = `⚡ <strong>${almostTop5.length} film${almostTop5.length > 1 ? 's ont' : ' a'} besoin d'1 vote</strong> pour entrer dans le Top 5 — le vôtre peut tout changer !`;
+        msgColor = 'var(--solar)'; bg = 'rgba(245,200,66,0.06)'; border = 'rgba(245,200,66,0.22)';
+      } else {
+        msg = `Vous avez voté pour <strong>${myFinCount}/5</strong> finaliste${myFinCount !== 1 ? 's' : ''}. Il reste <strong>${5 - myFinCount} vote${5 - myFinCount > 1 ? 's' : ''}</strong> à donner.`;
+      }
+      incentiveEl.style.cssText = `margin-bottom:16px;padding:12px 18px;border-radius:12px;background:${bg};border:1px solid ${border};font-size:0.8rem;color:${msgColor};line-height:1.6;display:flex;align-items:center;gap:10px;`;
+      incentiveEl.innerHTML = msg;
+    } else {
+      incentiveEl.style.cssText = `margin-bottom:16px;padding:11px 18px;border-radius:12px;background:rgba(78,255,206,0.04);border:1px solid rgba(78,255,206,0.14);font-size:0.78rem;color:var(--aurora);line-height:1.6;`;
+      incentiveEl.innerHTML = `★ <strong>${top50count}</strong> film${top50count !== 1 ? 's' : ''} présélectionné${top50count !== 1 ? 's' : ''} par l'administrateur${top50count >= 50 ? ' — <strong>quota atteint ✓</strong>' : ` sur 50`}. Passez en <strong>Phase 2</strong> pour voter le Top 5.`;
+    }
+  }
+
+  if (activePhase === '2') {
+    // ════ Phase 2 : vote Top 5 collectif ════
+    const pct = Math.min((top5count / 5) * 100, 100);
+    const progressRow = `<tr><td colspan="4" style="padding:0;border-bottom:1px solid rgba(192,132,252,0.12);">
+      <div style="padding:10px 16px;background:rgba(192,132,252,0.04);display:flex;align-items:center;gap:14px;">
+        <span style="font-size:0.7rem;font-weight:700;color:var(--lavande);white-space:nowrap;letter-spacing:0.04em;">🏆 TOP 5</span>
+        <div style="flex:1;height:4px;background:rgba(192,132,252,0.12);border-radius:999px;overflow:hidden;">
+          <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--lavande),#e0c3ff);border-radius:999px;transition:width 0.4s;"></div>
+        </div>
+        <span style="font-family:monospace;font-size:0.82rem;font-weight:800;color:${top5count >= 5 ? 'var(--lavande)' : 'var(--snow)'};">${top5count}<span style="color:var(--mist);font-weight:400;"> / 5</span></span>
+        ${top5count >= 5 ? '<span style="font-size:0.65rem;font-weight:700;color:var(--lavande);padding:2px 8px;border-radius:999px;background:rgba(192,132,252,0.15);border:1px solid rgba(192,132,252,0.3);">✓ Finale constituée</span>' : ''}
+      </div>
+    </td></tr>`;
+
+    if (phase2Films.length === 0) {
+      table.innerHTML = `<tbody><tr><td colspan="4" style="text-align:center;padding:48px;color:var(--mist);font-size:0.85rem;">L'administrateur n'a pas encore nommé de candidats Top 5.<br><span style="font-size:0.75rem;opacity:0.6;">La liste apparaîtra ici dès que l'admin aura sélectionné ses films dans son panel.</span></td></tr></tbody>`;
+      return;
+    }
+
+    const rows = phase2Films.map((f, idx) => {
+      const cnt    = finalistVoteCount(f.id);
+      const inTop5 = isFilmInTop5(f.id);
+      const voted  = myFinalistVote(f.id);
+      const almost = !inTop5 && cnt === JURY_VOTE_THRESHOLD - 1 && !voted;
+      const votedIds = fv[f.id] || [];
+
+      const rowBg     = inTop5  ? 'rgba(192,132,252,0.06)' : almost ? 'rgba(245,200,66,0.03)' : '';
+      const leftBorder = inTop5 ? 'border-left:3px solid rgba(192,132,252,0.5);' : almost ? 'border-left:3px solid rgba(245,200,66,0.5);' : 'border-left:3px solid transparent;';
+      const rankColor  = inTop5 ? 'var(--lavande)' : 'var(--mist)';
+
+      let voteBtn;
+      if (inTop5 && voted) {
+        voteBtn = `<button onclick="event.stopPropagation();toggleJuryFinalist(${f.id})" class="delib-btn delib-btn-top5-voted">🏆 Voté <span style="opacity:0.6;font-size:0.62rem;">✕</span></button>`;
+      } else if (inTop5) {
+        voteBtn = `<button onclick="event.stopPropagation();toggleJuryFinalist(${f.id})" class="delib-btn delib-btn-top5">🏆 Top 5</button>`;
+      } else if (voted) {
+        voteBtn = `<button onclick="event.stopPropagation();toggleJuryFinalist(${f.id})" class="delib-btn delib-btn-voted">✓ Voté <span style="opacity:0.6;font-size:0.62rem;">✕</span></button>`;
+      } else if (almost) {
+        voteBtn = `<button onclick="event.stopPropagation();toggleJuryFinalist(${f.id})" class="delib-btn delib-btn-almost">⚡ 1 vote manquant !</button>`;
+      } else {
+        voteBtn = `<button onclick="event.stopPropagation();toggleJuryFinalist(${f.id})" class="delib-btn delib-btn-default">→ Top 5</button>`;
+      }
+
+      return `<tr onclick="switchView('eval');loadFilm(${f.id})" style="background:${rowBg};${leftBorder}" class="delib-row">
+        <td style="font-family:monospace;font-size:0.78rem;font-weight:700;color:${rankColor};width:40px;">${String(idx + 1).padStart(2,'0')}</td>
+        <td>
+          <div style="font-weight:700;font-size:0.88rem;">${f.title}${inTop5 ? ' <span style="font-size:0.62rem;color:var(--lavande);vertical-align:middle;">🏆</span>' : ''}</div>
+          <div style="font-size:0.7rem;color:var(--mist);margin-top:2px;">${f.author}${f.country ? ' · ' + f.country : ''}</div>
+        </td>
+        <td style="width:220px;">${voteAvatars(votedIds)}</td>
+        <td style="width:160px;" onclick="event.stopPropagation();">${voteBtn}</td>
+      </tr>`;
+    }).join('');
+
+    table.innerHTML = `<thead><tr>
+      <th style="width:40px;">#</th>
+      <th>Film</th>
+      <th style="width:220px;">Votes (${top5count}/5 finalistes)</th>
+      <th style="width:160px;">Mon vote</th>
+    </tr></thead><tbody>${progressRow}${rows}</tbody>`;
+
+  } else {
+    // ════ Phase 1 : Top 50 sélectionné par l'admin — lecture seule ════
+    const pct50 = Math.min((top50count / 50) * 100, 100);
+    const progressRow = `<tr><td colspan="4" style="padding:0;border-bottom:1px solid rgba(78,255,206,0.1);">
+      <div style="padding:10px 16px;background:rgba(78,255,206,0.03);display:flex;align-items:center;gap:14px;">
+        <span style="font-size:0.7rem;font-weight:700;color:var(--aurora);white-space:nowrap;letter-spacing:0.04em;">★ TOP 50</span>
+        <div style="flex:1;height:4px;background:rgba(78,255,206,0.1);border-radius:999px;overflow:hidden;">
+          <div style="height:100%;width:${pct50}%;background:linear-gradient(90deg,var(--aurora),#a8ffec);border-radius:999px;transition:width 0.4s;"></div>
+        </div>
+        <span style="font-family:monospace;font-size:0.82rem;font-weight:800;color:${top50count >= 50 ? 'var(--aurora)' : 'var(--snow)'};">${top50count}<span style="color:var(--mist);font-weight:400;"> / 50</span></span>
+        ${top50count >= 50 ? '<span style="font-size:0.65rem;font-weight:700;color:var(--aurora);padding:2px 8px;border-radius:999px;background:rgba(78,255,206,0.12);border:1px solid rgba(78,255,206,0.3);">✓ Sélection complète</span>' : ''}
+      </div>
+    </td></tr>`;
+
+    if (top50Films.length === 0) {
+      table.innerHTML = `<tbody><tr><td colspan="4" style="text-align:center;padding:48px;color:var(--mist);font-size:0.85rem;">L'administrateur n'a pas encore sélectionné les 50 films.<br><span style="font-size:0.75rem;opacity:0.6;">La liste apparaîtra ici dès qu'elle sera constituée.</span></td></tr></tbody>`;
+      return;
+    }
+
+    const rows = top50Films.map((f, idx) => {
+      const c  = getFilmConsensus(f);
+      const cs = consensusStyle[c.type] || consensusStyle.attente;
+      const tv = c.valide + c.refuse + c.aRevoir;
+      const scoreBar = tv > 0
+        ? `<div style="display:flex;height:3px;border-radius:3px;overflow:hidden;width:60px;background:rgba(255,255,255,0.05);margin-top:5px;">
+            <div style="width:${Math.round((c.valide/tv)*100)}%;background:var(--aurora);"></div>
+            <div style="width:${Math.round((c.aRevoir/tv)*100)}%;background:var(--solar);"></div>
+            <div style="width:${Math.round((c.refuse/tv)*100)}%;background:var(--coral);"></div>
+           </div>`
+        : '';
+      const juryAvatars = jurors.map(j => {
+        const dec = f.juryDec?.[j.key] || null;
+        const col = dec ? decColor[dec] : 'rgba(255,255,255,0.15)';
+        const ic  = dec ? decIcon[dec]  : '?';
+        return `<span style="position:relative;display:inline-block;" title="${j.name}${dec ? ' — ' + dec : ' — pas évalué'}">
+          <img src="${j.avatar}" style="width:30px;height:30px;border-radius:50%;object-fit:cover;border:2.5px solid ${col};opacity:${dec ? 1 : 0.3};display:block;">
+          <span style="position:absolute;bottom:-1px;right:-1px;width:13px;height:13px;border-radius:50%;font-size:0.42rem;display:flex;align-items:center;justify-content:center;background:${col};color:var(--deep-sky);font-weight:900;border:1.5px solid var(--deep-sky);">${ic}</span>
+        </span>`;
+      }).join('');
+
+      return `<tr onclick="switchView('eval');loadFilm(${f.id})" style="background:${cs.bg};border-left:3px solid ${cs.border};" class="delib-row">
+        <td style="font-family:monospace;font-size:0.78rem;font-weight:700;color:var(--mist);width:40px;">${String(idx + 1).padStart(2,'0')}</td>
+        <td>
+          <div style="font-weight:700;font-size:0.88rem;">${f.title} <span style="font-size:0.62rem;color:var(--aurora);vertical-align:middle;">★</span></div>
+          <div style="font-size:0.7rem;color:var(--mist);margin-top:2px;">${f.author}${f.country ? ' · ' + f.country : ''}</div>
+        </td>
+        <td style="width:160px;"><div style="display:flex;gap:5px;align-items:center;">${juryAvatars}</div>${scoreBar}</td>
+        <td style="width:130px;"><span style="font-size:0.72rem;font-weight:700;color:${cs.color};">${cs.label}</span></td>
+      </tr>`;
+    }).join('');
+
+    table.innerHTML = `<thead><tr>
+      <th style="width:40px;">#</th>
+      <th>Film présélectionné</th>
+      <th style="width:160px;">Évaluations jury</th>
+      <th style="width:130px;">Consensus</th>
+    </tr></thead><tbody>${progressRow}${rows}</tbody>`;
+  }
 }
 
 function setPhaseTab(el, phase) {
-  document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.ptab').forEach(t => { t.classList.remove('active'); delete t.dataset.phase; });
   el.classList.add('active');
+  el.dataset.phase = String(phase);
   const badge = document.getElementById('phase-badge');
-  if (phase === 1) {
-    badge.textContent = 'Phase 1 · Top 50 · 12/12/26';
-    badge.className = 'phase-badge phase-1';
-  } else {
-    badge.textContent = 'Phase 2 · Top 5 · Finale';
-    badge.className = 'phase-badge phase-2';
-    // En phase 2 on ne montre que 5 films (les plus validés)
-    const t = document.getElementById('delib-table');
-    if (t && t.tBodies[0]) {
-      const rows = Array.from(t.tBodies[0].rows);
-      rows.forEach((r, i) => r.style.display = i < 5 ? '' : 'none');
-    }
+  if (badge) {
+    badge.textContent = phase === 1 ? 'Phase 1 · Top 50 · 12/12/26' : 'Phase 2 · Top 5 · Finale';
+    badge.className = phase === 1 ? 'phase-badge phase-1' : 'phase-badge phase-2';
   }
+  renderDelib();
 }
 
 /* ── ANNOTATION RAPIDE (À discuter) ── */
