@@ -181,3 +181,37 @@ Sessions précédentes documentées : correction performances GPU, suppression U
 - `assets/pop-corn.png` — popcorn fond transparent (nouveau)
 - `assets/camera-cinema.png` — caméra cinéma fond transparent (nouveau)
 - `SESSION.md` — mise à jour session 12
+
+---
+
+## Session 13 — Galerie & Carousel : refonte visuelle cinéma
+**Date** : 5 mars 2026
+
+### 1. Section Galerie — popcorn x2 + couleurs chaudes
+- Caméra cinéma (droite) remplacée par un 2e popcorn en miroir (`scaleX(-1)`)
+- Couleur verte aurora remplacée par doré chaud (`#FFB347` → `#FF8C42`) :
+  - Label "Sélection Officielle" en doré avec halo chaud
+  - Bouton filtre actif en dégradé orangé
+- Police changée en `var(--font-display)` (Syne) pour le label et le titre
+- Titre "50 Films · Imaginez des futurs souhaitables" limité à `max-width: 600px`
+
+### 2. Carousel — cards réduites + caméras projecteurs
+- Cards vidéo réduites : `min-width: 200px, max-width: 230px` (avant 260/300)
+- Caméras cinéma ajoutées dans chaque rangée du carousel :
+  - Rangée 1 : caméra à droite, pointe vers la gauche
+  - Rangée 2 : caméra à gauche, pointe vers la droite
+- Caméras agrandies à `220px`
+- Carousel décalé (`margin-right/left: 210px`) pour que les vidéos commencent après la caméra
+- Masques de fondu bleus supprimés (`display: none`)
+
+### 3. Effet lumière projecteur — boule lumineuse sur l'objectif
+- Boule de lumière blanche/dorée devant l'objectif de chaque caméra
+- Dégradé radial : blanc au centre → doré → transparent
+- Triple `box-shadow` pour halo lumineux diffus
+- Animation `beam-glow` pulsante (scale + opacity)
+- Positionnement ajusté sur l'objectif de chaque caméra
+
+### Fichiers modifiés
+- `css/index.css` — refonte galerie, carousel, caméras, effet lumière
+- `views/index.html` — popcorn miroir, caméras dans chaque rangée du carousel
+- `SESSION.md` — mise à jour session 13
