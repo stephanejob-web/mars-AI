@@ -901,6 +901,9 @@ function renderDelib() {
       return;
     }
 
+    const decColor = { valide: 'var(--aurora)', aRevoir: 'var(--solar)', refuse: 'var(--coral)' };
+    const decIcon  = { valide: '✓', aRevoir: '↩', refuse: '✕' };
+
     const tbody = top50Films.map((f) => {
       const c = getFilmConsensus(f);
       const pill = c.type === 'unanime'
@@ -908,15 +911,22 @@ function renderDelib() {
         : c.type === 'partage'
           ? `<span style="color:var(--solar);font-weight:700;font-size:0.7rem;">⚠️ Partagé</span>`
           : `<span style="color:var(--mist);font-size:0.7rem;">—</span>`;
+      const juryAvatars = jurors.map(j => {
+        const dec = f.juryDec?.[j.key] || null;
+        const col = dec ? decColor[dec] : 'rgba(255,255,255,0.12)';
+        const ic  = dec ? decIcon[dec]  : '?';
+        return `<span title="${j.name}${dec ? ' · ' + dec : ' · pas évalué'}" style="position:relative;display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font-size:0.58rem;font-weight:700;border:2px solid ${col};background:${dec ? col + '22' : 'transparent'};color:${dec ? col : 'rgba(255,255,255,0.2)'};">${j.initials}<span style="position:absolute;bottom:-2px;right:-2px;width:11px;height:11px;border-radius:50%;font-size:0.4rem;display:flex;align-items:center;justify-content:center;background:${col};color:var(--deep-sky);font-weight:900;">${ic}</span></span>`;
+      }).join('');
       return `<tr onclick="switchView('eval');loadFilm(${f.id})" style="background:rgba(78,255,206,0.02);">
         <td style="font-family:monospace;font-size:0.72rem;color:var(--mist);">#${String(f.id).padStart(3,'0')}</td>
         <td><strong>${f.title}</strong> <span style="font-size:0.65rem;color:var(--aurora);">★</span><br><span style="font-size:0.7rem;color:var(--mist);">${f.author} · ${f.country||''}</span></td>
+        <td><div style="display:flex;gap:5px;align-items:center;">${juryAvatars}</div></td>
         <td>${pill}</td>
       </tr>`;
     }).join('');
 
     table.innerHTML = `<thead><tr>
-      <th>#</th><th>Film sélectionné par l'admin</th><th>Consensus jury</th>
+      <th>#</th><th>Film sélectionné par l'admin</th><th>Décisions jury</th><th>Consensus</th>
     </tr></thead><tbody>${progressBar}${tbody}</tbody>`;
   }
 }
