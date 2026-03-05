@@ -2923,7 +2923,8 @@ function renderSelection() {
       bannerLabel.style.color = "var(--lavande)";
       bannerStatus.textContent = "● En cours";
       bannerStatus.style.cssText = "font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:999px;background:rgba(192,132,252,0.12);color:var(--lavande);border:1px solid rgba(192,132,252,0.3);";
-      bannerFill.style.cssText = `width:${Math.min((finalCount/5)*100,100)}%;background:linear-gradient(90deg,var(--lavande),#e0c3ff);`;
+      bannerFill.style.width = `${Math.min((finalCount/5)*100,100)}%`;
+      bannerFill.style.background = "linear-gradient(90deg,var(--lavande),#e0c3ff)";
       bannerCount.textContent  = finalCount;
       bannerCount.style.color  = "var(--lavande)";
       bannerCLabel.textContent = "/ 5 finalistes";
@@ -2941,7 +2942,8 @@ function renderSelection() {
       bannerLabel.style.color = "var(--aurora)";
       bannerStatus.textContent = "● En cours";
       bannerStatus.style.cssText = "font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:999px;background:rgba(78,255,206,0.12);color:var(--aurora);border:1px solid rgba(78,255,206,0.3);";
-      bannerFill.style.cssText = `width:${Math.min((admSelCount/50)*100,100)}%;background:linear-gradient(90deg,var(--aurora),#a8ffec);`;
+      bannerFill.style.width = `${Math.min((admSelCount/50)*100,100)}%`;
+      bannerFill.style.background = "linear-gradient(90deg,var(--aurora),#a8ffec)";
       bannerCount.textContent  = admSelCount;
       bannerCount.style.color  = "var(--aurora)";
       bannerCLabel.textContent = "/ 50 sélectionnés";
@@ -2950,20 +2952,22 @@ function renderSelection() {
       if (selFilter === "tous") { selFilter = "selectionne"; document.querySelectorAll(".sel-filter").forEach(b => b.classList.remove("active")); document.getElementById("selfil-selectionne")?.classList.add("active"); }
 
     } else {
-      // Aucune phase active
-      banner.style.background = "rgba(255,255,255,0.03)";
-      banner.style.border     = "1px solid rgba(255,255,255,0.07)";
-      bannerIcon.textContent  = "📅";
-      bannerIcon.style.background = "rgba(255,255,255,0.05)";
-      const nextLabel = p1St === "upcoming" ? `Phase 1 à partir du ${fmtDate(p1.open)}` : p2St === "upcoming" ? `Phase 2 à partir du ${fmtDate(p2.open)}` : "Aucune phase configurée — allez dans Phases & Dates";
+      // Aucune phase active — affiche la progression de sélection en cours
+      const pct = Math.min((admSelCount / 50) * 100, 100);
+      banner.style.background = "rgba(78,255,206,0.04)";
+      banner.style.border     = "1px solid rgba(78,255,206,0.12)";
+      bannerIcon.textContent  = "★";
+      bannerIcon.style.background = "rgba(78,255,206,0.08)";
+      const nextLabel = p1St === "upcoming" ? `Phase 1 à partir du ${fmtDate(p1.open)}` : p2St === "upcoming" ? `Phase 2 à partir du ${fmtDate(p2.open)}` : "Sélection en cours";
       bannerLabel.textContent = nextLabel;
-      bannerLabel.style.color = "var(--snow)";
-      bannerStatus.textContent = p1St === "upcoming" || p2St === "upcoming" ? "◷ À venir" : "—";
-      bannerStatus.style.cssText = "font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,0.06);color:var(--mist);border:1px solid rgba(255,255,255,0.1);";
-      bannerFill.style.width  = "0%";
-      bannerCount.textContent = "—";
-      bannerCount.style.color = "var(--mist)";
-      bannerCLabel.textContent = "films affichés";
+      bannerLabel.style.color = "var(--aurora)";
+      bannerStatus.textContent = admSelCount >= 50 ? "✓ Quota atteint" : p1St === "upcoming" || p2St === "upcoming" ? "◷ À venir" : `${admSelCount} / 50`;
+      bannerStatus.style.cssText = "font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:999px;background:rgba(78,255,206,0.1);color:var(--aurora);border:1px solid rgba(78,255,206,0.25);";
+      bannerFill.style.width = `${pct}%`;
+      bannerFill.style.background = "linear-gradient(90deg,var(--aurora),#a8ffec)";
+      bannerCount.textContent = admSelCount;
+      bannerCount.style.color = "var(--aurora)";
+      bannerCLabel.textContent = "/ 50 sélectionnés";
       if (bannerDL) bannerDL.style.display = "none";
     }
   }
