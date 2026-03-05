@@ -49,6 +49,12 @@
           <span class="nav-count count-selected" id="nav-selected">3</span>
         </div>
 
+        <div class="nav-item" onclick="switchView('discuter', this)">
+          <span class="icon">💬</span>
+          À discuter
+          <span class="nav-count count-discuss" id="nav-discuter-count">0</span>
+        </div>
+
         <div class="nav-label" style="margin-top: 8px">Sélection</div>
 
         <div class="nav-item" onclick="switchView('delib', this)">
@@ -1437,19 +1443,27 @@ Thèmes intéressants mais traitement inégal — à peser lors de la délibéra
         <span class="dn-lbl">User Stories</span>
       </a>
     </div>
-<script>
-(function(){
-  var nav = document.getElementById('dev-nav');
-  if (!nav) return;
-  nav.addEventListener('touchstart', function(e) {
-    if (e.target.closest('a')) return;
-    e.preventDefault();
-    nav.classList.toggle('open');
-  }, { passive: false });
-  document.addEventListener('touchstart', function(e) {
-    if (!nav.contains(e.target)) nav.classList.remove('open');
-  }, { passive: true });
-})();
-</script>
+    <script>
+      (function () {
+        var nav = document.getElementById("dev-nav");
+        if (!nav) return;
+        nav.addEventListener(
+          "touchstart",
+          function (e) {
+            if (e.target.closest("a")) return;
+            e.preventDefault();
+            nav.classList.toggle("open");
+          },
+          { passive: false },
+        );
+        document.addEventListener(
+          "touchstart",
+          function (e) {
+            if (!nav.contains(e.target)) nav.classList.remove("open");
+          },
+          { passive: true },
+        );
+      })();
+    </script>
   </body>
 </html>
