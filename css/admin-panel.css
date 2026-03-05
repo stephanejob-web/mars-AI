@@ -227,6 +227,45 @@
   border: 1px solid rgba(192, 132, 252, 0.2);
 }
 
+/* ── PHASES CARDS ────────────────────────────────────────────── */
+.phase-save-btn {
+  margin-top: 14px;
+  width: 100%;
+  padding: 11px 16px;
+  border-radius: 12px;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  transition: all 0.2s;
+}
+.phase-save-aurora {
+  background: rgba(78, 255, 206, 0.1);
+  border: 1px solid rgba(78, 255, 206, 0.3);
+  color: var(--aurora);
+}
+.phase-save-aurora:hover {
+  background: rgba(78, 255, 206, 0.18);
+  box-shadow: 0 0 20px rgba(78, 255, 206, 0.15);
+}
+.phase-save-lavande {
+  background: rgba(192, 132, 252, 0.1);
+  border: 1px solid rgba(192, 132, 252, 0.3);
+  color: var(--lavande);
+}
+.phase-save-lavande:hover {
+  background: rgba(192, 132, 252, 0.18);
+  box-shadow: 0 0 20px rgba(192, 132, 252, 0.15);
+}
+@keyframes phaseNodePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(78, 255, 206, 0.4); }
+  50%       { box-shadow: 0 0 0 8px rgba(78, 255, 206, 0); }
+}
+.tl-node-active {
+  animation: phaseNodePulse 2s ease-in-out infinite;
+}
+
 /* ── SELECT RÔLE (éditable) ──────────────────────────────────── */
 .role-select {
   appearance: none;
@@ -2526,6 +2565,22 @@
   border-color: rgba(245, 230, 66, 0.5) !important;
   color: var(--solar) !important;
   box-shadow: 0 0 12px rgba(245, 230, 66, 0.15);
+}
+.sel-filter-final {
+  border-color: rgba(192, 132, 252, 0.35);
+  color: var(--lavande);
+  font-weight: 700;
+}
+.sel-filter-final:hover {
+  background: rgba(192, 132, 252, 0.1) !important;
+  border-color: rgba(192, 132, 252, 0.55) !important;
+  color: var(--lavande) !important;
+}
+.sel-filter-final.active {
+  background: rgba(192, 132, 252, 0.12) !important;
+  border-color: rgba(192, 132, 252, 0.55) !important;
+  color: var(--lavande) !important;
+  box-shadow: 0 0 14px rgba(192, 132, 252, 0.2);
 }
 .sel-sort.active {
   background: rgba(78, 255, 206, 0.1);

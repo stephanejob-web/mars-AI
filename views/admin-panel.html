@@ -580,301 +580,175 @@
 
       <!-- ══════ VUE PHASES ══════ -->
       <div class="content" id="view-phases" style="display: none">
-        <div class="section-head" style="margin-bottom: 20px">
+
+        <!-- Header -->
+        <div class="section-head" style="margin-bottom:32px;">
           <div>
-            <h2>Gestion des phases d'évaluation</h2>
-            <p>Définissez les dates d'ouverture de chaque session du jury.</p>
+            <h2>Phases d'évaluation</h2>
+            <p>Configurez les fenêtres temporelles de chaque session du jury.</p>
+          </div>
+          <span id="phase-active-badge" style="font-size:0.75rem;font-weight:700;padding:6px 18px;border-radius:999px;background:rgba(255,255,255,0.06);color:var(--mist);border:1px solid rgba(255,255,255,0.1);white-space:nowrap;">Aucune phase active</span>
+        </div>
+
+        <!-- Timeline visuelle -->
+        <div style="margin-bottom:36px;position:relative;">
+          <div style="display:flex;align-items:center;gap:0;position:relative;">
+
+            <!-- Nœud Phase 1 -->
+            <div style="display:flex;flex-direction:column;align-items:center;gap:6px;min-width:120px;">
+              <div id="tl-node-1" style="width:40px;height:40px;border-radius:50%;background:rgba(78,255,206,0.1);border:2px solid rgba(78,255,206,0.4);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:0.85rem;font-weight:700;color:var(--aurora);transition:all 0.3s;box-shadow:0 0 0 0 rgba(78,255,206,0);">01</div>
+              <span style="font-size:0.65rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--aurora);">Phase 1</span>
+              <span id="tl-date-1" style="font-family:var(--font-mono);font-size:0.62rem;color:var(--mist);">12/12 → 19/12</span>
+            </div>
+
+            <!-- Ligne de connexion -->
+            <div style="flex:1;height:2px;background:rgba(255,255,255,0.06);position:relative;overflow:hidden;">
+              <div id="tl-line-fill" style="position:absolute;left:0;top:0;height:100%;width:0%;background:linear-gradient(90deg,var(--aurora),var(--lavande));transition:width 0.5s ease;"></div>
+            </div>
+
+            <!-- Nœud intermédiaire (flèche) -->
+            <div style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:var(--mist);flex-shrink:0;">→</div>
+
+            <!-- Ligne de connexion -->
+            <div style="flex:1;height:2px;background:rgba(255,255,255,0.06);position:relative;overflow:hidden;">
+              <div id="tl-line-fill-2" style="position:absolute;left:0;top:0;height:100%;width:0%;background:linear-gradient(90deg,var(--lavande),rgba(192,132,252,0.4));transition:width 0.5s ease;"></div>
+            </div>
+
+            <!-- Nœud Phase 2 -->
+            <div style="display:flex;flex-direction:column;align-items:center;gap:6px;min-width:120px;">
+              <div id="tl-node-2" style="width:40px;height:40px;border-radius:50%;background:rgba(192,132,252,0.08);border:2px solid rgba(192,132,252,0.25);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:0.85rem;font-weight:700;color:var(--lavande);transition:all 0.3s;opacity:0.5;">02</div>
+              <span style="font-size:0.65rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--lavande);opacity:0.5;" id="tl-label-2">Phase 2</span>
+              <span id="tl-date-2" style="font-family:var(--font-mono);font-size:0.62rem;color:var(--mist);">22/12 → 28/12</span>
+            </div>
+
           </div>
         </div>
 
-        <div
-          style="
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            max-width: 760px;
-          "
-        >
-          <!-- Phase 1 -->
-          <div
-            style="
-              background: var(--surface-2);
-              border: 1px solid rgba(78, 255, 206, 0.2);
-              border-radius: 14px;
-              padding: 22px;
-            "
-          >
-            <div
-              style="
-                font-family: var(--font-mono);
-                font-size: 0.65rem;
-                color: var(--aurora);
-                font-weight: 700;
-                letter-spacing: 0.1em;
-                text-transform: uppercase;
-                margin-bottom: 10px;
-              "
-            >
-              Phase 1
+        <!-- Cartes phases -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+
+          <!-- ── Phase 1 ── -->
+          <div class="phase-card phase-card-p1" style="position:relative;overflow:hidden;background:linear-gradient(145deg,rgba(78,255,206,0.04) 0%,rgba(15,17,26,0) 60%),var(--surface-2);border:1px solid rgba(78,255,206,0.18);border-radius:18px;padding:28px;">
+            <!-- Orbe déco -->
+            <div style="position:absolute;top:-40px;right:-40px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(78,255,206,0.08) 0%,transparent 70%);pointer-events:none;"></div>
+
+            <!-- Tag + titre -->
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;">
+              <div>
+                <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--aurora);font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px;">Phase 01</div>
+                <div style="font-family:var(--font-display);font-size:1.3rem;font-weight:900;line-height:1.1;background:linear-gradient(135deg,var(--aurora),#a8ffec);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Présélection<br>Top 50</div>
+              </div>
+              <div style="font-family:var(--font-mono);font-size:2.8rem;font-weight:900;color:rgba(78,255,206,0.07);line-height:1;user-select:none;margin-top:-4px;">50</div>
             </div>
-            <div
-              style="
-                font-family: var(--font-display);
-                font-size: 1.1rem;
-                font-weight: 800;
-                margin-bottom: 4px;
-              "
-            >
-              Présélection Top 50
+
+            <div style="font-size:0.75rem;color:var(--mist);margin-bottom:22px;line-height:1.6;">
+              Le jury évalue et note les <strong style="color:var(--snow);">50 films</strong> de la sélection officielle. Chaque juré accède uniquement aux films qui lui sont assignés.
             </div>
-            <div
-              style="
-                font-size: 0.75rem;
-                color: var(--mist);
-                margin-bottom: 18px;
-                line-height: 1.5;
-              "
-            >
-              Évaluation des 50 premières vidéos. Chaque jury évalue ses films
-              assignés.
+
+            <!-- Inputs dates -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+              <div>
+                <label style="font-size:0.6rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(78,255,206,0.6);display:block;margin-bottom:5px;">📅 Ouverture</label>
+                <input type="date" id="p1-open" value="2026-12-12" style="width:100%;box-sizing:border-box;background:rgba(78,255,206,0.04);border:1.5px solid rgba(78,255,206,0.2);border-radius:10px;padding:9px 10px;font-family:var(--font-mono);font-size:0.8rem;color:var(--white-soft);outline:none;color-scheme:dark;transition:border-color 0.2s;" onfocus="this.style.borderColor='rgba(78,255,206,0.5)'" onblur="this.style.borderColor='rgba(78,255,206,0.2)'"/>
+              </div>
+              <div>
+                <label style="font-size:0.6rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.3);display:block;margin-bottom:5px;">🔒 Clôture</label>
+                <input type="date" id="p1-close" value="2026-12-19" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.03);border:1.5px solid rgba(255,255,255,0.08);border-radius:10px;padding:9px 10px;font-family:var(--font-mono);font-size:0.8rem;color:var(--white-soft);outline:none;color-scheme:dark;transition:border-color 0.2s;" onfocus="this.style.borderColor='rgba(255,255,255,0.25)'" onblur="this.style.borderColor='rgba(255,255,255,0.08)'"/>
+              </div>
             </div>
-            <div style="margin-bottom: 12px">
-              <label
-                style="
-                  font-size: 0.65rem;
-                  font-weight: 700;
-                  letter-spacing: 0.08em;
-                  text-transform: uppercase;
-                  color: var(--mist);
-                  display: block;
-                  margin-bottom: 6px;
-                "
-                >Date d'ouverture</label
-              >
-              <input
-                type="date"
-                value="2026-12-12"
-                style="
-                  width: 100%;
-                  background: rgba(255, 255, 255, 0.04);
-                  border: 1.5px solid rgba(78, 255, 206, 0.25);
-                  border-radius: 8px;
-                  padding: 9px 12px;
-                  font-family: var(--font-mono);
-                  font-size: 0.85rem;
-                  color: var(--white-soft);
-                  outline: none;
-                  color-scheme: dark;
-                "
-              />
+
+            <!-- Info + badge statut -->
+            <!-- Progression Phase 1 -->
+            <div style="margin-bottom:14px;">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
+                <span style="font-size:0.65rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:rgba(78,255,206,0.6);">Films sélectionnés</span>
+                <span id="p1-progress-counter" style="font-family:var(--font-mono);font-size:0.8rem;"></span>
+              </div>
+              <div style="height:5px;background:rgba(78,255,206,0.08);border-radius:999px;overflow:hidden;">
+                <div id="p1-progress-fill" style="height:100%;width:0%;background:linear-gradient(90deg,var(--aurora),#a8ffec);border-radius:999px;transition:width 0.4s ease;"></div>
+              </div>
+              <div id="p1-progress-msg" style="font-size:0.68rem;margin-top:5px;color:var(--solar);"></div>
             </div>
-            <div style="margin-bottom: 16px">
-              <label
-                style="
-                  font-size: 0.65rem;
-                  font-weight: 700;
-                  letter-spacing: 0.08em;
-                  text-transform: uppercase;
-                  color: var(--mist);
-                  display: block;
-                  margin-bottom: 6px;
-                "
-                >Date de clôture</label
-              >
-              <input
-                type="date"
-                value="2026-12-19"
-                style="
-                  width: 100%;
-                  background: rgba(255, 255, 255, 0.04);
-                  border: 1.5px solid rgba(255, 255, 255, 0.09);
-                  border-radius: 8px;
-                  padding: 9px 12px;
-                  font-family: var(--font-mono);
-                  font-size: 0.85rem;
-                  color: var(--white-soft);
-                  outline: none;
-                  color-scheme: dark;
-                "
-              />
+
+            <div id="p1-info" style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:rgba(78,255,206,0.05);border:1px solid rgba(78,255,206,0.1);border-radius:10px;font-size:0.73rem;color:rgba(78,255,206,0.8);margin-bottom:6px;">
+              🎬 Objectif : 50 films pour la sélection officielle
             </div>
-            <div
-              style="
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                padding: 8px 12px;
-                background: rgba(78, 255, 206, 0.06);
-                border-radius: 8px;
-                font-size: 0.75rem;
-                color: var(--aurora);
-              "
-            >
-              ✓ 50 films en compétition · 4 jurys assignés
-            </div>
-            <button
-              onclick="showToast('Phase 1 sauvegardée', 'ok')"
-              style="
-                margin-top: 14px;
-                width: 100%;
-                padding: 9px;
-                background: rgba(78, 255, 206, 0.1);
-                border: 1px solid rgba(78, 255, 206, 0.3);
-                border-radius: 8px;
-                font-family: var(--font-body);
-                font-size: 0.82rem;
-                font-weight: 600;
-                color: var(--aurora);
-                cursor: pointer;
-                transition: all 0.15s;
-              "
-              onmouseover="this.style.background = 'rgba(78,255,206,0.18)'"
-              onmouseout="this.style.background = 'rgba(78,255,206,0.1)'"
-            >
-              Enregistrer les dates
+            <div id="p1-status-badge" style="display:none;padding:6px 12px;border-radius:10px;font-size:0.72rem;font-weight:700;text-align:center;margin-bottom:6px;"></div>
+            <div id="p1-lock-msg" style="display:none;margin-bottom:8px;padding:9px 12px;background:rgba(245,200,66,0.06);border:1px solid rgba(245,200,66,0.18);border-radius:10px;font-size:0.72rem;color:var(--solar);"></div>
+
+            <button onclick="savePhase(1)" id="p1-save-btn" class="phase-save-btn phase-save-aurora">
+              Confirmer la Phase 1 →
             </button>
           </div>
 
-          <!-- Phase 2 -->
-          <div
-            style="
-              background: var(--surface-2);
-              border: 1px solid rgba(192, 132, 252, 0.2);
-              border-radius: 14px;
-              padding: 22px;
-            "
-          >
-            <div
-              style="
-                font-family: var(--font-mono);
-                font-size: 0.65rem;
-                color: var(--lavande);
-                font-weight: 700;
-                letter-spacing: 0.1em;
-                text-transform: uppercase;
-                margin-bottom: 10px;
-              "
-            >
-              Phase 2
+          <!-- ── Phase 2 ── -->
+          <div class="phase-card phase-card-p2" style="position:relative;overflow:hidden;background:linear-gradient(145deg,rgba(192,132,252,0.04) 0%,rgba(15,17,26,0) 60%),var(--surface-2);border:1px solid rgba(192,132,252,0.15);border-radius:18px;padding:28px;">
+            <!-- Orbe déco -->
+            <div style="position:absolute;top:-40px;right:-40px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(192,132,252,0.07) 0%,transparent 70%);pointer-events:none;"></div>
+
+            <!-- Tag + titre -->
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;">
+              <div>
+                <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--lavande);font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px;">Phase 02</div>
+                <div style="font-family:var(--font-display);font-size:1.3rem;font-weight:900;line-height:1.1;background:linear-gradient(135deg,var(--lavande),#e0c3ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Finale<br>Top 5</div>
+              </div>
+              <div style="font-family:var(--font-mono);font-size:2.8rem;font-weight:900;color:rgba(192,132,252,0.07);line-height:1;user-select:none;margin-top:-4px;">5</div>
             </div>
-            <div
-              style="
-                font-family: var(--font-display);
-                font-size: 1.1rem;
-                font-weight: 800;
-                margin-bottom: 4px;
-              "
-            >
-              Finale Top 5
+
+            <div style="font-size:0.75rem;color:var(--mist);margin-bottom:22px;line-height:1.6;">
+              Délibération finale sur les <strong style="color:var(--snow);">5 films finalistes</strong> issus de la Phase 1. Session de vote décisive avant la cérémonie du Gala.
             </div>
-            <div
-              style="
-                font-size: 0.75rem;
-                color: var(--mist);
-                margin-bottom: 18px;
-                line-height: 1.5;
-              "
-            >
-              Évaluation des 5 films finalistes. Session supplémentaire après
-              délibération Phase 1.
+
+            <!-- Inputs dates -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+              <div>
+                <label style="font-size:0.6rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(192,132,252,0.6);display:block;margin-bottom:5px;">📅 Ouverture</label>
+                <input type="date" id="p2-open" value="2026-12-22" style="width:100%;box-sizing:border-box;background:rgba(192,132,252,0.04);border:1.5px solid rgba(192,132,252,0.18);border-radius:10px;padding:9px 10px;font-family:var(--font-mono);font-size:0.8rem;color:var(--white-soft);outline:none;color-scheme:dark;transition:border-color 0.2s;" onfocus="this.style.borderColor='rgba(192,132,252,0.45)'" onblur="this.style.borderColor='rgba(192,132,252,0.18)'"/>
+              </div>
+              <div>
+                <label style="font-size:0.6rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.3);display:block;margin-bottom:5px;">🔒 Clôture</label>
+                <input type="date" id="p2-close" value="2026-12-28" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.03);border:1.5px solid rgba(255,255,255,0.08);border-radius:10px;padding:9px 10px;font-family:var(--font-mono);font-size:0.8rem;color:var(--white-soft);outline:none;color-scheme:dark;transition:border-color 0.2s;" onfocus="this.style.borderColor='rgba(255,255,255,0.25)'" onblur="this.style.borderColor='rgba(255,255,255,0.08)'"/>
+              </div>
             </div>
-            <div style="margin-bottom: 12px">
-              <label
-                style="
-                  font-size: 0.65rem;
-                  font-weight: 700;
-                  letter-spacing: 0.08em;
-                  text-transform: uppercase;
-                  color: var(--mist);
-                  display: block;
-                  margin-bottom: 6px;
-                "
-                >Date d'ouverture</label
-              >
-              <input
-                type="date"
-                value="2026-12-22"
-                style="
-                  width: 100%;
-                  background: rgba(255, 255, 255, 0.04);
-                  border: 1.5px solid rgba(192, 132, 252, 0.25);
-                  border-radius: 8px;
-                  padding: 9px 12px;
-                  font-family: var(--font-mono);
-                  font-size: 0.85rem;
-                  color: var(--white-soft);
-                  outline: none;
-                  color-scheme: dark;
-                "
-              />
+
+            <!-- Info + lock + badge -->
+            <!-- Progression Phase 2 -->
+            <div style="margin-bottom:14px;">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
+                <span style="font-size:0.65rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:rgba(192,132,252,0.6);">Finalistes désignés</span>
+                <span id="p2-progress-counter" style="font-family:var(--font-mono);font-size:0.8rem;"></span>
+              </div>
+              <div style="height:5px;background:rgba(192,132,252,0.08);border-radius:999px;overflow:hidden;">
+                <div id="p2-progress-fill" style="height:100%;width:0%;background:linear-gradient(90deg,var(--lavande),#e0c3ff);border-radius:999px;transition:width 0.4s ease;"></div>
+              </div>
+              <div id="p2-progress-msg" style="font-size:0.68rem;margin-top:5px;color:var(--solar);"></div>
             </div>
-            <div style="margin-bottom: 16px">
-              <label
-                style="
-                  font-size: 0.65rem;
-                  font-weight: 700;
-                  letter-spacing: 0.08em;
-                  text-transform: uppercase;
-                  color: var(--mist);
-                  display: block;
-                  margin-bottom: 6px;
-                "
-                >Date de clôture</label
-              >
-              <input
-                type="date"
-                value="2026-12-28"
-                style="
-                  width: 100%;
-                  background: rgba(255, 255, 255, 0.04);
-                  border: 1.5px solid rgba(255, 255, 255, 0.09);
-                  border-radius: 8px;
-                  padding: 9px 12px;
-                  font-family: var(--font-mono);
-                  font-size: 0.85rem;
-                  color: var(--white-soft);
-                  outline: none;
-                  color-scheme: dark;
-                "
-              />
+
+            <div id="p2-info" style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:rgba(192,132,252,0.05);border:1px solid rgba(192,132,252,0.1);border-radius:10px;font-size:0.73rem;color:rgba(192,132,252,0.8);margin-bottom:6px;">
+              <span id="p2-info-text">🏆 5 finalistes · À confirmer après Phase 1</span>
             </div>
-            <div
-              style="
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                padding: 8px 12px;
-                background: rgba(192, 132, 252, 0.06);
-                border-radius: 8px;
-                font-size: 0.75rem;
-                color: var(--lavande);
-              "
-            >
-              ⏳ 5 finalistes · À confirmer après Phase 1
+            <div id="p2-lock-msg" style="display:none;padding:9px 12px;background:rgba(245,200,66,0.06);border:1px solid rgba(245,200,66,0.18);border-radius:10px;font-size:0.72rem;color:var(--solar);margin-bottom:6px;">
+              🔒 Disponible une fois les 50 films sélectionnés
             </div>
-            <button
-              onclick="showToast('Phase 2 sauvegardée', 'ok')"
-              style="
-                margin-top: 14px;
-                width: 100%;
-                padding: 9px;
-                background: rgba(192, 132, 252, 0.1);
-                border: 1px solid rgba(192, 132, 252, 0.3);
-                border-radius: 8px;
-                font-family: var(--font-body);
-                font-size: 0.82rem;
-                font-weight: 600;
-                color: var(--lavande);
-                cursor: pointer;
-                transition: all 0.15s;
-              "
-              onmouseover="this.style.background = 'rgba(192,132,252,0.18)'"
-              onmouseout="this.style.background = 'rgba(192,132,252,0.1)'"
-            >
-              Enregistrer les dates
+            <div id="p2-status-badge" style="display:none;padding:6px 12px;border-radius:10px;font-size:0.72rem;font-weight:700;text-align:center;margin-bottom:6px;"></div>
+
+            <button onclick="savePhase(2)" id="p2-save-btn" class="phase-save-btn phase-save-lavande">
+              Confirmer la Phase 2 →
             </button>
           </div>
+
         </div>
+
+        <!-- Ligne d'aide -->
+        <div style="margin-top:20px;padding:14px 18px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:12px;display:flex;align-items:center;gap:12px;">
+          <span style="font-size:1rem;">💡</span>
+          <span style="font-size:0.75rem;color:var(--mist);line-height:1.5;">
+            <strong style="color:var(--aurora);">Phase 1</strong> — sélectionnez les <strong style="color:var(--snow);">50 films</strong> qui constitueront la sélection officielle.
+            <strong style="color:var(--lavande);">Phase 2</strong> — désignez les <strong style="color:var(--snow);">5 finalistes</strong> parmi ces 50 pour la cérémonie du Gala.
+            La Phase 2 se déverrouille automatiquement une fois les 50 films atteints.
+          </span>
+        </div>
+
       </div>
 
       <!-- ══════ VUE MODÉRATION ══════ -->
@@ -972,6 +846,40 @@
           </div>
         </div>
 
+        <!-- Banner phase active -->
+        <div id="sel-phase-banner" style="margin-bottom:18px;border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);">
+          <!-- Icône phase -->
+          <div id="sel-phase-icon" style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;background:rgba(255,255,255,0.05);">📅</div>
+          <!-- Info phase -->
+          <div style="flex:1;min-width:160px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <span id="sel-phase-label" style="font-size:0.8rem;font-weight:700;color:var(--snow);">Aucune phase configurée</span>
+              <span id="sel-phase-status" style="font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,0.06);color:var(--mist);border:1px solid rgba(255,255,255,0.1);">—</span>
+            </div>
+            <div style="height:5px;background:rgba(255,255,255,0.06);border-radius:999px;overflow:hidden;">
+              <div id="sel-phase-fill" style="height:100%;width:0%;border-radius:999px;transition:width 0.5s ease;"></div>
+            </div>
+          </div>
+          <!-- Compteur -->
+          <div style="text-align:right;flex-shrink:0;">
+            <div id="sel-phase-count" style="font-family:var(--font-mono);font-size:1.3rem;font-weight:900;line-height:1;">0</div>
+            <div id="sel-phase-count-label" style="font-size:0.65rem;color:var(--mist);margin-top:2px;">films affichés</div>
+          </div>
+          <!-- Deadline -->
+          <div id="sel-phase-deadline" style="flex-shrink:0;padding:8px 14px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);text-align:center;display:none;">
+            <div style="font-size:0.6rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--mist);margin-bottom:3px;">Clôture</div>
+            <div id="sel-phase-deadline-date" style="font-family:var(--font-mono);font-size:0.82rem;font-weight:700;color:var(--snow);"></div>
+            <div id="sel-phase-deadline-remaining" style="font-size:0.65rem;margin-top:2px;"></div>
+          </div>
+        </div>
+
+        <!-- Barre quota (conservée pour les compteurs JS) -->
+        <div style="display:none;">
+          <span id="sel-quota-current">0</span>
+          <div id="sel-quota-fill"></div>
+          <div id="sel-quota-msg"></div>
+        </div>
+
         <!-- Filtres -->
         <div
           style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap"
@@ -1027,9 +935,20 @@
             class="sel-filter sel-filter-star"
             id="selfil-selectionne"
           >
-            ★ Ma sélection
+            ★ Top 50
             <span
               id="selfil-selectionne-count"
+              style="font-family: var(--font-mono); font-size: 0.65rem"
+            ></span>
+          </button>
+          <button
+            onclick="filterSelection('finaliste', this)"
+            class="sel-filter sel-filter-final"
+            id="selfil-finaliste"
+          >
+            🏆 Top 5 — Finale
+            <span
+              id="selfil-finaliste-count"
               style="font-family: var(--font-mono); font-size: 0.65rem"
             ></span>
           </button>
