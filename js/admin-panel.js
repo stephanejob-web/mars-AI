@@ -728,16 +728,20 @@ function renderUsers() {
         u.role === "jury"
           ? `<div class="mobile-assign ${u.assigned.length === 0 ? "none" : ""}" onclick="openAssign(${u.id})">🎞️ <span>${u.assigned.length}</span></div>`
           : ``;
-      const statusHtml = `
-        <div class="status-wrap" style="display:flex;align-items:center;gap:10px;">
-          <div class="status-toggle" onclick="toggleUser(${u.id})">
-            <div class="toggle-track ${u.active ? "on" : ""}">
-              <div class="toggle-thumb"></div>
+      const statusHtml = u.invited
+        ? `<div class="status-wrap" style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:0.72rem;font-weight:600;color:var(--solar);background:rgba(245,200,66,0.1);border:1px solid rgba(245,200,66,0.25);border-radius:6px;padding:3px 8px;white-space:nowrap;">✉ En attente</span>
+            <button class="btn-icon" title="Renvoyer l'invitation" onclick="showToast('✉ Invitation renvoyée à ${u.email}', 'ok')" style="font-size:0.8rem;">↺</button>
+          </div>`
+        : `<div class="status-wrap" style="display:flex;align-items:center;gap:10px;">
+            <div class="status-toggle" onclick="toggleUser(${u.id})">
+              <div class="toggle-track ${u.active ? "on" : ""}">
+                <div class="toggle-thumb"></div>
+              </div>
+              <span class="toggle-label">${u.active ? "Actif" : "Désactivé"}</span>
             </div>
-            <span class="toggle-label">${u.active ? "Actif" : "Désactivé"}</span>
-          </div>
-          ${mobileAssign}
-        </div>`;
+            ${mobileAssign}
+          </div>`;
       return `<tr>
         <td>
           <div class="u-cell" style="display:flex;align-items:center;gap:10px;">
@@ -753,12 +757,6 @@ function renderUsers() {
         <td>${assignTxt}</td>
         <td>${tokenDisplay}</td>
         <td>${statusHtml}</td>
-        <td>
-          <div style="display:flex;gap:6px;">
-            <button class="btn-icon" title="Modifier" onclick="showToast('Modification de ${u.name}', 'warn')">✎</button>
-            <button class="btn-icon danger" title="Supprimer" onclick="deleteUser(${u.id})">✕</button>
-          </div>
-        </td>
       </tr>`;
     })
     .join("");
@@ -806,40 +804,37 @@ function selectRole(role) {
 }
 
 function createUser() {
-  const name = document.getElementById("new-name").value.trim();
   const email = document.getElementById("new-email").value.trim();
-  if (!name || !email) {
-    showToast("Nom et email requis", "err");
+  if (!email) {
+    showToast("Adresse email requise", "err");
     return;
   }
-  const initials = name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
+  if (users.find((u) => u.email === email)) {
+    showToast("Cette adresse est déjà utilisée", "err");
+    return;
+  }
   const token =
-    initials +
-    "-" +
+    "INV-" +
     Math.random().toString(36).slice(2, 6).toUpperCase() +
     "-" +
     Math.random().toString(36).slice(2, 5).toUpperCase();
   const clsList = ["ua-1", "ua-2", "ua-3", "ua-4", "ua-5", "ua-6"];
   const newUser = {
     id: Date.now(),
-    name,
+    name: "Invitation en attente",
     email,
     role: newUserRole,
-    active: true,
+    active: false,
+    invited: true,
     token,
     assigned: [],
     cls: clsList[users.length % clsList.length],
+    avatar: `https://i.pravatar.cc/80?u=${email}`,
   };
   users.push(newUser);
   closeModal("create");
-  document.getElementById("new-name").value = "";
   document.getElementById("new-email").value = "";
-  showToast(`✓ Compte créé · Lien envoyé à ${email}`, "ok");
+  showToast(`✉ Invitation envoyée à ${email}`, "ok");
   renderUsers();
 }
 
