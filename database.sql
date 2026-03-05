@@ -209,7 +209,7 @@ CREATE TABLE film_collaborateurs (
   profession VARCHAR(150)  NOT NULL COMMENT 'ex : Compositeur, Voix off, Motion designer',
   role_film  VARCHAR(150)  NULL     COMMENT 'ex : Co-réalisateur, Coordinateur IA',
 
-  PRIMARY KEY (film_id, nom),
+  PRIMARY KEY (film_id, nom, profession),
   CONSTRAINT fk_collab_film FOREIGN KEY (film_id) REFERENCES films (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
   COMMENT='Collaborateurs déclarés par le réalisateur (équipe projet)';
@@ -243,7 +243,8 @@ CREATE TABLE phases (
   fermeture_le DATE              NOT NULL,
   statut       ENUM('a_venir','en_cours','terminee') NOT NULL DEFAULT 'a_venir',
 
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  CONSTRAINT chk_phases_dates CHECK (fermeture_le > ouverture_le)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
   COMMENT='Phases jury — Phase 1 (Top 50) · Phase 2 (Top 5 finale, configurable)';
 
@@ -291,8 +292,9 @@ CREATE TABLE evaluations (
   CONSTRAINT  fk_eval_film  FOREIGN KEY (film_id)  REFERENCES films  (id) ON DELETE CASCADE,
   CONSTRAINT  fk_eval_user  FOREIGN KEY (user_id)  REFERENCES users  (id) ON DELETE CASCADE,
   CONSTRAINT  fk_eval_phase FOREIGN KEY (phase_id) REFERENCES phases (id) ON DELETE RESTRICT,
-  INDEX       idx_eval_film (film_id),
-  INDEX       idx_eval_user (user_id)
+  INDEX       idx_eval_film  (film_id),
+  INDEX       idx_eval_user  (user_id),
+  INDEX       idx_eval_phase (phase_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
   COMMENT='Évaluations jury — 1 vote + note privée + commentaire public par film/phase';
 
@@ -316,6 +318,7 @@ CREATE TABLE tickets (
   CONSTRAINT fk_ticket_emis   FOREIGN KEY (emis_par)   REFERENCES users (id) ON DELETE RESTRICT,
   CONSTRAINT fk_ticket_resolu FOREIGN KEY (resolu_par) REFERENCES users (id) ON DELETE SET NULL,
   INDEX idx_ticket_film   (film_id),
+  INDEX idx_ticket_emis   (emis_par),
   INDEX idx_ticket_statut (statut)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
   COMMENT='Signalements jury → admin : copyright, contenu, technique';
@@ -399,9 +402,10 @@ CREATE TABLE chat_messages (
 
   PRIMARY KEY (id),
   CONSTRAINT fk_chat_exp  FOREIGN KEY (expediteur_id)   REFERENCES users (id) ON DELETE CASCADE,
-  CONSTRAINT fk_chat_dest FOREIGN KEY (destinataire_id) REFERENCES users (id) ON DELETE SET NULL,
+  CONSTRAINT fk_chat_dest FOREIGN KEY (destinataire_id) REFERENCES users (id) ON DELETE CASCADE,
   INDEX idx_chat_exp  (expediteur_id),
   INDEX idx_chat_dest (destinataire_id),
+  INDEX idx_chat_conv (expediteur_id, destinataire_id),
   INDEX idx_chat_date (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
   COMMENT='Messagerie interne jury et admin — broadcast si destinataire_id IS NULL';
