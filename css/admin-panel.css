@@ -227,6 +227,35 @@
   border: 1px solid rgba(192, 132, 252, 0.2);
 }
 
+/* ── SELECT RÔLE (éditable) ──────────────────────────────────── */
+.role-select {
+  appearance: none;
+  -webkit-appearance: none;
+  border-radius: 9999px;
+  padding: 3px 26px 3px 10px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  outline: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  transition: opacity 0.15s;
+}
+.role-select:hover { opacity: 0.8; }
+.rs-jury {
+  background-color: rgba(78, 255, 206, 0.1);
+  color: var(--aurora);
+  border: 1px solid rgba(78, 255, 206, 0.2);
+}
+.rs-modo {
+  background-color: rgba(192, 132, 252, 0.1);
+  color: var(--lavande);
+  border: 1px solid rgba(192, 132, 252, 0.2);
+}
+
 /* ── TOGGLE STATUT ────────────────────────────────────────────── */
 .status-toggle {
   display: inline-flex;

@@ -713,10 +713,10 @@ function renderUsers() {
   tbody.innerHTML = users
     .map((u) => {
       const initials = getInitials(u.name);
-      const rolePill =
-        u.role === "jury"
-          ? `<span class="role-pill rp-jury"><span class="rp-icon">⚖️</span><span class="rp-label"> Jury</span></span>`
-          : `<span class="role-pill rp-modo"><span class="rp-icon">🛡️</span><span class="rp-label"> Modérateur</span></span>`;
+      const rolePill = `<select class="role-select ${u.role === 'jury' ? 'rs-jury' : 'rs-modo'}" onchange="changeRole(${u.id}, this.value)">
+        <option value="jury" ${u.role === 'jury' ? 'selected' : ''}>⚖️ Jury</option>
+        <option value="moderateur" ${u.role === 'moderateur' ? 'selected' : ''}>🛡️ Modérateur</option>
+      </select>`;
       const assignTxt =
         u.role === "jury"
           ? `<span class="assign-count ${u.assigned.length === 0 ? "none" : ""}" onclick="openAssign(${u.id})">${u.assigned.length} film${u.assigned.length !== 1 ? "s" : ""} ✎</span>`
@@ -776,6 +776,16 @@ function toggleUser(id) {
   renderUsers();
 }
 
+function changeRole(id, newRole) {
+  const u = users.find((x) => x.id === id);
+  if (!u || u.role === newRole) return;
+  const prev = u.role;
+  u.role = newRole;
+  const label = newRole === "jury" ? "Jury ⚖️" : "Modérateur 🛡️";
+  showToast(`✓ ${u.name} → ${label}`, "ok");
+  renderUsers();
+}
+
 function deleteUser(id) {
   const u = users.find((x) => x.id === id);
   if (!u) return;
@@ -788,6 +798,12 @@ function deleteUser(id) {
 /* ── MODAL CRÉER ── */
 function openModal(name) {
   document.getElementById("modal-" + name).classList.add("open");
+  if (name === "create") {
+    const emailInput = document.getElementById("new-email");
+    if (emailInput && !emailInput.value) {
+      emailInput.value = "jury.test@marsai.fr";
+    }
+  }
 }
 function closeModal(name) {
   document.getElementById("modal-" + name).classList.remove("open");
@@ -832,10 +848,80 @@ function createUser() {
     avatar: `https://i.pravatar.cc/80?u=${email}`,
   };
   users.push(newUser);
-  closeModal("create");
   document.getElementById("new-email").value = "";
-  showToast(`✉ Invitation envoyée à ${email}`, "ok");
+  const inviteUrl = `invite.html?token=${token}&email=${encodeURIComponent(email)}&role=${newUserRole}`;
+
+  // Afficher la confirmation avec lien cliquable
+  const modal = document.querySelector("#modal-create .modal");
+  modal.innerHTML = `
+    <div class="modal-header">
+      <div class="modal-title">✉ Invitation envoyée</div>
+      <button class="modal-close" onclick="closeModal('create');resetInviteModal()">✕</button>
+    </div>
+
+    <div style="text-align:center;padding:8px 0 20px;">
+      <div style="width:52px;height:52px;background:rgba(78,255,206,0.08);border:1px solid rgba(78,255,206,0.22);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin:0 auto 14px;">✉</div>
+      <div style="font-size:0.95rem;font-weight:700;color:var(--white-soft);margin-bottom:6px;">Invitation envoyée à</div>
+      <div style="font-size:0.85rem;color:var(--aurora);font-weight:600;">${email}</div>
+    </div>
+
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:14px;margin-bottom:18px;">
+      <div style="font-size:0.68rem;color:var(--mist);font-weight:600;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:10px;">Aperçu de la page d'invitation</div>
+      <a href="${inviteUrl}" target="_blank" style="
+        display:flex;align-items:center;justify-content:center;gap:8px;
+        width:100%;padding:11px;border-radius:8px;
+        background:linear-gradient(135deg,rgba(78,255,206,0.12),rgba(192,132,252,0.12));
+        border:1px solid rgba(78,255,206,0.25);
+        font-family:var(--font-body);font-size:0.88rem;font-weight:700;
+        color:var(--aurora);text-decoration:none;
+        transition:all 0.2s;
+      " onmouseover="this.style.background='linear-gradient(135deg,rgba(78,255,206,0.2),rgba(192,132,252,0.2))'"
+         onmouseout="this.style.background='linear-gradient(135deg,rgba(78,255,206,0.12),rgba(192,132,252,0.12))'">
+        👁 Voir la page d'invitation →
+      </a>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-confirm" onclick="navigator.clipboard.writeText(window.location.origin.replace(/\\/$/,'')+'/views/${inviteUrl}');showToast('Lien copié ✓','ok')">📋 Copier le lien</button>
+      <button class="btn-cancel" onclick="closeModal('create');resetInviteModal()">Fermer</button>
+    </div>`;
+
   renderUsers();
+}
+
+function resetInviteModal() {
+  const modal = document.querySelector("#modal-create .modal");
+  modal.innerHTML = `
+    <div class="modal-header">
+      <div class="modal-title">Inviter un membre</div>
+      <button class="modal-close" onclick="closeModal('create')">✕</button>
+    </div>
+    <div class="form-field">
+      <label>Adresse email</label>
+      <input type="email" id="new-email" placeholder="sophie.martin@email.com"/>
+    </div>
+    <div class="form-field">
+      <label>Rôle</label>
+      <div class="role-picker">
+        <div class="role-opt selected" id="opt-jury" onclick="selectRole('jury')">
+          <span class="ro-icon">⚖️</span><span class="ro-label">Jury</span>
+        </div>
+        <div class="role-opt modo" id="opt-modo" onclick="selectRole('moderateur')">
+          <span class="ro-icon">🛡️</span><span class="ro-label">Modérateur</span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-info">
+      Un <strong>lien d'invitation sécurisé</strong> sera envoyé à cette adresse.<br/>
+      Le membre choisit son nom et son mode de connexion à la création.
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('create')">Annuler</button>
+      <button class="btn-confirm" onclick="createUser()">Envoyer l'invitation →</button>
+    </div>`;
+  newUserRole = "jury";
+  document.getElementById("opt-jury")?.classList.add("selected");
+  document.getElementById("opt-modo")?.classList.remove("selected");
 }
 
 /* ── ASSIGNATION DIRECTE (clic avatar) ── */
