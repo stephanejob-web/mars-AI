@@ -227,6 +227,74 @@
   border: 1px solid rgba(192, 132, 252, 0.2);
 }
 
+/* ── PHASES CARDS ────────────────────────────────────────────── */
+.phase-save-btn {
+  margin-top: 14px;
+  width: 100%;
+  padding: 11px 16px;
+  border-radius: 12px;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  transition: all 0.2s;
+}
+.phase-save-aurora {
+  background: rgba(78, 255, 206, 0.1);
+  border: 1px solid rgba(78, 255, 206, 0.3);
+  color: var(--aurora);
+}
+.phase-save-aurora:hover {
+  background: rgba(78, 255, 206, 0.18);
+  box-shadow: 0 0 20px rgba(78, 255, 206, 0.15);
+}
+.phase-save-lavande {
+  background: rgba(192, 132, 252, 0.1);
+  border: 1px solid rgba(192, 132, 252, 0.3);
+  color: var(--lavande);
+}
+.phase-save-lavande:hover {
+  background: rgba(192, 132, 252, 0.18);
+  box-shadow: 0 0 20px rgba(192, 132, 252, 0.15);
+}
+@keyframes phaseNodePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(78, 255, 206, 0.4); }
+  50%       { box-shadow: 0 0 0 8px rgba(78, 255, 206, 0); }
+}
+.tl-node-active {
+  animation: phaseNodePulse 2s ease-in-out infinite;
+}
+
+/* ── SELECT RÔLE (éditable) ──────────────────────────────────── */
+.role-select {
+  appearance: none;
+  -webkit-appearance: none;
+  border-radius: 9999px;
+  padding: 3px 26px 3px 10px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  outline: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  transition: opacity 0.15s;
+}
+.role-select:hover { opacity: 0.8; }
+.rs-jury {
+  background-color: rgba(78, 255, 206, 0.1);
+  color: var(--aurora);
+  border: 1px solid rgba(78, 255, 206, 0.2);
+}
+.rs-modo {
+  background-color: rgba(192, 132, 252, 0.1);
+  color: var(--lavande);
+  border: 1px solid rgba(192, 132, 252, 0.2);
+}
+
 /* ── TOGGLE STATUT ────────────────────────────────────────────── */
 .status-toggle {
   display: inline-flex;
@@ -2497,6 +2565,22 @@
   border-color: rgba(245, 230, 66, 0.5) !important;
   color: var(--solar) !important;
   box-shadow: 0 0 12px rgba(245, 230, 66, 0.15);
+}
+.sel-filter-final {
+  border-color: rgba(192, 132, 252, 0.35);
+  color: var(--lavande);
+  font-weight: 700;
+}
+.sel-filter-final:hover {
+  background: rgba(192, 132, 252, 0.1) !important;
+  border-color: rgba(192, 132, 252, 0.55) !important;
+  color: var(--lavande) !important;
+}
+.sel-filter-final.active {
+  background: rgba(192, 132, 252, 0.12) !important;
+  border-color: rgba(192, 132, 252, 0.55) !important;
+  color: var(--lavande) !important;
+  box-shadow: 0 0 14px rgba(192, 132, 252, 0.2);
 }
 .sel-sort.active {
   background: rgba(78, 255, 206, 0.1);

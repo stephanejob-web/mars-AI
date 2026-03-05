@@ -713,10 +713,10 @@ function renderUsers() {
   tbody.innerHTML = users
     .map((u) => {
       const initials = getInitials(u.name);
-      const rolePill =
-        u.role === "jury"
-          ? `<span class="role-pill rp-jury"><span class="rp-icon">⚖️</span><span class="rp-label"> Jury</span></span>`
-          : `<span class="role-pill rp-modo"><span class="rp-icon">🛡️</span><span class="rp-label"> Modérateur</span></span>`;
+      const rolePill = `<select class="role-select ${u.role === 'jury' ? 'rs-jury' : 'rs-modo'}" onchange="changeRole(${u.id}, this.value)">
+        <option value="jury" ${u.role === 'jury' ? 'selected' : ''}>⚖️ Jury</option>
+        <option value="moderateur" ${u.role === 'moderateur' ? 'selected' : ''}>🛡️ Modérateur</option>
+      </select>`;
       const assignTxt =
         u.role === "jury"
           ? `<span class="assign-count ${u.assigned.length === 0 ? "none" : ""}" onclick="openAssign(${u.id})">${u.assigned.length} film${u.assigned.length !== 1 ? "s" : ""} ✎</span>`
@@ -728,16 +728,20 @@ function renderUsers() {
         u.role === "jury"
           ? `<div class="mobile-assign ${u.assigned.length === 0 ? "none" : ""}" onclick="openAssign(${u.id})">🎞️ <span>${u.assigned.length}</span></div>`
           : ``;
-      const statusHtml = `
-        <div class="status-wrap" style="display:flex;align-items:center;gap:10px;">
-          <div class="status-toggle" onclick="toggleUser(${u.id})">
-            <div class="toggle-track ${u.active ? "on" : ""}">
-              <div class="toggle-thumb"></div>
+      const statusHtml = u.invited
+        ? `<div class="status-wrap" style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:0.72rem;font-weight:600;color:var(--solar);background:rgba(245,200,66,0.1);border:1px solid rgba(245,200,66,0.25);border-radius:6px;padding:3px 8px;white-space:nowrap;">✉ En attente</span>
+            <button class="btn-icon" title="Renvoyer l'invitation" onclick="showToast('✉ Invitation renvoyée à ${u.email}', 'ok')" style="font-size:0.8rem;">↺</button>
+          </div>`
+        : `<div class="status-wrap" style="display:flex;align-items:center;gap:10px;">
+            <div class="status-toggle" onclick="toggleUser(${u.id})">
+              <div class="toggle-track ${u.active ? "on" : ""}">
+                <div class="toggle-thumb"></div>
+              </div>
+              <span class="toggle-label">${u.active ? "Actif" : "Désactivé"}</span>
             </div>
-            <span class="toggle-label">${u.active ? "Actif" : "Désactivé"}</span>
-          </div>
-          ${mobileAssign}
-        </div>`;
+            ${mobileAssign}
+          </div>`;
       return `<tr>
         <td>
           <div class="u-cell" style="display:flex;align-items:center;gap:10px;">
@@ -753,12 +757,6 @@ function renderUsers() {
         <td>${assignTxt}</td>
         <td>${tokenDisplay}</td>
         <td>${statusHtml}</td>
-        <td>
-          <div style="display:flex;gap:6px;">
-            <button class="btn-icon" title="Modifier" onclick="showToast('Modification de ${u.name}', 'warn')">✎</button>
-            <button class="btn-icon danger" title="Supprimer" onclick="deleteUser(${u.id})">✕</button>
-          </div>
-        </td>
       </tr>`;
     })
     .join("");
@@ -778,6 +776,16 @@ function toggleUser(id) {
   renderUsers();
 }
 
+function changeRole(id, newRole) {
+  const u = users.find((x) => x.id === id);
+  if (!u || u.role === newRole) return;
+  const prev = u.role;
+  u.role = newRole;
+  const label = newRole === "jury" ? "Jury ⚖️" : "Modérateur 🛡️";
+  showToast(`✓ ${u.name} → ${label}`, "ok");
+  renderUsers();
+}
+
 function deleteUser(id) {
   const u = users.find((x) => x.id === id);
   if (!u) return;
@@ -790,6 +798,12 @@ function deleteUser(id) {
 /* ── MODAL CRÉER ── */
 function openModal(name) {
   document.getElementById("modal-" + name).classList.add("open");
+  if (name === "create") {
+    const emailInput = document.getElementById("new-email");
+    if (emailInput && !emailInput.value) {
+      emailInput.value = "jury.test@marsai.fr";
+    }
+  }
 }
 function closeModal(name) {
   document.getElementById("modal-" + name).classList.remove("open");
@@ -806,41 +820,108 @@ function selectRole(role) {
 }
 
 function createUser() {
-  const name = document.getElementById("new-name").value.trim();
   const email = document.getElementById("new-email").value.trim();
-  if (!name || !email) {
-    showToast("Nom et email requis", "err");
+  if (!email) {
+    showToast("Adresse email requise", "err");
     return;
   }
-  const initials = name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
+  if (users.find((u) => u.email === email)) {
+    showToast("Cette adresse est déjà utilisée", "err");
+    return;
+  }
   const token =
-    initials +
-    "-" +
+    "INV-" +
     Math.random().toString(36).slice(2, 6).toUpperCase() +
     "-" +
     Math.random().toString(36).slice(2, 5).toUpperCase();
   const clsList = ["ua-1", "ua-2", "ua-3", "ua-4", "ua-5", "ua-6"];
   const newUser = {
     id: Date.now(),
-    name,
+    name: "Invitation en attente",
     email,
     role: newUserRole,
-    active: true,
+    active: false,
+    invited: true,
     token,
     assigned: [],
     cls: clsList[users.length % clsList.length],
+    avatar: `https://i.pravatar.cc/80?u=${email}`,
   };
   users.push(newUser);
-  closeModal("create");
-  document.getElementById("new-name").value = "";
   document.getElementById("new-email").value = "";
-  showToast(`✓ Compte créé · Lien envoyé à ${email}`, "ok");
+  const inviteUrl = `invite.html?token=${token}&email=${encodeURIComponent(email)}&role=${newUserRole}`;
+
+  // Afficher la confirmation avec lien cliquable
+  const modal = document.querySelector("#modal-create .modal");
+  modal.innerHTML = `
+    <div class="modal-header">
+      <div class="modal-title">✉ Invitation envoyée</div>
+      <button class="modal-close" onclick="closeModal('create');resetInviteModal()">✕</button>
+    </div>
+
+    <div style="text-align:center;padding:8px 0 20px;">
+      <div style="width:52px;height:52px;background:rgba(78,255,206,0.08);border:1px solid rgba(78,255,206,0.22);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin:0 auto 14px;">✉</div>
+      <div style="font-size:0.95rem;font-weight:700;color:var(--white-soft);margin-bottom:6px;">Invitation envoyée à</div>
+      <div style="font-size:0.85rem;color:var(--aurora);font-weight:600;">${email}</div>
+    </div>
+
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:14px;margin-bottom:18px;">
+      <div style="font-size:0.68rem;color:var(--mist);font-weight:600;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:10px;">Aperçu de la page d'invitation</div>
+      <a href="${inviteUrl}" target="_blank" style="
+        display:flex;align-items:center;justify-content:center;gap:8px;
+        width:100%;padding:11px;border-radius:8px;
+        background:linear-gradient(135deg,rgba(78,255,206,0.12),rgba(192,132,252,0.12));
+        border:1px solid rgba(78,255,206,0.25);
+        font-family:var(--font-body);font-size:0.88rem;font-weight:700;
+        color:var(--aurora);text-decoration:none;
+        transition:all 0.2s;
+      " onmouseover="this.style.background='linear-gradient(135deg,rgba(78,255,206,0.2),rgba(192,132,252,0.2))'"
+         onmouseout="this.style.background='linear-gradient(135deg,rgba(78,255,206,0.12),rgba(192,132,252,0.12))'">
+        👁 Voir la page d'invitation →
+      </a>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-confirm" onclick="navigator.clipboard.writeText(window.location.origin.replace(/\\/$/,'')+'/views/${inviteUrl}');showToast('Lien copié ✓','ok')">📋 Copier le lien</button>
+      <button class="btn-cancel" onclick="closeModal('create');resetInviteModal()">Fermer</button>
+    </div>`;
+
   renderUsers();
+}
+
+function resetInviteModal() {
+  const modal = document.querySelector("#modal-create .modal");
+  modal.innerHTML = `
+    <div class="modal-header">
+      <div class="modal-title">Inviter un membre</div>
+      <button class="modal-close" onclick="closeModal('create')">✕</button>
+    </div>
+    <div class="form-field">
+      <label>Adresse email</label>
+      <input type="email" id="new-email" placeholder="sophie.martin@email.com"/>
+    </div>
+    <div class="form-field">
+      <label>Rôle</label>
+      <div class="role-picker">
+        <div class="role-opt selected" id="opt-jury" onclick="selectRole('jury')">
+          <span class="ro-icon">⚖️</span><span class="ro-label">Jury</span>
+        </div>
+        <div class="role-opt modo" id="opt-modo" onclick="selectRole('moderateur')">
+          <span class="ro-icon">🛡️</span><span class="ro-label">Modérateur</span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-info">
+      Un <strong>lien d'invitation sécurisé</strong> sera envoyé à cette adresse.<br/>
+      Le membre choisit son nom et son mode de connexion à la création.
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('create')">Annuler</button>
+      <button class="btn-confirm" onclick="createUser()">Envoyer l'invitation →</button>
+    </div>`;
+  newUserRole = "jury";
+  document.getElementById("opt-jury")?.classList.add("selected");
+  document.getElementById("opt-modo")?.classList.remove("selected");
 }
 
 /* ── ASSIGNATION DIRECTE (clic avatar) ── */
@@ -1205,7 +1286,7 @@ function showView(name, el) {
   if (name === "users") {
     renderVoteChart();
   }
-  if (name === "selection") renderSelection();
+  if (name === "selection") { renderPhasesStatus(); renderSelection(); }
   if (name === "moderation") renderKanban();
 }
 
@@ -2299,6 +2380,233 @@ function animateChart() {
   });
 })();
 
+/* ── PHASES CONFIG ── */
+const phasesConfig = {
+  p1: { open: "2026-12-12", close: "2026-12-19", saved: false },
+  p2: { open: "2026-12-22", close: "2026-12-28", saved: false },
+};
+
+function getPhaseStatus(open, close) {
+  const today = new Date().toISOString().slice(0, 10);
+  if (today < open) return "upcoming";
+  if (today >= open && today <= close) return "active";
+  return "closed";
+}
+function fmtDate(d) {
+  if (!d) return "—";
+  const [y, m, day] = d.split("-");
+  return `${day}/${m}/${y}`;
+}
+function daysLeft(d) {
+  const today = new Date().toISOString().slice(0, 10);
+  return Math.ceil((new Date(d) - new Date(today)) / 86400000);
+}
+
+function savePhase(n) {
+  const sel50 = films.filter((f) => adminDecisions[f.id] === "valide").length;
+  const sel5  = Object.values(finalistDecisions).filter(Boolean).length;
+  if (n === 1 && sel50 < 50) {
+    showToast(`🔒 Sélectionnez les ${50 - sel50} film${50 - sel50 > 1 ? "s" : ""} manquant${50 - sel50 > 1 ? "s" : ""} dans Sélection & Votes avant de confirmer la Phase 1`, "warn");
+    return;
+  }
+  if (n === 2 && sel50 < 50) {
+    showToast("🔒 La Phase 1 doit être complète (50 films) avant de configurer la Phase 2", "warn");
+    return;
+  }
+  if (n === 2 && sel5 < 5) {
+    showToast(`🔒 Désignez les ${5 - sel5} finaliste${5 - sel5 > 1 ? "s" : ""} manquant${5 - sel5 > 1 ? "s" : ""} dans Sélection & Votes avant de confirmer la Phase 2`, "warn");
+    return;
+  }
+  const key = "p" + n;
+  phasesConfig[key].open = document.getElementById(`p${n}-open`).value;
+  phasesConfig[key].close = document.getElementById(`p${n}-close`).value;
+  if (!phasesConfig[key].open || !phasesConfig[key].close) {
+    showToast("Veuillez renseigner les deux dates", "err");
+    return;
+  }
+  if (phasesConfig[key].open >= phasesConfig[key].close) {
+    showToast("La date de clôture doit être après l'ouverture", "err");
+    return;
+  }
+  phasesConfig[key].saved = true;
+  const label = n === 1 ? "Phase 1 · Présélection Top 50" : "Phase 2 · Finale Top 5";
+  showToast(`✓ ${label} sauvegardée`, "ok");
+  renderPhasesStatus();
+}
+
+function renderPhasesStatus() {
+  const sel50 = films.filter((f) => adminDecisions[f.id] === "valide").length;
+  const sel5  = Object.values(finalistDecisions).filter(Boolean).length;
+  const p1Done = sel50 >= 50;
+  const p2Done = sel5 >= 5;
+
+  const fmt = fmtDate;
+  const statusCfg = {
+    active:   { label: "● Actif",    bg: "rgba(78,255,206,0.12)",  color: "var(--aurora)",  border: "rgba(78,255,206,0.3)" },
+    upcoming: { label: "◷ À venir",  bg: "rgba(245,200,66,0.1)",   color: "var(--solar)",   border: "rgba(245,200,66,0.25)" },
+    closed:   { label: "✓ Terminé",  bg: "rgba(255,255,255,0.05)", color: "var(--mist)",    border: "rgba(255,255,255,0.1)" },
+  };
+
+  ["1", "2"].forEach((n) => {
+    const cfg = phasesConfig["p" + n];
+    if (!cfg.saved) return;
+    const st = getPhaseStatus(cfg.open, cfg.close);
+    const s = statusCfg[st];
+    const badge = document.getElementById(`p${n}-status-badge`);
+    if (badge) {
+      badge.style.display = "block";
+      badge.style.background = s.bg;
+      badge.style.color = s.color;
+      badge.style.border = `1px solid ${s.border}`;
+      badge.textContent = `${s.label} · ${fmtDate(cfg.open)} → ${fmtDate(cfg.close)}`;
+    }
+  });
+
+  // ── Barre de progression Phase 1 (50 films) ──
+  const p1Bar = document.getElementById("p1-progress-fill");
+  const p1Counter = document.getElementById("p1-progress-counter");
+  const p1Msg = document.getElementById("p1-progress-msg");
+  if (p1Bar) p1Bar.style.width = Math.min((sel50 / 50) * 100, 100) + "%";
+  if (p1Counter) {
+    p1Counter.innerHTML = `<span style="font-weight:800;color:${p1Done ? "var(--aurora)" : "var(--snow)"};">${sel50}</span><span style="color:var(--mist);"> / 50</span>`;
+  }
+  if (p1Msg) {
+    p1Msg.textContent = p1Done ? "✓ Sélection complète" : `Il manque ${50 - sel50} film${50 - sel50 > 1 ? "s" : ""}`;
+    p1Msg.style.color = p1Done ? "var(--aurora)" : "var(--solar)";
+  }
+
+  // ── Barre de progression Phase 2 (5 finalistes) ──
+  const p2Bar = document.getElementById("p2-progress-fill");
+  const p2Counter = document.getElementById("p2-progress-counter");
+  const p2Msg = document.getElementById("p2-progress-msg");
+  if (p2Bar) p2Bar.style.width = Math.min((sel5 / 5) * 100, 100) + "%";
+  if (p2Counter) {
+    p2Counter.innerHTML = `<span style="font-weight:800;color:${p2Done ? "var(--lavande)" : "var(--snow)"};">${sel5}</span><span style="color:var(--mist);"> / 5</span>`;
+  }
+  if (p2Msg) {
+    p2Msg.textContent = p2Done ? "✓ Finalistes confirmés" : `Il manque ${5 - sel5} finaliste${5 - sel5 > 1 ? "s" : ""}`;
+    p2Msg.style.color = p2Done ? "var(--lavande)" : "var(--solar)";
+  }
+
+  // ── Bouton Phase 1 : grisé si < 50 films ──
+  const p1Btn = document.getElementById("p1-save-btn");
+  const p1LockMsg = document.getElementById("p1-lock-msg");
+  if (p1Btn) {
+    if (p1Done) {
+      p1Btn.disabled = false;
+      p1Btn.style.opacity = "1";
+      p1Btn.style.cursor  = "pointer";
+      p1Btn.textContent   = "Confirmer la Phase 1 →";
+      if (p1LockMsg) p1LockMsg.style.display = "none";
+    } else {
+      p1Btn.disabled = true;
+      p1Btn.style.opacity = "0.35";
+      p1Btn.style.cursor  = "not-allowed";
+      p1Btn.textContent   = "🔒 Confirmer la Phase 1";
+      if (p1LockMsg) { p1LockMsg.style.display = "block"; p1LockMsg.textContent = `Sélectionnez ${50 - sel50} film${50 - sel50 > 1 ? "s" : ""} supplémentaire${50 - sel50 > 1 ? "s" : ""} dans Sélection & Votes`; }
+    }
+  }
+
+  // ── Bouton Phase 2 : grisé si < 50 films ou < 5 finalistes ──
+  const lockMsg = document.getElementById("p2-lock-msg");
+  const saveBtn = document.getElementById("p2-save-btn");
+  const p2Ready = p1Done && p2Done;
+  if (saveBtn) {
+    if (p2Ready) {
+      saveBtn.disabled = false;
+      saveBtn.style.opacity = "1";
+      saveBtn.style.cursor  = "pointer";
+      saveBtn.textContent   = "Confirmer la Phase 2 →";
+    } else {
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = "0.35";
+      saveBtn.style.cursor  = "not-allowed";
+      saveBtn.textContent   = "🔒 Confirmer la Phase 2";
+    }
+  }
+  if (lockMsg) {
+    if (!p1Done) {
+      lockMsg.style.display   = "block";
+      lockMsg.textContent     = `🔒 Sélectionnez d'abord les ${50 - sel50} film${50 - sel50 > 1 ? "s" : ""} manquant${50 - sel50 > 1 ? "s" : ""} en Phase 1`;
+    } else if (!p2Done) {
+      lockMsg.style.display   = "block";
+      lockMsg.textContent     = `🔒 Désignez ${5 - sel5} finaliste${5 - sel5 > 1 ? "s" : ""} manquant${5 - sel5 > 1 ? "s" : ""} dans Sélection & Votes → Top 5`;
+    } else {
+      lockMsg.style.display   = "none";
+    }
+  }
+
+  // Phase 2 info text
+  const p2Info = document.getElementById("p2-info-text");
+  if (p2Info) {
+    p2Info.textContent = p1Done
+      ? `🏆 Désignez 5 finalistes parmi vos ${sel50} films sélectionnés`
+      : `🔒 Disponible après la sélection des 50 films`;
+    document.getElementById("p2-info").style.color = p1Done ? "var(--lavande)" : "var(--mist)";
+  }
+
+  // Timeline visuelle
+  const activeBadge = document.getElementById("phase-active-badge");
+  const p1St = phasesConfig.p1.saved ? getPhaseStatus(phasesConfig.p1.open, phasesConfig.p1.close) : null;
+  const p2St = phasesConfig.p2.saved ? getPhaseStatus(phasesConfig.p2.open, phasesConfig.p2.close) : null;
+
+  // Badge phase active (header)
+  if (activeBadge) {
+    if (p1St === "active") {
+      activeBadge.textContent = "● Phase 1 active — Présélection Top 50";
+      activeBadge.style.cssText = "font-size:0.75rem;font-weight:700;padding:6px 18px;border-radius:999px;background:rgba(78,255,206,0.12);color:var(--aurora);border:1px solid rgba(78,255,206,0.3);white-space:nowrap;";
+    } else if (p2St === "active") {
+      activeBadge.textContent = "● Phase 2 active — Finale Top 5";
+      activeBadge.style.cssText = "font-size:0.75rem;font-weight:700;padding:6px 18px;border-radius:999px;background:rgba(192,132,252,0.12);color:var(--lavande);border:1px solid rgba(192,132,252,0.3);white-space:nowrap;";
+    } else {
+      activeBadge.textContent = "Aucune phase active";
+      activeBadge.style.cssText = "font-size:0.75rem;font-weight:700;padding:6px 18px;border-radius:999px;background:rgba(255,255,255,0.06);color:var(--mist);border:1px solid rgba(255,255,255,0.1);white-space:nowrap;";
+    }
+  }
+
+  // Nœuds timeline
+  const node1 = document.getElementById("tl-node-1");
+  const node2 = document.getElementById("tl-node-2");
+  const label2 = document.getElementById("tl-label-2");
+  const line1 = document.getElementById("tl-line-fill");
+  const line2 = document.getElementById("tl-line-fill-2");
+
+  if (node1) {
+    node1.classList.remove("tl-node-active");
+    if (p1St === "active") {
+      node1.style.background = "rgba(78,255,206,0.2)";
+      node1.style.borderColor = "var(--aurora)";
+      node1.style.boxShadow = "0 0 16px rgba(78,255,206,0.3)";
+      node1.classList.add("tl-node-active");
+    } else if (p1St === "closed") {
+      node1.style.background = "rgba(78,255,206,0.08)";
+      node1.style.borderColor = "rgba(78,255,206,0.3)";
+      node1.style.boxShadow = "none";
+    }
+    if (line1) line1.style.width = (p1St === "closed" || p1St === "active") ? "100%" : "0%";
+  }
+
+  if (node2 && label2) {
+    const p2Ready = sel50 >= 50;
+    node2.style.opacity = p2Ready ? "1" : "0.4";
+    label2.style.opacity = p2Ready ? "1" : "0.4";
+    node2.classList.remove("tl-node-active");
+    if (p2St === "active") {
+      node2.style.background = "rgba(192,132,252,0.2)";
+      node2.style.borderColor = "var(--lavande)";
+      node2.style.boxShadow = "0 0 16px rgba(192,132,252,0.3)";
+      node2.classList.add("tl-node-active");
+    }
+    if (line2) line2.style.width = (p2St === "active" || p2St === "closed") ? "100%" : "0%";
+  }
+
+  // Dates dans la timeline
+  const tlDate1 = document.getElementById("tl-date-1");
+  const tlDate2 = document.getElementById("tl-date-2");
+  if (tlDate1 && phasesConfig.p1.saved) tlDate1.textContent = `${fmtDate(phasesConfig.p1.open)} → ${fmtDate(phasesConfig.p1.close)}`;
+  if (tlDate2 && phasesConfig.p2.saved) tlDate2.textContent = `${fmtDate(phasesConfig.p2.open)} → ${fmtDate(phasesConfig.p2.close)}`;
+}
+
 /* ── INIT ── */
 renderUsers();
 animateChart();
@@ -2310,7 +2618,8 @@ if (brmCount) brmCount.textContent = films.length;
    ══════════════════════════════════════════ */
 let selFilter = "tous";
 let selSort = "score";
-const adminDecisions = {}; // filmId → 'valide'|'refuse'|null
+const adminDecisions = {};   // Phase 1 : filmId → 'valide'|'refuse'|null  (top 50)
+const finalistDecisions = {}; // Phase 2 : filmId → true|false             (top 5)
 
 // Tickets data (previously in Modération view)
 const filmTickets = {
@@ -2478,13 +2787,38 @@ function selActTicket(tkId, action) {
 function adminDecide(filmId, decision) {
   adminDecisions[filmId] =
     adminDecisions[filmId] === decision ? null : decision;
+  // Si on retire un film du top 50, le retirer aussi des finalistes
+  if (adminDecisions[filmId] !== "valide") delete finalistDecisions[filmId];
   showToast(
     decision === "valide"
-      ? `✓ Film #${filmId} sélectionné`
-      : `✕ Film #${filmId} retiré`,
+      ? `✓ Film #${filmId} ajouté au Top 50`
+      : `✕ Film #${filmId} retiré de la sélection`,
     decision === "valide" ? "ok" : "err",
   );
   renderSelection();
+  renderPhasesStatus();
+}
+
+function toggleFinalist(filmId) {
+  const sel50 = films.filter((f) => adminDecisions[f.id] === "valide").length;
+  if (adminDecisions[filmId] !== "valide") {
+    showToast("⚠️ Ce film n'est pas dans le Top 50", "warn");
+    return;
+  }
+  if (finalistDecisions[filmId]) {
+    delete finalistDecisions[filmId];
+    showToast(`Film #${filmId} retiré des finalistes`, "err");
+  } else {
+    const currentFinal = Object.values(finalistDecisions).filter(Boolean).length;
+    if (currentFinal >= 5) {
+      showToast("⚠️ Vous avez déjà 5 finalistes — retirez-en un d'abord", "warn");
+      return;
+    }
+    finalistDecisions[filmId] = true;
+    showToast(`🏆 Film #${filmId} désigné finaliste`, "ok");
+  }
+  renderSelection();
+  renderPhasesStatus();
 }
 
 function toggleSelDetail(filmId) {
@@ -2543,72 +2877,183 @@ function renderSelection() {
     navTk.style.display = openTkCount > 0 ? "" : "none";
   }
 
-  // Compteur Ma Sélection
-  const admSelCount = films.filter(
-    (f) => adminDecisions[f.id] === "valide",
-  ).length;
-  const selCountEl = document.getElementById("selfil-selectionne-count");
-  if (selCountEl)
-    selCountEl.textContent = admSelCount > 0 ? `(${admSelCount})` : "";
+  // Compteurs onglets
+  const admSelCount = films.filter((f) => adminDecisions[f.id] === "valide").length;
+  const finalCount  = Object.values(finalistDecisions).filter(Boolean).length;
+  const selCountEl  = document.getElementById("selfil-selectionne-count");
+  const finCountEl  = document.getElementById("selfil-finaliste-count");
+  if (selCountEl) selCountEl.textContent = admSelCount > 0 ? `(${admSelCount}/50)` : "";
+  if (finCountEl) finCountEl.textContent = finalCount  > 0 ? `(${finalCount}/5)`   : "";
 
-  // Si onglet "Ma sélection" actif : affichage spécial tous films (évalués ou non)
+  // ── Banner phase active ──
+  const p1      = phasesConfig.p1;
+  const p2      = phasesConfig.p2;
+  const p1St    = p1.saved ? getPhaseStatus(p1.open, p1.close) : null;
+  const p2St    = p2.saved ? getPhaseStatus(p2.open, p2.close) : null;
+
+  const banner       = document.getElementById("sel-phase-banner");
+  const bannerIcon   = document.getElementById("sel-phase-icon");
+  const bannerLabel  = document.getElementById("sel-phase-label");
+  const bannerStatus = document.getElementById("sel-phase-status");
+  const bannerFill   = document.getElementById("sel-phase-fill");
+  const bannerCount  = document.getElementById("sel-phase-count");
+  const bannerCLabel = document.getElementById("sel-phase-count-label");
+  const bannerDL     = document.getElementById("sel-phase-deadline");
+  const bannerDLDate = document.getElementById("sel-phase-deadline-date");
+  const bannerDLRem  = document.getElementById("sel-phase-deadline-remaining");
+
+  let activePhaseSt = null; // 'p1' | 'p2' | null
+
+  if (p2St === "active") {
+    activePhaseSt = "p2";
+  } else if (p1St === "active") {
+    activePhaseSt = "p1";
+  } else if (p2St === "upcoming" || p1St === "upcoming") {
+    activePhaseSt = p1St === "upcoming" ? "p1_upcoming" : "p2_upcoming";
+  }
+
+  if (banner) {
+    if (activePhaseSt === "p2") {
+      // Phase 2 active → affiche les 5 finalistes
+      banner.style.background = "rgba(192,132,252,0.06)";
+      banner.style.border     = "1px solid rgba(192,132,252,0.2)";
+      bannerIcon.textContent  = "🏆";
+      bannerIcon.style.background = "rgba(192,132,252,0.12)";
+      bannerLabel.textContent = "Phase 2 active — Affichage : 5 Finalistes";
+      bannerLabel.style.color = "var(--lavande)";
+      bannerStatus.textContent = "● En cours";
+      bannerStatus.style.cssText = "font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:999px;background:rgba(192,132,252,0.12);color:var(--lavande);border:1px solid rgba(192,132,252,0.3);";
+      bannerFill.style.cssText = `width:${Math.min((finalCount/5)*100,100)}%;background:linear-gradient(90deg,var(--lavande),#e0c3ff);`;
+      bannerCount.textContent  = finalCount;
+      bannerCount.style.color  = "var(--lavande)";
+      bannerCLabel.textContent = "/ 5 finalistes";
+      if (bannerDL) { bannerDL.style.display = "block"; bannerDLDate.textContent = fmtDate(p2.close); const d = daysLeft(p2.close); bannerDLRem.textContent = d > 0 ? `J-${d}` : "Terminé"; bannerDLRem.style.color = d <= 2 ? "var(--coral)" : d <= 5 ? "var(--solar)" : "var(--aurora)"; }
+      // Basculer vers l'onglet Top 5 si on est sur "tous"
+      if (selFilter === "tous") { selFilter = "finaliste"; document.querySelectorAll(".sel-filter").forEach(b => b.classList.remove("active")); document.getElementById("selfil-finaliste")?.classList.add("active"); }
+
+    } else if (activePhaseSt === "p1") {
+      // Phase 1 active → affiche les 50 films
+      banner.style.background = "rgba(78,255,206,0.05)";
+      banner.style.border     = "1px solid rgba(78,255,206,0.18)";
+      bannerIcon.textContent  = "★";
+      bannerIcon.style.background = "rgba(78,255,206,0.1)";
+      bannerLabel.textContent = "Phase 1 active — Affichage : 50 films sélectionnés";
+      bannerLabel.style.color = "var(--aurora)";
+      bannerStatus.textContent = "● En cours";
+      bannerStatus.style.cssText = "font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:999px;background:rgba(78,255,206,0.12);color:var(--aurora);border:1px solid rgba(78,255,206,0.3);";
+      bannerFill.style.cssText = `width:${Math.min((admSelCount/50)*100,100)}%;background:linear-gradient(90deg,var(--aurora),#a8ffec);`;
+      bannerCount.textContent  = admSelCount;
+      bannerCount.style.color  = "var(--aurora)";
+      bannerCLabel.textContent = "/ 50 sélectionnés";
+      if (bannerDL) { bannerDL.style.display = "block"; bannerDLDate.textContent = fmtDate(p1.close); const d = daysLeft(p1.close); bannerDLRem.textContent = d > 0 ? `J-${d}` : "Terminé"; bannerDLRem.style.color = d <= 2 ? "var(--coral)" : d <= 5 ? "var(--solar)" : "var(--aurora)"; }
+      // Basculer vers l'onglet Top 50 si on est sur "tous"
+      if (selFilter === "tous") { selFilter = "selectionne"; document.querySelectorAll(".sel-filter").forEach(b => b.classList.remove("active")); document.getElementById("selfil-selectionne")?.classList.add("active"); }
+
+    } else {
+      // Aucune phase active
+      banner.style.background = "rgba(255,255,255,0.03)";
+      banner.style.border     = "1px solid rgba(255,255,255,0.07)";
+      bannerIcon.textContent  = "📅";
+      bannerIcon.style.background = "rgba(255,255,255,0.05)";
+      const nextLabel = p1St === "upcoming" ? `Phase 1 à partir du ${fmtDate(p1.open)}` : p2St === "upcoming" ? `Phase 2 à partir du ${fmtDate(p2.open)}` : "Aucune phase configurée — allez dans Phases & Dates";
+      bannerLabel.textContent = nextLabel;
+      bannerLabel.style.color = "var(--snow)";
+      bannerStatus.textContent = p1St === "upcoming" || p2St === "upcoming" ? "◷ À venir" : "—";
+      bannerStatus.style.cssText = "font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,0.06);color:var(--mist);border:1px solid rgba(255,255,255,0.1);";
+      bannerFill.style.width  = "0%";
+      bannerCount.textContent = "—";
+      bannerCount.style.color = "var(--mist)";
+      bannerCLabel.textContent = "films affichés";
+      if (bannerDL) bannerDL.style.display = "none";
+    }
+  }
+
+  // ── Onglet TOP 50 ──
   if (selFilter === "selectionne") {
     const admSelected = films.filter((f) => adminDecisions[f.id] === "valide");
     const tbody = document.getElementById("selection-tbody");
     if (admSelected.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:48px;color:var(--mist);font-size:0.85rem;">Aucun film sélectionné pour l'instant.<br><span style="font-size:0.75rem;opacity:0.6;">Cliquez sur "Sélectionner" dans la liste pour constituer votre palmarès.</span></td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:48px;color:var(--mist);font-size:0.85rem;">Aucun film dans le Top 50.<br><span style="font-size:0.75rem;opacity:0.6;">Cliquez sur "Sélectionner ✓" dans la liste pour constituer votre sélection.</span></td></tr>`;
     } else {
       const juryUsers = users.filter((u) => u.role === "jury");
-      tbody.innerHTML = admSelected
-        .map((f, idx) => {
-          const c = getFilmConsensus(f);
-          const nComm = f.comments ? Object.keys(f.comments).length : 0;
-          const voteLabel =
-            c.type === "unanime"
-              ? `<span style="color:var(--aurora);font-weight:700;">✅ Unanime</span>`
-              : c.type === "partage"
-                ? `<span style="color:var(--solar);font-weight:700;">⚠️ Partagé</span>`
-                : `<span style="color:var(--mist);">—</span>`;
-          const juryAv = Object.entries(f.juryDec || {})
-            .map(([uid, dec]) => {
-              const u = juryUsers.find((x) => x.id === parseInt(uid));
-              if (!u) return "";
-              const bc =
-                dec === "valide"
-                  ? "var(--aurora)"
-                  : dec === "refuse"
-                    ? "var(--coral)"
-                    : dec === "aRevoir"
-                      ? "var(--solar)"
-                      : "rgba(255,255,255,0.15)";
-              const ic =
-                dec === "valide"
-                  ? "✓"
-                  : dec === "refuse"
-                    ? "✕"
-                    : dec === "aRevoir"
-                      ? "↩"
-                      : "?";
-              return `<div title="${u.name}" style="position:relative;display:inline-block;">
-            <img src="${u.avatar}" style="width:22px;height:22px;border-radius:50%;object-fit:cover;border:2px solid ${bc};opacity:${dec ? 1 : 0.4};">
-            <span style="position:absolute;bottom:-3px;right:-3px;width:11px;height:11px;border-radius:50%;font-size:0.42rem;font-weight:900;display:flex;align-items:center;justify-content:center;background:${bc};color:var(--deep-sky);">${ic}</span>
-          </div>`;
-            })
-            .join("");
-          return `<tr style="background:rgba(78,255,206,0.03);" onmouseover="this.style.background='rgba(78,255,206,0.06)'" onmouseout="this.style.background='rgba(78,255,206,0.03)'">
+      tbody.innerHTML = admSelected.map((f, idx) => {
+        const c = getFilmConsensus(f);
+        const isFinal = !!finalistDecisions[f.id];
+        const voteLabel = c.type === "unanime"
+          ? `<span style="color:var(--aurora);font-weight:700;">✅ Unanime</span>`
+          : c.type === "partage"
+            ? `<span style="color:var(--solar);font-weight:700;">⚠️ Partagé</span>`
+            : `<span style="color:var(--mist);">—</span>`;
+        const juryAv = Object.entries(f.juryDec || {}).map(([uid, dec]) => {
+          const u = juryUsers.find((x) => x.id === parseInt(uid));
+          if (!u) return "";
+          const bc = dec === "valide" ? "var(--aurora)" : dec === "refuse" ? "var(--coral)" : dec === "aRevoir" ? "var(--solar)" : "rgba(255,255,255,0.15)";
+          const ic = dec === "valide" ? "✓" : dec === "refuse" ? "✕" : dec === "aRevoir" ? "↩" : "?";
+          return `<div title="${u.name}" style="position:relative;display:inline-block;"><img src="${u.avatar}" style="width:22px;height:22px;border-radius:50%;object-fit:cover;border:2px solid ${bc};opacity:${dec ? 1 : 0.4};"><span style="position:absolute;bottom:-3px;right:-3px;width:11px;height:11px;border-radius:50%;font-size:0.42rem;font-weight:900;display:flex;align-items:center;justify-content:center;background:${bc};color:var(--deep-sky);">${ic}</span></div>`;
+        }).join("");
+        const currentFinalCount = Object.values(finalistDecisions).filter(Boolean).length;
+        const finalBtn = isFinal
+          ? `<button onclick="event.stopPropagation();toggleFinalist(${f.id})" title="Retirer du Top 5" style="padding:5px 12px;border-radius:6px;font-size:0.72rem;font-weight:700;cursor:pointer;border:1px solid rgba(192,132,252,0.5);background:rgba(192,132,252,0.15);color:var(--lavande);display:flex;align-items:center;gap:5px;white-space:nowrap;">🏆 Dans le Top 5 <span style="opacity:0.6;font-size:0.65rem;">✕</span></button>`
+          : currentFinalCount >= 5
+            ? `<button disabled style="padding:5px 12px;border-radius:6px;font-size:0.72rem;font-weight:600;cursor:not-allowed;border:1px solid rgba(255,255,255,0.08);background:transparent;color:var(--mist);opacity:0.4;white-space:nowrap;">Top 5 complet</button>`
+            : `<button onclick="event.stopPropagation();toggleFinalist(${f.id})" title="Envoyer dans le Top 5" style="padding:5px 12px;border-radius:6px;font-size:0.72rem;font-weight:600;cursor:pointer;border:1px solid rgba(192,132,252,0.3);background:rgba(192,132,252,0.07);color:var(--lavande);white-space:nowrap;transition:all 0.15s;" onmouseover="this.style.background='rgba(192,132,252,0.18)'" onmouseout="this.style.background='rgba(192,132,252,0.07)'">→ Top 5</button>`;
+        return `<tr style="background:${isFinal ? "rgba(192,132,252,0.05)" : "rgba(78,255,206,0.03)"};" onmouseover="this.style.background='${isFinal ? "rgba(192,132,252,0.09)" : "rgba(78,255,206,0.06)"}'" onmouseout="this.style.background='${isFinal ? "rgba(192,132,252,0.05)" : "rgba(78,255,206,0.03)"}'">
           <td style="font-family:var(--font-mono);font-size:0.8rem;font-weight:700;color:var(--solar);">${String(idx + 1).padStart(2, "0")}</td>
-          <td>
-            <div style="font-weight:700;font-size:0.88rem;">${f.title}</div>
-            <div style="font-size:0.72rem;color:var(--mist);">${f.author} · ${flags[f.country] || ""} ${f.country || ""}</div>
-          </td>
+          <td><div style="font-weight:700;font-size:0.88rem;">${f.title}${isFinal ? ' <span style="font-size:0.65rem;color:var(--lavande);vertical-align:middle;">🏆</span>' : ""}</div><div style="font-size:0.72rem;color:var(--mist);">${f.author} · ${flags[f.country] || ""} ${f.country || ""}</div></td>
           <td>${voteLabel}</td>
           <td><div style="display:flex;align-items:center;gap:3px;">${juryAv}</div></td>
-          <td>${nComm > 0 ? `<span style="font-size:0.78rem;color:var(--lavande);">💬 ${nComm}</span>` : '<span style="color:var(--mist);opacity:0.4;font-size:0.72rem;">—</span>'}</td>
+          <td>${finalBtn}</td>
           <td><button onclick="event.stopPropagation();openVideoModal(${f.id})" style="padding:4px 10px;border-radius:6px;font-size:0.68rem;font-weight:600;cursor:pointer;border:1px solid rgba(78,255,206,0.25);background:rgba(78,255,206,0.06);color:var(--aurora);">▶ Voir</button></td>
-          <td><button onclick="event.stopPropagation();adminDecide(${f.id},'valide')" style="padding:4px 10px;border-radius:6px;font-size:0.68rem;font-weight:600;cursor:pointer;border:1px solid rgba(255,107,107,0.25);background:rgba(255,107,107,0.06);color:var(--coral);">✕ Retirer</button></td>
+          <td><button onclick="event.stopPropagation();adminDecide(${f.id},'valide')" style="padding:4px 10px;border-radius:6px;font-size:0.68rem;font-weight:600;cursor:pointer;border:1px solid rgba(255,107,107,0.2);background:rgba(255,107,107,0.04);color:var(--coral);">✕</button></td>
         </tr>`;
-        })
-        .join("");
+      }).join("");
+    }
+    return;
+  }
+
+  // ── Onglet TOP 5 FINALE ──
+  if (selFilter === "finaliste") {
+    const finalists = films.filter((f) => finalistDecisions[f.id]);
+    const tbody = document.getElementById("selection-tbody");
+    if (finalists.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:48px;color:var(--mist);font-size:0.85rem;">Aucun finaliste désigné.<br><span style="font-size:0.75rem;opacity:0.6;">Allez dans <strong style="color:var(--solar);">★ Top 50</strong> et cliquez sur <strong style="color:var(--lavande);">→ Top 5</strong> pour désigner vos 5 finalistes.</span></td></tr>`;
+    } else {
+      const juryUsers = users.filter((u) => u.role === "jury");
+      // Barre 5 finalistes en haut du tableau
+      const bar5pct = Math.min((finalists.length / 5) * 100, 100);
+      const bar5 = `<tr><td colspan="8" style="padding:0;border-bottom:none;">
+        <div style="padding:12px 16px;background:rgba(192,132,252,0.05);border-bottom:1px solid rgba(192,132,252,0.1);display:flex;align-items:center;gap:16px;">
+          <span style="font-size:0.72rem;font-weight:700;color:var(--lavande);white-space:nowrap;">🏆 Finalistes</span>
+          <div style="flex:1;height:5px;background:rgba(192,132,252,0.1);border-radius:999px;overflow:hidden;"><div style="height:100%;width:${bar5pct}%;background:linear-gradient(90deg,var(--lavande),#e0c3ff);border-radius:999px;transition:width 0.4s;"></div></div>
+          <span style="font-family:var(--font-mono);font-size:0.78rem;font-weight:800;color:${finalists.length >= 5 ? "var(--lavande)" : "var(--snow)"};">${finalists.length}<span style="color:var(--mist);font-weight:400;"> / 5</span></span>
+          ${finalists.length >= 5 ? '<span style="font-size:0.72rem;color:var(--lavande);font-weight:700;">✓ Finale constituée</span>' : '<span style="font-size:0.72rem;color:var(--solar);">Il manque ' + (5 - finalists.length) + ' finaliste' + (5 - finalists.length > 1 ? "s" : "") + '</span>'}
+        </div>
+      </td></tr>`;
+      tbody.innerHTML = bar5 + finalists.map((f, idx) => {
+        const c = getFilmConsensus(f);
+        const voteLabel = c.type === "unanime"
+          ? `<span style="color:var(--aurora);font-weight:700;">✅ Unanime</span>`
+          : c.type === "partage"
+            ? `<span style="color:var(--solar);font-weight:700;">⚠️ Partagé</span>`
+            : `<span style="color:var(--mist);">—</span>`;
+        const juryAv = Object.entries(f.juryDec || {}).map(([uid, dec]) => {
+          const u = juryUsers.find((x) => x.id === parseInt(uid));
+          if (!u) return "";
+          const bc = dec === "valide" ? "var(--aurora)" : dec === "refuse" ? "var(--coral)" : dec === "aRevoir" ? "var(--solar)" : "rgba(255,255,255,0.15)";
+          const ic = dec === "valide" ? "✓" : dec === "refuse" ? "✕" : dec === "aRevoir" ? "↩" : "?";
+          return `<div title="${u.name}" style="position:relative;display:inline-block;"><img src="${u.avatar}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;border:2px solid ${bc};"><span style="position:absolute;bottom:-3px;right:-3px;width:11px;height:11px;border-radius:50%;font-size:0.42rem;font-weight:900;display:flex;align-items:center;justify-content:center;background:${bc};color:var(--deep-sky);">${ic}</span></div>`;
+        }).join("");
+        const medal = ["🥇","🥈","🥉","④","⑤"][idx] || (idx+1);
+        return `<tr style="background:rgba(192,132,252,0.06);" onmouseover="this.style.background='rgba(192,132,252,0.1)'" onmouseout="this.style.background='rgba(192,132,252,0.06)'">
+          <td style="font-family:var(--font-mono);font-size:1.1rem;text-align:center;">${medal}</td>
+          <td><div style="font-weight:700;font-size:0.9rem;">${f.title}</div><div style="font-size:0.72rem;color:var(--mist);">${f.author} · ${flags[f.country] || ""} ${f.country || ""}</div></td>
+          <td>${voteLabel}</td>
+          <td><div style="display:flex;align-items:center;gap:3px;">${juryAv}</div></td>
+          <td></td>
+          <td><button onclick="event.stopPropagation();openVideoModal(${f.id})" style="padding:4px 10px;border-radius:6px;font-size:0.68rem;font-weight:600;cursor:pointer;border:1px solid rgba(78,255,206,0.25);background:rgba(78,255,206,0.06);color:var(--aurora);">▶ Voir</button></td>
+          <td><button onclick="event.stopPropagation();toggleFinalist(${f.id})" style="padding:4px 10px;border-radius:6px;font-size:0.68rem;font-weight:600;cursor:pointer;border:1px solid rgba(255,107,107,0.2);background:rgba(255,107,107,0.04);color:var(--coral);">✕ Retirer</button></td>
+        </tr>`;
+      }).join("");
     }
     return;
   }
@@ -2616,7 +3061,7 @@ function renderSelection() {
   let filtered = enriched;
   if (selFilter === "signale")
     filtered = filtered.filter((f) => f.tickets && f.tickets.length > 0);
-  else if (selFilter !== "tous")
+  else if (selFilter !== "tous" && selFilter !== "finaliste" && selFilter !== "selectionne")
     filtered = filtered.filter((f) => f.consensus.type === selFilter);
   if (searchQ)
     filtered = filtered.filter((f) =>
@@ -2815,19 +3260,21 @@ function renderSelection() {
       </td>
     </tr>`;
 
-      const rowBg =
-        adm === "valide"
-          ? "rgba(78,255,206,0.03)"
-          : adm === "refuse"
-            ? "rgba(255,107,107,0.03)"
-            : "";
+      const isSelected = adm === "valide";
+      const isRefused  = adm === "refuse";
+      const rowBg      = isSelected ? "rgba(78,255,206,0.04)" : isRefused ? "rgba(255,107,107,0.03)" : "";
+      const rowOpacity = isSelected ? "0.45" : "1";
+      const selBadge   = isSelected
+        ? `<span style="display:inline-flex;align-items:center;gap:3px;font-size:0.62rem;font-weight:700;padding:2px 7px;border-radius:999px;background:rgba(78,255,206,0.1);color:var(--aurora);border:1px solid rgba(78,255,206,0.25);white-space:nowrap;">✓ Top 50</span>`
+        : "";
       const infoBadges = `<div style="display:flex;align-items:center;gap:5px;">
+      ${selBadge}
       ${nComm > 0 ? `<span style="font-size:0.75rem;color:var(--lavande);" title="${nComm} commentaire(s)">💬${nComm}</span>` : ""}
       ${nTk > 0 ? `<span style="font-size:0.75rem;color:var(--solar);" title="${nTk} signalement(s)">🚩${nTk}</span>` : ""}
-      ${nComm === 0 && nTk === 0 ? '<span style="font-size:0.72rem;color:var(--mist);opacity:0.4;">—</span>' : ""}
+      ${!isSelected && nComm === 0 && nTk === 0 ? '<span style="font-size:0.72rem;color:var(--mist);opacity:0.4;">—</span>' : ""}
     </div>`;
 
-      return `<tr onclick="toggleSelDetail(${f.id})" style="cursor:pointer;transition:background .15s;background:${rowBg};" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='${rowBg}'">
+      return `<tr onclick="toggleSelDetail(${f.id})" style="cursor:pointer;transition:background .15s;background:${rowBg};opacity:${isSelected ? "0.28" : "1"};" onmouseover="this.style.opacity='1';this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.opacity='${isSelected ? "0.28" : "1"}';this.style.background='${rowBg}'">
       <td style="font-family:var(--font-mono);font-size:0.72rem;color:var(--mist);">#${String(f.id).padStart(3, "0")}</td>
       <td>
         <div style="font-weight:700;font-size:0.88rem;">${f.title}</div>
@@ -3765,3 +4212,6 @@ function openMobileChat() {
   const scWrap = document.getElementById("sc-wrap");
   if (scWrap) scWrap.scrollIntoView({ behavior: "smooth", block: "end" });
 }
+
+// Init phases status (after adminDecisions is declared)
+renderPhasesStatus();
