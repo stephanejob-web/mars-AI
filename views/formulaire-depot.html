@@ -566,7 +566,7 @@
             <div class="dur-label" id="dur-label">Vérification de la durée…</div>
           </div>
         </div>
-        <div class="field-error" id="err-video" style="margin-top:8px;">Fichier vidéo requis</div>
+         <div class="field-error" id="err-video" style="margin-top:8px;">Fichier vidéo requis</div>
 
         <hr class="section-sep">
 
@@ -582,6 +582,17 @@
           </div>
         </div>
 
+         <div class="fields-grid">
+          <div class="field">
+            <label class="field-label">Outils utilisés et méthodes de création <span class="req">● requis</span></label>
+            <textarea id="f-outils" rows="5"
+              placeholder="Décrivez les outils (logiciels, langages, frameworks, etc.) et les méthodes de création employées pour ce dépôt..."
+              maxlength="1000" oninput="countChars(this,'cc-outils',1000)"></textarea>
+            <div class="char-counter" id="cc-outils">0 / 1000</div>
+            <div class="field-hint">Cette note est lue par le jury lors de la présélection</div>
+            <div class="field-error" id="err-outils">Les outils utilisés sont requis</div>
+          </div>
+        </div>
         <div class="step-nav-btns">
           <button class="btn-prev" onclick="prevStep(2)">← Retour</button>
           <button class="btn-next" onclick="nextStep(2)">Étape suivante — Fiche IA →</button>

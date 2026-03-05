@@ -27,9 +27,21 @@
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Afficher le panneau au survol */
-#dev-nav:hover {
+/* Afficher le panneau au survol (desktop) */
+#dev-nav:hover,
+#dev-nav.open {
   transform: translateY(-50%) translateX(0);
+}
+
+/* Mobile — pointer grossier (touch) : curseur tap sur la languette visible */
+@media (pointer: coarse) {
+  #dev-nav {
+    cursor: pointer;
+  }
+  #dev-nav .dn-btn,
+  #dev-nav .dn-header {
+    cursor: auto;
+  }
 }
 
 /* ── En-tête ───────────────────────────────────────────────────── */

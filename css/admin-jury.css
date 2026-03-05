@@ -11,68 +11,6 @@
   --sidebar-w: 260px;
 }
 
-/* ── SIDEBAR TOGGLE BUTTON ───────────────────────────────────── */
-.sidebar-toggle {
-  position: fixed;
-  left: var(--sidebar-w);
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 1100;
-  width: 20px;
-  height: 48px;
-  background: var(--surface, #141a2e);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-left: none;
-  border-radius: 0 8px 8px 0;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  transition:
-    left 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-    background 0.2s,
-    box-shadow 0.2s;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
-}
-.sidebar-toggle:hover {
-  background: rgba(78, 255, 206, 0.1);
-  border-color: rgba(78, 255, 206, 0.25);
-  box-shadow: 2px 0 14px rgba(78, 255, 206, 0.15);
-}
-.sidebar-toggle-icon {
-  font-size: 1rem;
-  color: var(--mist, #8892b0);
-  line-height: 1;
-  transition:
-    transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-    color 0.2s;
-  display: block;
-}
-.sidebar-toggle:hover .sidebar-toggle-icon {
-  color: var(--aurora, #4effce);
-}
-
-/* ── SIDEBAR TRANSITION ──────────────────────────────────────── */
-.sidebar {
-  transition:
-    margin-left 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-    opacity 0.25s ease;
-}
-
-/* ── SIDEBAR COLLAPSED STATE ─────────────────────────────────── */
-body.sidebar-collapsed .sidebar {
-  margin-left: calc(-1 * var(--sidebar-w));
-  opacity: 0;
-  pointer-events: none;
-}
-body.sidebar-collapsed .sidebar-toggle {
-  left: 0;
-}
-body.sidebar-collapsed .sidebar-toggle-icon {
-  transform: rotate(180deg);
-}
-
 /* ── SURCHARGES SIDEBAR (valeurs jury vs admin-panel) ─────────── */
 /* admin-layout.css utilise 20px/18px/16px ; ici 22px/20px/18px   */
 .sidebar-header {
@@ -108,6 +46,10 @@ body.sidebar-collapsed .sidebar-toggle-icon {
 .count-selected {
   background: rgba(78, 255, 206, 0.12);
   color: var(--aurora);
+}
+.count-discuss {
+  background: rgba(192, 132, 252, 0.12);
+  color: var(--lavande);
 }
 .count-neutral {
   background: rgba(255, 255, 255, 0.06);
@@ -1009,26 +951,84 @@ body.sidebar-collapsed .sidebar-toggle-icon {
 .delib-table {
   width: 100%;
   border-collapse: collapse;
+  border-radius: 12px;
+  overflow: hidden;
 }
 .delib-table th {
   text-align: left;
-  padding: 8px 12px;
-  font-size: 0.65rem;
+  padding: 9px 14px;
+  font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--mist);
+  color: rgba(136, 146, 176, 0.6);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
 }
 .delib-table td {
-  padding: 10px 12px;
-  font-size: 0.8rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  padding: 13px 14px;
+  font-size: 0.82rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.035);
   vertical-align: middle;
 }
-.delib-table tr:hover td {
-  background: rgba(255, 255, 255, 0.02);
+.delib-row {
+  transition: background 0.12s;
   cursor: pointer;
+}
+.delib-row:hover td {
+  background: rgba(255, 255, 255, 0.025) !important;
+}
+
+/* Boutons vote délibération */
+.delib-btn {
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1.5px solid;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.delib-btn-default {
+  border-color: rgba(192, 132, 252, 0.2);
+  background: rgba(192, 132, 252, 0.05);
+  color: var(--lavande);
+}
+.delib-btn-default:hover {
+  background: rgba(192, 132, 252, 0.14);
+  border-color: rgba(192, 132, 252, 0.4);
+}
+.delib-btn-voted {
+  border-color: rgba(192, 132, 252, 0.5);
+  background: rgba(192, 132, 252, 0.14);
+  color: var(--lavande);
+  font-weight: 700;
+}
+.delib-btn-top5 {
+  border-color: rgba(192, 132, 252, 0.6);
+  background: rgba(192, 132, 252, 0.18);
+  color: var(--lavande);
+  font-weight: 700;
+  box-shadow: 0 0 10px rgba(192, 132, 252, 0.15);
+}
+.delib-btn-top5-voted {
+  border-color: rgba(192, 132, 252, 0.7);
+  background: rgba(192, 132, 252, 0.22);
+  color: var(--lavande);
+  font-weight: 700;
+}
+.delib-btn-almost {
+  border-color: rgba(245, 200, 66, 0.6);
+  background: rgba(245, 200, 66, 0.12);
+  color: var(--solar);
+  font-weight: 700;
+  animation: delib-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes delib-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(245, 200, 66, 0.3); }
+  50%       { opacity: 0.85; box-shadow: 0 0 0 4px rgba(245, 200, 66, 0.1); }
 }
 .rank {
   font-family: var(--font-mono);

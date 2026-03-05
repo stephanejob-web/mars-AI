@@ -5,11 +5,6 @@
    Dépendances : DOM chargé.
    ================================================================ */
 
-/* ── SIDEBAR TOGGLE ── */
-function toggleSidebar() {
-  document.body.classList.toggle("sidebar-collapsed");
-}
-
 /* ── DONNÉES (maquette) ── */
 // decisions: null = pas encore évalué, 'valide', 'aRevoir', 'refuse'
 const films = [
@@ -236,19 +231,22 @@ let activeFilm = 1;
 let playInterval = null,
   isPlaying = false,
   progress = 42;
+const MOBILE_BREAKPOINT = 980;
+let mobilePane = "list";
+let mobileSidebarOpen = false;
 
 function isMobileViewport() {
   return window.innerWidth <= MOBILE_BREAKPOINT;
 }
 
 function isEvalViewVisible() {
-  const evalEl = document.getElementById('view-eval');
-  return !!evalEl && evalEl.style.display !== 'none';
+  const evalEl = document.getElementById("view-eval");
+  return !!evalEl && evalEl.style.display !== "none";
 }
 
 function setMobileSidebar(open) {
   mobileSidebarOpen = !!open;
-  document.body.classList.toggle('jury-mobile-sidebar-open', mobileSidebarOpen);
+  document.body.classList.toggle("jury-mobile-sidebar-open", mobileSidebarOpen);
 }
 
 function toggleMobileSidebar() {
@@ -258,49 +256,59 @@ function toggleMobileSidebar() {
 
 function setMobilePane(pane) {
   if (!isMobileViewport()) return;
-  mobilePane = pane === 'detail' ? 'detail' : 'list';
-  document.body.classList.toggle('jury-mobile-pane-list', mobilePane === 'list');
-  document.body.classList.toggle('jury-mobile-pane-detail', mobilePane === 'detail');
+  mobilePane = pane === "detail" ? "detail" : "list";
+  document.body.classList.toggle(
+    "jury-mobile-pane-list",
+    mobilePane === "list",
+  );
+  document.body.classList.toggle(
+    "jury-mobile-pane-detail",
+    mobilePane === "detail",
+  );
 }
 
 function ensureMobileControls() {
-  const topbar = document.querySelector('.topbar');
+  const topbar = document.querySelector(".topbar");
   if (!topbar) return;
 
-  if (!document.getElementById('aj-mobile-menu-btn')) {
-    const menuBtn = document.createElement('button');
-    menuBtn.id = 'aj-mobile-menu-btn';
-    menuBtn.className = 'mobile-nav-btn';
-    menuBtn.type = 'button';
-    menuBtn.textContent = '☰';
-    menuBtn.setAttribute('aria-label', 'Ouvrir le menu');
+  if (!document.getElementById("aj-mobile-menu-btn")) {
+    const menuBtn = document.createElement("button");
+    menuBtn.id = "aj-mobile-menu-btn";
+    menuBtn.className = "mobile-nav-btn";
+    menuBtn.type = "button";
+    menuBtn.textContent = "☰";
+    menuBtn.setAttribute("aria-label", "Ouvrir le menu");
     menuBtn.onclick = toggleMobileSidebar;
     topbar.insertBefore(menuBtn, topbar.firstChild);
   }
 
-  if (!document.getElementById('aj-mobile-back-btn')) {
-    const backBtn = document.createElement('button');
-    backBtn.id = 'aj-mobile-back-btn';
-    backBtn.className = 'mobile-back-btn';
-    backBtn.type = 'button';
-    backBtn.textContent = '← Liste';
-    backBtn.setAttribute('aria-label', 'Retour à la liste des films');
-    backBtn.onclick = function () { setMobilePane('list'); };
+  if (!document.getElementById("aj-mobile-back-btn")) {
+    const backBtn = document.createElement("button");
+    backBtn.id = "aj-mobile-back-btn";
+    backBtn.className = "mobile-back-btn";
+    backBtn.type = "button";
+    backBtn.textContent = "← Liste";
+    backBtn.setAttribute("aria-label", "Retour à la liste des films");
+    backBtn.onclick = function () {
+      setMobilePane("list");
+    };
     topbar.insertBefore(backBtn, topbar.firstChild);
   }
 
-  if (!document.getElementById('aj-mobile-overlay')) {
-    const overlay = document.createElement('div');
-    overlay.id = 'aj-mobile-overlay';
-    overlay.onclick = function () { setMobileSidebar(false); };
+  if (!document.getElementById("aj-mobile-overlay")) {
+    const overlay = document.createElement("div");
+    overlay.id = "aj-mobile-overlay";
+    overlay.onclick = function () {
+      setMobileSidebar(false);
+    };
     document.body.appendChild(overlay);
   }
 }
 
 function injectMobileStyles() {
-  if (document.getElementById('aj-mobile-style')) return;
-  const style = document.createElement('style');
-  style.id = 'aj-mobile-style';
+  if (document.getElementById("aj-mobile-style")) return;
+  const style = document.createElement("style");
+  style.id = "aj-mobile-style";
   style.textContent = `
     .mobile-nav-btn,
     .mobile-back-btn {
@@ -405,19 +413,28 @@ function injectMobileStyles() {
         position: sticky;
         bottom: 0;
         z-index: 5;
+        padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+        background: color-mix(in srgb, var(--surface) 92%, transparent);
+        backdrop-filter: blur(6px);
       }
-<<<<<<< HEAD
       .decision-main {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: 1fr 1fr;
         gap: 8px;
+        margin-bottom: 8px;
       }
       .dbtn-main {
-        min-width: 0;
-        height: 42px;
+        width: 100%;
+        min-height: 38px;
+        font-size: 0.76rem;
       }
-=======
->>>>>>> origin/jds-admin-jury
+      .notation-bottom {
+        gap: 8px;
+        align-items: stretch;
+      }
+      .btn-publish {
+        height: 44px;
+      }
       body.jury-mobile-pane-list #view-eval .detail {
         display: none;
       }
@@ -437,17 +454,20 @@ function injectMobileStyles() {
 
 function applyResponsiveLayout() {
   const mobile = isMobileViewport();
-  document.body.classList.toggle('jury-mobile', mobile);
+  document.body.classList.toggle("jury-mobile", mobile);
   if (!mobile) {
     setMobileSidebar(false);
-    document.body.classList.remove('jury-mobile-pane-list', 'jury-mobile-pane-detail');
+    document.body.classList.remove(
+      "jury-mobile-pane-list",
+      "jury-mobile-pane-detail",
+    );
     return;
   }
   if (isEvalViewVisible() && !mobilePane) {
-    mobilePane = 'list';
+    mobilePane = "list";
   }
   if (isEvalViewVisible()) {
-    setMobilePane(mobilePane || 'list');
+    setMobilePane(mobilePane || "list");
   }
 }
 
@@ -513,7 +533,7 @@ function loadFilm(id) {
   document.getElementById("ptime").textContent = "0:00 / 1:00";
   renderList();
   if (isMobileViewport() && isEvalViewVisible()) {
-    setMobilePane('detail');
+    setMobilePane("detail");
     setMobileSidebar(false);
   }
 }
@@ -748,10 +768,23 @@ function decide(type) {
 }
 
 function updateCounts() {
-  const evaluated = films.filter((f) => f.myDecision !== null).length;
-  const pending = films.length - evaluated;
-  document.getElementById("nav-pending").textContent = pending;
-  document.getElementById("nav-selected").textContent = evaluated;
+  const evaluated = films.filter(
+    (f) => f.myDecision !== null && f.myDecision !== "discuss",
+  ).length;
+  const pending = films.filter((f) => f.myDecision === null).length;
+
+  const pbadge = document.getElementById("nav-pending");
+  if (pbadge) pbadge.textContent = pending;
+
+  const sbadge = document.getElementById("nav-selected");
+  if (sbadge) sbadge.textContent = evaluated;
+
+  const discussFilms = films.filter(
+    (f) =>
+      f.myDecision === "discuss" || (f.discussedBy && f.discussedBy.length > 0),
+  );
+  const dbadge = document.getElementById("nav-discuter-count");
+  if (dbadge) dbadge.textContent = discussFilms.length;
 }
 
 /* ── PUBLIER COMMENTAIRE ── */
@@ -802,7 +835,24 @@ function renderComments(f) {
     .join("");
 }
 
+/* ── CONSENSUS FILM ── */
+function getFilmConsensus(f) {
+  if (!f.juryDec) return { type: 'attente', valide: 0, refuse: 0, aRevoir: 0, pending: 0, score: 0 };
+  const decs    = Object.values(f.juryDec);
+  const valide  = decs.filter(d => d === 'valide').length;
+  const refuse  = decs.filter(d => d === 'refuse').length;
+  const aRevoir = decs.filter(d => d === 'aRevoir').length;
+  const pending = decs.filter(d => d === null || d === undefined).length;
+  const voted   = decs.length - pending;
+  if (voted === 0) return { type: 'attente', valide, refuse, aRevoir, pending, score: 0 };
+  const score = (valide * 2 + aRevoir * 0.5 - refuse * 1.5) / voted;
+  if (valide === voted || valide > voted / 2) return { type: 'unanime', valide, refuse, aRevoir, pending, score };
+  if (refuse > voted / 2)                    return { type: 'rejete',  valide, refuse, aRevoir, pending, score };
+  return                                             { type: 'partage', valide, refuse, aRevoir, pending, score };
+}
+
 /* ── VOTES JURY ── */
+const ADMIN_VOTER = { id: 0, initials: 'Ad', name: 'Administrateur', avatar: 'https://i.pravatar.cc/150?img=25' };
 const jurors = [
   {
     key: "ML",
@@ -833,6 +883,61 @@ const jurors = [
     cls: "va-4",
   },
 ];
+
+// ── Phase 1 : admin seul sélectionne les 50 films (lecture seule pour le jury)
+// ── Phase 2 : admin + jury votent collectivement pour le Top 5 ──
+let currentJurorKey = 'ML';
+const JURY_VOTE_THRESHOLD = 3; // ceil(5/2) — majorité pour Top 5
+
+function getVotesFromStorage() {
+  try {
+    return {
+      sel: JSON.parse(localStorage.getItem('marsai_adminSelected') || '[]'), // Top 50 — admin seul
+      fv:  JSON.parse(localStorage.getItem('marsai_finalistVotes') || '{}'), // Top 5  — collectif
+    };
+  } catch(e) { return { sel: [], fv: {} }; }
+}
+function saveFinalistVotes(fv) {
+  localStorage.setItem('marsai_finalistVotes', JSON.stringify(fv));
+}
+function currentJurorId() { return jurors.find(j => j.key === currentJurorKey)?.id || 1; }
+
+function isFilmInTop50(filmId) {
+  const { sel } = getVotesFromStorage();
+  return sel.includes(filmId);
+}
+function myFinalistVote(filmId) {
+  const { fv } = getVotesFromStorage();
+  return (fv[filmId] || []).includes(currentJurorId());
+}
+function finalistVoteCount(filmId) {
+  const { fv } = getVotesFromStorage();
+  return (fv[filmId] || []).length;
+}
+function isFilmInTop5(filmId) { return finalistVoteCount(filmId) >= JURY_VOTE_THRESHOLD; }
+
+function toggleJuryFinalist(filmId) {
+  if (!isFilmInTop50(filmId)) { showToast('⚠️ Ce film n\'est pas dans le Top 50', 'warn'); return; }
+  const { fv } = getVotesFromStorage();
+  const uid = currentJurorId();
+  if (!fv[filmId]) fv[filmId] = [];
+  const idx = fv[filmId].indexOf(uid);
+  if (idx >= 0) {
+    fv[filmId].splice(idx, 1);
+    showToast('Vote Top 5 retiré', 'warn');
+  } else {
+    const myCount = films.filter(f => (fv[f.id] || []).includes(uid)).length;
+    if (myCount >= 5) { showToast('⚠️ Vous avez déjà voté pour 5 finalistes', 'warn'); return; }
+    fv[filmId].push(uid);
+    showToast('🏆 Vote Top 5 enregistré', 'ok');
+  }
+  saveFinalistVotes(fv);
+  renderDelib();
+}
+function switchJuror(key) {
+  currentJurorKey = key;
+  renderDelib();
+}
 
 function renderVotes(f) {
   const el = document.getElementById("votes-list");
@@ -923,7 +1028,7 @@ function switchView(view, navEl) {
 
   if (isMobileViewport()) {
     setMobileSidebar(false);
-    if (view === 'eval') setMobilePane('list');
+    if (view === "eval") setMobilePane("list");
   }
 }
 
@@ -1011,6 +1116,7 @@ function setPhaseTab(el, phase) {
       rows.forEach((r, i) => (r.style.display = i < 5 ? "" : "none"));
     }
   }
+  renderDelib();
 }
 
 /* ── ANNOTATION RAPIDE (À discuter) ── */
@@ -1025,6 +1131,10 @@ function quickAnnotate(type, btn) {
       f.myDecision = "discuss";
       if (!f.discussedBy) f.discussedBy = [];
       if (!f.discussedBy.includes("ML")) f.discussedBy.push("ML");
+      showToast('💬 Ajouté à "À discuter" : ' + f.title, "ok");
+      updateCounts();
+      renderDiscuterView();
+      loadFilm(activeFilm);
     }
     // Ouvrir le sidebar chat sur le canal "Tous" avec le titre du film pré-rempli
     pendingFilmId = f ? f.id : null;
@@ -1173,6 +1283,14 @@ function selectDiscussFilm(id) {
     })
     .join("");
 
+  if (!f.fakeVotes) {
+    f.fakeVotes = {
+      valide: { count: Math.floor(Math.random() * 5), active: false },
+      aRevoir: { count: Math.floor(Math.random() * 5), active: false },
+      refuse: { count: Math.floor(Math.random() * 5), active: false },
+    };
+  }
+
   const details = document.getElementById("discuss-film-details");
   details.innerHTML = `
     <!-- Titre + meta -->
@@ -1209,7 +1327,37 @@ function selectDiscussFilm(id) {
     <div class="dfd-section">
       <div class="dfd-label">⚖️ Votes & commentaires jury</div>
       ${juryRows}
+    </div>
+    
+    <!-- Décision de groupe -->
+    <div class="dfd-section" style="margin-top: 16px;">
+      <div class="dfd-label">🎯 Décision de groupe</div>
+      <div style="display: flex; gap: 8px;">
+        <button class="dbtn-main dbtn-valide" style="flex:1; height: 36px; font-size: 0.75rem; transition: background 0.2s, color 0.2s; ${f.fakeVotes.valide.active ? "background: #3b82f6; color: white; border-color: #2563eb;" : ""}" onclick="toggleDiscussVote(${f.id}, 'valide')">
+          ✓ Valider (${f.fakeVotes.valide.count}/6)
+        </button>
+        <button class="dbtn-main dbtn-arevoir" style="flex:1; height: 36px; font-size: 0.75rem; transition: background 0.2s, color 0.2s; ${f.fakeVotes.aRevoir.active ? "background: #3b82f6; color: white; border-color: #2563eb;" : ""}" onclick="toggleDiscussVote(${f.id}, 'aRevoir')">
+          ↩ À revoir (${f.fakeVotes.aRevoir.count}/6)
+        </button>
+        <button class="dbtn-main dbtn-refuse" style="flex:1; height: 36px; font-size: 0.75rem; transition: background 0.2s, color 0.2s; ${f.fakeVotes.refuse.active ? "background: #3b82f6; color: white; border-color: #2563eb;" : ""}" onclick="toggleDiscussVote(${f.id}, 'refuse')">
+          ✕ Refuser (${f.fakeVotes.refuse.count}/6)
+        </button>
+      </div>
     </div>`;
+}
+
+function toggleDiscussVote(id, type) {
+  const f = films.find((x) => x.id === id);
+  if (!f || !f.fakeVotes) return;
+  const v = f.fakeVotes[type];
+  if (v.active) {
+    v.count--;
+    v.active = false;
+  } else {
+    v.count++;
+    v.active = true;
+  }
+  selectDiscussFilm(id);
 }
 
 function sendChatMsg() {
@@ -1494,4 +1642,13 @@ updateSCBadge();
 injectMobileStyles();
 ensureMobileControls();
 applyResponsiveLayout();
-window.addEventListener('resize', applyResponsiveLayout);
+window.addEventListener("resize", applyResponsiveLayout);
+
+// Toggle sidebar gauche — délègue au système mobile si viewport étroit
+function toggleSidebar() {
+  if (isMobileViewport()) {
+    toggleMobileSidebar();
+  } else {
+    document.body.classList.toggle("sidebar-collapsed");
+  }
+}

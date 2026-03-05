@@ -52,6 +52,7 @@ const thumbVideoObserver = new IntersectionObserver((entries) => {
         video.autoplay = true;
         video.playsInline = true;
         video.preload = 'none';
+        video.setAttribute('aria-hidden', 'true');
         const source = document.createElement('source');
         source.src = '../assets/video.mp4';
         source.type = 'video/mp4';
@@ -223,15 +224,18 @@ window.addEventListener('scroll', () => {
 
   // ─── JURY SECTION ──────────────────────────────────────
   const defaultJury = [
-    { id:1,  name:"Marie Lefebvre", label:"Présidente · Réalisatrice",  badge:"Présidence du Jury", quote:"Figure incontournable du cinéma d'auteur, trois fois primée au Festival de Cannes. Elle préside le jury marsAI 2026 avec l'ambition d'élever la création IA au rang d'art majeur.", avatar:"https://i.pravatar.cc/400?img=47", featured:true },
-    { id:2,  name:"Pierre Dubois",  label:"Directeur artistique",       badge:"Membre du Jury", quote:"Directeur artistique visionnaire, il a collaboré avec les plus grands studios européens. Son regard esthétique unique apporte une dimension singulière aux délibérations.", avatar:"https://i.pravatar.cc/400?img=12"  },
-    { id:3,  name:"Kenji Ito",      label:"Artiste numérique",          badge:"Membre du Jury", quote:"Pionnier de l'art génératif au Japon, ses œuvres mêlent tradition et technologie. Il explore les frontières entre créativité humaine et intelligence artificielle.", avatar:"https://i.pravatar.cc/400?img=68"  },
-    { id:4,  name:"Sofia Eriksson", label:"Critique de cinéma",         badge:"Membre du Jury", quote:"Critique influente basée à Stockholm, elle écrit pour les plus grands magazines cinématographiques. Spécialiste des nouvelles formes narratives numériques.", avatar:"https://i.pravatar.cc/400?img=44"  },
-    { id:7,  name:"Amara Touré",    label:"Productrice",                badge:"Membre du Jury", quote:"Productrice primée originaire de Dakar, elle défend un cinéma engagé et innovant. Elle a produit plusieurs courts-métrages sélectionnés dans des festivals internationaux.", avatar:"https://i.pravatar.cc/400?img=32"  },
-    { id:10, name:"Carlos Ruiz",    label:"Chef opérateur",             badge:"Membre du Jury", quote:"Chef opérateur de renom basé à Madrid, il a signé la photographie de nombreux films récompensés. Son expertise technique enrichit l'évaluation des œuvres.", avatar:"https://i.pravatar.cc/400?img=18"  },
+    { id:1,  name:"Marie Lefebvre", label:"Présidente · Réalisatrice",  labelEN:"President · Director",      badge:"Présidence du Jury", badgeEN:"Jury President", quote:"Figure incontournable du cinéma d'auteur, trois fois primée au Festival de Cannes. Elle préside le jury marsAI 2026 avec l'ambition d'élever la création IA au rang d'art majeur.", quoteEN:"A towering figure of auteur cinema, three-time award winner at Cannes. She chairs the marsAI 2026 jury with the ambition of elevating AI creation to the rank of major art.", avatar:"https://i.pravatar.cc/400?img=47", featured:true },
+    { id:2,  name:"Pierre Dubois",  label:"Directeur artistique",       labelEN:"Art Director",               badge:"Membre du Jury",     badgeEN:"Jury Member",    quote:"Directeur artistique visionnaire, il a collaboré avec les plus grands studios européens. Son regard esthétique unique apporte une dimension singulière aux délibérations.", quoteEN:"A visionary art director who has collaborated with the leading European studios. His unique aesthetic sensibility brings a singular dimension to the jury's deliberations.", avatar:"https://i.pravatar.cc/400?img=12"  },
+    { id:3,  name:"Kenji Ito",      label:"Artiste numérique",          labelEN:"Digital Artist",             badge:"Membre du Jury",     badgeEN:"Jury Member",    quote:"Pionnier de l'art génératif au Japon, ses œuvres mêlent tradition et technologie. Il explore les frontières entre créativité humaine et intelligence artificielle.", quoteEN:"A pioneer of generative art in Japan, his work blends tradition and technology. He explores the boundaries between human creativity and artificial intelligence.", avatar:"https://i.pravatar.cc/400?img=68"  },
+    { id:4,  name:"Sofia Eriksson", label:"Critique de cinéma",         labelEN:"Film Critic",                badge:"Membre du Jury",     badgeEN:"Jury Member",    quote:"Critique influente basée à Stockholm, elle écrit pour les plus grands magazines cinématographiques. Spécialiste des nouvelles formes narratives numériques.", quoteEN:"An influential critic based in Stockholm, she writes for the world's leading film magazines. A specialist in new forms of digital storytelling.", avatar:"https://i.pravatar.cc/400?img=44"  },
+    { id:7,  name:"Amara Touré",    label:"Productrice",                labelEN:"Producer",                   badge:"Membre du Jury",     badgeEN:"Jury Member",    quote:"Productrice primée originaire de Dakar, elle défend un cinéma engagé et innovant. Elle a produit plusieurs courts-métrages sélectionnés dans des festivals internationaux.", quoteEN:"Award-winning producer from Dakar, she champions committed and innovative cinema. She has produced several short films selected at major international festivals.", avatar:"https://i.pravatar.cc/400?img=32"  },
+    { id:10, name:"Carlos Ruiz",    label:"Chef opérateur",             labelEN:"Cinematographer",            badge:"Membre du Jury",     badgeEN:"Jury Member",    quote:"Chef opérateur de renom basé à Madrid, il a signé la photographie de nombreux films récompensés. Son expertise technique enrichit l'évaluation des œuvres.", quoteEN:"A renowned cinematographer based in Madrid, he has shot the photography of many award-winning films. His technical expertise enriches the evaluation of entries.", avatar:"https://i.pravatar.cc/400?img=18"  },
   ];
 
 function renderJury() {
+  const lang = document.documentElement.lang === 'en' ? 'en' : 'fr';
+  const isEN = lang === 'en';
+
   // Priorité aux données éditées depuis le panneau admin
   const savedData = localStorage.getItem('marsai_jury_data');
   const jurySource = savedData ? JSON.parse(savedData) : defaultJury;
@@ -242,27 +246,33 @@ function renderJury() {
 
   if (!visible.length) {
     featuredWrap.innerHTML = '';
-    grid.innerHTML = '<p style="color:var(--mist);grid-column:1/-1;text-align:center;font-size:0.9rem;">Le jury est en cours de constitution.</p>';
+    grid.innerHTML = `<p style="color:var(--mist);grid-column:1/-1;text-align:center;font-size:0.9rem;">${isEN ? 'The jury is being formed.' : 'Le jury est en cours de constitution.'}</p>`;
     return;
   }
 
-    // Tous les membres en cards verticales uniformes
-    featuredWrap.innerHTML = '';
+  // Tous les membres en cards verticales uniformes
+  featuredWrap.innerHTML = '';
 
-    grid.innerHTML = visible.map(j => `
+  grid.innerHTML = visible.map(j => {
+    const badge = (isEN ? (j.badgeEN || j.badge) : j.badge) || (isEN ? 'Jury Member' : 'Membre du Jury');
+    const label = (isEN ? (j.labelEN || j.label) : j.label) || '';
+    const quote = (isEN ? (j.quoteEN || j.quote) : j.quote) || '';
+    return `
       <div class="jury-card">
         <div class="jury-card-photo-wrap">
           <img class="jury-card-photo" src="${j.avatar}" alt="${j.name}">
         </div>
         <div class="jury-card-info">
-          <div class="jury-card-badge">${j.badge || 'Membre du Jury'}</div>
+          <div class="jury-card-badge">${badge}</div>
           <div class="jury-card-name">${j.name}</div>
-          <div class="jury-card-role">${j.label}</div>
-          ${j.quote ? `<p class="jury-card-quote">${j.quote}</p>` : ''}
+          <div class="jury-card-role">${label}</div>
+          ${quote ? `<p class="jury-card-quote">${quote}</p>` : ''}
         </div>
-      </div>`).join('');
+      </div>`;
+  }).join('');
 }
 renderJury();
+window.renderJury = renderJury;
 
 // ─── SPONSORS ───────────────────────────────────────────
 const defaultSponsors = [
@@ -289,10 +299,11 @@ function renderSponsors() {
     partenaire: visible.filter(s => s.tier === 'partenaire'),
     institutionnel: visible.filter(s => s.tier === 'institutionnel'),
   };
+  const isEN = document.documentElement.lang === 'en';
   const tierLabels = {
-    principal: 'Sponsor Principal',
-    partenaire: 'Partenaires',
-    institutionnel: 'Soutiens Institutionnels',
+    principal:     isEN ? 'Main Sponsor'            : 'Sponsor Principal',
+    partenaire:    isEN ? 'Partners'                : 'Partenaires',
+    institutionnel:isEN ? 'Institutional Supporters': 'Soutiens Institutionnels',
   };
 
   let html = '';
@@ -316,6 +327,7 @@ function renderSponsors() {
   document.getElementById('sponsors-display').innerHTML = html;
 }
 renderSponsors();
+window.renderSponsors = renderSponsors;
 
   // Carousel films — boucle infinie fluide + drag
   document.querySelectorAll('.films-carousel').forEach(el => {
@@ -494,5 +506,20 @@ renderSponsors();
     }, { threshold: 0.15 });
     obs.observe(section);
   }
+})();
+
+// Globe 3D — chargé seulement quand visible (Three.js ~500KB évité au démarrage)
+(function () {
+  const globeCanvas = document.getElementById('globe-canvas');
+  if (!globeCanvas) return;
+  let loaded = false;
+  const globeObs = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting && !loaded) {
+      loaded = true;
+      globeObs.disconnect();
+      import('../js/index-globe.js').catch(() => {});
+    }
+  }, { rootMargin: '300px' });
+  globeObs.observe(globeCanvas);
 })();
 
