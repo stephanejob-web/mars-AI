@@ -4,10 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vous êtes invité — marsAI 2026</title>
+  <!-- ===================== -->
+  <!-- FEUILLES DE STYLES    -->
+  <!-- ===================== -->
   <link rel="stylesheet" href="../css/tokens.css">
   <link rel="stylesheet" href="../css/reset.css">
   <link rel="stylesheet" href="../css/dev-nav.css">
   <link rel="stylesheet" href="../css/login.css">
+
+  <!-- ===================== -->
+  <!-- STYLES INLINE PAGE    -->
+  <!-- ===================== -->
   <style>
     /* ── Orbes décoratifs ── */
     .inv-orb {
@@ -124,7 +131,9 @@
 </head>
 <body>
 
-<!-- Orbes décoratifs -->
+<!-- ===================== -->
+<!-- ORBES DÉCORATIFS     -->
+<!-- ===================== -->
 <div class="inv-orb inv-orb-1"></div>
 <div class="inv-orb inv-orb-2"></div>
 
@@ -133,7 +142,9 @@
   <!-- Logo -->
   <a href="index.html" class="logo">mars<span>AI</span></a>
 
-  <!-- ══ CARTE : INVALIDE ══════════════════════════════════════ -->
+  <!-- ===================== -->
+  <!-- CARTE : LIEN INVALIDE -->
+  <!-- ===================== -->
   <div class="card" id="card-invalid" style="display:none; text-align:center;">
     <div class="invalid-icon">⚠️</div>
     <div class="card-title" style="margin-bottom:10px;">Lien invalide</div>
@@ -147,7 +158,9 @@
     <a href="index.html" class="back-link" style="display:block;margin-top:14px;">← Retour au site</a>
   </div>
 
-  <!-- ══ CARTE : FORMULAIRE ════════════════════════════════════ -->
+  <!-- ===================== -->
+  <!-- CARTE : FORMULAIRE   -->
+  <!-- ===================== -->
   <div class="card" id="card-invite" style="max-width:440px;">
 
     <!-- En-tête -->
@@ -178,6 +191,7 @@
 
     <!-- Formulaire -->
     <form id="form-invite" onsubmit="handleInvite(event)" novalidate>
+      <!-- Field (élément répétable - futur composant React possible) -->
       <div class="field">
         <label>Prénom & Nom</label>
         <input type="text" id="inv-name" required placeholder="ex : Sophie Martin" autocomplete="name">
@@ -224,7 +238,9 @@
     </p>
   </div>
 
-  <!-- ══ CARTE : SUCCÈS ════════════════════════════════════════ -->
+  <!-- ===================== -->
+  <!-- CARTE : SUCCÈS        -->
+  <!-- ===================== -->
   <div class="card" id="card-success" style="display:none; text-align:center; max-width:440px;">
     <div class="success-icon">🎬</div>
     <div class="card-title" style="margin-bottom:8px;">Bienvenue dans l'équipe !</div>
@@ -243,7 +259,9 @@
 
 </div>
 
-<!-- ── NAV MAQUETTE ────────────────────────────────────────── -->
+<!-- ===================== -->
+<!-- DEV NAV MAQUETTE     -->
+<!-- ===================== -->
 <div id="dev-nav">
   <div class="dn-header">
     <span class="dn-icon-main">🧭</span>
@@ -264,6 +282,9 @@
   </a>
 </div>
 
+<!-- ===================== -->
+<!-- SCRIPTS              -->
+<!-- ===================== -->
 <script>
 (function () {
   /* ── Lecture des paramètres URL ── */
