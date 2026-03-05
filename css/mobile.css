@@ -1,0 +1,219 @@
+/* ================================================================
+   RESPONSIVE MOBILE — max-width: 480px
+   Fichier dedie aux corrections mobile (iPhone SE 375px,
+   iPhone 12 390px, Galaxy S21 360px).
+   Charge APRES index.css pour surcharger les styles desktop.
+   ================================================================ */
+
+@media (max-width: 480px) {
+
+  /* ============================================================
+     0. HERO — reordonner et compacter
+     ============================================================ */
+
+  /* Reduire le padding global du hero */
+  .hero { padding: 80px 20px 100px; min-height: auto; }
+
+  /* Reduire le gap de la grille hero */
+  .hero-content { gap: 0; }
+
+  /* Eclater hero-left pour reordonner via le grid parent */
+  .hero-left { display: contents; }
+
+  /* Ordre : partenaires > badge > titre > desc > tags > countdown > accroche */
+  .hero-partners   { order: 1; }
+  .hero-badge      { order: 2; margin-bottom: 12px; }
+  .hero-title      { order: 3; margin-bottom: 6px; }
+  .hero-desc       { order: 4; margin-bottom: 10px; }
+  .hero-tags       { order: 5; margin-bottom: 16px; }
+  .hero-right      { order: 6; margin-top: 0; margin-bottom: 16px; }
+  .hero-accroche   { order: 7; margin-top: 0; padding-top: 16px; }
+
+  /* Accroche : espacement compact */
+  .hero-accroche-title { margin-bottom: 16px; }
+
+  /* Countdown centre et compact */
+  .hero-right { align-items: center; }
+  .hero-city { display: none; }
+  .countdown-inline { align-items: center; }
+  .countdown-label {
+    font-size: 0.6rem;
+    text-align: center;
+    opacity: 0.7;
+  }
+
+  /* Boutons CTA centres et compacts */
+  .hero-cta { justify-content: center; gap: 10px; }
+
+
+  /* ============================================================
+     1. MANIFESTE — texte centre + carousel en bas
+     ============================================================ */
+
+  .manifeste-section { padding: 36px 18px; }
+
+  /* Image de fond : recentree sur le visage */
+  .manifeste-bg-img {
+    object-fit: cover;
+    object-position: 80% 20%;
+    opacity: 0.55;
+    transform: scale(1.15);
+  }
+
+  /* Fond tres leger pour laisser voir l'image */
+  .manifeste-overlay {
+    background: linear-gradient(to bottom,
+      rgba(21,27,70,0.35) 0%,
+      rgba(21,27,70,0.02) 30%,
+      rgba(21,27,70,0.02) 70%,
+      rgba(21,27,70,0.35) 100%);
+  }
+
+  /* Grille : carousel en bas */
+  .manifeste-grid { gap: 20px; }
+  .manifeste-text { order: -1; gap: 8px; }
+
+  /* Lignes typographiques */
+  .manifeste-line { font-size: clamp(1.1rem, 6vw, 1.5rem); line-height: 1.25; }
+  .manifeste-line.dim { font-size: clamp(0.8rem, 3.2vw, 1rem); margin-bottom: 2px; }
+  .manifeste-sep { margin: 10px auto; }
+  .manifeste-sub { font-size: 0.78rem; line-height: 1.55; margin-top: 10px; }
+
+  /* Outils IA */
+  .manifeste-tools { gap: 6px; margin-top: 14px; }
+  .manifeste-tool { font-size: 0.7rem; padding: 6px 12px; }
+
+  /* Carousel HORIZONTAL sur mobile */
+  .carousel-viewport {
+    height: 100px;
+    max-width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  /* Flux horizontal */
+  .card-line {
+    flex-direction: row;
+    gap: 10px;
+    height: 100%;
+  }
+
+  /* Cards horizontales compactes */
+  .ev-card-wrapper {
+    height: 100%;
+    width: 140px;
+    min-width: 140px;
+    flex-shrink: 0;
+  }
+  .ev-card-overlay { padding: 6px 8px; }
+  .ev-card-title { font-size: 0.62rem; }
+  .ev-card-badge { font-size: 0.5rem; padding: 2px 5px; }
+  .ev-card-play { width: 28px; height: 28px; }
+  .ev-card-play::after {
+    border-width: 5px 0 5px 9px;
+  }
+
+  /* Cacher le scanner vertical (pas pertinent en horizontal) */
+  .scanner-beam { display: none; }
+  .scanner-canvas { display: none; }
+
+
+  /* ============================================================
+     2. GALERIE FILMS — carousel + decorations
+     ============================================================ */
+
+  /* Cacher cameras + faisceaux lumineux */
+  .cinema-deco-wrap { display: none; }
+
+  /* Cacher decorations popcorn */
+  .gallery-deco-left,
+  .gallery-deco-right { display: none; }
+
+  /* Supprimer marges carousel */
+  .films-row-1 { margin-right: 0; }
+  .films-row-2 { margin-left: 0; }
+
+  /* Titre galerie pleine largeur */
+  .gallery-section .section-title { max-width: 100%; }
+
+  /* Filtres compacts */
+  .gallery-filters { gap: 6px; justify-content: center; }
+  .filter-chip { padding: 7px 16px; font-size: 0.75rem; }
+
+
+  /* ============================================================
+     2. SECTION CONCEPT — robot + cards + particules
+     ============================================================ */
+
+  /* Cacher robot et particules */
+  .robot-wrap { display: none; }
+  .concept-particles { display: none; }
+
+  /* Centrer le texte de la section */
+  .concept .section-label { justify-content: center; }
+  .concept .section-inner { text-align: center; }
+  .concept .section-title { font-size: clamp(1.3rem, 6vw, 1.7rem); }
+  .concept .section-desc {
+    font-size: 0.8rem;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  /* Grille 2 colonnes compacte */
+  .concept-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    padding-top: 16px;
+    margin-top: 16px;
+  }
+
+  /* Cards tres compactes */
+  .concept-card {
+    padding: 12px 10px;
+    border-radius: 10px;
+  }
+  .concept-card-title { font-size: 0.75rem; }
+  .concept-card p { font-size: 0.65rem; line-height: 1.45; }
+  .concept-num { font-size: 1.2rem; margin-bottom: 4px; }
+
+
+  /* ============================================================
+     3. SECTION ABOUT / GLOBE
+     ============================================================ */
+
+  /* Globe limite et centre */
+  .globe-container {
+    max-width: 280px;
+    margin: 0 auto;
+  }
+
+  /* Overlay : retour a la ligne autorise */
+  .venue-overlay { white-space: normal; }
+
+
+  /* ============================================================
+     4. SECTION GALA — prix + sponsors
+     ============================================================ */
+
+  /* 1 colonne */
+  .gala-columns {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  /* Padding reduit */
+  .gala-inner { padding: 40px 16px 36px; }
+
+  /* Sponsors 2 colonnes */
+  .sponsors-row { grid-template-columns: repeat(2, 1fr); }
+
+
+  /* ============================================================
+     5. FOOTER
+     ============================================================ */
+
+  footer { padding: 24px 20px 18px; }
+  .footer-inner { gap: 20px; }
+  .footer-desc { max-width: 100%; }
+
+}
