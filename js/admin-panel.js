@@ -2618,31 +2618,30 @@ if (brmCount) brmCount.textContent = films.length;
    ══════════════════════════════════════════ */
 let selFilter = "tous";
 let selSort = "score";
-// ── Vote collectif admin + jury (voterId: 0=admin, 1=ML, 2=PD, 3=KI, 4=SE) ──
-const VOTE_TOTAL     = 5;  // 1 admin + 4 jurés
-const VOTE_THRESHOLD = Math.ceil(VOTE_TOTAL / 2); // 3
+// ── Phase 1 : admin seul sélectionne les 50 films ──
+// ── Phase 2 : admin + jury votent collectivement pour le Top 5 ──
+const FINALIST_THRESHOLD = Math.ceil(5 / 2); // 3 — majorité (admin + 4 jurés)
 
-const selectionVotes = {};  // Top 50 — filmId → Set<voterId>
-const finalistVotes  = {};  // Top 5  — filmId → Set<voterId>
+const adminSelected = new Set(); // Top 50 — admin seul (Set<filmId>)
+const finalistVotes = {};        // Top 5  — collectif (filmId → Set<voterId>)
 
-function isInTop50(filmId) { return (selectionVotes[filmId]?.size || 0) >= VOTE_THRESHOLD; }
-function isInTop5(filmId)  { return (finalistVotes[filmId]?.size  || 0) >= VOTE_THRESHOLD; }
-function getAdmSelCount()  { return films.filter(f => isInTop50(f.id)).length; }
+function isInTop50(filmId) { return adminSelected.has(filmId); }
+function isInTop5(filmId)  { return (finalistVotes[filmId]?.size || 0) >= FINALIST_THRESHOLD; }
+function getAdmSelCount()  { return adminSelected.size; }
 function getFinalCount()   { return films.filter(f => isInTop5(f.id)).length; }
 
 function saveVotes() {
-  const sv = {}, fv = {};
-  for (const [id, s] of Object.entries(selectionVotes)) sv[id] = Array.from(s);
-  for (const [id, s] of Object.entries(finalistVotes))  fv[id] = Array.from(s);
-  localStorage.setItem("marsai_selectionVotes", JSON.stringify(sv));
-  localStorage.setItem("marsai_finalistVotes",  JSON.stringify(fv));
+  const fv = {};
+  for (const [id, s] of Object.entries(finalistVotes)) fv[id] = Array.from(s);
+  localStorage.setItem("marsai_adminSelected", JSON.stringify([...adminSelected]));
+  localStorage.setItem("marsai_finalistVotes", JSON.stringify(fv));
 }
 function loadVotes() {
   try {
-    const sv = JSON.parse(localStorage.getItem("marsai_selectionVotes") || "{}");
-    const fv = JSON.parse(localStorage.getItem("marsai_finalistVotes")  || "{}");
-    for (const [id, a] of Object.entries(sv)) selectionVotes[id] = new Set(a);
-    for (const [id, a] of Object.entries(fv)) finalistVotes[id]  = new Set(a);
+    const sel = JSON.parse(localStorage.getItem("marsai_adminSelected") || "[]");
+    sel.forEach(id => adminSelected.add(id));
+    const fv = JSON.parse(localStorage.getItem("marsai_finalistVotes") || "{}");
+    for (const [id, a] of Object.entries(fv)) finalistVotes[id] = new Set(a);
   } catch(e) {}
 }
 loadVotes();
@@ -2811,17 +2810,14 @@ function selActTicket(tkId, action) {
 }
 
 function adminDecide(filmId, decision) {
-  const ADMIN_ID = 0;
-  if (!selectionVotes[filmId]) selectionVotes[filmId] = new Set();
   if (decision === "valide") {
-    if (selectionVotes[filmId].has(ADMIN_ID)) {
-      selectionVotes[filmId].delete(ADMIN_ID);
-      // Si le film quitte le Top 50, retirer aussi des finalistes
-      if (!isInTop50(filmId)) { delete finalistVotes[filmId]; }
-      showToast(`Film #${filmId} — vote Top 50 retiré`, "err");
+    if (adminSelected.has(filmId)) {
+      adminSelected.delete(filmId);
+      delete finalistVotes[filmId]; // Si film quitte Top 50, retirer des finalistes
+      showToast(`Film #${filmId} retiré de la sélection`, "err");
     } else {
-      selectionVotes[filmId].add(ADMIN_ID);
-      showToast(`✓ Film #${filmId} ajouté à votre Top 50`, "ok");
+      adminSelected.add(filmId);
+      showToast(`✓ Film #${filmId} ajouté au Top 50`, "ok");
     }
   }
   saveVotes();
@@ -3123,9 +3119,7 @@ function renderSelection() {
       const c = f.consensus;
       const nComm = f.comments ? Object.keys(f.comments).length : 0;
       const nTk = f.tickets.length;
-      const adminVotedSel = selectionVotes[f.id]?.has(0);
-      const selVoteCnt    = selectionVotes[f.id]?.size || 0;
-      const adm = isInTop50(f.id) ? "valide" : adminVotedSel ? "voted" : null; // compat badges
+      const adm = isInTop50(f.id) ? "valide" : null;
       const tv = c.valide + c.refuse + c.aRevoir;
 
       const pV = tv > 0 ? Math.round((c.valide / tv) * 100) : 0;
@@ -3182,12 +3176,9 @@ function renderSelection() {
         .join("");
 
       const admBtns = `<div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start;">
-      <div style="display:flex;gap:6px;align-items:center;">
-        <button onclick="event.stopPropagation();adminDecide(${f.id},'valide')" style="padding:5px 12px;border-radius:7px;font-size:0.72rem;font-weight:700;cursor:pointer;border:1.5px solid;transition:all .18s;
-          ${adminVotedSel ? "background:rgba(78,255,206,0.2);border-color:rgba(78,255,206,0.6);color:var(--aurora);box-shadow:0 0 12px rgba(78,255,206,0.15);" : "background:rgba(78,255,206,0.05);border-color:rgba(78,255,206,0.15);color:var(--aurora);"}">
-          ${adminVotedSel ? "✓ Voté" : "Voter"}</button>
-        <span style="font-family:var(--font-mono);font-size:0.7rem;font-weight:700;color:${adm === "valide" ? "var(--aurora)" : selVoteCnt > 0 ? "var(--solar)" : "var(--mist)"};" title="${selVoteCnt} vote(s) sur ${VOTE_THRESHOLD} requis">${selVoteCnt}/${VOTE_THRESHOLD}${adm === "valide" ? " ✓" : ""}</span>
-      </div>
+      <button onclick="event.stopPropagation();adminDecide(${f.id},'valide')" style="padding:5px 12px;border-radius:7px;font-size:0.72rem;font-weight:700;cursor:pointer;border:1.5px solid;transition:all .18s;
+        ${adm === "valide" ? "background:rgba(78,255,206,0.2);border-color:rgba(78,255,206,0.6);color:var(--aurora);box-shadow:0 0 12px rgba(78,255,206,0.15);" : "background:rgba(78,255,206,0.05);border-color:rgba(78,255,206,0.15);color:var(--aurora);"}">
+        ${adm === "valide" ? "✓ Sélectionné" : "Sélectionner"}</button>
       <button onclick="event.stopPropagation();openVideoModal(${f.id})" style="padding:4px 12px;border-radius:7px;font-size:0.7rem;font-weight:600;cursor:pointer;border:1.5px solid rgba(78,255,206,0.25);background:rgba(78,255,206,0.06);color:var(--aurora);display:flex;align-items:center;gap:5px;transition:all .18s;" onmouseover="this.style.background='rgba(78,255,206,0.14)'" onmouseout="this.style.background='rgba(78,255,206,0.06)'">▶ Voir le film</button>
     </div>`;
 

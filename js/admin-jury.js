@@ -641,34 +641,28 @@ const jurors = [
   { key: 'SE', id: 4, initials: 'SE', name: 'Sofia Eriksson', role: 'Critique de cinéma', cls: 'va-4' },
 ];
 
-// ── Vote Top 5 collectif (partagé avec admin via localStorage) ──
+// ── Phase 1 : admin seul sélectionne les 50 films (lecture seule pour le jury)
+// ── Phase 2 : admin + jury votent collectivement pour le Top 5 ──
 let currentJurorKey = 'ML';
-const JURY_VOTE_THRESHOLD = 3; // ceil(5/2) — doit correspondre à admin-panel.js
+const JURY_VOTE_THRESHOLD = 3; // ceil(5/2) — majorité pour Top 5
 
 function getVotesFromStorage() {
   try {
     return {
-      sv: JSON.parse(localStorage.getItem('marsai_selectionVotes') || '{}'),
-      fv: JSON.parse(localStorage.getItem('marsai_finalistVotes')  || '{}'),
+      sel: JSON.parse(localStorage.getItem('marsai_adminSelected') || '[]'), // Top 50 — admin seul
+      fv:  JSON.parse(localStorage.getItem('marsai_finalistVotes') || '{}'), // Top 5  — collectif
     };
-  } catch(e) { return { sv: {}, fv: {} }; }
+  } catch(e) { return { sel: [], fv: {} }; }
 }
-function saveAllVotes(sv, fv) {
-  localStorage.setItem('marsai_selectionVotes', JSON.stringify(sv));
-  localStorage.setItem('marsai_finalistVotes',  JSON.stringify(fv));
+function saveFinalistVotes(fv) {
+  localStorage.setItem('marsai_finalistVotes', JSON.stringify(fv));
 }
 function currentJurorId() { return jurors.find(j => j.key === currentJurorKey)?.id || 1; }
 
-function mySelectionVote(filmId) {
-  const { sv } = getVotesFromStorage();
-  return (sv[filmId] || []).includes(currentJurorId());
+function isFilmInTop50(filmId) {
+  const { sel } = getVotesFromStorage();
+  return sel.includes(filmId);
 }
-function selectionVoteCount(filmId) {
-  const { sv } = getVotesFromStorage();
-  return (sv[filmId] || []).length;
-}
-function isFilmInTop50(filmId) { return selectionVoteCount(filmId) >= JURY_VOTE_THRESHOLD; }
-
 function myFinalistVote(filmId) {
   const { fv } = getVotesFromStorage();
   return (fv[filmId] || []).includes(currentJurorId());
@@ -679,29 +673,9 @@ function finalistVoteCount(filmId) {
 }
 function isFilmInTop5(filmId) { return finalistVoteCount(filmId) >= JURY_VOTE_THRESHOLD; }
 
-function toggleJurySelection(filmId) {
-  const { sv, fv } = getVotesFromStorage();
-  const uid = currentJurorId();
-  if (!sv[filmId]) sv[filmId] = [];
-  const idx = sv[filmId].indexOf(uid);
-  if (idx >= 0) {
-    sv[filmId].splice(idx, 1);
-    // Si le film quitte Top 50, retirer aussi des finalistes
-    if ((sv[filmId] || []).length < JURY_VOTE_THRESHOLD && fv[filmId]) {
-      const fi = fv[filmId].indexOf(uid);
-      if (fi >= 0) fv[filmId].splice(fi, 1);
-    }
-    showToast('Vote Top 50 retiré', 'warn');
-  } else {
-    sv[filmId].push(uid);
-    showToast('✓ Vote Top 50 enregistré', 'ok');
-  }
-  saveAllVotes(sv, fv);
-  renderDelib();
-}
 function toggleJuryFinalist(filmId) {
   if (!isFilmInTop50(filmId)) { showToast('⚠️ Ce film n\'est pas dans le Top 50', 'warn'); return; }
-  const { sv, fv } = getVotesFromStorage();
+  const { fv } = getVotesFromStorage();
   const uid = currentJurorId();
   if (!fv[filmId]) fv[filmId] = [];
   const idx = fv[filmId].indexOf(uid);
@@ -714,7 +688,7 @@ function toggleJuryFinalist(filmId) {
     fv[filmId].push(uid);
     showToast('🏆 Vote Top 5 enregistré', 'ok');
   }
-  saveAllVotes(sv, fv);
+  saveFinalistVotes(fv);
   renderDelib();
 }
 function switchJuror(key) {
@@ -817,79 +791,61 @@ function renderDelib() {
   if (!table) return;
   const activePhase = document.querySelector('.ptab.active')?.dataset?.phase || '1';
   const uid = currentJurorId();
+  const { sel, fv } = getVotesFromStorage();
 
-  const pill = (dec) => {
-    if (!dec) return `<span style="color:rgba(136,146,176,0.35);font-size:0.72rem;">—</span>`;
-    const cls = { valide: 'sp-valide', aRevoir: 'sp-arevoir', refuse: 'sp-refuse' }[dec];
-    return `<span class="status-pill ${cls}">${decLabel[dec]}</span>`;
-  };
+  const top50Films = films.filter(f => sel.includes(f.id));
+  const top50count = top50Films.length;
+  const top5count  = films.filter(f => isFilmInTop5(f.id)).length;
 
-  // ── Avatars "qui a voté" par film ──
-  // voters: jurors (id 1-4) + admin (id 0, label "Ad")
+  // ── Avatars "qui a voté" pour Top 5 (admin id=0 + jurés id=1-4) ──
   const allVoters = [{ id: 0, initials: 'Ad', name: 'Admin', cls: '' }, ...jurors];
-  const voteAvatars = (votedIds, highlightMine) => allVoters.map(v => {
+  const voteAvatars = (votedIds) => allVoters.map(v => {
     const voted = votedIds.includes(v.id);
-    const isMe = v.id === uid;
-    return `<span title="${v.name}${voted ? ' ✓' : ' — pas encore voté'}" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;font-size:0.52rem;font-weight:700;border:1.5px solid ${voted ? (isMe && highlightMine ? 'var(--aurora)' : 'rgba(255,255,255,0.35)') : 'rgba(255,255,255,0.1)'};background:${voted ? (isMe && highlightMine ? 'rgba(78,255,206,0.25)' : 'rgba(255,255,255,0.1)') : 'transparent'};color:${voted ? 'var(--snow)' : 'rgba(255,255,255,0.2)'};transition:all 0.15s;">${v.initials}</span>`;
+    const isMe  = v.id === uid;
+    return `<span title="${v.name}${voted ? ' ✓' : ''}" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;font-size:0.52rem;font-weight:700;border:1.5px solid ${voted ? (isMe ? 'var(--lavande)' : 'rgba(255,255,255,0.35)') : 'rgba(255,255,255,0.1)'};background:${voted ? (isMe ? 'rgba(192,132,252,0.25)' : 'rgba(255,255,255,0.1)') : 'transparent'};color:${voted ? 'var(--snow)' : 'rgba(255,255,255,0.2)'};">${v.initials}</span>`;
   }).join('');
 
-  // ── Switcher juré connecté ──
+  // ── Switcher juré — affiche les votes Top 5 par personne ──
   const switcher = document.getElementById('delib-juror-switcher');
   if (switcher) {
     switcher.innerHTML = jurors.map(j => {
       const active = j.key === currentJurorKey;
-      const mySelVotes = films.filter(f => { const {sv} = getVotesFromStorage(); return (sv[f.id]||[]).includes(j.id); }).length;
-      const myFinVotes = films.filter(f => { const {fv} = getVotesFromStorage(); return (fv[f.id]||[]).includes(j.id); }).length;
-      return `<button onclick="switchJuror('${j.key}')" style="padding:5px 12px;border-radius:8px;font-size:0.72rem;font-weight:${active ? 700 : 500};cursor:pointer;border:1.5px solid ${active ? 'var(--aurora)' : 'rgba(255,255,255,0.08)'};background:${active ? 'rgba(78,255,206,0.1)' : 'transparent'};color:${active ? 'var(--aurora)' : 'var(--mist)'};transition:all 0.15s;display:flex;flex-direction:column;align-items:center;gap:2px;">
+      const myFinVotes = films.filter(f => (fv[f.id]||[]).includes(j.id)).length;
+      return `<button onclick="switchJuror('${j.key}')" style="padding:5px 12px;border-radius:8px;font-size:0.72rem;font-weight:${active ? 700 : 500};cursor:pointer;border:1.5px solid ${active ? 'var(--lavande)' : 'rgba(255,255,255,0.08)'};background:${active ? 'rgba(192,132,252,0.1)' : 'transparent'};color:${active ? 'var(--lavande)' : 'var(--mist)'};transition:all 0.15s;display:flex;flex-direction:column;align-items:center;gap:2px;">
         <span>${j.initials} — ${j.name.split(' ')[0]}</span>
-        <span style="font-size:0.6rem;font-weight:600;color:${active ? 'var(--aurora)' : 'rgba(136,146,176,0.6)'};">★${mySelVotes} · 🏆${myFinVotes}</span>
+        <span style="font-size:0.6rem;font-weight:600;color:${active ? 'var(--lavande)' : 'rgba(136,146,176,0.5)'};">🏆 ${myFinVotes} votes</span>
       </button>`;
     }).join('');
   }
 
-  // ── Bandeau d'incitation personnel ──
-  const { sv, fv } = getVotesFromStorage();
-  const mySelCount = films.filter(f => (sv[f.id]||[]).includes(uid)).length;
-  const myFinCount = films.filter(f => (fv[f.id]||[]).includes(uid)).length;
-  const top50count = films.filter(f => isFilmInTop50(f.id)).length;
-  const top5count  = films.filter(f => isFilmInTop5(f.id)).length;
-  // Films à 1 vote de la sélection (threshold-1) où le juré n'a pas encore voté
-  const almostTop50 = films.filter(f => !isFilmInTop50(f.id) && selectionVoteCount(f.id) === JURY_VOTE_THRESHOLD - 1 && !(sv[f.id]||[]).includes(uid));
-  const almostTop5  = films.filter(f => isFilmInTop50(f.id) && !isFilmInTop5(f.id) && finalistVoteCount(f.id) === JURY_VOTE_THRESHOLD - 1 && !(fv[f.id]||[]).includes(uid));
-
+  // ── Bandeau d'incitation (Phase 2 uniquement) ──
   const incentiveEl = document.getElementById('delib-incentive');
   if (incentiveEl) {
-    const phase1done = mySelCount >= 10; // encouragement basé sur 10+ votes
-    const phase2done = myFinCount >= 5;
-    let msg = '', msgColor = 'var(--aurora)', bg = 'rgba(78,255,206,0.04)', border = 'rgba(78,255,206,0.12)';
     if (activePhase === '2') {
-      if (phase2done) {
+      const myFinCount = films.filter(f => (fv[f.id]||[]).includes(uid)).length;
+      const almostTop5 = top50Films.filter(f => !isFilmInTop5(f.id) && finalistVoteCount(f.id) === JURY_VOTE_THRESHOLD - 1 && !(fv[f.id]||[]).includes(uid));
+      let msg = '', msgColor = 'var(--lavande)', bg = 'rgba(192,132,252,0.05)', border = 'rgba(192,132,252,0.15)';
+      if (myFinCount >= 5) {
         msg = `🎉 Vous avez voté pour ${myFinCount} finaliste${myFinCount > 1 ? 's' : ''} — merci pour votre contribution !`;
-        msgColor = 'var(--lavande)'; bg = 'rgba(192,132,252,0.06)'; border = 'rgba(192,132,252,0.2)';
       } else if (almostTop5.length > 0) {
-        msg = `⚡ ${almostTop5.length} film${almostTop5.length > 1 ? 's ont' : ' a'} besoin d'<strong>1 vote de plus</strong> pour entrer dans le Top 5 — votre vote peut tout changer !`;
+        msg = `⚡ <strong>${almostTop5.length} film${almostTop5.length > 1 ? 's ont' : ' a'} besoin d'1 vote</strong> pour entrer dans le Top 5 — le vôtre peut tout changer !`;
         msgColor = 'var(--solar)'; bg = 'rgba(245,200,66,0.05)'; border = 'rgba(245,200,66,0.2)';
       } else {
         msg = `Vous avez voté pour <strong>${myFinCount}/5</strong> finaliste${myFinCount !== 1 ? 's' : ''}. Il reste ${5 - myFinCount} vote${5 - myFinCount > 1 ? 's' : ''} à donner.`;
       }
+      incentiveEl.style.cssText = `margin-bottom:14px;padding:12px 16px;border-radius:12px;background:${bg};border:1px solid ${border};font-size:0.78rem;color:${msgColor};line-height:1.5;`;
+      incentiveEl.innerHTML = msg;
     } else {
-      if (almostTop50.length > 0) {
-        msg = `⚡ <strong>${almostTop50.length} film${almostTop50.length > 1 ? 's sont' : ' est'} à 1 vote</strong> du Top 50 — votre vote peut les faire entrer !`;
-        msgColor = 'var(--solar)'; bg = 'rgba(245,200,66,0.05)'; border = 'rgba(245,200,66,0.2)';
-      } else if (mySelCount === 0) {
-        msg = `Vous n'avez pas encore voté. Parcourez la liste et cliquez <strong>Voter</strong> pour les films que vous souhaitez sélectionner.`;
-      } else {
-        msg = `Vous avez voté pour <strong>${mySelCount} film${mySelCount > 1 ? 's' : ''}</strong>. ${top50count} film${top50count > 1 ? 's ont' : ' a'} atteint le seuil de sélection (${JURY_VOTE_THRESHOLD}/5 votes).`;
-      }
+      // Phase 1 — l'admin a déjà sélectionné, pas de vote pour le jury
+      incentiveEl.style.cssText = `margin-bottom:14px;padding:12px 16px;border-radius:12px;background:rgba(78,255,206,0.04);border:1px solid rgba(78,255,206,0.12);font-size:0.78rem;color:var(--aurora);line-height:1.5;`;
+      incentiveEl.innerHTML = `★ <strong>${top50count} film${top50count !== 1 ? 's' : ''}</strong> sélectionné${top50count !== 1 ? 's' : ''} par l'administrateur${top50count >= 50 ? ' — quota atteint ✓' : ` sur 50`}. Passez en <strong>Phase 2</strong> pour voter le Top 5.`;
     }
-    incentiveEl.style.cssText = `margin-bottom:14px;padding:12px 16px;border-radius:12px;background:${bg};border:1px solid ${border};font-size:0.78rem;color:${msgColor};line-height:1.5;`;
-    incentiveEl.innerHTML = msg;
   }
 
   if (activePhase === '2') {
-    // ── Phase 2 : vote Top 5 depuis le Top 50 ──
+    // ── Phase 2 : vote Top 5 collectif (admin + jury) ──
     const pct = Math.min((top5count / 5) * 100, 100);
-    const progressBar = `<tr><td colspan="5" style="padding:0;border-bottom:1px solid rgba(192,132,252,0.1);">
+    const progressBar = `<tr><td colspan="4" style="padding:0;border-bottom:1px solid rgba(192,132,252,0.1);">
       <div style="padding:10px 16px;background:rgba(192,132,252,0.04);display:flex;align-items:center;gap:14px;">
         <span style="font-size:0.72rem;font-weight:700;color:var(--lavande);white-space:nowrap;">🏆 Top 5</span>
         <div style="flex:1;height:5px;background:rgba(192,132,252,0.1);border-radius:999px;overflow:hidden;"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--lavande),#e0c3ff);border-radius:999px;transition:width 0.4s;"></div></div>
@@ -897,21 +853,19 @@ function renderDelib() {
       </div>
     </td></tr>`;
 
-    const listFilms = films.filter(f => isFilmInTop50(f.id));
-    if (listFilms.length === 0) {
-      table.innerHTML = `<tbody><tr><td colspan="5" style="text-align:center;padding:40px;color:var(--mist);font-size:0.85rem;">Aucun film dans le Top 50 pour l'instant.<br><span style="font-size:0.75rem;opacity:0.6;">Passez en Phase 1 pour voter.</span></td></tr></tbody>`;
+    if (top50Films.length === 0) {
+      table.innerHTML = `<tbody><tr><td colspan="4" style="text-align:center;padding:40px;color:var(--mist);font-size:0.85rem;">Aucun film dans le Top 50.<br><span style="font-size:0.75rem;opacity:0.6;">L'administrateur n'a pas encore sélectionné les 50 films.</span></td></tr></tbody>`;
       return;
     }
 
-    const tbody = listFilms.map((f, i) => {
+    const tbody = top50Films.map((f) => {
       const cnt    = finalistVoteCount(f.id);
       const inTop5 = isFilmInTop5(f.id);
       const voted  = myFinalistVote(f.id);
       const almost = !inTop5 && cnt === JURY_VOTE_THRESHOLD - 1 && !voted;
       const rowBg  = inTop5 ? 'rgba(192,132,252,0.06)' : almost ? 'rgba(245,200,66,0.04)' : '';
       const rowBorder = almost ? 'border-left:3px solid rgba(245,200,66,0.5);' : inTop5 ? 'border-left:3px solid rgba(192,132,252,0.4);' : '';
-      const { fv: fvData } = getVotesFromStorage();
-      const votedIds = fvData[f.id] || [];
+      const votedIds = fv[f.id] || [];
       const voteBtn = inTop5
         ? `<button onclick="event.stopPropagation();toggleJuryFinalist(${f.id})" style="padding:4px 10px;border-radius:7px;font-size:0.7rem;font-weight:700;cursor:pointer;border:1.5px solid rgba(192,132,252,0.5);background:rgba(192,132,252,0.15);color:var(--lavande);">${voted ? '🏆 Voté ✕' : '🏆 Top 5'}</button>`
         : voted
@@ -922,7 +876,7 @@ function renderDelib() {
       return `<tr onclick="switchView('eval');loadFilm(${f.id})" style="background:${rowBg};${rowBorder}">
         <td style="font-family:monospace;font-size:0.72rem;color:var(--mist);">#${String(f.id).padStart(3,'0')}</td>
         <td><strong>${f.title}</strong>${inTop5 ? ' <span style="font-size:0.65rem;color:var(--lavande);">🏆</span>' : ''}<br><span style="font-size:0.7rem;color:var(--mist);">${f.author}</span></td>
-        <td><div style="display:flex;gap:3px;flex-wrap:wrap;">${voteAvatars(votedIds, true)}</div><div style="font-size:0.6rem;color:var(--mist);margin-top:3px;">${cnt}/${JURY_VOTE_THRESHOLD} votes</div></td>
+        <td><div style="display:flex;gap:3px;flex-wrap:wrap;">${voteAvatars(votedIds)}</div><div style="font-size:0.6rem;color:var(--mist);margin-top:3px;">${cnt}/${JURY_VOTE_THRESHOLD} votes</div></td>
         <td onclick="event.stopPropagation();">${voteBtn}</td>
       </tr>`;
     }).join('');
@@ -932,9 +886,9 @@ function renderDelib() {
     </tr></thead><tbody>${progressBar}${tbody}</tbody>`;
 
   } else {
-    // ── Phase 1 : vote Top 50 ──
+    // ── Phase 1 : Top 50 sélectionné par l'admin — lecture seule pour le jury ──
     const pct50 = Math.min((top50count / 50) * 100, 100);
-    const progressBar = `<tr><td colspan="5" style="padding:0;border-bottom:1px solid rgba(78,255,206,0.1);">
+    const progressBar = `<tr><td colspan="3" style="padding:0;border-bottom:1px solid rgba(78,255,206,0.1);">
       <div style="padding:10px 16px;background:rgba(78,255,206,0.03);display:flex;align-items:center;gap:14px;">
         <span style="font-size:0.72rem;font-weight:700;color:var(--aurora);white-space:nowrap;">★ Top 50</span>
         <div style="flex:1;height:5px;background:rgba(78,255,206,0.08);border-radius:999px;overflow:hidden;"><div style="height:100%;width:${pct50}%;background:linear-gradient(90deg,var(--aurora),#a8ffec);border-radius:999px;transition:width 0.4s;"></div></div>
@@ -942,30 +896,27 @@ function renderDelib() {
       </div>
     </td></tr>`;
 
-    const tbody = films.map((f, i) => {
-      const cnt     = selectionVoteCount(f.id);
-      const inTop50 = isFilmInTop50(f.id);
-      const voted   = mySelectionVote(f.id);
-      const almost  = !inTop50 && cnt === JURY_VOTE_THRESHOLD - 1 && !voted;
-      const rowBg   = inTop50 ? 'rgba(78,255,206,0.03)' : almost ? 'rgba(245,200,66,0.04)' : '';
-      const rowBorder = almost ? 'border-left:3px solid rgba(245,200,66,0.5);' : inTop50 ? 'border-left:3px solid rgba(78,255,206,0.3);' : '';
-      const { sv: svData } = getVotesFromStorage();
-      const votedIds = svData[f.id] || [];
-      const voteBtn = voted
-        ? `<button onclick="event.stopPropagation();toggleJurySelection(${f.id})" style="padding:4px 10px;border-radius:7px;font-size:0.7rem;font-weight:700;cursor:pointer;border:1.5px solid rgba(78,255,206,0.6);background:rgba(78,255,206,0.18);color:var(--aurora);">✓ Voté ✕</button>`
-        : almost
-          ? `<button onclick="event.stopPropagation();toggleJurySelection(${f.id})" style="padding:4px 10px;border-radius:7px;font-size:0.7rem;font-weight:700;cursor:pointer;border:1.5px solid rgba(245,200,66,0.6);background:rgba(245,200,66,0.12);color:var(--solar);animation:pulse 1.5s ease-in-out infinite;">⚡ 1 vote manquant !</button>`
-          : `<button onclick="event.stopPropagation();toggleJurySelection(${f.id})" style="padding:4px 10px;border-radius:7px;font-size:0.7rem;font-weight:600;cursor:pointer;border:1.5px solid rgba(78,255,206,0.2);background:rgba(78,255,206,0.04);color:var(--aurora);">Voter</button>`;
-      return `<tr onclick="switchView('eval');loadFilm(${f.id})" style="background:${rowBg};${rowBorder}opacity:${inTop50 && !voted ? '0.4' : '1'};" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='${inTop50 && !voted ? '0.4' : '1'}'">
+    if (top50Films.length === 0) {
+      table.innerHTML = `<tbody><tr><td colspan="3" style="text-align:center;padding:40px;color:var(--mist);font-size:0.85rem;">L'administrateur n'a pas encore sélectionné les 50 films.<br><span style="font-size:0.75rem;opacity:0.6;">La liste apparaîtra ici dès qu'elle sera constituée.</span></td></tr></tbody>`;
+      return;
+    }
+
+    const tbody = top50Films.map((f) => {
+      const c = getFilmConsensus(f);
+      const pill = c.type === 'unanime'
+        ? `<span style="color:var(--aurora);font-weight:700;font-size:0.7rem;">✅ Unanime</span>`
+        : c.type === 'partage'
+          ? `<span style="color:var(--solar);font-weight:700;font-size:0.7rem;">⚠️ Partagé</span>`
+          : `<span style="color:var(--mist);font-size:0.7rem;">—</span>`;
+      return `<tr onclick="switchView('eval');loadFilm(${f.id})" style="background:rgba(78,255,206,0.02);">
         <td style="font-family:monospace;font-size:0.72rem;color:var(--mist);">#${String(f.id).padStart(3,'0')}</td>
-        <td><strong>${f.title}</strong>${inTop50 ? ' <span style="font-size:0.65rem;color:var(--aurora);">★</span>' : ''}<br><span style="font-size:0.7rem;color:var(--mist);">${f.author}</span></td>
-        <td><div style="display:flex;gap:3px;flex-wrap:wrap;">${voteAvatars(votedIds, true)}</div><div style="font-size:0.6rem;color:var(--mist);margin-top:3px;">${cnt}/${JURY_VOTE_THRESHOLD} votes</div></td>
-        <td onclick="event.stopPropagation();">${voteBtn}</td>
+        <td><strong>${f.title}</strong> <span style="font-size:0.65rem;color:var(--aurora);">★</span><br><span style="font-size:0.7rem;color:var(--mist);">${f.author} · ${f.country||''}</span></td>
+        <td>${pill}</td>
       </tr>`;
     }).join('');
 
     table.innerHTML = `<thead><tr>
-      <th>#</th><th>Film</th><th>Qui a voté</th><th>Mon vote Top 50</th>
+      <th>#</th><th>Film sélectionné par l'admin</th><th>Consensus jury</th>
     </tr></thead><tbody>${progressBar}${tbody}</tbody>`;
   }
 }
