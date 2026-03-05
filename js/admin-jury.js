@@ -633,6 +633,22 @@ function renderComments(f) {
   }).join('');
 }
 
+/* ── CONSENSUS FILM ── */
+function getFilmConsensus(f) {
+  if (!f.juryDec) return { type: 'attente', valide: 0, refuse: 0, aRevoir: 0, pending: 0, score: 0 };
+  const decs    = Object.values(f.juryDec);
+  const valide  = decs.filter(d => d === 'valide').length;
+  const refuse  = decs.filter(d => d === 'refuse').length;
+  const aRevoir = decs.filter(d => d === 'aRevoir').length;
+  const pending = decs.filter(d => d === null || d === undefined).length;
+  const voted   = decs.length - pending;
+  if (voted === 0) return { type: 'attente', valide, refuse, aRevoir, pending, score: 0 };
+  const score = (valide * 2 + aRevoir * 0.5 - refuse * 1.5) / voted;
+  if (valide === voted || valide > voted / 2) return { type: 'unanime', valide, refuse, aRevoir, pending, score };
+  if (refuse > voted / 2)                    return { type: 'rejete',  valide, refuse, aRevoir, pending, score };
+  return                                             { type: 'partage', valide, refuse, aRevoir, pending, score };
+}
+
 /* ── VOTES JURY ── */
 const jurors = [
   { key: 'ML', id: 1, initials: 'ML', name: 'Marie Lefebvre', role: 'Présidente · Réalisatrice', cls: 'va-1' },
@@ -797,137 +813,182 @@ function renderDelib() {
   const top50count = top50Films.length;
   const top5count  = films.filter(f => isFilmInTop5(f.id)).length;
 
-  // ── Avatars "qui a voté" pour Top 5 (admin id=0 + jurés id=1-4) ──
-  const allVoters = [{ id: 0, initials: 'Ad', name: 'Admin', cls: '' }, ...jurors];
-  const voteAvatars = (votedIds) => allVoters.map(v => {
-    const voted = votedIds.includes(v.id);
-    const isMe  = v.id === uid;
-    return `<span title="${v.name}${voted ? ' ✓' : ''}" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;font-size:0.52rem;font-weight:700;border:1.5px solid ${voted ? (isMe ? 'var(--lavande)' : 'rgba(255,255,255,0.35)') : 'rgba(255,255,255,0.1)'};background:${voted ? (isMe ? 'rgba(192,132,252,0.25)' : 'rgba(255,255,255,0.1)') : 'transparent'};color:${voted ? 'var(--snow)' : 'rgba(255,255,255,0.2)'};">${v.initials}</span>`;
-  }).join('');
+  // ── Couleurs consensus ──
+  const consensusStyle = {
+    unanime: { border: 'rgba(78,255,206,0.5)',  bg: 'rgba(78,255,206,0.04)',  color: 'var(--aurora)', label: '✅ Unanime' },
+    partage: { border: 'rgba(245,200,66,0.5)',  bg: 'rgba(245,200,66,0.03)',  color: 'var(--solar)',  label: '⚠️ Partagé' },
+    rejete:  { border: 'rgba(255,107,107,0.5)', bg: 'rgba(255,107,107,0.03)', color: 'var(--coral)',  label: '❌ Rejeté'  },
+    attente: { border: 'rgba(255,255,255,0.06)', bg: '',                      color: 'var(--mist)',   label: '⏳ En attente' },
+  };
+  const decColor = { valide: 'var(--aurora)', aRevoir: 'var(--solar)', refuse: 'var(--coral)' };
+  const decIcon  = { valide: '✓', aRevoir: '↩', refuse: '✕' };
 
-  // ── Switcher juré — affiche les votes Top 5 par personne ──
+  // ── Avatars "qui a voté" pour Top 5 (admin id=0 + jurés id=1-4) ──
+  const allVoters = [{ id: 0, initials: 'Ad', name: 'Admin' }, ...jurors];
+  const voteAvatars = (votedIds) => `<div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap;">` +
+    allVoters.map(v => {
+      const voted = votedIds.includes(v.id);
+      const isMe  = v.id === uid;
+      const borderC = voted ? (isMe ? 'var(--lavande)' : 'rgba(192,132,252,0.5)') : 'rgba(255,255,255,0.1)';
+      const bgC     = voted ? (isMe ? 'rgba(192,132,252,0.3)' : 'rgba(192,132,252,0.12)') : 'rgba(255,255,255,0.02)';
+      return `<span title="${v.name}${voted ? ' — a voté ✓' : ' — pas encore voté'}" style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;font-size:0.54rem;font-weight:700;border:2px solid ${borderC};background:${bgC};color:${voted ? 'var(--snow)' : 'rgba(255,255,255,0.2)'};transition:all 0.15s;">${v.initials}</span>`;
+    }).join('') +
+    `<span style="font-family:monospace;font-size:0.72rem;font-weight:800;color:${votedIds.length >= JURY_VOTE_THRESHOLD ? 'var(--lavande)' : 'var(--mist)'};margin-left:4px;">${votedIds.length}/${JURY_VOTE_THRESHOLD}</span>
+    </div>`;
+
+  // ── Switcher juré (Phase 2 uniquement) ──
+  const switcherWrap = document.getElementById('delib-juror-switcher')?.closest('div[style*="align-items:center"]');
   const switcher = document.getElementById('delib-juror-switcher');
-  if (switcher) {
+  if (switcherWrap) switcherWrap.style.display = activePhase === '2' ? '' : 'none';
+  if (switcher && activePhase === '2') {
     switcher.innerHTML = jurors.map(j => {
       const active = j.key === currentJurorKey;
       const myFinVotes = films.filter(f => (fv[f.id]||[]).includes(j.id)).length;
-      return `<button onclick="switchJuror('${j.key}')" style="padding:5px 12px;border-radius:8px;font-size:0.72rem;font-weight:${active ? 700 : 500};cursor:pointer;border:1.5px solid ${active ? 'var(--lavande)' : 'rgba(255,255,255,0.08)'};background:${active ? 'rgba(192,132,252,0.1)' : 'transparent'};color:${active ? 'var(--lavande)' : 'var(--mist)'};transition:all 0.15s;display:flex;flex-direction:column;align-items:center;gap:2px;">
-        <span>${j.initials} — ${j.name.split(' ')[0]}</span>
-        <span style="font-size:0.6rem;font-weight:600;color:${active ? 'var(--lavande)' : 'rgba(136,146,176,0.5)'};">🏆 ${myFinVotes} votes</span>
+      return `<button onclick="switchJuror('${j.key}')" style="padding:6px 14px;border-radius:9px;font-size:0.72rem;font-weight:${active ? 700 : 500};cursor:pointer;border:1.5px solid ${active ? 'var(--lavande)' : 'rgba(255,255,255,0.07)'};background:${active ? 'rgba(192,132,252,0.12)' : 'rgba(255,255,255,0.02)'};color:${active ? 'var(--lavande)' : 'var(--mist)'};transition:all 0.15s;display:flex;flex-direction:column;align-items:center;gap:3px;">
+        <span>${j.initials} · ${j.name.split(' ')[0]}</span>
+        <span style="font-size:0.58rem;font-weight:600;color:${active ? 'rgba(192,132,252,0.8)' : 'rgba(136,146,176,0.45)'};">🏆 ${myFinVotes} vote${myFinVotes !== 1 ? 's' : ''}</span>
       </button>`;
     }).join('');
   }
 
-  // ── Bandeau d'incitation (Phase 2 uniquement) ──
+  // ── Bandeau d'incitation ──
   const incentiveEl = document.getElementById('delib-incentive');
   if (incentiveEl) {
     if (activePhase === '2') {
       const myFinCount = films.filter(f => (fv[f.id]||[]).includes(uid)).length;
       const almostTop5 = top50Films.filter(f => !isFilmInTop5(f.id) && finalistVoteCount(f.id) === JURY_VOTE_THRESHOLD - 1 && !(fv[f.id]||[]).includes(uid));
-      let msg = '', msgColor = 'var(--lavande)', bg = 'rgba(192,132,252,0.05)', border = 'rgba(192,132,252,0.15)';
+      let msg, msgColor = 'var(--lavande)', bg = 'rgba(192,132,252,0.06)', border = 'rgba(192,132,252,0.18)';
       if (myFinCount >= 5) {
-        msg = `🎉 Vous avez voté pour ${myFinCount} finaliste${myFinCount > 1 ? 's' : ''} — merci pour votre contribution !`;
+        msg = `🎉 Vous avez voté pour <strong>${myFinCount} finaliste${myFinCount > 1 ? 's' : ''}</strong> — merci pour votre contribution !`;
       } else if (almostTop5.length > 0) {
         msg = `⚡ <strong>${almostTop5.length} film${almostTop5.length > 1 ? 's ont' : ' a'} besoin d'1 vote</strong> pour entrer dans le Top 5 — le vôtre peut tout changer !`;
-        msgColor = 'var(--solar)'; bg = 'rgba(245,200,66,0.05)'; border = 'rgba(245,200,66,0.2)';
+        msgColor = 'var(--solar)'; bg = 'rgba(245,200,66,0.06)'; border = 'rgba(245,200,66,0.22)';
       } else {
-        msg = `Vous avez voté pour <strong>${myFinCount}/5</strong> finaliste${myFinCount !== 1 ? 's' : ''}. Il reste ${5 - myFinCount} vote${5 - myFinCount > 1 ? 's' : ''} à donner.`;
+        msg = `Vous avez voté pour <strong>${myFinCount}/5</strong> finaliste${myFinCount !== 1 ? 's' : ''}. Il reste <strong>${5 - myFinCount} vote${5 - myFinCount > 1 ? 's' : ''}</strong> à donner.`;
       }
-      incentiveEl.style.cssText = `margin-bottom:14px;padding:12px 16px;border-radius:12px;background:${bg};border:1px solid ${border};font-size:0.78rem;color:${msgColor};line-height:1.5;`;
+      incentiveEl.style.cssText = `margin-bottom:16px;padding:12px 18px;border-radius:12px;background:${bg};border:1px solid ${border};font-size:0.8rem;color:${msgColor};line-height:1.6;display:flex;align-items:center;gap:10px;`;
       incentiveEl.innerHTML = msg;
     } else {
-      // Phase 1 — l'admin a déjà sélectionné, pas de vote pour le jury
-      incentiveEl.style.cssText = `margin-bottom:14px;padding:12px 16px;border-radius:12px;background:rgba(78,255,206,0.04);border:1px solid rgba(78,255,206,0.12);font-size:0.78rem;color:var(--aurora);line-height:1.5;`;
-      incentiveEl.innerHTML = `★ <strong>${top50count} film${top50count !== 1 ? 's' : ''}</strong> sélectionné${top50count !== 1 ? 's' : ''} par l'administrateur${top50count >= 50 ? ' — quota atteint ✓' : ` sur 50`}. Passez en <strong>Phase 2</strong> pour voter le Top 5.`;
+      incentiveEl.style.cssText = `margin-bottom:16px;padding:11px 18px;border-radius:12px;background:rgba(78,255,206,0.04);border:1px solid rgba(78,255,206,0.14);font-size:0.78rem;color:var(--aurora);line-height:1.6;`;
+      incentiveEl.innerHTML = `★ <strong>${top50count}</strong> film${top50count !== 1 ? 's' : ''} présélectionné${top50count !== 1 ? 's' : ''} par l'administrateur${top50count >= 50 ? ' — <strong>quota atteint ✓</strong>' : ` sur 50`}. Passez en <strong>Phase 2</strong> pour voter le Top 5.`;
     }
   }
 
   if (activePhase === '2') {
-    // ── Phase 2 : vote Top 5 collectif (admin + jury) ──
+    // ════ Phase 2 : vote Top 5 collectif ════
     const pct = Math.min((top5count / 5) * 100, 100);
-    const progressBar = `<tr><td colspan="4" style="padding:0;border-bottom:1px solid rgba(192,132,252,0.1);">
+    const progressRow = `<tr><td colspan="4" style="padding:0;border-bottom:1px solid rgba(192,132,252,0.12);">
       <div style="padding:10px 16px;background:rgba(192,132,252,0.04);display:flex;align-items:center;gap:14px;">
-        <span style="font-size:0.72rem;font-weight:700;color:var(--lavande);white-space:nowrap;">🏆 Top 5</span>
-        <div style="flex:1;height:5px;background:rgba(192,132,252,0.1);border-radius:999px;overflow:hidden;"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--lavande),#e0c3ff);border-radius:999px;transition:width 0.4s;"></div></div>
-        <span style="font-family:monospace;font-size:0.8rem;font-weight:800;color:${top5count >= 5 ? 'var(--lavande)' : 'var(--snow)'};">${top5count} / 5</span>
+        <span style="font-size:0.7rem;font-weight:700;color:var(--lavande);white-space:nowrap;letter-spacing:0.04em;">🏆 TOP 5</span>
+        <div style="flex:1;height:4px;background:rgba(192,132,252,0.12);border-radius:999px;overflow:hidden;">
+          <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--lavande),#e0c3ff);border-radius:999px;transition:width 0.4s;"></div>
+        </div>
+        <span style="font-family:monospace;font-size:0.82rem;font-weight:800;color:${top5count >= 5 ? 'var(--lavande)' : 'var(--snow)'};">${top5count}<span style="color:var(--mist);font-weight:400;"> / 5</span></span>
+        ${top5count >= 5 ? '<span style="font-size:0.65rem;font-weight:700;color:var(--lavande);padding:2px 8px;border-radius:999px;background:rgba(192,132,252,0.15);border:1px solid rgba(192,132,252,0.3);">✓ Finale constituée</span>' : ''}
       </div>
     </td></tr>`;
 
     if (top50Films.length === 0) {
-      table.innerHTML = `<tbody><tr><td colspan="4" style="text-align:center;padding:40px;color:var(--mist);font-size:0.85rem;">Aucun film dans le Top 50.<br><span style="font-size:0.75rem;opacity:0.6;">L'administrateur n'a pas encore sélectionné les 50 films.</span></td></tr></tbody>`;
+      table.innerHTML = `<tbody><tr><td colspan="4" style="text-align:center;padding:48px;color:var(--mist);font-size:0.85rem;">Aucun film dans le Top 50.<br><span style="font-size:0.75rem;opacity:0.6;">L'administrateur n'a pas encore sélectionné les films.</span></td></tr></tbody>`;
       return;
     }
 
-    const tbody = top50Films.map((f) => {
+    const rows = top50Films.map((f, idx) => {
       const cnt    = finalistVoteCount(f.id);
       const inTop5 = isFilmInTop5(f.id);
       const voted  = myFinalistVote(f.id);
       const almost = !inTop5 && cnt === JURY_VOTE_THRESHOLD - 1 && !voted;
-      const rowBg  = inTop5 ? 'rgba(192,132,252,0.06)' : almost ? 'rgba(245,200,66,0.04)' : '';
-      const rowBorder = almost ? 'border-left:3px solid rgba(245,200,66,0.5);' : inTop5 ? 'border-left:3px solid rgba(192,132,252,0.4);' : '';
       const votedIds = fv[f.id] || [];
-      const voteBtn = inTop5
-        ? `<button onclick="event.stopPropagation();toggleJuryFinalist(${f.id})" style="padding:4px 10px;border-radius:7px;font-size:0.7rem;font-weight:700;cursor:pointer;border:1.5px solid rgba(192,132,252,0.5);background:rgba(192,132,252,0.15);color:var(--lavande);">${voted ? '🏆 Voté ✕' : '🏆 Top 5'}</button>`
-        : voted
-          ? `<button onclick="event.stopPropagation();toggleJuryFinalist(${f.id})" style="padding:4px 10px;border-radius:7px;font-size:0.7rem;font-weight:700;cursor:pointer;border:1.5px solid rgba(192,132,252,0.5);background:rgba(192,132,252,0.15);color:var(--lavande);">✓ Voté ✕</button>`
-          : almost
-            ? `<button onclick="event.stopPropagation();toggleJuryFinalist(${f.id})" style="padding:4px 10px;border-radius:7px;font-size:0.7rem;font-weight:700;cursor:pointer;border:1.5px solid rgba(245,200,66,0.6);background:rgba(245,200,66,0.12);color:var(--solar);animation:pulse 1.5s ease-in-out infinite;">⚡ 1 vote manquant !</button>`
-            : `<button onclick="event.stopPropagation();toggleJuryFinalist(${f.id})" style="padding:4px 10px;border-radius:7px;font-size:0.7rem;font-weight:600;cursor:pointer;border:1.5px solid rgba(192,132,252,0.2);background:rgba(192,132,252,0.05);color:var(--lavande);">→ Top 5 (${cnt}/${JURY_VOTE_THRESHOLD})</button>`;
-      return `<tr onclick="switchView('eval');loadFilm(${f.id})" style="background:${rowBg};${rowBorder}">
-        <td style="font-family:monospace;font-size:0.72rem;color:var(--mist);">#${String(f.id).padStart(3,'0')}</td>
-        <td><strong>${f.title}</strong>${inTop5 ? ' <span style="font-size:0.65rem;color:var(--lavande);">🏆</span>' : ''}<br><span style="font-size:0.7rem;color:var(--mist);">${f.author}</span></td>
-        <td><div style="display:flex;gap:3px;flex-wrap:wrap;">${voteAvatars(votedIds)}</div><div style="font-size:0.6rem;color:var(--mist);margin-top:3px;">${cnt}/${JURY_VOTE_THRESHOLD} votes</div></td>
-        <td onclick="event.stopPropagation();">${voteBtn}</td>
+
+      const rowBg     = inTop5  ? 'rgba(192,132,252,0.06)' : almost ? 'rgba(245,200,66,0.03)' : '';
+      const leftBorder = inTop5 ? 'border-left:3px solid rgba(192,132,252,0.5);' : almost ? 'border-left:3px solid rgba(245,200,66,0.5);' : 'border-left:3px solid transparent;';
+      const rankColor  = inTop5 ? 'var(--lavande)' : 'var(--mist)';
+
+      let voteBtn;
+      if (inTop5 && voted) {
+        voteBtn = `<button onclick="event.stopPropagation();toggleJuryFinalist(${f.id})" class="delib-btn delib-btn-top5-voted">🏆 Voté <span style="opacity:0.6;font-size:0.62rem;">✕</span></button>`;
+      } else if (inTop5) {
+        voteBtn = `<button onclick="event.stopPropagation();toggleJuryFinalist(${f.id})" class="delib-btn delib-btn-top5">🏆 Top 5</button>`;
+      } else if (voted) {
+        voteBtn = `<button onclick="event.stopPropagation();toggleJuryFinalist(${f.id})" class="delib-btn delib-btn-voted">✓ Voté <span style="opacity:0.6;font-size:0.62rem;">✕</span></button>`;
+      } else if (almost) {
+        voteBtn = `<button onclick="event.stopPropagation();toggleJuryFinalist(${f.id})" class="delib-btn delib-btn-almost">⚡ 1 vote manquant !</button>`;
+      } else {
+        voteBtn = `<button onclick="event.stopPropagation();toggleJuryFinalist(${f.id})" class="delib-btn delib-btn-default">→ Top 5</button>`;
+      }
+
+      return `<tr onclick="switchView('eval');loadFilm(${f.id})" style="background:${rowBg};${leftBorder}" class="delib-row">
+        <td style="font-family:monospace;font-size:0.78rem;font-weight:700;color:${rankColor};width:40px;">${String(idx + 1).padStart(2,'0')}</td>
+        <td>
+          <div style="font-weight:700;font-size:0.88rem;">${f.title}${inTop5 ? ' <span style="font-size:0.62rem;color:var(--lavande);vertical-align:middle;">🏆</span>' : ''}</div>
+          <div style="font-size:0.7rem;color:var(--mist);margin-top:2px;">${f.author}${f.country ? ' · ' + f.country : ''}</div>
+        </td>
+        <td style="width:220px;">${voteAvatars(votedIds)}</td>
+        <td style="width:160px;" onclick="event.stopPropagation();">${voteBtn}</td>
       </tr>`;
     }).join('');
 
     table.innerHTML = `<thead><tr>
-      <th>#</th><th>Film</th><th>Qui a voté</th><th>Mon vote Top 5</th>
-    </tr></thead><tbody>${progressBar}${tbody}</tbody>`;
+      <th style="width:40px;">#</th>
+      <th>Film</th>
+      <th style="width:220px;">Votes (${top5count}/5 finalistes)</th>
+      <th style="width:160px;">Mon vote</th>
+    </tr></thead><tbody>${progressRow}${rows}</tbody>`;
 
   } else {
-    // ── Phase 1 : Top 50 sélectionné par l'admin — lecture seule pour le jury ──
+    // ════ Phase 1 : Top 50 sélectionné par l'admin — lecture seule ════
     const pct50 = Math.min((top50count / 50) * 100, 100);
-    const progressBar = `<tr><td colspan="3" style="padding:0;border-bottom:1px solid rgba(78,255,206,0.1);">
+    const progressRow = `<tr><td colspan="4" style="padding:0;border-bottom:1px solid rgba(78,255,206,0.1);">
       <div style="padding:10px 16px;background:rgba(78,255,206,0.03);display:flex;align-items:center;gap:14px;">
-        <span style="font-size:0.72rem;font-weight:700;color:var(--aurora);white-space:nowrap;">★ Top 50</span>
-        <div style="flex:1;height:5px;background:rgba(78,255,206,0.08);border-radius:999px;overflow:hidden;"><div style="height:100%;width:${pct50}%;background:linear-gradient(90deg,var(--aurora),#a8ffec);border-radius:999px;transition:width 0.4s;"></div></div>
-        <span style="font-family:monospace;font-size:0.8rem;font-weight:800;color:${top50count >= 50 ? 'var(--aurora)' : 'var(--snow)'};">${top50count} / 50</span>
+        <span style="font-size:0.7rem;font-weight:700;color:var(--aurora);white-space:nowrap;letter-spacing:0.04em;">★ TOP 50</span>
+        <div style="flex:1;height:4px;background:rgba(78,255,206,0.1);border-radius:999px;overflow:hidden;">
+          <div style="height:100%;width:${pct50}%;background:linear-gradient(90deg,var(--aurora),#a8ffec);border-radius:999px;transition:width 0.4s;"></div>
+        </div>
+        <span style="font-family:monospace;font-size:0.82rem;font-weight:800;color:${top50count >= 50 ? 'var(--aurora)' : 'var(--snow)'};">${top50count}<span style="color:var(--mist);font-weight:400;"> / 50</span></span>
+        ${top50count >= 50 ? '<span style="font-size:0.65rem;font-weight:700;color:var(--aurora);padding:2px 8px;border-radius:999px;background:rgba(78,255,206,0.12);border:1px solid rgba(78,255,206,0.3);">✓ Sélection complète</span>' : ''}
       </div>
     </td></tr>`;
 
     if (top50Films.length === 0) {
-      table.innerHTML = `<tbody><tr><td colspan="3" style="text-align:center;padding:40px;color:var(--mist);font-size:0.85rem;">L'administrateur n'a pas encore sélectionné les 50 films.<br><span style="font-size:0.75rem;opacity:0.6;">La liste apparaîtra ici dès qu'elle sera constituée.</span></td></tr></tbody>`;
+      table.innerHTML = `<tbody><tr><td colspan="4" style="text-align:center;padding:48px;color:var(--mist);font-size:0.85rem;">L'administrateur n'a pas encore sélectionné les 50 films.<br><span style="font-size:0.75rem;opacity:0.6;">La liste apparaîtra ici dès qu'elle sera constituée.</span></td></tr></tbody>`;
       return;
     }
 
-    const decColor = { valide: 'var(--aurora)', aRevoir: 'var(--solar)', refuse: 'var(--coral)' };
-    const decIcon  = { valide: '✓', aRevoir: '↩', refuse: '✕' };
-
-    const tbody = top50Films.map((f) => {
-      const c = getFilmConsensus(f);
-      const pill = c.type === 'unanime'
-        ? `<span style="color:var(--aurora);font-weight:700;font-size:0.7rem;">✅ Unanime</span>`
-        : c.type === 'partage'
-          ? `<span style="color:var(--solar);font-weight:700;font-size:0.7rem;">⚠️ Partagé</span>`
-          : `<span style="color:var(--mist);font-size:0.7rem;">—</span>`;
+    const rows = top50Films.map((f, idx) => {
+      const c  = getFilmConsensus(f);
+      const cs = consensusStyle[c.type] || consensusStyle.attente;
+      const tv = c.valide + c.refuse + c.aRevoir;
+      const scoreBar = tv > 0
+        ? `<div style="display:flex;height:3px;border-radius:3px;overflow:hidden;width:60px;background:rgba(255,255,255,0.05);margin-top:5px;">
+            <div style="width:${Math.round((c.valide/tv)*100)}%;background:var(--aurora);"></div>
+            <div style="width:${Math.round((c.aRevoir/tv)*100)}%;background:var(--solar);"></div>
+            <div style="width:${Math.round((c.refuse/tv)*100)}%;background:var(--coral);"></div>
+           </div>`
+        : '';
       const juryAvatars = jurors.map(j => {
         const dec = f.juryDec?.[j.key] || null;
         const col = dec ? decColor[dec] : 'rgba(255,255,255,0.12)';
         const ic  = dec ? decIcon[dec]  : '?';
-        return `<span title="${j.name}${dec ? ' · ' + dec : ' · pas évalué'}" style="position:relative;display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font-size:0.58rem;font-weight:700;border:2px solid ${col};background:${dec ? col + '22' : 'transparent'};color:${dec ? col : 'rgba(255,255,255,0.2)'};">${j.initials}<span style="position:absolute;bottom:-2px;right:-2px;width:11px;height:11px;border-radius:50%;font-size:0.4rem;display:flex;align-items:center;justify-content:center;background:${col};color:var(--deep-sky);font-weight:900;">${ic}</span></span>`;
+        return `<span title="${j.name}${dec ? ' — ' + dec : ' — pas évalué'}" style="position:relative;display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;font-size:0.6rem;font-weight:700;border:2px solid ${col};background:${dec ? col.replace(')', ',0.12)').replace('var(', 'rgba(') : 'transparent'};color:${dec ? col : 'rgba(255,255,255,0.2)'};">${j.initials}<span style="position:absolute;bottom:-1px;right:-1px;width:12px;height:12px;border-radius:50%;font-size:0.42rem;display:flex;align-items:center;justify-content:center;background:${col};color:var(--deep-sky);font-weight:900;">${ic}</span></span>`;
       }).join('');
-      return `<tr onclick="switchView('eval');loadFilm(${f.id})" style="background:rgba(78,255,206,0.02);">
-        <td style="font-family:monospace;font-size:0.72rem;color:var(--mist);">#${String(f.id).padStart(3,'0')}</td>
-        <td><strong>${f.title}</strong> <span style="font-size:0.65rem;color:var(--aurora);">★</span><br><span style="font-size:0.7rem;color:var(--mist);">${f.author} · ${f.country||''}</span></td>
-        <td><div style="display:flex;gap:5px;align-items:center;">${juryAvatars}</div></td>
-        <td>${pill}</td>
+
+      return `<tr onclick="switchView('eval');loadFilm(${f.id})" style="background:${cs.bg};border-left:3px solid ${cs.border};" class="delib-row">
+        <td style="font-family:monospace;font-size:0.78rem;font-weight:700;color:var(--mist);width:40px;">${String(idx + 1).padStart(2,'0')}</td>
+        <td>
+          <div style="font-weight:700;font-size:0.88rem;">${f.title} <span style="font-size:0.62rem;color:var(--aurora);vertical-align:middle;">★</span></div>
+          <div style="font-size:0.7rem;color:var(--mist);margin-top:2px;">${f.author}${f.country ? ' · ' + f.country : ''}</div>
+        </td>
+        <td style="width:160px;"><div style="display:flex;gap:5px;align-items:center;">${juryAvatars}</div>${scoreBar}</td>
+        <td style="width:130px;"><span style="font-size:0.72rem;font-weight:700;color:${cs.color};">${cs.label}</span></td>
       </tr>`;
     }).join('');
 
     table.innerHTML = `<thead><tr>
-      <th>#</th><th>Film sélectionné par l'admin</th><th>Décisions jury</th><th>Consensus</th>
-    </tr></thead><tbody>${progressBar}${tbody}</tbody>`;
+      <th style="width:40px;">#</th>
+      <th>Film présélectionné</th>
+      <th style="width:160px;">Évaluations jury</th>
+      <th style="width:130px;">Consensus</th>
+    </tr></thead><tbody>${progressRow}${rows}</tbody>`;
   }
 }
 
