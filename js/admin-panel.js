@@ -3034,7 +3034,10 @@ function renderSelection() {
           <td>${voteLabel}</td>
           <td><div style="display:flex;align-items:center;gap:3px;">${juryAv}</div></td>
           <td>${finalBtn}</td>
-          <td><button onclick="event.stopPropagation();openVideoModal(${f.id})" style="padding:4px 10px;border-radius:6px;font-size:0.68rem;font-weight:600;cursor:pointer;border:1px solid rgba(78,255,206,0.25);background:rgba(78,255,206,0.06);color:var(--aurora);">▶ Voir</button></td>
+          <td style="white-space:nowrap;">
+            <button onclick="event.stopPropagation();openVideoModal(${f.id})" style="padding:4px 10px;border-radius:6px;font-size:0.68rem;font-weight:600;cursor:pointer;border:1px solid rgba(78,255,206,0.25);background:rgba(78,255,206,0.06);color:var(--aurora);">▶ Voir</button>
+            <button onclick="event.stopPropagation();openDirectorEmail(${f.id},'selection')" style="margin-left:4px;padding:4px 10px;border-radius:6px;font-size:0.68rem;font-weight:600;cursor:pointer;border:1px solid rgba(192,132,252,0.25);background:rgba(192,132,252,0.06);color:var(--lavande);" title="Envoyer un email au réalisateur">📧</button>
+          </td>
           <td><button onclick="event.stopPropagation();adminDecide(${f.id},'valide')" style="padding:4px 10px;border-radius:6px;font-size:0.68rem;font-weight:600;cursor:pointer;border:1px solid rgba(255,107,107,0.2);background:rgba(255,107,107,0.04);color:var(--coral);">✕</button></td>
         </tr>`;
       }).join("");
@@ -3080,7 +3083,7 @@ function renderSelection() {
           <td><div style="font-weight:700;font-size:0.9rem;">${f.title}</div><div style="font-size:0.72rem;color:var(--mist);">${f.author} · ${flags[f.country] || ""} ${f.country || ""}</div></td>
           <td>${voteLabel}</td>
           <td><div style="display:flex;align-items:center;gap:3px;">${juryAv}</div></td>
-          <td></td>
+          <td><button onclick="event.stopPropagation();openDirectorEmail(${f.id},'finaliste')" style="padding:4px 12px;border-radius:6px;font-size:0.68rem;font-weight:600;cursor:pointer;border:1px solid rgba(192,132,252,0.3);background:rgba(192,132,252,0.08);color:var(--lavande);" title="Notifier le réalisateur de sa sélection en finale">📧 Notifier</button></td>
           <td><button onclick="event.stopPropagation();openVideoModal(${f.id})" style="padding:4px 10px;border-radius:6px;font-size:0.68rem;font-weight:600;cursor:pointer;border:1px solid rgba(78,255,206,0.25);background:rgba(78,255,206,0.06);color:var(--aurora);">▶ Voir</button></td>
           <td><button onclick="event.stopPropagation();toggleFinalist(${f.id})" style="padding:4px 10px;border-radius:6px;font-size:0.68rem;font-weight:600;cursor:pointer;border:1px solid rgba(255,107,107,0.2);background:rgba(255,107,107,0.04);color:var(--coral);">✕ Retirer</button></td>
         </tr>`;
@@ -3175,11 +3178,13 @@ function renderSelection() {
         })
         .join("");
 
+      const emailType = adm === "valide" ? "selection" : "info";
       const admBtns = `<div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start;">
       <button onclick="event.stopPropagation();adminDecide(${f.id},'valide')" style="padding:5px 12px;border-radius:7px;font-size:0.72rem;font-weight:700;cursor:pointer;border:1.5px solid;transition:all .18s;
         ${adm === "valide" ? "background:rgba(78,255,206,0.2);border-color:rgba(78,255,206,0.6);color:var(--aurora);box-shadow:0 0 12px rgba(78,255,206,0.15);" : "background:rgba(78,255,206,0.05);border-color:rgba(78,255,206,0.15);color:var(--aurora);"}">
         ${adm === "valide" ? "✓ Sélectionné" : "Sélectionner"}</button>
       <button onclick="event.stopPropagation();openVideoModal(${f.id})" style="padding:4px 12px;border-radius:7px;font-size:0.7rem;font-weight:600;cursor:pointer;border:1.5px solid rgba(78,255,206,0.25);background:rgba(78,255,206,0.06);color:var(--aurora);display:flex;align-items:center;gap:5px;transition:all .18s;" onmouseover="this.style.background='rgba(78,255,206,0.14)'" onmouseout="this.style.background='rgba(78,255,206,0.06)'">▶ Voir le film</button>
+      <button onclick="event.stopPropagation();openDirectorEmail(${f.id},'${emailType}')" style="padding:4px 12px;border-radius:7px;font-size:0.7rem;font-weight:600;cursor:pointer;border:1.5px solid rgba(192,132,252,0.25);background:rgba(192,132,252,0.06);color:var(--lavande);display:flex;align-items:center;gap:5px;transition:all .18s;" onmouseover="this.style.background='rgba(192,132,252,0.14)'" onmouseout="this.style.background='rgba(192,132,252,0.06)'">📧 Email réalisateur</button>
     </div>`;
 
       const commEntries = Object.entries(f.comments || {});
@@ -3934,9 +3939,60 @@ function closeEmailModal(e) {
 
 function sendEmailAction() {
   if (!pendingEmailAction) return;
+  // Email direct réalisateur (sans ticket)
+  if (pendingEmailAction.filmId !== undefined) {
+    const f = films.find(x => x.id === pendingEmailAction.filmId);
+    closeEmailModal();
+    showToast(`📧 Email envoyé à ${f ? f.author : 'le réalisateur'}`, 'ok');
+    pendingEmailAction = null;
+    return;
+  }
   const { tkId, action } = pendingEmailAction;
   closeEmailModal();
   selActTicket(tkId, action);
+}
+
+/* ── Email direct au réalisateur (sans ticket) ── */
+function openDirectorEmail(filmId, type) {
+  const f = films.find(x => x.id === filmId);
+  if (!f) return;
+  pendingEmailAction = { filmId, type };
+
+  const email = f.author
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, '.') + '@exemple.fr';
+
+  const tpls = {
+    selection: {
+      subject: 'marsAI 2026 — Félicitations ! Votre film est sélectionné Top 50',
+      body: `Bonjour ${f.author},\n\nNous avons le plaisir de vous informer que votre film "${f.title}" a été sélectionné dans le Top 50 du festival marsAI 2026.\n\nVotre œuvre sera soumise à l'évaluation du jury dans les prochaines semaines. Vous recevrez une notification dès que la délibération sera terminée.\n\nMerci de votre confiance et bonne continuation.\n\nCordialement,\nL'équipe marsAI 2026`,
+    },
+    finaliste: {
+      subject: 'marsAI 2026 — Votre film est finaliste 🏆',
+      body: `Bonjour ${f.author},\n\nFélicitations !\n\nNous avons l'honneur de vous annoncer que votre film "${f.title}" a été sélectionné parmi les 5 finalistes du festival marsAI 2026.\n\nVous êtes officiellement invité(e) à la cérémonie de remise des prix qui se tiendra à Marseille. Des informations pratiques vous seront communiquées prochainement (lieu exact, date, accréditations).\n\nEncore toutes nos félicitations pour votre travail remarquable.\n\nCordialement,\nL'équipe marsAI 2026`,
+    },
+    revision: {
+      subject: 'marsAI 2026 — Votre candidature · Révision souhaitée',
+      body: `Bonjour ${f.author},\n\nNous avons bien visionné votre film "${f.title}" soumis au festival marsAI 2026.\n\nSuite à l'examen de votre œuvre par notre comité, nous souhaiterions que vous apportiez certaines modifications avant la sélection définitive.\n\n[Précisez ici les modifications souhaitées]\n\nMerci de soumettre une version révisée dans un délai de 7 jours via votre espace personnel.\n\nCordialement,\nL'équipe marsAI 2026`,
+    },
+    refuse: {
+      subject: 'marsAI 2026 — Décision de sélection · Film non retenu',
+      body: `Bonjour ${f.author},\n\nNous vous remercions pour votre participation au festival marsAI 2026 et la confiance que vous nous accordez.\n\nAprès délibération du comité de sélection, votre film "${f.title}" n'a malheureusement pas été retenu pour cette édition.\n\nCette décision n'est en aucun cas un jugement définitif sur la qualité de votre travail. Nous espérons vous voir participer aux prochaines éditions du festival.\n\nCordialement,\nL'équipe marsAI 2026`,
+    },
+    info: {
+      subject: `marsAI 2026 — Information concernant votre film`,
+      body: `Bonjour ${f.author},\n\n`,
+    },
+  };
+
+  const tpl = tpls[type] || tpls.info;
+  document.getElementById('em-ticket-info').textContent = `${f.title} · ${f.author}`;
+  document.getElementById('em-to').textContent = email;
+  document.getElementById('em-subject').value = tpl.subject;
+  document.getElementById('em-body').value = tpl.body;
+  document.getElementById('email-modal-overlay').classList.add('open');
 }
 
 /* ════════════════════════════════════════════
