@@ -924,7 +924,7 @@ function resetInviteModal() {
   document.getElementById("opt-modo")?.classList.remove("selected");
 }
 
-/* ── ASSIGNATION DIRECTE (clic avatar) ── */
+/* ── ASSIGNATION DIRECTE (clic avatar — assigne ou désassigne) ── */
 function toggleFilmJury(filmId, userId) {
   const u = users.find((x) => x.id === userId);
   const f = films.find((x) => x.id === filmId);
@@ -944,8 +944,7 @@ function toggleFilmJury(filmId, userId) {
 /* ── VUE ASSIGNATION (médiathèque) ── */
 const FILMS_PER_PAGE = 20;
 let currentPage = 1;
-let currentFilmTab = "pending";
-let currentViewMode = "list";
+let currentViewMode = "grid";
 
 function setViewMode(mode) {
   currentViewMode = mode;
@@ -958,26 +957,6 @@ function setViewMode(mode) {
   renderAssignView();
 }
 
-function switchFilmTab(tab) {
-  currentFilmTab = tab;
-  currentPage = 1;
-  filmSearchQuery = "";
-  filmCountryFilters = [];
-  updateCountryBtn();
-  const searchEl = document.getElementById("film-search");
-  if (searchEl) searchEl.value = "";
-  document
-    .getElementById("tab-pending")
-    .classList.toggle("active", tab === "pending");
-  document
-    .getElementById("tab-assigned")
-    .classList.toggle("active", tab === "assigned");
-  renderAssignView();
-  // Remonter en haut de la liste
-  document
-    .getElementById("view-assign")
-    .scrollIntoView({ behavior: "smooth", block: "start" });
-}
 
 function renderAssignView(page) {
   if (page !== undefined) currentPage = page;
@@ -997,20 +976,19 @@ function renderAssignView(page) {
   // Rafraîchir les pills pays
   renderCountryFilters();
 
-  // Séparer films selon l'onglet
-  const pending = filteredFilms.filter(
+  // Vue unique : ordre original conservé, les films ne bougent pas lors de l'assignation
+  const nonAssigned = filteredFilms.filter(
     (f) => !juryUsers.some((u) => u.assigned.includes(f.id)),
   );
-  const assigned = filteredFilms.filter((f) =>
-    juryUsers.some((u) => u.assigned.includes(f.id)),
-  );
+  const filmList = filteredFilms;
 
-  // Mettre à jour les compteurs des onglets
-  document.getElementById("count-pending").textContent = pending.length;
-  document.getElementById("count-assigned").textContent = assigned.length;
-  document.getElementById("count-assign").textContent = pending.length;
-
-  const filmList = currentFilmTab === "pending" ? pending : assigned;
+  // Compteur nav + info bar
+  document.getElementById("count-assign").textContent = nonAssigned.length || "✓";
+  const infoEl = document.getElementById("films-total-info");
+  if (infoEl) {
+    const assignedCount = filteredFilms.length - nonAssigned.length;
+    infoEl.textContent = `${filteredFilms.length} film${filteredFilms.length > 1 ? "s" : ""} · ${assignedCount} assigné${assignedCount > 1 ? "s" : ""} · ${nonAssigned.length} en attente`;
+  }
   const totalPages = Math.ceil(filmList.length / FILMS_PER_PAGE);
   if (currentPage > totalPages) currentPage = Math.max(1, totalPages);
   const pageFilms = filmList.slice(
@@ -1118,26 +1096,31 @@ function renderAssignView(page) {
         const isAssigned = nAssigned > 0;
         const nComments = f.comments ? Object.keys(f.comments).length : 0;
         const pal = cardPalettes[f.id % cardPalettes.length];
-        const assignedBadge = isAssigned
-          ? `<div class="assigned-badge ab-ok">✓ ${nAssigned} juré${nAssigned > 1 ? "s" : ""}</div>`
-          : `<div class="assigned-badge ab-none">Non assigné</div>`;
-        const avatars = juryUsers
-          .map((u) => {
+        // Grille avatars jury (clic = assigner/désassigner)
+        const avatars = juryUsers.map((u) => {
             const assigned = u.assigned.includes(f.id);
             const total = u.assigned.length;
-            const badgeCls =
-              total <= 5 ? "alb-green" : total <= 10 ? "alb-orange" : "alb-red";
+            const badgeCls = total === 0 ? "alb-empty"
+              : total <= 5 ? "alb-green"
+              : total <= 10 ? "alb-orange"
+              : "alb-red";
+            const badgeTxt = total === 0 ? "—" : total;
             const shadow = assigned
               ? "0 0 0 2.5px var(--aurora),0 0 10px rgba(78,255,206,0.3)"
+              : total > 0 ? "0 0 0 2px rgba(78,255,206,0.2)"
               : "0 0 0 2px rgba(255,255,255,0.12)";
-            const opacity = assigned ? "1" : "0.3";
-            return `<div class="av-load-wrap" onclick="toggleFilmJury(${f.id}, ${u.id})" title="${u.name}">
-            <img src="${u.avatar}" alt="${u.name}" style="box-shadow:${shadow};opacity:${opacity};" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='${opacity}'">
-            <span class="av-load-badge ${badgeCls}">${total}</span>
-          </div>`;
-          })
-          .join("");
-        return `<div class="film-card" style="--card-accent-color:${pal.accent}22;">
+            const opacity = assigned ? "1" : total > 0 ? "0.65" : "0.28";
+            const initials = u.name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
+            const tooltip = `${u.name} — ${total === 0 ? "aucun film assigné" : total + " film" + (total > 1 ? "s" : "") + " assigné" + (total > 1 ? "s" : "")}`;
+            const checkMark = assigned ? `<span class="av-assigned-check">✓</span>` : "";
+            return `<div class="av-load-wrap ${assigned ? "is-assigned" : ""}" onclick="toggleFilmJury(${f.id}, ${u.id})" title="${tooltip}">
+              ${checkMark}
+              <img src="${u.avatar}" alt="${u.name}" style="box-shadow:${shadow};opacity:${opacity};" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='${opacity}'">
+              <span class="av-load-badge ${badgeCls}">${badgeTxt}</span>
+              <span class="av-load-name">${initials}</span>
+            </div>`;
+          }).join("");
+        return `<div class="film-card${isAssigned ? " fc-jury-assigned" : ""}" style="--card-accent-color:${pal.accent}22;">
           <div class="film-card-accent" style="background:${pal.accent};opacity:0.7;"></div>
           <div class="film-thumb" onclick="playFilm(${f.id})" style="background:${pal.bg};">
             <video src="../assets/video.mp4" muted preload="none" id="vid-${f.id}"></video>
@@ -1147,12 +1130,11 @@ function renderAssignView(page) {
               <div class="play-btn">▶</div>
             </div>
             <div class="film-num-badge">#${String(f.id).padStart(3, "0")}</div>
-            ${assignedBadge}
           </div>
           <div class="film-body">
             <div class="film-title">${f.title}</div>
             <div class="film-meta">${f.author} · ${flags[f.country] || ""} ${f.country}</div>
-            <div style="display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap;">${avatars}</div>
+            <div class="fc-avatars-row">${avatars}</div>
             ${
               nComments > 0
                 ? `<button class="film-comments-btn" onclick="openCommentsModal(${f.id})">💬 ${nComments} commentaire${nComments > 1 ? "s" : ""}</button>`

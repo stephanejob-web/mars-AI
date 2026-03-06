@@ -455,30 +455,14 @@
           </div>
         </div>
 
-        <!-- Onglets + Toggle de vue -->
-        <!-- TabButton (élément répétable - futur composant React possible) -->
+        <!-- Barre toolbar vue unique -->
         <div class="tabs-toolbar">
-          <div class="film-tabs">
-            <button
-              class="film-tab pending-tab active"
-              id="tab-pending"
-              onclick="switchFilmTab('pending')"
-            >
-              🎬 À assigner
-              <span class="tab-count" id="count-pending">—</span>
-            </button>
-            <button
-              class="film-tab assigned-tab"
-              id="tab-assigned"
-              onclick="switchFilmTab('assigned')"
-            >
-              ✓ Assignés
-              <span class="tab-count" id="count-assigned">—</span>
-            </button>
+          <div class="film-tabs-info">
+            <span id="films-total-info" style="font-size:0.78rem;color:var(--mist);font-family:var(--font-mono);"></span>
           </div>
           <div class="view-mode-toggle">
             <button
-              class="vmt-btn active"
+              class="vmt-btn"
               id="vmt-list"
               onclick="setViewMode('list')"
               title="Vue liste"
@@ -512,7 +496,7 @@
               Liste
             </button>
             <button
-              class="vmt-btn"
+              class="vmt-btn active"
               id="vmt-grid"
               onclick="setViewMode('grid')"
               title="Vue grille"

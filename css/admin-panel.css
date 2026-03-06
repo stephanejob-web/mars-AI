@@ -1149,6 +1149,24 @@
   transform: translateY(-3px);
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
 }
+/* Carte avec au moins un juré assigné */
+.film-card.fc-jury-assigned {
+  border-color: rgba(78, 255, 206, 0.35);
+  box-shadow: 0 0 0 1px rgba(78, 255, 206, 0.15), 0 4px 18px rgba(0, 0, 0, 0.25);
+}
+.film-card.fc-jury-assigned:hover {
+  border-color: rgba(78, 255, 206, 0.6);
+  box-shadow: 0 0 0 1px rgba(78, 255, 206, 0.3), 0 8px 28px rgba(0, 0, 0, 0.35);
+}
+
+/* ── Rangée avatars jury sur carte ───────────────────────────── */
+.fc-avatars-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0 6px;
+}
 
 /* ── Barre accent colorée en haut ─────────────────────────────── */
 .film-card-accent {
@@ -1910,7 +1928,10 @@
 /* ── BADGE CHARGE JURY ────────────────────────────────────────── */
 .av-load-wrap {
   position: relative;
-  display: inline-block;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
   cursor: pointer;
   flex-shrink: 0;
 }
@@ -1928,22 +1949,74 @@
 .av-load-wrap:hover img {
   transform: scale(1.08);
 }
+/* Initiales sous l'avatar */
+.av-load-name {
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--mist);
+  text-align: center;
+  line-height: 1;
+  transition: color 0.15s;
+  white-space: nowrap;
+  max-width: 56px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.av-load-wrap.is-assigned .av-load-name {
+  color: var(--aurora);
+}
+/* Badge charge (coin bas-droit) */
 .av-load-badge {
   position: absolute;
-  bottom: -4px;
+  bottom: 22px; /* au-dessus du nom */
   right: -4px;
-  min-width: 22px;
-  height: 22px;
+  min-width: 20px;
+  height: 20px;
   border-radius: 9999px;
-  font-family: var(--font-body);
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 5px;
-  border: 2.5px solid var(--surface-2);
+  padding: 0 4px;
+  border: 2px solid var(--surface-2);
   line-height: 1;
+  transition: transform 0.15s;
+}
+.av-load-wrap:hover .av-load-badge {
+  transform: scale(1.1);
+}
+/* Badge atténué pour les jurés NON assignés à CE film (mais qui ont d'autres films) */
+.av-load-wrap:not(.is-assigned) .av-load-badge:not(.alb-empty) {
+  opacity: 0.45;
+  filter: saturate(0.6);
+}
+/* Badge ✓ assigné à CE film (coin haut-gauche) */
+.av-assigned-check {
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: var(--aurora);
+  color: var(--deep-sky);
+  font-size: 0.55rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--surface-2);
+  box-shadow: 0 0 6px rgba(78,255,206,0.4);
+}
+/* États de charge */
+.alb-empty {
+  background: rgba(136,146,176,0.18);
+  color: rgba(136,146,176,0.7);
+  border-color: var(--surface-2);
 }
 .alb-green {
   background: #1a9e78;
