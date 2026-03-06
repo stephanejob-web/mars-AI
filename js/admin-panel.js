@@ -976,18 +976,30 @@ function renderAssignView(page) {
   // Rafraîchir les pills pays
   renderCountryFilters();
 
-  // Vue unique : ordre original conservé, les films ne bougent pas lors de l'assignation
+  // Stats assignation
   const nonAssigned = filteredFilms.filter(
     (f) => !juryUsers.some((u) => u.assigned.includes(f.id)),
   );
-  const filmList = filteredFilms;
+  const assignedFilms = filteredFilms.filter(
+    (f) => juryUsers.some((u) => u.assigned.includes(f.id)),
+  );
+
+  // Appliquer le filtre assignation
+  const filmList = filmAssignFilter === "unassigned" ? nonAssigned
+                 : filmAssignFilter === "assigned"   ? assignedFilms
+                 : filteredFilms;
+
+  // Mise à jour des compteurs sur les boutons filtre
+  const btnUCount = document.getElementById("afilter-unassigned-count");
+  const btnACount = document.getElementById("afilter-assigned-count");
+  if (btnUCount) btnUCount.textContent = `(${nonAssigned.length})`;
+  if (btnACount) btnACount.textContent = `(${assignedFilms.length})`;
 
   // Compteur nav + info bar
   document.getElementById("count-assign").textContent = nonAssigned.length || "✓";
   const infoEl = document.getElementById("films-total-info");
   if (infoEl) {
-    const assignedCount = filteredFilms.length - nonAssigned.length;
-    infoEl.textContent = `${filteredFilms.length} film${filteredFilms.length > 1 ? "s" : ""} · ${assignedCount} assigné${assignedCount > 1 ? "s" : ""} · ${nonAssigned.length} en attente`;
+    infoEl.textContent = `${filteredFilms.length} film${filteredFilms.length > 1 ? "s" : ""} · ${assignedFilms.length} assigné${assignedFilms.length > 1 ? "s" : ""} · ${nonAssigned.length} en attente`;
   }
   const totalPages = Math.ceil(filmList.length / FILMS_PER_PAGE);
   if (currentPage > totalPages) currentPage = Math.max(1, totalPages);
@@ -1007,6 +1019,10 @@ function renderAssignView(page) {
     if (cardsWrap) cardsWrap.style.display = "none";
     emptyEl.innerHTML = filmSearchQuery
       ? `<div style="font-size:2rem;margin-bottom:12px;">🔍</div><div style="font-family:var(--font-display);font-size:1rem;font-weight:800;color:var(--white-soft);margin-bottom:6px;">Aucun résultat pour "${filmSearchQuery}"</div><div style="font-size:0.78rem;color:var(--mist);">Essayez un autre titre, réalisateur ou pays.</div>`
+      : filmAssignFilter === "assigned"
+      ? `<div style="font-size:2rem;margin-bottom:12px;">📋</div><div style="font-family:var(--font-display);font-size:1rem;font-weight:800;color:var(--white-soft);margin-bottom:6px;">Aucun film assigné pour l'instant</div><div style="font-size:0.78rem;color:var(--mist);">Utilisez "Répartir équitablement" ou assignez manuellement.</div>`
+      : filmAssignFilter === "unassigned"
+      ? `<div style="font-size:3rem;margin-bottom:16px;">🎉</div><div style="font-family:var(--font-display);font-size:1.1rem;font-weight:800;color:var(--white-soft);margin-bottom:8px;">Tous les films sont assignés !</div><div style="font-size:0.8rem;color:var(--mist);">Retrouvez-les dans l'onglet "Assignés".</div>`
       : `<div style="font-size:3rem;margin-bottom:16px;">🎉</div><div style="font-family:var(--font-display);font-size:1.1rem;font-weight:800;color:var(--white-soft);margin-bottom:8px;">Tous les films sont assignés !</div><div style="font-size:0.8rem;color:var(--mist);">Retrouvez-les dans l'onglet "Assignés".</div>`;
     emptyEl.style.display = "block";
     document.getElementById("pagination").innerHTML = "";
@@ -1315,6 +1331,17 @@ const flags = {
 /* ── RECHERCHE & FILTRE FILMS ── */
 let filmSearchQuery = "";
 let filmCountryFilters = []; // multi-sélection
+let filmAssignFilter = "all"; // "all" | "unassigned" | "assigned"
+
+function setAssignFilter(val) {
+  filmAssignFilter = val;
+  ["all", "unassigned", "assigned"].forEach((v) => {
+    const btn = document.getElementById("afilter-" + v);
+    if (btn) btn.classList.toggle("active", v === val);
+  });
+  currentPage = 1;
+  renderAssignView();
+}
 
 function filterFilms(query) {
   filmSearchQuery = query.toLowerCase().trim();
