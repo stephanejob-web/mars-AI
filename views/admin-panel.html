@@ -327,17 +327,30 @@
           class="btn-repartir-main"
         >
           <div class="brm-left">
-            <span class="brm-icon">⚡</span>
+            <div class="brm-icon-wrap">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <circle cx="3.5" cy="10" r="2" stroke="currentColor" stroke-width="1.6"/>
+                <circle cx="16.5" cy="4.5" r="2" stroke="currentColor" stroke-width="1.6"/>
+                <circle cx="16.5" cy="15.5" r="2" stroke="currentColor" stroke-width="1.6"/>
+                <path d="M5.5 10C7 10 8 4.5 14.5 4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                <path d="M5.5 10C7 10 8 15.5 14.5 15.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              </svg>
+            </div>
             <div>
               <div class="brm-title">Répartir équitablement</div>
-              <div class="brm-sub">
-                Distribuer automatiquement les
-                <span id="brm-count">500</span> films entre tous les jurés
-                actifs
-              </div>
+              <div class="brm-sub">Distribuer automatiquement les <span id="brm-count">500</span> films non assignés entre les jurés actifs</div>
             </div>
           </div>
-          <span class="brm-arrow">→</span>
+          <div class="brm-right">
+            <div class="brm-chip" id="brm-chip">
+              <span id="brm-jury-count">6</span> jurés
+              <span style="opacity:0.4;margin:0 4px;">·</span>
+              <span id="brm-per-jury">~83 films/juré</span>
+            </div>
+            <svg class="brm-arrow-svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
         </button>
 
         <!-- Barre de recherche films -->
@@ -374,85 +387,6 @@
             onfocus="this.style.borderColor = 'rgba(78,255,206,0.4)'"
             onblur="this.style.borderColor = 'rgba(255,255,255,0.09)'"
           />
-        </div>
-
-        <!-- Filtre par pays -->
-        <div
-          style="position: relative; margin-bottom: 16px"
-          id="country-filter-wrap"
-        >
-          <div style="display: flex; gap: 8px; align-items: center">
-            <button id="country-btn" onclick="toggleCountryDropdown()">
-              <span id="country-btn-icon">🌍</span>
-              <span id="country-btn-label">Tous les pays</span>
-              <span
-                id="country-btn-arrow"
-                style="font-size: 0.7rem; opacity: 0.6; margin-left: 2px"
-                >▾</span
-              >
-            </button>
-            <button
-              id="country-reset-btn"
-              onclick="resetCountryFilter()"
-              style="
-                display: none;
-                align-items: center;
-                gap: 5px;
-                padding: 7px 12px;
-                background: rgba(255, 107, 107, 0.08);
-                border: 1px solid rgba(255, 107, 107, 0.22);
-                border-radius: 10px;
-                font-family: var(--font-body);
-                font-size: 0.78rem;
-                color: var(--coral);
-                cursor: pointer;
-                transition: all 0.2s;
-              "
-            >
-              × Réinitialiser
-            </button>
-          </div>
-          <div
-            id="country-dropdown"
-            style="
-              display: none;
-              position: absolute;
-              top: calc(100% + 6px);
-              left: 0;
-              z-index: 200;
-              background: var(--surface-2);
-              border: 1px solid rgba(255, 255, 255, 0.1);
-              border-radius: 12px;
-              padding: 8px;
-              min-width: 230px;
-              max-height: 340px;
-              box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
-            "
-          >
-            <input
-              type="text"
-              id="country-search"
-              placeholder="Filtrer les pays…"
-              oninput="renderCountryDropdown(this.value)"
-              style="
-                width: 100%;
-                background: rgba(255, 255, 255, 0.05);
-                border: 1px solid rgba(255, 255, 255, 0.08);
-                border-radius: 8px;
-                padding: 7px 10px;
-                font-family: var(--font-body);
-                font-size: 0.8rem;
-                color: var(--white-soft);
-                outline: none;
-                margin-bottom: 6px;
-              "
-              autocomplete="off"
-            />
-            <div
-              id="country-list"
-              style="overflow-y: auto; max-height: 260px"
-            ></div>
-          </div>
         </div>
 
         <!-- Filtre assignation -->
