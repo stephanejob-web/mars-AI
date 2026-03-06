@@ -401,107 +401,12 @@
           <div class="film-tabs-info">
             <span id="films-total-info" style="font-size:0.78rem;color:var(--mist);font-family:var(--font-mono);"></span>
           </div>
-          <div class="view-mode-toggle">
-            <button
-              class="vmt-btn"
-              id="vmt-list"
-              onclick="setViewMode('list')"
-              title="Vue liste"
-            >
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <rect
-                  x="1"
-                  y="2"
-                  width="12"
-                  height="1.5"
-                  rx="0.75"
-                  fill="currentColor"
-                />
-                <rect
-                  x="1"
-                  y="6"
-                  width="12"
-                  height="1.5"
-                  rx="0.75"
-                  fill="currentColor"
-                />
-                <rect
-                  x="1"
-                  y="10"
-                  width="12"
-                  height="1.5"
-                  rx="0.75"
-                  fill="currentColor"
-                />
-              </svg>
-              Liste
-            </button>
-            <button
-              class="vmt-btn active"
-              id="vmt-grid"
-              onclick="setViewMode('grid')"
-              title="Vue grille"
-            >
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <rect
-                  x="1"
-                  y="1"
-                  width="5"
-                  height="5"
-                  rx="1"
-                  fill="currentColor"
-                />
-                <rect
-                  x="8"
-                  y="1"
-                  width="5"
-                  height="5"
-                  rx="1"
-                  fill="currentColor"
-                />
-                <rect
-                  x="1"
-                  y="8"
-                  width="5"
-                  height="5"
-                  rx="1"
-                  fill="currentColor"
-                />
-                <rect
-                  x="8"
-                  y="8"
-                  width="5"
-                  height="5"
-                  rx="1"
-                  fill="currentColor"
-                />
-              </svg>
-              Grille
-            </button>
-          </div>
-        </div>
-
-        <!-- Vue Liste -->
-        <div class="film-list-wrap" id="film-list-wrap">
-          <table class="film-list-table">
-            <thead>
-              <tr>
-                <th class="flt-num">#</th>
-                <th>Film</th>
-                <th>Pays</th>
-                <th>Jury assigné</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="assign-grid"></tbody>
-          </table>
         </div>
 
         <!-- Vue Grille -->
         <div
           id="assign-cards"
           class="assign-cards-grid"
-          style="display: none"
         ></div>
 
         <!-- État vide -->
