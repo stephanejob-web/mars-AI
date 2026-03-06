@@ -1742,11 +1742,25 @@ function handleHeroVideo(input) {
   const file = input.files[0];
   if (!file) return;
   const url = URL.createObjectURL(file);
-  const preview = document.querySelector(".video-preview video");
-  const label = document.querySelector(".video-preview-label");
-  preview.src = url;
-  label.textContent = "⏳ Nouvelle vidéo — " + file.name;
+  const preview = document.getElementById("sa-hero-video-preview");
+  if (preview) {
+    preview.src = url;
+    preview.play().catch(() => {});
+  }
+  const badge = document.getElementById("sa-video-badge");
+  if (badge) badge.innerHTML = `<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" fill="rgba(245,230,66,0.2)" stroke="#f5e642" stroke-width="1"/></svg> ${file.name} · En attente`;
   showToast("Vidéo chargée — cliquez sur Enregistrer", "warn");
+}
+
+function saPreviewFullscreen() {
+  const vid = document.getElementById("sa-hero-video-preview");
+  if (!vid) return;
+  if (document.fullscreenElement) {
+    document.exitFullscreen();
+  } else {
+    const stage = vid.closest(".sa-hero-stage");
+    (stage.requestFullscreen || stage.webkitRequestFullscreen || stage.mozRequestFullScreen).call(stage);
+  }
 }
 
 /* ── TOAST ── */
