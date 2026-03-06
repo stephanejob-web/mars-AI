@@ -635,30 +635,6 @@ let users = [
     avatar: "https://i.pravatar.cc/150?img=32",
   },
   {
-    id: 8,
-    name: "Elena Petrov",
-    email: "e.petrov@marsai.ru",
-    role: "jury",
-    active: true,
-    token: "EPV-7K2R-J6M",
-    assigned: [],
-    cls: "ua-2",
-    label: "Compositrice",
-    avatar: "https://i.pravatar.cc/150?img=29",
-  },
-  {
-    id: 9,
-    name: "Yuki Nakamura",
-    email: "y.nakamura@marsai.jp",
-    role: "jury",
-    active: true,
-    token: "YNK-1P8T-V5B",
-    assigned: [],
-    cls: "ua-3",
-    label: "Réalisatrice",
-    avatar: "https://i.pravatar.cc/150?img=56",
-  },
-  {
     id: 10,
     name: "Carlos Ruiz",
     email: "c.ruiz@marsai.es",
@@ -669,30 +645,6 @@ let users = [
     cls: "ua-4",
     label: "Chef opérateur",
     avatar: "https://i.pravatar.cc/150?img=18",
-  },
-  {
-    id: 11,
-    name: "Priya Mehta",
-    email: "p.mehta@marsai.in",
-    role: "jury",
-    active: true,
-    token: "PMT-6A1N-X2V",
-    assigned: [],
-    cls: "ua-1",
-    label: "Scénariste",
-    avatar: "https://i.pravatar.cc/150?img=36",
-  },
-  {
-    id: 12,
-    name: "Omar Diallo",
-    email: "o.diallo@marsai.sn",
-    role: "jury",
-    active: true,
-    token: "ODL-3S7F-L9Z",
-    assigned: [],
-    cls: "ua-2",
-    label: "Directeur photo",
-    avatar: "https://i.pravatar.cc/150?img=11",
   },
 ];
 
@@ -710,6 +662,10 @@ function getInitials(name) {
 
 function renderUsers() {
   const tbody = document.getElementById("user-tbody");
+  const juryUsers = users.filter((u) => u.role === "jury");
+  const maxAssigned = juryUsers.length
+    ? Math.max(...juryUsers.map((u) => u.assigned.length), 1)
+    : 1;
   tbody.innerHTML = users
     .map((u) => {
       const initials = getInitials(u.name);
@@ -717,9 +673,13 @@ function renderUsers() {
         <option value="jury" ${u.role === 'jury' ? 'selected' : ''}>⚖️ Jury</option>
         <option value="moderateur" ${u.role === 'moderateur' ? 'selected' : ''}>🛡️ Modérateur</option>
       </select>`;
+      const pct = u.role === "jury" ? Math.round((u.assigned.length / maxAssigned) * 100) : 0;
       const assignTxt =
         u.role === "jury"
-          ? `<span class="assign-count ${u.assigned.length === 0 ? "none" : ""}" onclick="openAssign(${u.id})">${u.assigned.length} film${u.assigned.length !== 1 ? "s" : ""} ✎</span>`
+          ? `<div class="assign-count ${u.assigned.length === 0 ? "none" : ""}" onclick="openAssign(${u.id})">
+               <span>${u.assigned.length} film${u.assigned.length !== 1 ? "s" : ""} ✎</span>
+               <div class="assign-bar-track"><div class="assign-bar-fill" style="width:${pct}%"></div></div>
+             </div>`
           : `<span style="color:var(--mist);font-size:0.75rem;">—</span>`;
       const tokenDisplay = u.active
         ? `<div class="token-col"><span class="token-val">${u.token}</span><button class="btn-icon" title="Copier le lien" onclick="showToast('Lien copié : https://jury.marsai.fr/access/${u.token}', 'ok')">📋</button><button class="btn-icon" title="Renvoyer par email" onclick="showToast('Email renvoyé à ${u.email}', 'ok')">📧</button></div>`
@@ -1122,10 +1082,9 @@ function renderAssignView(page) {
               : "alb-red";
             const badgeTxt = total === 0 ? "—" : total;
             const shadow = assigned
-              ? "0 0 0 2.5px var(--aurora),0 0 10px rgba(78,255,206,0.3)"
-              : total > 0 ? "0 0 0 2px rgba(78,255,206,0.2)"
+              ? "0 0 0 2.5px #4effce,0 0 12px rgba(78,255,206,0.5)"
               : "0 0 0 2px rgba(255,255,255,0.12)";
-            const opacity = assigned ? "1" : total > 0 ? "0.65" : "0.28";
+            const opacity = assigned ? "1" : "0.35";
             const initials = u.name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
             const tooltip = `${u.name} — ${total === 0 ? "aucun film assigné" : total + " film" + (total > 1 ? "s" : "") + " assigné" + (total > 1 ? "s" : "")}`;
             const checkMark = assigned ? `<span class="av-assigned-check">✓</span>` : "";
@@ -1997,6 +1956,11 @@ function openRepartirModal() {
   });
 
   // Rendu aperçu
+  const maxTotal = Math.max(...repartirPlan.map((p) => {
+    const u = users.find((x) => x.id === p.userId);
+    return u.assigned.length + p.newFilmIds.length;
+  }), 1);
+
   const preview = document.getElementById("repartir-preview");
   preview.innerHTML = repartirPlan
     .map((plan) => {
@@ -2004,19 +1968,19 @@ function openRepartirModal() {
       const current = u.assigned.length;
       const added = plan.newFilmIds.length;
       const total = current + added;
-      const loadStyle =
-        total <= 10
-          ? "color:var(--aurora)"
-          : total <= 20
-            ? "color:var(--solar)"
-            : "color:var(--coral)";
-      return `<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;">
-        <img src="${u.avatar}" alt="${u.name}" style="width:34px;height:34px;border-radius:8px;object-fit:cover;flex-shrink:0;">
+      const barPct = Math.round((total / maxTotal) * 100);
+      return `<div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;">
+        <img src="${u.avatar}" alt="${u.name}" style="width:38px;height:38px;border-radius:10px;object-fit:cover;flex-shrink:0;box-shadow:0 0 0 2px #4effce,0 0 10px rgba(78,255,206,0.25);">
         <div style="flex:1;min-width:0;">
-          <div style="font-size:0.82rem;font-weight:700;color:var(--white-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${u.name}</div>
-          <div style="font-size:0.72rem;color:var(--mist);">${current} actuel${current > 1 ? "s" : ""} + <span style="color:var(--aurora);">+${added} nouveau${added > 1 ? "x" : ""}</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;">
+            <span style="font-size:0.82rem;font-weight:700;color:var(--white-soft);">${u.name}</span>
+            <span style="font-family:var(--font-mono);font-size:0.82rem;font-weight:800;color:#4effce;">${total} films</span>
+          </div>
+          <div style="height:4px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden;">
+            <div style="height:100%;width:${barPct}%;background:linear-gradient(90deg,#4effce,#a8ffec);border-radius:2px;transition:width 0.4s ease;"></div>
+          </div>
+          <div style="font-size:0.68rem;color:var(--mist);margin-top:4px;">${current > 0 ? `${current} déjà assigné${current>1?"s":""} · ` : ""}+${added} nouveau${added>1?"x":""}</div>
         </div>
-        <div style="font-family:var(--font-mono);font-size:1.05rem;font-weight:800;${loadStyle};flex-shrink:0;">${total}</div>
       </div>`;
     })
     .join("");
