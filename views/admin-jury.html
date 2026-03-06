@@ -26,10 +26,10 @@
       </div>
 
       <div class="jury-identity">
-        <div class="avatar">ML</div>
+        <div class="avatar" id="sidebar-avatar">ML</div>
         <div class="identity-info">
-          <div class="name">Marie Lefebvre</div>
-          <div class="role">Présidente du Jury</div>
+          <div class="name" id="sidebar-name">Marie Lefebvre</div>
+          <div class="role" id="sidebar-role">Présidente du Jury</div>
         </div>
         <div class="online"></div>
       </div>
@@ -61,7 +61,7 @@
         <div class="nav-item" onclick="switchView('delib', this)">
           <span class="icon">⚖️</span>
           Délibération
-          <span class="nav-count count-neutral">10</span>
+          <span class="nav-count count-neutral" id="nav-delib-count">0</span>
         </div>
 
         <div class="nav-label" style="margin-top: 8px">Compte</div>
@@ -1047,42 +1047,44 @@ Thèmes intéressants mais traitement inégal — à peser lors de la délibéra
       <!-- ===================== -->
       <!-- VUE DÉLIBÉRATION     -->
       <!-- ===================== -->
+      <!-- ===================== -->
+      <!-- VUE DÉLIBÉRATION     -->
+      <!-- Phase 2 : vote collectif jury + admin → Top 5 finalistes -->
+      <!-- ===================== -->
       <div class="delib-view" id="view-delib">
+
+        <!-- En-tête -->
         <div class="delib-header">
           <div>
-            <h2>Délibération finale</h2>
+            <h2>Délibération · Top 5 Finalistes</h2>
           </div>
-          <button
-            class="export-btn"
-            onclick="showToast('Export CSV en cours...', 'warn')"
-          >
+          <button class="export-btn" onclick="showToast('Export CSV en cours...', 'warn')">
             📤 Exporter palmarès CSV
           </button>
         </div>
         <div class="delib-sub">
-          Décisions du jury · 4 membres · Films assignés par l'administrateur
+          Phase 2 · Vote collectif jury + admin · 5 finalistes à désigner parmi les 50 sélectionnés
         </div>
 
-        <!-- Switcher juré connecté -->
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:10px 16px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:10px;flex-wrap:wrap;">
-          <span style="font-size:0.68rem;font-weight:700;color:var(--mist);text-transform:uppercase;letter-spacing:0.08em;white-space:nowrap;">Voter en tant que :</span>
-          <div id="delib-juror-switcher" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
-        </div>
-
-        <!-- Bannière incitative -->
-        <div id="delib-incentive" style="margin-bottom:12px;"></div>
-
-        <!-- 2 phases de sélection -->
-        <div class="phase-tabs">
-          <div class="ptab active" data-phase="1" onclick="setPhaseTab(this, 1)">
-            Phase 1 · Présélection Top 50 · 12/12/26
+        <!-- Identité juré connecté (maquette : Marie Lefebvre) -->
+        <div class="d2-juror-bar">
+          <div class="d2-mini-avatar vote-avatar va-1" style="width:32px;height:32px;font-size:0.65rem;">ML</div>
+          <div>
+            <div style="font-size:0.82rem;font-weight:700;color:var(--white-soft);">Marie Lefebvre</div>
+            <div style="font-size:0.65rem;color:var(--mist);">Présidente du Jury · connectée</div>
           </div>
-          <div class="ptab ptab-2" onclick="setPhaseTab(this, 2)">
-            Phase 2 · Finale Top 5 · Date à confirmer
-          </div>
+          <div style="margin-left:auto;width:8px;height:8px;border-radius:50%;background:var(--aurora);box-shadow:0 0 6px var(--aurora);"></div>
         </div>
 
-        <table class="delib-table" id="delib-table"></table>
+        <!-- Ma progression de vote -->
+        <div id="delib-progress" style="margin-bottom:14px;"></div>
+
+        <!-- Participation du jury -->
+        <div id="delib-participation" style="margin-bottom:20px;"></div>
+
+        <!-- Corps : liste films + podium live -->
+        <div id="delib-body" class="d2-body-grid"></div>
+
       </div>
     </div>
     <!-- /main -->

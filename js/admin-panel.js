@@ -635,30 +635,6 @@ let users = [
     avatar: "https://i.pravatar.cc/150?img=32",
   },
   {
-    id: 8,
-    name: "Elena Petrov",
-    email: "e.petrov@marsai.ru",
-    role: "jury",
-    active: true,
-    token: "EPV-7K2R-J6M",
-    assigned: [],
-    cls: "ua-2",
-    label: "Compositrice",
-    avatar: "https://i.pravatar.cc/150?img=29",
-  },
-  {
-    id: 9,
-    name: "Yuki Nakamura",
-    email: "y.nakamura@marsai.jp",
-    role: "jury",
-    active: true,
-    token: "YNK-1P8T-V5B",
-    assigned: [],
-    cls: "ua-3",
-    label: "Réalisatrice",
-    avatar: "https://i.pravatar.cc/150?img=56",
-  },
-  {
     id: 10,
     name: "Carlos Ruiz",
     email: "c.ruiz@marsai.es",
@@ -669,30 +645,6 @@ let users = [
     cls: "ua-4",
     label: "Chef opérateur",
     avatar: "https://i.pravatar.cc/150?img=18",
-  },
-  {
-    id: 11,
-    name: "Priya Mehta",
-    email: "p.mehta@marsai.in",
-    role: "jury",
-    active: true,
-    token: "PMT-6A1N-X2V",
-    assigned: [],
-    cls: "ua-1",
-    label: "Scénariste",
-    avatar: "https://i.pravatar.cc/150?img=36",
-  },
-  {
-    id: 12,
-    name: "Omar Diallo",
-    email: "o.diallo@marsai.sn",
-    role: "jury",
-    active: true,
-    token: "ODL-3S7F-L9Z",
-    assigned: [],
-    cls: "ua-2",
-    label: "Directeur photo",
-    avatar: "https://i.pravatar.cc/150?img=11",
   },
 ];
 
@@ -710,6 +662,10 @@ function getInitials(name) {
 
 function renderUsers() {
   const tbody = document.getElementById("user-tbody");
+  const juryUsers = users.filter((u) => u.role === "jury");
+  const maxAssigned = juryUsers.length
+    ? Math.max(...juryUsers.map((u) => u.assigned.length), 1)
+    : 1;
   tbody.innerHTML = users
     .map((u) => {
       const initials = getInitials(u.name);
@@ -717,9 +673,13 @@ function renderUsers() {
         <option value="jury" ${u.role === 'jury' ? 'selected' : ''}>⚖️ Jury</option>
         <option value="moderateur" ${u.role === 'moderateur' ? 'selected' : ''}>🛡️ Modérateur</option>
       </select>`;
+      const pct = u.role === "jury" ? Math.round((u.assigned.length / maxAssigned) * 100) : 0;
       const assignTxt =
         u.role === "jury"
-          ? `<span class="assign-count ${u.assigned.length === 0 ? "none" : ""}" onclick="openAssign(${u.id})">${u.assigned.length} film${u.assigned.length !== 1 ? "s" : ""} ✎</span>`
+          ? `<div class="assign-count ${u.assigned.length === 0 ? "none" : ""}" onclick="openAssign(${u.id})">
+               <span>${u.assigned.length} film${u.assigned.length !== 1 ? "s" : ""} ✎</span>
+               <div class="assign-bar-track"><div class="assign-bar-fill" style="width:${pct}%"></div></div>
+             </div>`
           : `<span style="color:var(--mist);font-size:0.75rem;">—</span>`;
       const tokenDisplay = u.active
         ? `<div class="token-col"><span class="token-val">${u.token}</span><button class="btn-icon" title="Copier le lien" onclick="showToast('Lien copié : https://jury.marsai.fr/access/${u.token}', 'ok')">📋</button><button class="btn-icon" title="Renvoyer par email" onclick="showToast('Email renvoyé à ${u.email}', 'ok')">📧</button></div>`
@@ -924,7 +884,7 @@ function resetInviteModal() {
   document.getElementById("opt-modo")?.classList.remove("selected");
 }
 
-/* ── ASSIGNATION DIRECTE (clic avatar) ── */
+/* ── ASSIGNATION DIRECTE (clic avatar — assigne ou désassigne) ── */
 function toggleFilmJury(filmId, userId) {
   const u = users.find((x) => x.id === userId);
   const f = films.find((x) => x.id === filmId);
@@ -944,8 +904,7 @@ function toggleFilmJury(filmId, userId) {
 /* ── VUE ASSIGNATION (médiathèque) ── */
 const FILMS_PER_PAGE = 20;
 let currentPage = 1;
-let currentFilmTab = "pending";
-let currentViewMode = "list";
+let currentViewMode = "grid";
 
 function setViewMode(mode) {
   currentViewMode = mode;
@@ -958,26 +917,6 @@ function setViewMode(mode) {
   renderAssignView();
 }
 
-function switchFilmTab(tab) {
-  currentFilmTab = tab;
-  currentPage = 1;
-  filmSearchQuery = "";
-  filmCountryFilters = [];
-  updateCountryBtn();
-  const searchEl = document.getElementById("film-search");
-  if (searchEl) searchEl.value = "";
-  document
-    .getElementById("tab-pending")
-    .classList.toggle("active", tab === "pending");
-  document
-    .getElementById("tab-assigned")
-    .classList.toggle("active", tab === "assigned");
-  renderAssignView();
-  // Remonter en haut de la liste
-  document
-    .getElementById("view-assign")
-    .scrollIntoView({ behavior: "smooth", block: "start" });
-}
 
 function renderAssignView(page) {
   if (page !== undefined) currentPage = page;
@@ -997,20 +936,31 @@ function renderAssignView(page) {
   // Rafraîchir les pills pays
   renderCountryFilters();
 
-  // Séparer films selon l'onglet
-  const pending = filteredFilms.filter(
+  // Stats assignation
+  const nonAssigned = filteredFilms.filter(
     (f) => !juryUsers.some((u) => u.assigned.includes(f.id)),
   );
-  const assigned = filteredFilms.filter((f) =>
-    juryUsers.some((u) => u.assigned.includes(f.id)),
+  const assignedFilms = filteredFilms.filter(
+    (f) => juryUsers.some((u) => u.assigned.includes(f.id)),
   );
 
-  // Mettre à jour les compteurs des onglets
-  document.getElementById("count-pending").textContent = pending.length;
-  document.getElementById("count-assigned").textContent = assigned.length;
-  document.getElementById("count-assign").textContent = pending.length;
+  // Appliquer le filtre assignation
+  const filmList = filmAssignFilter === "unassigned" ? nonAssigned
+                 : filmAssignFilter === "assigned"   ? assignedFilms
+                 : filteredFilms;
 
-  const filmList = currentFilmTab === "pending" ? pending : assigned;
+  // Mise à jour des compteurs sur les boutons filtre
+  const btnUCount = document.getElementById("afilter-unassigned-count");
+  const btnACount = document.getElementById("afilter-assigned-count");
+  if (btnUCount) btnUCount.textContent = `(${nonAssigned.length})`;
+  if (btnACount) btnACount.textContent = `(${assignedFilms.length})`;
+
+  // Compteur nav + info bar
+  document.getElementById("count-assign").textContent = nonAssigned.length || "✓";
+  const infoEl = document.getElementById("films-total-info");
+  if (infoEl) {
+    infoEl.textContent = `${filteredFilms.length} film${filteredFilms.length > 1 ? "s" : ""} · ${assignedFilms.length} assigné${assignedFilms.length > 1 ? "s" : ""} · ${nonAssigned.length} en attente`;
+  }
   const totalPages = Math.ceil(filmList.length / FILMS_PER_PAGE);
   if (currentPage > totalPages) currentPage = Math.max(1, totalPages);
   const pageFilms = filmList.slice(
@@ -1029,6 +979,10 @@ function renderAssignView(page) {
     if (cardsWrap) cardsWrap.style.display = "none";
     emptyEl.innerHTML = filmSearchQuery
       ? `<div style="font-size:2rem;margin-bottom:12px;">🔍</div><div style="font-family:var(--font-display);font-size:1rem;font-weight:800;color:var(--white-soft);margin-bottom:6px;">Aucun résultat pour "${filmSearchQuery}"</div><div style="font-size:0.78rem;color:var(--mist);">Essayez un autre titre, réalisateur ou pays.</div>`
+      : filmAssignFilter === "assigned"
+      ? `<div style="font-size:2rem;margin-bottom:12px;">📋</div><div style="font-family:var(--font-display);font-size:1rem;font-weight:800;color:var(--white-soft);margin-bottom:6px;">Aucun film assigné pour l'instant</div><div style="font-size:0.78rem;color:var(--mist);">Utilisez "Répartir équitablement" ou assignez manuellement.</div>`
+      : filmAssignFilter === "unassigned"
+      ? `<div style="font-size:3rem;margin-bottom:16px;">🎉</div><div style="font-family:var(--font-display);font-size:1.1rem;font-weight:800;color:var(--white-soft);margin-bottom:8px;">Tous les films sont assignés !</div><div style="font-size:0.8rem;color:var(--mist);">Retrouvez-les dans l'onglet "Assignés".</div>`
       : `<div style="font-size:3rem;margin-bottom:16px;">🎉</div><div style="font-family:var(--font-display);font-size:1.1rem;font-weight:800;color:var(--white-soft);margin-bottom:8px;">Tous les films sont assignés !</div><div style="font-size:0.8rem;color:var(--mist);">Retrouvez-les dans l'onglet "Assignés".</div>`;
     emptyEl.style.display = "block";
     document.getElementById("pagination").innerHTML = "";
@@ -1118,26 +1072,30 @@ function renderAssignView(page) {
         const isAssigned = nAssigned > 0;
         const nComments = f.comments ? Object.keys(f.comments).length : 0;
         const pal = cardPalettes[f.id % cardPalettes.length];
-        const assignedBadge = isAssigned
-          ? `<div class="assigned-badge ab-ok">✓ ${nAssigned} juré${nAssigned > 1 ? "s" : ""}</div>`
-          : `<div class="assigned-badge ab-none">Non assigné</div>`;
-        const avatars = juryUsers
-          .map((u) => {
+        // Grille avatars jury (clic = assigner/désassigner)
+        const avatars = juryUsers.map((u) => {
             const assigned = u.assigned.includes(f.id);
             const total = u.assigned.length;
-            const badgeCls =
-              total <= 5 ? "alb-green" : total <= 10 ? "alb-orange" : "alb-red";
+            const badgeCls = total === 0 ? "alb-empty"
+              : total <= 5 ? "alb-green"
+              : total <= 10 ? "alb-orange"
+              : "alb-red";
+            const badgeTxt = total === 0 ? "—" : total;
             const shadow = assigned
-              ? "0 0 0 2.5px var(--aurora),0 0 10px rgba(78,255,206,0.3)"
+              ? "0 0 0 2.5px #4effce,0 0 12px rgba(78,255,206,0.5)"
               : "0 0 0 2px rgba(255,255,255,0.12)";
-            const opacity = assigned ? "1" : "0.3";
-            return `<div class="av-load-wrap" onclick="toggleFilmJury(${f.id}, ${u.id})" title="${u.name}">
-            <img src="${u.avatar}" alt="${u.name}" style="box-shadow:${shadow};opacity:${opacity};" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='${opacity}'">
-            <span class="av-load-badge ${badgeCls}">${total}</span>
-          </div>`;
-          })
-          .join("");
-        return `<div class="film-card" style="--card-accent-color:${pal.accent}22;">
+            const opacity = assigned ? "1" : "0.35";
+            const initials = u.name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
+            const tooltip = `${u.name} — ${total === 0 ? "aucun film assigné" : total + " film" + (total > 1 ? "s" : "") + " assigné" + (total > 1 ? "s" : "")}`;
+            const checkMark = assigned ? `<span class="av-assigned-check">✓</span>` : "";
+            return `<div class="av-load-wrap ${assigned ? "is-assigned" : ""}" onclick="toggleFilmJury(${f.id}, ${u.id})" title="${tooltip}">
+              ${checkMark}
+              <img src="${u.avatar}" alt="${u.name}" style="box-shadow:${shadow};opacity:${opacity};" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='${opacity}'">
+              <span class="av-load-badge ${badgeCls}">${badgeTxt}</span>
+              <span class="av-load-name">${initials}</span>
+            </div>`;
+          }).join("");
+        return `<div class="film-card${isAssigned ? " fc-jury-assigned" : ""}" style="--card-accent-color:${pal.accent}22;">
           <div class="film-card-accent" style="background:${pal.accent};opacity:0.7;"></div>
           <div class="film-thumb" onclick="playFilm(${f.id})" style="background:${pal.bg};">
             <video src="../assets/video.mp4" muted preload="none" id="vid-${f.id}"></video>
@@ -1147,12 +1105,11 @@ function renderAssignView(page) {
               <div class="play-btn">▶</div>
             </div>
             <div class="film-num-badge">#${String(f.id).padStart(3, "0")}</div>
-            ${assignedBadge}
           </div>
           <div class="film-body">
             <div class="film-title">${f.title}</div>
             <div class="film-meta">${f.author} · ${flags[f.country] || ""} ${f.country}</div>
-            <div style="display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap;">${avatars}</div>
+            <div class="fc-avatars-row">${avatars}</div>
             ${
               nComments > 0
                 ? `<button class="film-comments-btn" onclick="openCommentsModal(${f.id})">💬 ${nComments} commentaire${nComments > 1 ? "s" : ""}</button>`
@@ -1213,26 +1170,7 @@ function renderAssignView(page) {
 }
 
 function playFilm(filmId) {
-  const vid = document.getElementById("vid-" + filmId);
-  if (!vid) return;
-  const thumb = vid.closest(".film-thumb");
-  if (vid.paused) {
-    // Stopper + reset tous les autres
-    document.querySelectorAll(".film-thumb video").forEach((v) => {
-      if (v !== vid) {
-        v.pause();
-        v.classList.remove("playing");
-        v.closest(".film-thumb").classList.remove("playing");
-      }
-    });
-    vid.play();
-    vid.classList.add("playing");
-    thumb.classList.add("playing");
-  } else {
-    vid.pause();
-    vid.classList.remove("playing");
-    thumb.classList.remove("playing");
-  }
+  openVideoModal(filmId);
 }
 
 /* ── VUES ── */
@@ -1333,6 +1271,17 @@ const flags = {
 /* ── RECHERCHE & FILTRE FILMS ── */
 let filmSearchQuery = "";
 let filmCountryFilters = []; // multi-sélection
+let filmAssignFilter = "all"; // "all" | "unassigned" | "assigned"
+
+function setAssignFilter(val) {
+  filmAssignFilter = val;
+  ["all", "unassigned", "assigned"].forEach((v) => {
+    const btn = document.getElementById("afilter-" + v);
+    if (btn) btn.classList.toggle("active", v === val);
+  });
+  currentPage = 1;
+  renderAssignView();
+}
 
 function filterFilms(query) {
   filmSearchQuery = query.toLowerCase().trim();
@@ -1793,11 +1742,25 @@ function handleHeroVideo(input) {
   const file = input.files[0];
   if (!file) return;
   const url = URL.createObjectURL(file);
-  const preview = document.querySelector(".video-preview video");
-  const label = document.querySelector(".video-preview-label");
-  preview.src = url;
-  label.textContent = "⏳ Nouvelle vidéo — " + file.name;
+  const preview = document.getElementById("sa-hero-video-preview");
+  if (preview) {
+    preview.src = url;
+    preview.play().catch(() => {});
+  }
+  const badge = document.getElementById("sa-video-badge");
+  if (badge) badge.innerHTML = `<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" fill="rgba(245,230,66,0.2)" stroke="#f5e642" stroke-width="1"/></svg> ${file.name} · En attente`;
   showToast("Vidéo chargée — cliquez sur Enregistrer", "warn");
+}
+
+function saPreviewFullscreen() {
+  const vid = document.getElementById("sa-hero-video-preview");
+  if (!vid) return;
+  if (document.fullscreenElement) {
+    document.exitFullscreen();
+  } else {
+    const stage = vid.closest(".sa-hero-stage");
+    (stage.requestFullscreen || stage.webkitRequestFullscreen || stage.mozRequestFullScreen).call(stage);
+  }
 }
 
 /* ── TOAST ── */
@@ -1988,6 +1951,11 @@ function openRepartirModal() {
   });
 
   // Rendu aperçu
+  const maxTotal = Math.max(...repartirPlan.map((p) => {
+    const u = users.find((x) => x.id === p.userId);
+    return u.assigned.length + p.newFilmIds.length;
+  }), 1);
+
   const preview = document.getElementById("repartir-preview");
   preview.innerHTML = repartirPlan
     .map((plan) => {
@@ -1995,19 +1963,19 @@ function openRepartirModal() {
       const current = u.assigned.length;
       const added = plan.newFilmIds.length;
       const total = current + added;
-      const loadStyle =
-        total <= 10
-          ? "color:var(--aurora)"
-          : total <= 20
-            ? "color:var(--solar)"
-            : "color:var(--coral)";
-      return `<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;">
-        <img src="${u.avatar}" alt="${u.name}" style="width:34px;height:34px;border-radius:8px;object-fit:cover;flex-shrink:0;">
+      const barPct = Math.round((total / maxTotal) * 100);
+      return `<div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;">
+        <img src="${u.avatar}" alt="${u.name}" style="width:38px;height:38px;border-radius:10px;object-fit:cover;flex-shrink:0;box-shadow:0 0 0 2px #4effce,0 0 10px rgba(78,255,206,0.25);">
         <div style="flex:1;min-width:0;">
-          <div style="font-size:0.82rem;font-weight:700;color:var(--white-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${u.name}</div>
-          <div style="font-size:0.72rem;color:var(--mist);">${current} actuel${current > 1 ? "s" : ""} + <span style="color:var(--aurora);">+${added} nouveau${added > 1 ? "x" : ""}</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;">
+            <span style="font-size:0.82rem;font-weight:700;color:var(--white-soft);">${u.name}</span>
+            <span style="font-family:var(--font-mono);font-size:0.82rem;font-weight:800;color:#4effce;">${total} films</span>
+          </div>
+          <div style="height:4px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden;">
+            <div style="height:100%;width:${barPct}%;background:linear-gradient(90deg,#4effce,#a8ffec);border-radius:2px;transition:width 0.4s ease;"></div>
+          </div>
+          <div style="font-size:0.68rem;color:var(--mist);margin-top:4px;">${current > 0 ? `${current} déjà assigné${current>1?"s":""} · ` : ""}+${added} nouveau${added>1?"x":""}</div>
         </div>
-        <div style="font-family:var(--font-mono);font-size:1.05rem;font-weight:800;${loadStyle};flex-shrink:0;">${total}</div>
       </div>`;
     })
     .join("");
@@ -3034,7 +3002,10 @@ function renderSelection() {
           <td>${voteLabel}</td>
           <td><div style="display:flex;align-items:center;gap:3px;">${juryAv}</div></td>
           <td>${finalBtn}</td>
-          <td><button onclick="event.stopPropagation();openVideoModal(${f.id})" style="padding:4px 10px;border-radius:6px;font-size:0.68rem;font-weight:600;cursor:pointer;border:1px solid rgba(78,255,206,0.25);background:rgba(78,255,206,0.06);color:var(--aurora);">▶ Voir</button></td>
+          <td style="white-space:nowrap;">
+            <button onclick="event.stopPropagation();openVideoModal(${f.id})" style="padding:4px 10px;border-radius:6px;font-size:0.68rem;font-weight:600;cursor:pointer;border:1px solid rgba(78,255,206,0.25);background:rgba(78,255,206,0.06);color:var(--aurora);">▶ Voir</button>
+            <button onclick="event.stopPropagation();openDirectorEmail(${f.id},'selection')" style="margin-left:4px;padding:4px 10px;border-radius:6px;font-size:0.68rem;font-weight:600;cursor:pointer;border:1px solid rgba(192,132,252,0.25);background:rgba(192,132,252,0.06);color:var(--lavande);" title="Envoyer un email au réalisateur">📧</button>
+          </td>
           <td><button onclick="event.stopPropagation();adminDecide(${f.id},'valide')" style="padding:4px 10px;border-radius:6px;font-size:0.68rem;font-weight:600;cursor:pointer;border:1px solid rgba(255,107,107,0.2);background:rgba(255,107,107,0.04);color:var(--coral);">✕</button></td>
         </tr>`;
       }).join("");
@@ -3080,7 +3051,7 @@ function renderSelection() {
           <td><div style="font-weight:700;font-size:0.9rem;">${f.title}</div><div style="font-size:0.72rem;color:var(--mist);">${f.author} · ${flags[f.country] || ""} ${f.country || ""}</div></td>
           <td>${voteLabel}</td>
           <td><div style="display:flex;align-items:center;gap:3px;">${juryAv}</div></td>
-          <td></td>
+          <td><button onclick="event.stopPropagation();openDirectorEmail(${f.id},'finaliste')" style="padding:4px 12px;border-radius:6px;font-size:0.68rem;font-weight:600;cursor:pointer;border:1px solid rgba(192,132,252,0.3);background:rgba(192,132,252,0.08);color:var(--lavande);" title="Notifier le réalisateur de sa sélection en finale">📧 Notifier</button></td>
           <td><button onclick="event.stopPropagation();openVideoModal(${f.id})" style="padding:4px 10px;border-radius:6px;font-size:0.68rem;font-weight:600;cursor:pointer;border:1px solid rgba(78,255,206,0.25);background:rgba(78,255,206,0.06);color:var(--aurora);">▶ Voir</button></td>
           <td><button onclick="event.stopPropagation();toggleFinalist(${f.id})" style="padding:4px 10px;border-radius:6px;font-size:0.68rem;font-weight:600;cursor:pointer;border:1px solid rgba(255,107,107,0.2);background:rgba(255,107,107,0.04);color:var(--coral);">✕ Retirer</button></td>
         </tr>`;
@@ -3175,12 +3146,54 @@ function renderSelection() {
         })
         .join("");
 
-      const admBtns = `<div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start;">
-      <button onclick="event.stopPropagation();adminDecide(${f.id},'valide')" style="padding:5px 12px;border-radius:7px;font-size:0.72rem;font-weight:700;cursor:pointer;border:1.5px solid;transition:all .18s;
-        ${adm === "valide" ? "background:rgba(78,255,206,0.2);border-color:rgba(78,255,206,0.6);color:var(--aurora);box-shadow:0 0 12px rgba(78,255,206,0.15);" : "background:rgba(78,255,206,0.05);border-color:rgba(78,255,206,0.15);color:var(--aurora);"}">
-        ${adm === "valide" ? "✓ Sélectionné" : "Sélectionner"}</button>
-      <button onclick="event.stopPropagation();openVideoModal(${f.id})" style="padding:4px 12px;border-radius:7px;font-size:0.7rem;font-weight:600;cursor:pointer;border:1.5px solid rgba(78,255,206,0.25);background:rgba(78,255,206,0.06);color:var(--aurora);display:flex;align-items:center;gap:5px;transition:all .18s;" onmouseover="this.style.background='rgba(78,255,206,0.14)'" onmouseout="this.style.background='rgba(78,255,206,0.06)'">▶ Voir le film</button>
-    </div>`;
+      const emailType = adm === "valide" ? "selection" : "info";
+      const isSelected = adm === "valide";
+      const admBtns = `<div style="display:flex;flex-direction:column;gap:5px;align-items:stretch;min-width:130px;">
+        <button onclick="event.stopPropagation();adminDecide(${f.id},'valide')" style="
+          display:flex;align-items:center;gap:7px;
+          padding:7px 12px;border-radius:8px;font-size:0.72rem;font-weight:800;
+          cursor:pointer;transition:all .18s;font-family:var(--font-display);
+          border:1.5px solid ${isSelected ? "rgba(78,255,206,0.7)" : "rgba(78,255,206,0.2)"};
+          background:${isSelected ? "rgba(78,255,206,0.18)" : "rgba(78,255,206,0.05)"};
+          color:var(--aurora);
+          box-shadow:${isSelected ? "0 0 14px rgba(78,255,206,0.18),inset 0 0 8px rgba(78,255,206,0.06)" : "none"};"
+          onmouseover="if(!${isSelected})this.style.background='rgba(78,255,206,0.12)'"
+          onmouseout="if(!${isSelected})this.style.background='rgba(78,255,206,0.05)'">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="flex-shrink:0">
+            ${isSelected
+              ? '<path d="M2 6l3 3 5-5" stroke="#4effce" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>'
+              : '<circle cx="6" cy="6" r="4.5" stroke="#4effce" stroke-width="1.4"/><path d="M6 4v4M4 6h4" stroke="#4effce" stroke-width="1.4" stroke-linecap="round"/>'}
+          </svg>
+          ${isSelected ? "Sélectionné" : "Sélectionner"}
+        </button>
+        <button onclick="event.stopPropagation();openVideoModal(${f.id})" style="
+          display:flex;align-items:center;gap:7px;
+          padding:7px 12px;border-radius:8px;font-size:0.72rem;font-weight:700;
+          cursor:pointer;transition:all .18s;font-family:var(--font-display);
+          border:1.5px solid rgba(96,165,250,0.22);
+          background:rgba(96,165,250,0.06);color:#60a5fa;"
+          onmouseover="this.style.background='rgba(96,165,250,0.14)';this.style.borderColor='rgba(96,165,250,0.45)'"
+          onmouseout="this.style.background='rgba(96,165,250,0.06)';this.style.borderColor='rgba(96,165,250,0.22)'">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="flex-shrink:0">
+            <polygon points="3,2 10,6 3,10" fill="#60a5fa"/>
+          </svg>
+          Voir le film
+        </button>
+        <button onclick="event.stopPropagation();openDirectorEmail(${f.id},'${emailType}')" style="
+          display:flex;align-items:center;gap:7px;
+          padding:7px 12px;border-radius:8px;font-size:0.72rem;font-weight:700;
+          cursor:pointer;transition:all .18s;font-family:var(--font-display);
+          border:1.5px solid rgba(192,132,252,0.22);
+          background:rgba(192,132,252,0.06);color:var(--lavande);"
+          onmouseover="this.style.background='rgba(192,132,252,0.14)';this.style.borderColor='rgba(192,132,252,0.45)'"
+          onmouseout="this.style.background='rgba(192,132,252,0.06)';this.style.borderColor='rgba(192,132,252,0.22)'">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="flex-shrink:0">
+            <rect x="1" y="2.5" width="10" height="7" rx="1.5" stroke="#c084fc" stroke-width="1.3"/>
+            <path d="M1 4l5 3.5L11 4" stroke="#c084fc" stroke-width="1.3" stroke-linecap="round"/>
+          </svg>
+          Email réalisateur
+        </button>
+      </div>`;
 
       const commEntries = Object.entries(f.comments || {});
       const gridCols = nTk > 0 ? "1fr 1fr 1fr" : "1fr 1fr";
@@ -3288,7 +3301,6 @@ function renderSelection() {
       </td>
     </tr>`;
 
-      const isSelected = adm === "valide";
       const isRefused  = adm === "refuse";
       const rowBg      = isSelected ? "rgba(78,255,206,0.04)" : isRefused ? "rgba(255,107,107,0.03)" : "";
       const rowOpacity = isSelected ? "0.45" : "1";
@@ -3825,6 +3837,16 @@ function openVideoModal(filmId) {
   const vid = document.getElementById("vid-modal-video");
   vid.currentTime = 0;
   document.getElementById("vid-modal-overlay").classList.add("open");
+  vid.play().catch(() => {});
+}
+
+function toggleVideoFullscreen() {
+  const vid = document.getElementById("vid-modal-video");
+  if (!document.fullscreenElement) {
+    (vid.requestFullscreen || vid.webkitRequestFullscreen || vid.mozRequestFullScreen).call(vid);
+  } else {
+    (document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen).call(document);
+  }
 }
 
 function closeVideoModal(e) {
@@ -3934,9 +3956,60 @@ function closeEmailModal(e) {
 
 function sendEmailAction() {
   if (!pendingEmailAction) return;
+  // Email direct réalisateur (sans ticket)
+  if (pendingEmailAction.filmId !== undefined) {
+    const f = films.find(x => x.id === pendingEmailAction.filmId);
+    closeEmailModal();
+    showToast(`📧 Email envoyé à ${f ? f.author : 'le réalisateur'}`, 'ok');
+    pendingEmailAction = null;
+    return;
+  }
   const { tkId, action } = pendingEmailAction;
   closeEmailModal();
   selActTicket(tkId, action);
+}
+
+/* ── Email direct au réalisateur (sans ticket) ── */
+function openDirectorEmail(filmId, type) {
+  const f = films.find(x => x.id === filmId);
+  if (!f) return;
+  pendingEmailAction = { filmId, type };
+
+  const email = f.author
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, '.') + '@exemple.fr';
+
+  const tpls = {
+    selection: {
+      subject: 'marsAI 2026 — Félicitations ! Votre film est sélectionné Top 50',
+      body: `Bonjour ${f.author},\n\nNous avons le plaisir de vous informer que votre film "${f.title}" a été sélectionné dans le Top 50 du festival marsAI 2026.\n\nVotre œuvre sera soumise à l'évaluation du jury dans les prochaines semaines. Vous recevrez une notification dès que la délibération sera terminée.\n\nMerci de votre confiance et bonne continuation.\n\nCordialement,\nL'équipe marsAI 2026`,
+    },
+    finaliste: {
+      subject: 'marsAI 2026 — Votre film est finaliste 🏆',
+      body: `Bonjour ${f.author},\n\nFélicitations !\n\nNous avons l'honneur de vous annoncer que votre film "${f.title}" a été sélectionné parmi les 5 finalistes du festival marsAI 2026.\n\nVous êtes officiellement invité(e) à la cérémonie de remise des prix qui se tiendra à Marseille. Des informations pratiques vous seront communiquées prochainement (lieu exact, date, accréditations).\n\nEncore toutes nos félicitations pour votre travail remarquable.\n\nCordialement,\nL'équipe marsAI 2026`,
+    },
+    revision: {
+      subject: 'marsAI 2026 — Votre candidature · Révision souhaitée',
+      body: `Bonjour ${f.author},\n\nNous avons bien visionné votre film "${f.title}" soumis au festival marsAI 2026.\n\nSuite à l'examen de votre œuvre par notre comité, nous souhaiterions que vous apportiez certaines modifications avant la sélection définitive.\n\n[Précisez ici les modifications souhaitées]\n\nMerci de soumettre une version révisée dans un délai de 7 jours via votre espace personnel.\n\nCordialement,\nL'équipe marsAI 2026`,
+    },
+    refuse: {
+      subject: 'marsAI 2026 — Décision de sélection · Film non retenu',
+      body: `Bonjour ${f.author},\n\nNous vous remercions pour votre participation au festival marsAI 2026 et la confiance que vous nous accordez.\n\nAprès délibération du comité de sélection, votre film "${f.title}" n'a malheureusement pas été retenu pour cette édition.\n\nCette décision n'est en aucun cas un jugement définitif sur la qualité de votre travail. Nous espérons vous voir participer aux prochaines éditions du festival.\n\nCordialement,\nL'équipe marsAI 2026`,
+    },
+    info: {
+      subject: `marsAI 2026 — Information concernant votre film`,
+      body: `Bonjour ${f.author},\n\n`,
+    },
+  };
+
+  const tpl = tpls[type] || tpls.info;
+  document.getElementById('em-ticket-info').textContent = `${f.title} · ${f.author}`;
+  document.getElementById('em-to').textContent = email;
+  document.getElementById('em-subject').value = tpl.subject;
+  document.getElementById('em-body').value = tpl.body;
+  document.getElementById('email-modal-overlay').classList.add('open');
 }
 
 /* ════════════════════════════════════════════
