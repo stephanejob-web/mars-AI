@@ -455,6 +455,13 @@
           </div>
         </div>
 
+        <!-- Filtre assignation -->
+        <div style="display:flex;gap:4px;margin-bottom:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:3px;width:fit-content;">
+          <button class="vmt-btn active" id="afilter-all" onclick="setAssignFilter('all')">Tous</button>
+          <button class="vmt-btn" id="afilter-unassigned" onclick="setAssignFilter('unassigned')">Non assignés <span id="afilter-unassigned-count" style="font-size:0.7rem;opacity:0.6;margin-left:2px;"></span></button>
+          <button class="vmt-btn" id="afilter-assigned" onclick="setAssignFilter('assigned')">Assignés <span id="afilter-assigned-count" style="font-size:0.7rem;opacity:0.6;margin-left:2px;"></span></button>
+        </div>
+
         <!-- Barre toolbar vue unique -->
         <div class="tabs-toolbar">
           <div class="film-tabs-info">
