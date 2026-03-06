@@ -297,16 +297,18 @@ nav.nav-scrolled .lang-btn {
 .hero::after {
   content: '';
   position: absolute;
-  bottom: 0;
+  bottom: -1px;
   left: 0;
   right: 0;
-  height: 220px;
+  height: 350px;
   background: linear-gradient(
     to bottom,
     transparent 0%,
-    rgba(13, 18, 50, 0.3) 30%,
-    rgba(13, 18, 50, 0.6) 60%,
-    rgba(13, 18, 50, 0.85) 100%
+    rgba(20, 26, 66, 0.2) 20%,
+    rgba(20, 26, 66, 0.5) 40%,
+    rgba(20, 26, 66, 0.8) 60%,
+    #141A42 80%,
+    #141A42 100%
   );
   z-index: 1;
   pointer-events: none;
@@ -688,10 +690,30 @@ section {
   position: relative;
   padding: 0 60px;
 }
+section:not(.hero) {
+  z-index: 1;
+}
+section:not(.hero):not(.concept):not(.gallery-section):not(.films-cinema-section) {
+  margin-top: -40px;
+  padding-top: 40px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 80px, black calc(100% - 80px), transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 80px, black calc(100% - 80px), transparent);
+}
+.gallery-section {
+  margin-top: -40px;
+  padding-top: 40px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 80px);
+  mask-image: linear-gradient(to bottom, transparent, black 80px);
+}
+.films-cinema-section {
+  -webkit-mask-image: linear-gradient(to bottom, black, black calc(100% - 80px), transparent);
+  mask-image: linear-gradient(to bottom, black, black calc(100% - 80px), transparent);
+}
+
 .section-inner {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 100px 0;
+  padding: 80px 0;
 }
 .section-label {
   font-size: 1.3rem;
@@ -779,12 +801,12 @@ section {
   height: auto;
   filter: brightness(1.05) saturate(1.1);
   mask-image:
-    radial-gradient(ellipse 85% 70% at 55% 35%, #000 45%, transparent 75%),
-    linear-gradient(to bottom, #000 55%, transparent 85%),
+    radial-gradient(ellipse 85% 70% at 55% 40%, #000 45%, transparent 75%),
+    linear-gradient(to bottom, transparent, #000 20%, #000 55%, transparent 85%),
     linear-gradient(to right, transparent, #000 15%, #000 100%);
   -webkit-mask-image:
-    radial-gradient(ellipse 85% 70% at 55% 35%, #000 45%, transparent 75%),
-    linear-gradient(to bottom, #000 55%, transparent 85%),
+    radial-gradient(ellipse 85% 70% at 55% 40%, #000 45%, transparent 75%),
+    linear-gradient(to bottom, transparent, #000 20%, #000 55%, transparent 85%),
     linear-gradient(to right, transparent, #000 15%, #000 100%);
   mask-composite: intersect;
   -webkit-mask-composite: source-in;
@@ -798,13 +820,7 @@ section {
   50%      { opacity: 1; transform: translateX(-50%) scale(1.1); }
 }
 .concept::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(78,255,206,0.3), transparent);
-  transform: scaleX(0);
-  animation: line-reveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+  display: none;
 }
 @keyframes line-reveal {
   to { transform: scaleX(1); }
@@ -1344,7 +1360,7 @@ section {
   position: relative;
   overflow: hidden;
   background: url('../assets/view-3d-cinema-theatre-room.jpg') center 40% / cover no-repeat;
-  padding: 25px 0 30px;
+  padding: 80px 60px;
 }
 .films-cinema-section::before {
   content: '';
@@ -1432,7 +1448,7 @@ section {
 .gallery-section .section-inner {
   position: relative;
   z-index: 1;
-  padding: 40px 0 24px;
+  padding: 40px 0;
 }
 /* Décorations cinéma : popcorn à gauche, caméra à droite */
 .gallery-deco {
@@ -1859,7 +1875,6 @@ section {
 .how-section .section-inner {
   position: relative;
   z-index: 1;
-  padding: 40px 0 70px;
 }
 .how-header {
   text-align: center;
@@ -2223,7 +2238,7 @@ section {
   position: relative; z-index: 2;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 40px 40px 24px;
+  padding: 80px 40px;
   text-align: center;
 }
 /* 2 colonnes : Prix + Sponsors */
@@ -2579,16 +2594,7 @@ footer {
    Ligne horizontale degradee entre deux blocs
    ================================================================ */
 .divider {
-  width: 100%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent 5%, rgba(78,255,206,0.12) 30%, rgba(192,132,252,0.10) 70%, transparent 95%);
-  transform: scaleX(0);
-  transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1);
-  position: relative;
-  z-index: 3;
-}
-.divider.visible {
-  transform: scaleX(1);
+  display: none;
 }
 
 /* ================================================================
@@ -2752,7 +2758,7 @@ footer {
   .counter-item:last-child  { border-radius: 2px 2px 2px 14px; }
 
   /* bloc gala */
-  .gala-inner { padding: 70px 24px 60px; }
+  .gala-inner { padding: 60px 24px; }
   .gala-title { font-size: clamp(1.6rem, 7vw, 2.4rem); }
   .gala-tags { gap: 6px; }
   .gala-tag { font-size: 0.78rem; padding: 7px 12px; }
@@ -2875,7 +2881,7 @@ footer {
   .btn-nav { font-size: 0.72rem; padding: 8px 14px; }
 
   /* bloc gala mobile */
-  .gala-inner { padding: 60px 18px 50px; }
+  .gala-inner { padding: 50px 18px; }
   .gala-title { font-size: clamp(1.4rem, 9vw, 2rem); }
   .gala-desc { font-size: 0.85rem; }
   .gala-tag { font-size: 0.75rem; padding: 6px 10px; }
@@ -2903,7 +2909,7 @@ footer {
    Texte typographique plein ecran avec arriere-plan shader WebGL
    ================================================================ */
 .manifeste-section {
-  padding: 80px 60px 60px;
+  padding: 80px 60px;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -3431,7 +3437,6 @@ footer {
     #1D2558 65%,
     #161C48 100%
   );
-  padding: 40px 0 60px;
   overflow: hidden;
 }
 .jury-section::before {
@@ -3460,7 +3465,7 @@ footer {
   margin: 0 auto;
 }
 .jury-section .section-inner {
-  padding: 10px 0 20px !important;
+  padding: 40px 0 60px;
 }
 
 /* --- Carte vedette — President(e) du jury --- */
