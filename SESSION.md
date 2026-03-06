@@ -288,3 +288,45 @@ Sessions précédentes documentées : correction performances GPU, suppression U
 - `views/index.html` — ajout lien `mobile.css`
 - `js/manifeste-carousel.js` — mode horizontal mobile (translateX, drag tactile)
 - `SESSION.md` — mise à jour session 14
+
+---
+
+## Session 15 — Harmonisation des sections + transitions fluides
+**Date** : 6 mars 2026
+
+### 1. Harmonisation des paddings entre sections
+- `.section-inner` global unifié à `padding: 80px 0` (avant : `100px 0`)
+- Suppression des overrides incohérents :
+  - `.how-section .section-inner` : `40px 0 70px` → hérité (80px 0)
+  - `.gallery-section .section-inner` : `40px 0 24px` → `40px 0` (réduit volontairement)
+  - `.gala-inner` : `40px 40px 24px` → `80px 40px`
+  - `.jury-section .section-inner` : `10px 0 20px !important` → `40px 0 60px`
+  - `.manifeste-section` : `80px 60px 60px` → `80px 60px` (symétrique)
+  - `.films-cinema-section` : `25px 0 30px` → `80px 60px`
+- Paddings responsive gala rendus symétriques (`60px 24px`, `50px 18px`)
+
+### 2. Transitions fluides entre sections (mask-image)
+- `z-index: 1` sur toutes les sections non-hero pour couvrir la vidéo de fond (`position: fixed`)
+- `mask-image` avec fondu haut/bas (80px) sur les sections standard
+- Exceptions par section :
+  - `.concept` : pas de mask (enchaîne directement après le hero)
+  - `.gallery-section` : fondu haut uniquement (bas net pour le carousel cinéma)
+  - `.films-cinema-section` : fondu bas uniquement (haut net collé à la galerie)
+- Sections chevauchement de -40px (`margin-top: -40px` + `padding-top: 40px`)
+- Dividers originaux (lignes 1px) masqués (`display: none`), remplacés par les mask-image
+- Ajout d'un divider entre gala et jury (manquant)
+
+### 3. Transition Hero → Concept améliorée
+- `hero::after` agrandi : 220px → 350px, dégradé progressif jusqu'à `#141A42` opaque (80-100%)
+- `bottom: -1px` pour éviter tout pixel gap
+- Couleurs du dégradé alignées sur `rgba(20,26,66)` = `#141A42` (couleur du concept)
+- Ligne verte `concept::before` (animation `line-reveal`) supprimée
+
+### 4. Image robot (femme-robot) — fondu haut ajouté
+- `mask-image` modifié : ajout `transparent → #000 20%` en haut pour éviter la coupure nette
+- Centre du radial-gradient décalé de `35%` → `40%` vertical
+
+### Fichiers modifiés
+- `css/index.css` — harmonisation paddings, mask-image, hero::after, concept::before, robot mask
+- `views/index.html` — dividers `aria-hidden="true"`, ajout divider gala→jury
+- `SESSION.md` — mise à jour session 15
