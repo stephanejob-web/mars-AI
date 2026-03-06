@@ -314,13 +314,6 @@
       <!-- Futur composant React : <FilmsView /> -->
       <!-- ===================== -->
       <div class="content" id="view-assign" style="display: none">
-        <div class="section-head" style="margin-bottom: 16px">
-          <div>
-            <h2>Films soumis</h2>
-            <p>Visionnez chaque film et assignez-le au jury de votre choix.</p>
-          </div>
-        </div>
-
         <button
           id="btn-repartir"
           onclick="openRepartirModal()"
@@ -1964,6 +1957,7 @@ Marseille accueille la première édition de marsAI, festival international déd
             <div class="vid-modal-title" id="vid-modal-title"></div>
             <div class="vid-modal-sub" id="vid-modal-sub"></div>
           </div>
+          <button class="vid-modal-close" onclick="toggleVideoFullscreen()" title="Plein écran" style="margin-right:6px;">⛶</button>
           <button class="vid-modal-close" onclick="closeVideoModal()">✕</button>
         </div>
         <video
