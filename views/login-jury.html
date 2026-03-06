@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Espace Jury — marsAI 2026</title>
 
-  <!-- ── FEUILLES DE STYLES ──────────────────────────────────── -->
+  <!-- ===================== -->
+  <!-- FEUILLES DE STYLES    -->
+  <!-- ===================== -->
   <link rel="stylesheet" href="../css/tokens.css">
   <link rel="stylesheet" href="../css/reset.css">
   <link rel="stylesheet" href="../css/dev-nav.css">
@@ -13,7 +15,9 @@
 </head>
 <body>
 
-<!-- ── CONTENU PRINCIPAL ─────────────────────────────────────── -->
+<!-- ===================== -->
+<!-- CONTENU PRINCIPAL     -->
+<!-- ===================== -->
 <div class="page">
 
   <!-- Logo -->
@@ -27,7 +31,7 @@
       <div class="card-subtitle">Connectez-vous ou créez votre compte pour accéder à l'interface du jury ou d'administration.</div>
     </div>
 
-    <!-- Onglets Connexion / Inscription -->
+    <!-- Onglets Connexion / Inscription (futur composant TabSwitch React possible) -->
     <div class="role-switch" style="margin-bottom:16px;">
       <button class="role-btn active" id="tab-login" onclick="switchTab('login', this)">🔑 Se connecter</button>
       <button class="role-btn" id="tab-register" onclick="switchTab('register', this)">📝 Créer un compte</button>
@@ -38,7 +42,9 @@
     <!-- Message de succès -->
     <div class="error-msg" id="success-msg" style="display:none;background:rgba(78,255,206,0.08);border-color:rgba(78,255,206,0.3);color:var(--aurora);">Compte créé avec succès ! Vous pouvez maintenant vous connecter.</div>
 
-    <!-- ══ FORMULAIRE CONNEXION ══ -->
+    <!-- ===================== -->
+    <!-- FORMULAIRE CONNEXION  -->
+    <!-- ===================== -->
     <div id="form-login">
       <!-- Sélecteur de rôle -->
       <div class="role-switch" style="margin-bottom:14px;">
@@ -47,10 +53,12 @@
       </div>
 
       <form onsubmit="handleLogin(event)">
+        <!-- Field (élément répétable - futur composant React possible) -->
         <div class="field">
           <label>Adresse e-mail</label>
           <input type="email" id="email" value="jury@marsai.fr" required autocomplete="email" placeholder="votre@email.com">
         </div>
+        <!-- Field (élément répétable - futur composant React possible) -->
         <div class="field">
           <label>Mot de passe</label>
           <input type="password" id="password" required autocomplete="current-password" placeholder="••••••••" style="letter-spacing:0.1em;">
@@ -76,7 +84,9 @@
       </div>
     </div>
 
-    <!-- ══ FORMULAIRE INSCRIPTION ══ -->
+    <!-- ===================== -->
+    <!-- FORMULAIRE INSCRIPTION -->
+    <!-- ===================== -->
     <div id="form-register" style="display:none;">
       <div style="background:rgba(78,255,206,0.05);border:1px solid rgba(78,255,206,0.15);border-radius:10px;padding:11px 14px;margin-bottom:16px;font-size:0.78rem;color:var(--mist);line-height:1.55;">
         <span style="color:var(--aurora);font-weight:600;">Créez votre compte jury ou admin.</span><br>
@@ -123,7 +133,9 @@
 
 </div>
 
-<!-- ── NAV MAQUETTE ──────────────────────────────────────────── -->
+<!-- ===================== -->
+<!-- DEV NAV MAQUETTE     -->
+<!-- ===================== -->
 <div id="dev-nav">
   <div class="dn-header">
     <span class="dn-icon-main">🧭</span>
@@ -152,7 +164,9 @@
     </a>
 </div>
 
-<!-- ── SCRIPTS ────────────────────────────────────────────────── -->
+<!-- ===================== -->
+<!-- SCRIPTS              -->
+<!-- ===================== -->
 <script src="../js/login-jury.js"></script>
 </body>
 </html>

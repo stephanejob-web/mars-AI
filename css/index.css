@@ -1432,7 +1432,7 @@ section {
 .gallery-section .section-inner {
   position: relative;
   z-index: 1;
-  padding: 60px 0 30px;
+  padding: 40px 0 24px;
 }
 /* Décorations cinéma : popcorn à gauche, caméra à droite */
 .gallery-deco {
@@ -1456,23 +1456,23 @@ section {
   max-height: 75%;
 }
 .gallery-header {
-  margin-bottom: 40px;
+  margin-bottom: 0;
   text-align: center;
 }
 .gallery-header-top {
-  margin-bottom: 24px;
+  margin-bottom: 14px;
 }
 .gallery-section .section-label {
   color: #FFB347;
-  text-shadow: 0 0 20px rgba(255, 179, 71, 0.5);
-  font-size: 0.95rem;
+  text-shadow: 0 0 20px rgba(255, 179, 71, 0.5), 0 1px 8px rgba(0, 0, 0, 0.6);
+  font-size: 0.82rem;
   letter-spacing: 0.15em;
   font-family: var(--font-display);
 }
 .gallery-section .section-title {
   color: #fff;
   text-shadow: 0 2px 15px rgba(0, 0, 0, 0.7);
-  font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+  font-size: clamp(1.4rem, 3vw, 2rem);
   font-family: var(--font-display);
   max-width: 600px;
   margin: 0 auto;
@@ -1500,8 +1500,8 @@ section {
   background: rgba(0, 0, 0, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 9999px;
-  padding: 10px 26px;
-  font-size: 0.85rem;
+  padding: 8px 22px;
+  font-size: 0.8rem;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.85);
   cursor: pointer;

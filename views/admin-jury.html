@@ -5,20 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Interface Jury — marsAI 2026</title>
 
-    <!-- Feuilles de style partagées -->
+    <!-- ===================== -->
+    <!-- FEUILLES DE STYLES    -->
+    <!-- ===================== -->
     <link rel="stylesheet" href="../css/tokens.css" />
     <link rel="stylesheet" href="../css/reset.css" />
     <link rel="stylesheet" href="../css/components.css" />
     <link rel="stylesheet" href="../css/admin-layout.css" />
-
-    <!-- Styles spécifiques à l'interface jury -->
     <link rel="stylesheet" href="../css/admin-jury.css" />
-
-    <!-- Barre de navigation maquette -->
     <link rel="stylesheet" href="../css/dev-nav.css" />
   </head>
   <body>
-    <!-- ══════════ SIDEBAR ══════════ -->
+    <!-- ===================== -->
+    <!-- SIDEBAR JURY         -->
+    <!-- ===================== -->
     <aside class="sidebar">
       <div class="sidebar-header">
         <div class="logo">mars<span class="ai">AI</span></div>
@@ -37,6 +37,7 @@
       <nav class="sidebar-nav">
         <div class="nav-label">Évaluation</div>
 
+        <!-- Nav Item (élément répétable - futur composant React possible) -->
         <div class="nav-item active" onclick="switchView('eval', this)">
           <span class="icon">🎬</span>
           Films assignés
@@ -117,7 +118,9 @@
       <span class="sidebar-toggle-icon">‹</span>
     </button>
 
-    <!-- ══════════ ZONE PRINCIPALE ══════════ -->
+    <!-- ===================== -->
+    <!-- ZONE PRINCIPALE      -->
+    <!-- ===================== -->
     <div class="main">
       <!-- Barre supérieure -->
       <div class="topbar">
@@ -156,7 +159,9 @@
         </div>
       </div>
 
-      <!-- ══════ VUE ÉVALUATION ══════ -->
+      <!-- ===================== -->
+      <!-- VUE ÉVALUATION       -->
+      <!-- ===================== -->
       <div class="view" id="view-eval">
         <!-- Liste des films -->
         <div class="film-list">
@@ -235,7 +240,9 @@
               </div>
             </div>
 
-            <!-- ══ AVIS DES AUTRES JURÉS ══ -->
+            <!-- ===================== -->
+            <!-- AVIS AUTRES JURÉS    -->
+            <!-- ===================== -->
             <div class="section-card jury-opinions">
               <h4>
                 Avis des autres jurés
@@ -250,6 +257,7 @@
                 >
               </h4>
               <div class="other-jury-list">
+                <!-- Jury Opinion Item (élément répétable - futur composant React possible) -->
                 <div class="other-jury-item">
                   <div
                     class="oj-avatar"
@@ -411,7 +419,9 @@
           </div>
           <!-- /detail-scroll -->
 
-          <!-- ══ PANNEAU DÉCISION ══ -->
+          <!-- ===================== -->
+          <!-- PANNEAU DÉCISION     -->
+          <!-- ===================== -->
           <div class="notation-panel">
             <div class="decision-main">
               <button
@@ -465,7 +475,9 @@
       </div>
       <!-- /view-eval -->
 
-      <!-- ══════ VUE MES LISTES ══════ -->
+      <!-- ===================== -->
+      <!-- VUE MES LISTES       -->
+      <!-- ===================== -->
       <div class="delib-view" id="view-listes" style="display: none">
         <div class="delib-header">
           <div>
@@ -914,7 +926,9 @@ Thèmes intéressants mais traitement inégal — à peser lors de la délibéra
         </div>
       </div>
 
-      <!-- ══════ VUE À DISCUTER ══════ -->
+      <!-- ===================== -->
+      <!-- VUE À DISCUTER       -->
+      <!-- ===================== -->
       <div class="discuss-view" id="view-discuter" style="display: none">
         <!-- Liste films à discuter (sidebar gauche) -->
         <div class="discuss-films">
@@ -951,6 +965,7 @@ Thèmes intéressants mais traitement inégal — à peser lors de la délibéra
             >
           </div>
           <div class="discuss-messages" id="discuss-messages">
+            <!-- Chat Message (élément répétable - futur composant React possible) -->
             <div class="chat-msg">
               <img
                 class="chat-avatar"
@@ -1029,7 +1044,9 @@ Thèmes intéressants mais traitement inégal — à peser lors de la délibéra
         </div>
       </div>
 
-      <!-- ══════ VUE DÉLIBÉRATION ══════ -->
+      <!-- ===================== -->
+      <!-- VUE DÉLIBÉRATION     -->
+      <!-- ===================== -->
       <div class="delib-view" id="view-delib">
         <div class="delib-header">
           <div>
@@ -1070,7 +1087,11 @@ Thèmes intéressants mais traitement inégal — à peser lors de la délibéra
     </div>
     <!-- /main -->
 
-    <!-- ══ MODALE : À REVOIR ══ -->
+    <!-- ===================== -->
+    <!-- MODALES              -->
+    <!-- ===================== -->
+
+    <!-- Modale : À Revoir -->
     <div
       class="modal-overlay"
       id="modal-arevoir"
@@ -1085,6 +1106,7 @@ Thèmes intéressants mais traitement inégal — à peser lors de la délibéra
         </div>
         <div class="modal-film-chip" id="arevoir-chip">—</div>
         <div class="modal-label">Raison</div>
+        <!-- Modal Tag (élément répétable - futur composant React possible) -->
         <div class="modal-tags" id="arevoir-tags">
           <button
             class="mtag"
@@ -1155,7 +1177,7 @@ Thèmes intéressants mais traitement inégal — à peser lors de la délibéra
       </div>
     </div>
 
-    <!-- ══ MODALE : REFUS ══ -->
+    <!-- Modale : Refus -->
     <div
       class="modal-overlay"
       id="modal-refuse"
@@ -1237,7 +1259,7 @@ Thèmes intéressants mais traitement inégal — à peser lors de la délibéra
       </div>
     </div>
 
-    <!-- ══ POPOVER SIGNALEMENT RAPIDE ══ -->
+    <!-- Popover : Signalement rapide -->
     <div class="rp-popover" id="report-popover">
       <div class="rp-popover-title">🚩 Signaler rapidement</div>
       <div class="rp-chips">
@@ -1293,7 +1315,7 @@ Thèmes intéressants mais traitement inégal — à peser lors de la délibéra
       </button>
     </div>
 
-    <!-- ══ MODALE : SIGNALEMENT (Ticket) ══ -->
+    <!-- Modale : Signalement (Ticket) -->
     <div
       class="modal-overlay"
       id="modal-report"
@@ -1408,10 +1430,14 @@ Thèmes intéressants mais traitement inégal — à peser lors de la délibéra
 
     <div class="toast" id="toast"></div>
 
-    <!-- Script principal de l'interface jury -->
+    <!-- ===================== -->
+    <!-- SCRIPTS              -->
+    <!-- ===================== -->
     <script src="../js/admin-jury.js"></script>
 
-    <!-- Barre de navigation maquette (dev) -->
+    <!-- ===================== -->
+    <!-- DEV NAV MAQUETTE     -->
+    <!-- ===================== -->
     <div id="dev-nav">
       <div class="dn-header">
         <span class="dn-icon-main">🧭</span>
