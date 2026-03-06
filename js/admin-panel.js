@@ -3147,13 +3147,53 @@ function renderSelection() {
         .join("");
 
       const emailType = adm === "valide" ? "selection" : "info";
-      const admBtns = `<div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start;">
-      <button onclick="event.stopPropagation();adminDecide(${f.id},'valide')" style="padding:5px 12px;border-radius:7px;font-size:0.72rem;font-weight:700;cursor:pointer;border:1.5px solid;transition:all .18s;
-        ${adm === "valide" ? "background:rgba(78,255,206,0.2);border-color:rgba(78,255,206,0.6);color:var(--aurora);box-shadow:0 0 12px rgba(78,255,206,0.15);" : "background:rgba(78,255,206,0.05);border-color:rgba(78,255,206,0.15);color:var(--aurora);"}">
-        ${adm === "valide" ? "✓ Sélectionné" : "Sélectionner"}</button>
-      <button onclick="event.stopPropagation();openVideoModal(${f.id})" style="padding:4px 12px;border-radius:7px;font-size:0.7rem;font-weight:600;cursor:pointer;border:1.5px solid rgba(78,255,206,0.25);background:rgba(78,255,206,0.06);color:var(--aurora);display:flex;align-items:center;gap:5px;transition:all .18s;" onmouseover="this.style.background='rgba(78,255,206,0.14)'" onmouseout="this.style.background='rgba(78,255,206,0.06)'">▶ Voir le film</button>
-      <button onclick="event.stopPropagation();openDirectorEmail(${f.id},'${emailType}')" style="padding:4px 12px;border-radius:7px;font-size:0.7rem;font-weight:600;cursor:pointer;border:1.5px solid rgba(192,132,252,0.25);background:rgba(192,132,252,0.06);color:var(--lavande);display:flex;align-items:center;gap:5px;transition:all .18s;" onmouseover="this.style.background='rgba(192,132,252,0.14)'" onmouseout="this.style.background='rgba(192,132,252,0.06)'">📧 Email réalisateur</button>
-    </div>`;
+      const isSelected = adm === "valide";
+      const admBtns = `<div style="display:flex;flex-direction:column;gap:5px;align-items:stretch;min-width:130px;">
+        <button onclick="event.stopPropagation();adminDecide(${f.id},'valide')" style="
+          display:flex;align-items:center;gap:7px;
+          padding:7px 12px;border-radius:8px;font-size:0.72rem;font-weight:800;
+          cursor:pointer;transition:all .18s;font-family:var(--font-display);
+          border:1.5px solid ${isSelected ? "rgba(78,255,206,0.7)" : "rgba(78,255,206,0.2)"};
+          background:${isSelected ? "rgba(78,255,206,0.18)" : "rgba(78,255,206,0.05)"};
+          color:var(--aurora);
+          box-shadow:${isSelected ? "0 0 14px rgba(78,255,206,0.18),inset 0 0 8px rgba(78,255,206,0.06)" : "none"};"
+          onmouseover="if(!${isSelected})this.style.background='rgba(78,255,206,0.12)'"
+          onmouseout="if(!${isSelected})this.style.background='rgba(78,255,206,0.05)'">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="flex-shrink:0">
+            ${isSelected
+              ? '<path d="M2 6l3 3 5-5" stroke="#4effce" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>'
+              : '<circle cx="6" cy="6" r="4.5" stroke="#4effce" stroke-width="1.4"/><path d="M6 4v4M4 6h4" stroke="#4effce" stroke-width="1.4" stroke-linecap="round"/>'}
+          </svg>
+          ${isSelected ? "Sélectionné" : "Sélectionner"}
+        </button>
+        <button onclick="event.stopPropagation();openVideoModal(${f.id})" style="
+          display:flex;align-items:center;gap:7px;
+          padding:7px 12px;border-radius:8px;font-size:0.72rem;font-weight:700;
+          cursor:pointer;transition:all .18s;font-family:var(--font-display);
+          border:1.5px solid rgba(96,165,250,0.22);
+          background:rgba(96,165,250,0.06);color:#60a5fa;"
+          onmouseover="this.style.background='rgba(96,165,250,0.14)';this.style.borderColor='rgba(96,165,250,0.45)'"
+          onmouseout="this.style.background='rgba(96,165,250,0.06)';this.style.borderColor='rgba(96,165,250,0.22)'">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="flex-shrink:0">
+            <polygon points="3,2 10,6 3,10" fill="#60a5fa"/>
+          </svg>
+          Voir le film
+        </button>
+        <button onclick="event.stopPropagation();openDirectorEmail(${f.id},'${emailType}')" style="
+          display:flex;align-items:center;gap:7px;
+          padding:7px 12px;border-radius:8px;font-size:0.72rem;font-weight:700;
+          cursor:pointer;transition:all .18s;font-family:var(--font-display);
+          border:1.5px solid rgba(192,132,252,0.22);
+          background:rgba(192,132,252,0.06);color:var(--lavande);"
+          onmouseover="this.style.background='rgba(192,132,252,0.14)';this.style.borderColor='rgba(192,132,252,0.45)'"
+          onmouseout="this.style.background='rgba(192,132,252,0.06)';this.style.borderColor='rgba(192,132,252,0.22)'">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="flex-shrink:0">
+            <rect x="1" y="2.5" width="10" height="7" rx="1.5" stroke="#c084fc" stroke-width="1.3"/>
+            <path d="M1 4l5 3.5L11 4" stroke="#c084fc" stroke-width="1.3" stroke-linecap="round"/>
+          </svg>
+          Email réalisateur
+        </button>
+      </div>`;
 
       const commEntries = Object.entries(f.comments || {});
       const gridCols = nTk > 0 ? "1fr 1fr 1fr" : "1fr 1fr";
@@ -3261,7 +3301,6 @@ function renderSelection() {
       </td>
     </tr>`;
 
-      const isSelected = adm === "valide";
       const isRefused  = adm === "refuse";
       const rowBg      = isSelected ? "rgba(78,255,206,0.04)" : isRefused ? "rgba(255,107,107,0.03)" : "";
       const rowOpacity = isSelected ? "0.45" : "1";
