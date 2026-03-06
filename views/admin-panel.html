@@ -1,5 +1,10 @@
 <!doctype html>
 <html lang="fr">
+  <!-- ===================== -->
+  <!-- HEAD                  -->
+  <!-- (meta, liens CSS)     -->
+  <!-- Futur : imports React -->
+  <!-- ===================== -->
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -14,7 +19,11 @@
     <link rel="stylesheet" href="../css/admin-panel.css" />
   </head>
   <body>
-    <!-- ══════════ SIDEBAR ══════════ -->
+    <!-- ===================== -->
+    <!-- SIDEBAR NAVIGATION    -->
+    <!-- (logo, identité admin, liens nav, chat jury) -->
+    <!-- Futur composant React : <Sidebar /> -->
+    <!-- ===================== -->
     <aside class="sidebar">
       <div class="sidebar-header">
         <div class="logo">mars<span class="ai">AI</span></div>
@@ -34,6 +43,7 @@
       <nav class="sidebar-nav">
         <div class="nav-label">Gestion</div>
 
+        <!-- NavItem (élément répétable - futur composant React possible) -->
         <div class="nav-item active" onclick="showView('users', this)">
           <span class="icon">👥</span>
           Utilisateurs
@@ -131,6 +141,12 @@
       </div>
     </aside>
 
+    <!-- ===================== -->
+    <!-- TOPBAR               -->
+    <!-- (titre, info, badge admin) -->
+    <!-- Futur composant React : <Topbar /> -->
+    <!-- ===================== -->
+
     <!-- Bouton toggle sidebar -->
     <button
       class="sidebar-toggle"
@@ -142,6 +158,7 @@
     </button>
 
     <!-- ══════════ ZONE PRINCIPALE ══════════ -->
+    <!-- Futur composant React : <MainContent /> — contient la topbar + toutes les vues -->
     <div class="main">
       <!-- Barre supérieure -->
       <div class="topbar">
@@ -168,10 +185,15 @@
         </div>
       </div>
 
-      <!-- ══════ VUE UTILISATEURS ══════ -->
+      <!-- ===================== -->
+      <!-- VUE UTILISATEURS     -->
+      <!-- (stats, graphique participation, tableau comptes) -->
+      <!-- Futur composant React : <UsersView /> -->
+      <!-- ===================== -->
       <div class="content" id="view-users">
         <!-- Statistiques -->
         <div class="stats-row">
+          <!-- StatCard (élément répétable - futur composant React possible) -->
           <div class="stat-card">
             <div class="stat-card-label">Jurys</div>
             <div class="stat-card-val sv-aurora">4</div>
@@ -286,7 +308,11 @@
         </div>
       </div>
 
-      <!-- ══════ VUE ASSIGNATION ══════ -->
+      <!-- ===================== -->
+      <!-- VUE ASSIGNATION FILMS -->
+      <!-- (recherche, filtres pays, onglets, tableau/grille, pagination) -->
+      <!-- Futur composant React : <FilmsView /> -->
+      <!-- ===================== -->
       <div class="content" id="view-assign" style="display: none">
         <div class="section-head" style="margin-bottom: 16px">
           <div>
@@ -430,6 +456,7 @@
         </div>
 
         <!-- Onglets + Toggle de vue -->
+        <!-- TabButton (élément répétable - futur composant React possible) -->
         <div class="tabs-toolbar">
           <div class="film-tabs">
             <button
@@ -578,7 +605,11 @@
         <div id="pagination"></div>
       </div>
 
-      <!-- ══════ VUE PHASES ══════ -->
+      <!-- ===================== -->
+      <!-- VUE PHASES & DATES   -->
+      <!-- (timeline, cartes phase 1 & 2, aide) -->
+      <!-- Futur composant React : <PhasesView /> -->
+      <!-- ===================== -->
       <div class="content" id="view-phases" style="display: none">
 
         <!-- Header -->
@@ -625,6 +656,7 @@
         </div>
 
         <!-- Cartes phases -->
+        <!-- PhaseCard (élément répétable - futur composant React possible) -->
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
 
           <!-- ── Phase 1 ── -->
@@ -751,7 +783,11 @@
 
       </div>
 
-      <!-- ══════ VUE MODÉRATION ══════ -->
+      <!-- ===================== -->
+      <!-- VUE MODÉRATION       -->
+      <!-- (tickets signalements, stats, inbox) -->
+      <!-- Futur composant React : <ModerationView /> -->
+      <!-- ===================== -->
       <div class="content" id="view-moderation" style="display: none">
         <div class="section-head" style="margin-bottom: 20px">
           <div>
@@ -762,6 +798,7 @@
 
         <!-- Stats compactes -->
         <div class="stats-row" style="margin-bottom: 24px">
+          <!-- StatCard (élément répétable - futur composant React possible) -->
           <div class="stat-card">
             <div class="stat-card-label">À traiter</div>
             <div
@@ -790,7 +827,11 @@
         <div class="tk-resolved-section" id="tk-resolved-section"></div>
       </div>
 
-      <!-- ══════ VUE SÉLECTION ══════ -->
+      <!-- ===================== -->
+      <!-- VUE SÉLECTION & VOTES -->
+      <!-- (stats consensus, banner phase, filtres, tri, tableau) -->
+      <!-- Futur composant React : <SelectionView /> -->
+      <!-- ===================== -->
       <div class="content" id="view-selection" style="display: none">
         <div class="section-head" style="margin-bottom: 20px">
           <div>
@@ -807,6 +848,7 @@
 
         <!-- Stats -->
         <div class="stats-row" style="margin-bottom: 20px">
+          <!-- StatCard (élément répétable - futur composant React possible) -->
           <div class="stat-card">
             <div class="stat-card-label">Unanimes ✅</div>
             <div class="stat-card-val sv-aurora" id="sel-unanime">0</div>
@@ -881,6 +923,7 @@
         </div>
 
         <!-- Filtres -->
+        <!-- FilterButton (élément répétable - futur composant React possible) -->
         <div
           style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap"
         >
@@ -1033,7 +1076,11 @@
         </div>
       </div>
 
-      <!-- ══════ VUE AWARDS & SPONSORS ══════ -->
+      <!-- ===================== -->
+      <!-- VUE AWARDS & SPONSORS -->
+      <!-- (table awards, table sponsors) -->
+      <!-- Futur composant React : <AwardsView /> -->
+      <!-- ===================== -->
       <div class="content" id="view-awards" style="display: none">
         <div class="section-head" style="margin-bottom: 20px">
           <div>
@@ -1071,6 +1118,7 @@
                 </tr>
               </thead>
               <tbody>
+                <!-- AwardRow (élément répétable - futur composant React possible) -->
                 <tr>
                   <td>
                     <div style="display: flex; align-items: center; gap: 8px">
@@ -1374,6 +1422,7 @@
               </tr>
             </thead>
             <tbody>
+              <!-- SponsorRow (élément répétable - futur composant React possible) -->
               <tr>
                 <td
                   style="font-weight: 600; font-size: 0.88rem; color: #4285f4"
@@ -1532,12 +1581,17 @@
         </div>
       </div>
 
-      <!-- ══════ VUE SITE ══════ -->
+      <!-- ===================== -->
+      <!-- VUE ADMINISTRATION SITE -->
+      <!-- (vidéo hero, infos, calendrier, jury page accueil, sponsors) -->
+      <!-- Futur composant React : <SiteSettingsView /> -->
+      <!-- ===================== -->
       <div
         class="content"
         id="view-site"
         style="display: none; max-width: 720px"
       >
+        <!-- SiteSection (élément répétable - futur composant React possible) -->
         <!-- ── 1. Vidéo Hero ── -->
         <div class="site-section">
           <div
@@ -1673,6 +1727,7 @@ Marseille accueille la première édition de marsAI, festival international déd
             <span class="site-chevron">▼</span>
           </div>
           <div class="site-section-body" id="sec-cal" style="display: none">
+            <!-- CalendarItem (élément répétable - futur composant React possible) -->
             <div class="cal-item">
               <div>
                 <div class="cal-name">Ouverture des candidatures</div>
@@ -1842,6 +1897,13 @@ Marseille accueille la première édition de marsAI, festival international déd
       </div>
     </div>
 
+    <!-- ===================== -->
+    <!-- MODALES              -->
+    <!-- (créer compte, assignation, drawer, commentaires, ticket, vidéo, email, répartition) -->
+    <!-- Futur : chaque modale = composant React indépendant -->
+    <!-- ===================== -->
+
+    <!-- ModalCreateAccount (élément répétable - futur composant React possible) -->
     <!-- ══════ MODALE CRÉER COMPTE ══════ -->
     <div class="modal-overlay" id="modal-create">
       <div class="modal">
@@ -2137,6 +2199,7 @@ Marseille accueille la première édition de marsAI, festival international déd
     </div>
 
     <!-- ── FAB Chat Jury Mobile ── -->
+    <!-- Futur composant React : <ChatFAB /> -->
     <button
       class="mobile-chat-fab"
       id="mobile-chat-fab"
@@ -2147,6 +2210,10 @@ Marseille accueille la première édition de marsAI, festival international déd
       <span class="mobile-chat-fab-badge" id="mobile-chat-fab-badge">3</span>
     </button>
 
+    <!-- ===================== -->
+    <!-- TOAST                -->
+    <!-- Futur composant React : <Toast /> -->
+    <!-- ===================== -->
     <div class="toast" id="toast"></div>
 
     <!-- ══ MODALE RÉPARTITION ÉQUITABLE ══ -->
@@ -2207,15 +2274,23 @@ Marseille accueille la première édition de marsAI, festival international déd
       </div>
     </div>
 
+    <!-- ===================== -->
+    <!-- SCRIPTS              -->
+    <!-- Futur : remplacés par imports React (main.tsx) -->
+    <!-- ===================== -->
     <!-- Script principal du panneau d'administration -->
     <script src="../js/admin-panel.js"></script>
 
-    <!-- ─── NAV MAQUETTE ─── -->
+    <!-- ===================== -->
+    <!-- DEV NAV MAQUETTE     -->
+    <!-- (navigation entre pages maquette - supprimé en production) -->
+    <!-- ===================== -->
     <div id="dev-nav">
       <div class="dn-header">
         <span class="dn-icon-main">🧭</span>
         <span class="dn-title">Maquette</span>
       </div>
+      <!-- DevNavLink (élément répétable - futur composant React possible) -->
       <a href="index.html" class="dn-btn">
         <span class="dn-icon">🏠</span>
         <span class="dn-lbl">Accueil</span>

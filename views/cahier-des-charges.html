@@ -857,9 +857,10 @@
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════
-     SIDEBAR
-═══════════════════════════════════════ -->
+<!-- ===================== -->
+<!-- SIDEBAR               -->
+<!-- ===================== -->
+<!-- Barre latérale avec sommaire et navigation — futur composant <Sidebar> -->
 <aside class="sidebar">
   <div class="sb-brand">
     <div class="sb-logo">mars<span class="ai">AI</span></div>
@@ -876,6 +877,7 @@
 
   <div class="sb-section-label">Sommaire</div>
 
+  <!-- .toc-link (élément répétable - futur composant React possible) -->
   <a class="toc-link" href="#s1"><span class="toc-num">01</span>Identité &amp; Concept</a>
   <a class="toc-link" href="#s2"><span class="toc-num">02</span>Soumission publique</a>
   <a class="toc-link" href="#s3"><span class="toc-num">03</span>Vidéo &amp; Hébergement</a>
@@ -901,12 +903,15 @@
   </div>
 </aside>
 
-<!-- ═══════════════════════════════════════
-     MAIN
-═══════════════════════════════════════ -->
+<!-- ===================== -->
+<!-- CONTENU PRINCIPAL     -->
+<!-- ===================== -->
 <main class="main">
 
-  <!-- ── COUVERTURE ── -->
+  <!-- ===================== -->
+  <!-- COUVERTURE            -->
+  <!-- ===================== -->
+  <!-- Page de garde du document — futur composant <Cover> -->
   <div class="cover">
     <div class="cover-eyebrow">Document officiel · Confidentiel</div>
     <h1 class="cover-title">Cahier des Charges<br><span class="accent">marsAI 2026</span></h1>
@@ -937,9 +942,10 @@
     </div>
   </div>
 
-  <!-- ══════════════════════════════════
-       01. IDENTITÉ
-  ══════════════════════════════════ -->
+  <!-- ===================== -->
+  <!-- SECTION 01 — IDENTITÉ -->
+  <!-- ===================== -->
+  <!-- .section (élément répétable - futur composant React possible) -->
   <section class="section" id="s1">
     <div class="sec-head">
       <div class="sec-num">01</div>
@@ -957,15 +963,16 @@
       <tr><td>Co-créateurs</td><td>La Plateforme · Mobile Film Festival (logos affichés sur la plateforme)</td></tr>
     </table>
 
+    <!-- .highlight-box (élément répétable - futur composant React possible) -->
     <div class="highlight-box hb-aurora">
       <div class="hb-icon">💡</div>
       <div>Le festival marsAI est le <strong>premier festival mondial</strong> dédié aux films créés par ou avec l'intelligence artificielle. La plateforme doit refléter cette ambition : moderne, accessible à l'international, sans friction pour les réalisateurs candidats.</div>
     </div>
   </section>
 
-  <!-- ══════════════════════════════════
-       02. SOUMISSION
-  ══════════════════════════════════ -->
+  <!-- ===================== -->
+  <!-- SECTION 02 — SOUMISSION -->
+  <!-- ===================== -->
   <section class="section" id="s2">
     <div class="sec-head">
       <div class="sec-num">02</div>
@@ -978,6 +985,7 @@
       <div><strong>Aucune inscription ni connexion requise</strong> pour les réalisateurs. Les champs saisis sont mémorisés par le navigateur à chaque étape (auto-save local). <strong>Aucune modification possible</strong> après l'envoi. Dépôts multiples autorisés avec numéros individuels.</div>
     </div>
 
+    <!-- .card dans .card-grid (élément répétable - futur composant React possible) -->
     <div class="card-grid cg-2">
       <div class="card ca">
         <div class="card-head"><div class="card-icon">🎬</div><div class="card-label cl-aurora">Fiche Film</div></div>
@@ -1022,9 +1030,9 @@
     <p class="lead">À la validation, le réalisateur reçoit un <strong>email de confirmation</strong> avec son numéro de candidature unique au format <code style="font-family:var(--font-mono);font-size:0.75rem;color:var(--aurora);">MAI-2026-XXXX</code>.</p>
   </section>
 
-  <!-- ══════════════════════════════════
-       03. VIDÉO
-  ══════════════════════════════════ -->
+  <!-- ===================== -->
+  <!-- SECTION 03 — VIDÉO    -->
+  <!-- ===================== -->
   <section class="section" id="s3">
     <div class="sec-head">
       <div class="sec-num">03</div>
@@ -1039,6 +1047,7 @@
     </table>
 
     <p class="lead" style="margin-bottom:12px;"><strong>Double hébergement automatique et simultané :</strong></p>
+    <!-- .flow-step (élément répétable - futur composant React possible) -->
     <div class="flow">
       <div class="flow-step">
         <div class="flow-dot">1</div>
@@ -1069,9 +1078,9 @@
     </div>
   </section>
 
-  <!-- ══════════════════════════════════
-       04. MODÉRATION
-  ══════════════════════════════════ -->
+  <!-- ===================== -->
+  <!-- SECTION 04 — MODÉRATION -->
+  <!-- ===================== -->
   <section class="section" id="s4">
     <div class="sec-head">
       <div class="sec-num">04</div>
@@ -1102,9 +1111,9 @@
     <p class="lead" style="font-size:0.76rem;">L'administrateur gère les presets : ajout, modification et suppression depuis le panel d'administration.</p>
   </section>
 
-  <!-- ══════════════════════════════════
-       05. JURY
-  ══════════════════════════════════ -->
+  <!-- ===================== -->
+  <!-- SECTION 05 — JURY     -->
+  <!-- ===================== -->
   <section class="section" id="s5">
     <div class="sec-head">
       <div class="sec-num">05</div>
@@ -1140,6 +1149,7 @@
     </div>
 
     <p class="lead"><strong>Options de visibilité — toggles dynamiques (Panel Admin) :</strong></p>
+    <!-- .toggle-opt (élément répétable - futur composant React possible) -->
     <div class="toggle-opt">
       <div class="to-badge to-a">OPTION A</div>
       <div class="to-text"><strong>Affichage collaboratif entre jurés</strong>Activer/désactiver la visibilité des choix et commentaires entre membres du jury</div>
@@ -1150,9 +1160,9 @@
     </div>
   </section>
 
-  <!-- ══════════════════════════════════
-       06. PHASES
-  ══════════════════════════════════ -->
+  <!-- ===================== -->
+  <!-- SECTION 06 — PHASES   -->
+  <!-- ===================== -->
   <section class="section" id="s6">
     <div class="sec-head">
       <div class="sec-num">06</div>
@@ -1162,6 +1172,7 @@
 
     <p class="lead">L'affichage public est <strong>piloté dynamiquement par l'administrateur</strong> via 3 phases. Chaque phase se déclenche à une date précise, avec compte à rebours visible jusqu'à l'ouverture.</p>
 
+    <!-- .phase dans .phase-timeline (élément répétable - futur composant React possible) -->
     <div class="phase-timeline">
       <div class="phase">
         <div class="phase-badge pb-1">Phase 1</div>
@@ -1191,9 +1202,9 @@
     </div>
   </section>
 
-  <!-- ══════════════════════════════════
-       07. ADMIN
-  ══════════════════════════════════ -->
+  <!-- ===================== -->
+  <!-- SECTION 07 — ADMIN    -->
+  <!-- ===================== -->
   <section class="section" id="s7">
     <div class="sec-head">
       <div class="sec-num">07</div>
@@ -1255,9 +1266,9 @@
     </div>
   </section>
 
-  <!-- ══════════════════════════════════
-       08. TECHNIQUE
-  ══════════════════════════════════ -->
+  <!-- ===================== -->
+  <!-- SECTION 08 — TECHNIQUE -->
+  <!-- ===================== -->
   <section class="section" id="s8">
     <div class="sec-head">
       <div class="sec-num">08</div>
@@ -1265,6 +1276,7 @@
     </div>
     <div class="sec-rule"></div>
 
+    <!-- .tech-item dans .tech-grid (élément répétable - futur composant React possible) -->
     <div class="tech-grid">
       <div class="tech-item"><div class="tech-icon">⚛️</div><div><div class="tech-name">React.js + Tailwind CSS</div><div class="tech-role">Front-end</div></div></div>
       <div class="tech-item"><div class="tech-icon">🟩</div><div><div class="tech-name">Node.js</div><div class="tech-role">Back-end / API</div></div></div>
@@ -1286,9 +1298,9 @@
     </div>
   </section>
 
-  <!-- ══════════════════════════════════
-       09. JWT
-  ══════════════════════════════════ -->
+  <!-- ===================== -->
+  <!-- SECTION 09 — JWT      -->
+  <!-- ===================== -->
   <section class="section" id="s9">
     <div class="sec-head">
       <div class="sec-num">09</div>
@@ -1308,9 +1320,10 @@
     </div>
   </section>
 
-  <!-- ══════════════════════════════════
-       USER STORIES
-  ══════════════════════════════════ -->
+  <!-- ===================== -->
+  <!-- USER STORIES          -->
+  <!-- ===================== -->
+  <!-- Section regroupant les 36 user stories réparties en 4 personas -->
   <section class="section" id="us-visiteur">
     <div class="sec-head">
       <div class="sec-num" style="background:rgba(136,146,176,0.08);border-color:rgba(136,146,176,0.2);color:var(--mist);">US</div>
@@ -1326,6 +1339,7 @@
     </div>
     <div class="sec-rule"></div>
 
+    <!-- .persona-block (élément répétable - futur composant React possible) -->
     <!-- VISITEUR -->
     <div class="persona-block">
       <div class="persona-header ph-visiteur">
@@ -1336,6 +1350,7 @@
         </div>
         <div class="ph-count pc-v">6 stories</div>
       </div>
+      <!-- .us-table avec lignes de user stories (élément répétable - futur composant React possible) -->
       <table class="us-table">
         <thead><tr><th style="width:60px;">ID</th><th style="width:90px;">Tag</th><th>Histoire utilisateur</th></tr></thead>
         <tbody>
@@ -1431,7 +1446,9 @@
     </div>
   </section>
 
-  <!-- FOOTER -->
+  <!-- ===================== -->
+  <!-- PIED DE DOCUMENT      -->
+  <!-- ===================== -->
   <div class="doc-footer">
     <div>mars<strong style="color:var(--aurora);">AI</strong> 2026 — Document confidentiel · Tous droits réservés</div>
     <div>v1.0 · 25 Février 2026 · 36 user stories</div>
@@ -1454,7 +1471,10 @@
   sections.forEach(s => io.observe(s));
 </script>
 
-<!-- DEV NAV -->
+<!-- ===================== -->
+<!-- DEV-NAV               -->
+<!-- ===================== -->
+<!-- Barre de navigation développeur entre maquettes -->
 <link rel="stylesheet" href="../css/dev-nav.css">
 <div id="dev-nav">
   <div class="dn-header">
