@@ -1170,26 +1170,7 @@ function renderAssignView(page) {
 }
 
 function playFilm(filmId) {
-  const vid = document.getElementById("vid-" + filmId);
-  if (!vid) return;
-  const thumb = vid.closest(".film-thumb");
-  if (vid.paused) {
-    // Stopper + reset tous les autres
-    document.querySelectorAll(".film-thumb video").forEach((v) => {
-      if (v !== vid) {
-        v.pause();
-        v.classList.remove("playing");
-        v.closest(".film-thumb").classList.remove("playing");
-      }
-    });
-    vid.play();
-    vid.classList.add("playing");
-    thumb.classList.add("playing");
-  } else {
-    vid.pause();
-    vid.classList.remove("playing");
-    thumb.classList.remove("playing");
-  }
+  openVideoModal(filmId);
 }
 
 /* ── VUES ── */
@@ -3803,6 +3784,16 @@ function openVideoModal(filmId) {
   const vid = document.getElementById("vid-modal-video");
   vid.currentTime = 0;
   document.getElementById("vid-modal-overlay").classList.add("open");
+  vid.play().catch(() => {});
+}
+
+function toggleVideoFullscreen() {
+  const vid = document.getElementById("vid-modal-video");
+  if (!document.fullscreenElement) {
+    (vid.requestFullscreen || vid.webkitRequestFullscreen || vid.mozRequestFullScreen).call(vid);
+  } else {
+    (document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen).call(document);
+  }
 }
 
 function closeVideoModal(e) {
