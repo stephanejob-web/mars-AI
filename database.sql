@@ -1,487 +1,582 @@
 -- ============================================================
---  marsAI 2026 — Schéma de base de données
+--  marsAI 2026 — Schema de base de donnees
 --  Stack      : React · Express.js · MySQL 8.x
 --  Charset    : utf8mb4 / utf8mb4_unicode_ci
---  Stockage   : Scaleway S3 (vidéos) · YouTube API (diffusion)
---
---  17 tables · 3NF · indexes stratégiques · FK contraintes
+--  Genere depuis l'analyse de la maquette HTML
 -- ============================================================
 
-SET NAMES utf8mb4;
-SET time_zone = '+00:00';
-SET FOREIGN_KEY_CHECKS = 0;
+CREATE DATABASE IF NOT EXISTS marsai CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE marsai;
 
--- ============================================================
---  DROP — ordre inverse des dépendances
--- ============================================================
-DROP TABLE IF EXISTS chat_messages;
-DROP TABLE IF EXISTS jury_liste_films;
-DROP TABLE IF EXISTS jury_listes;
-DROP TABLE IF EXISTS tickets;
-DROP TABLE IF EXISTS evaluations;
-DROP TABLE IF EXISTS assignations;
-DROP TABLE IF EXISTS awards;
-DROP TABLE IF EXISTS sponsors;
-DROP TABLE IF EXISTS moderation_presets;
-DROP TABLE IF EXISTS film_collaborateurs;
-DROP TABLE IF EXISTS film_ia;
-DROP TABLE IF EXISTS films;
-DROP TABLE IF EXISTS email_tokens;
-DROP TABLE IF EXISTS phases;
-DROP TABLE IF EXISTS realisateurs;
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS site_config;
-
-SET FOREIGN_KEY_CHECKS = 1;
-
-
--- ============================================================
---  1. USERS — Jury · Modérateurs · Administrateurs
---     Hors réalisateurs — pas de compte requis pour soumettre
--- ============================================================
+-- ────────────────────────────────────────────────────────────
+-- USERS
+-- Comptes internes : admin, jury, moderateurs.
+-- password_hash NULL  → compte Google OAuth uniquement.
+-- google_sub    NULL  → compte email/password uniquement.
+-- Les deux peuvent coexister si l'utilisateur lie son Google.
+-- ────────────────────────────────────────────────────────────
 CREATE TABLE users (
   id            INT UNSIGNED    NOT NULL AUTO_INCREMENT,
-  nom           VARCHAR(150)    NOT NULL,
   email         VARCHAR(255)    NOT NULL,
-  password_hash VARCHAR(255)    NULL     COMMENT 'NULL si auth Google uniquement',
-  google_id     VARCHAR(100)    NULL     COMMENT 'sub OAuth2 Google',
-  role          ENUM('admin','jury','moderateur') NOT NULL DEFAULT 'jury',
-  actif         TINYINT(1)      NOT NULL DEFAULT 1,
-  last_login_at TIMESTAMP       NULL,
-  created_at    TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
+  password_hash VARCHAR(255)    NULL,
+  google_sub    VARCHAR(255)    NULL,
+  first_name    VARCHAR(100)    NOT NULL,
+  last_name     VARCHAR(100)    NOT NULL,
+  role          ENUM('admin','jury','moderator') NOT NULL,
+  is_active     TINYINT(1)      NOT NULL DEFAULT 1,
+  created_at    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
-  UNIQUE KEY uq_users_email  (email),
-  UNIQUE KEY uq_users_google (google_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-  COMMENT='Comptes jury, modérateurs et administrateurs (hors réalisateurs)';
+  UNIQUE KEY uq_users_email (email),
+  UNIQUE KEY uq_users_google_sub (google_sub)
+  -- Note : en MySQL 8+, UNIQUE accepte plusieurs lignes NULL,
+  --        donc google_sub NULL pour plusieurs users est valide.
+) ENGINE=InnoDB;
 
+-- ────────────────────────────────────────────────────────────
+-- INVITATIONS
+-- Token unique envoye par mail depuis le panneau admin.
+-- Flow : admin invite → token genere → mail envoye → jury clique
+--        → invite.html valide le token → compte cree dans users.
+-- ────────────────────────────────────────────────────────────
+CREATE TABLE invitations (
+  id           INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+  email        VARCHAR(255)    NOT NULL,
+  role         ENUM('jury','moderator') NOT NULL,
+  token        VARCHAR(128)    NOT NULL,
+  invited_by   INT UNSIGNED    NOT NULL,
+  expires_at   DATETIME        NOT NULL,
+  used_at      DATETIME        NULL,
+  created_at   DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_invitations_token (token),
+  INDEX idx_invitations_email (email),
+  FOREIGN KEY (invited_by) REFERENCES users(id) ON DELETE RESTRICT
+) ENGINE=InnoDB;
 
--- ============================================================
---  2. RÉALISATEURS — Participants (dépôt sans inscription)
---     RGPD : conservation 3 ans après festival, puis anonymisation
--- ============================================================
-CREATE TABLE realisateurs (
+-- ────────────────────────────────────────────────────────────
+-- DIRECTORS
+-- Realisateurs candidats — ne se connectent pas au backoffice.
+-- Un meme director peut soumettre plusieurs films (regle festival).
+-- ────────────────────────────────────────────────────────────
+CREATE TABLE directors (
   id                INT UNSIGNED    NOT NULL AUTO_INCREMENT,
-  civilite          ENUM('M','Mme') NOT NULL,
-  prenom            VARCHAR(100)    NOT NULL,
-  nom               VARCHAR(100)    NOT NULL,
-  date_naissance    DATE            NOT NULL,
-  metier            VARCHAR(150)    NOT NULL,
+  salutation        ENUM('M','Mme') NOT NULL,
+  first_name        VARCHAR(100)    NOT NULL,
+  last_name         VARCHAR(100)    NOT NULL,
+  birth_date        DATE            NOT NULL,
+  profession        VARCHAR(150)    NOT NULL,
   email             VARCHAR(255)    NOT NULL,
-  email_verifie     TINYINT(1)      NOT NULL DEFAULT 0,
+  phone             VARCHAR(30)     NULL,
   mobile            VARCHAR(30)     NOT NULL,
-  telephone         VARCHAR(30)     NULL,
-
-  -- Adresse postale
-  rue               VARCHAR(255)    NOT NULL,
-  code_postal       VARCHAR(20)     NOT NULL,
-  ville             VARCHAR(100)    NOT NULL,
-  pays              CHAR(2)         NOT NULL COMMENT 'ISO 3166-1 alpha-2',
-
-  -- Réseaux sociaux (facultatifs)
-  social_youtube    VARCHAR(255)    NULL,
-  social_instagram  VARCHAR(255)    NULL,
-  social_linkedin   VARCHAR(255)    NULL,
-  social_facebook   VARCHAR(255)    NULL,
-  social_xtwitter   VARCHAR(255)    NULL,
-
-  source_decouverte ENUM('rs','presse','bouche','ecole','partenaire','newsletter','autre') NULL,
-  newsletter        TINYINT(1)      NOT NULL DEFAULT 0,
-  created_at        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
+  discovery_source  VARCHAR(50)     NULL,
+  newsletter_opt_in TINYINT(1)      NOT NULL DEFAULT 0,
+  created_at        DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at        DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
-  UNIQUE KEY uq_realisateurs_email (email),
-  INDEX      idx_realisateurs_pays (pays)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-  COMMENT='Réalisateurs — données conservées 3 ans (RGPD art. 5)';
+  UNIQUE KEY uq_directors_email (email)
+) ENGINE=InnoDB;
 
-
--- ============================================================
---  3. EMAIL_TOKENS — Vérification OTP avant dépôt de film
---     Code à 6 chiffres · expiration 15 min · usage unique
--- ============================================================
-CREATE TABLE email_tokens (
-  id         INT UNSIGNED  NOT NULL AUTO_INCREMENT,
-  email      VARCHAR(255)  NOT NULL,
-  token      CHAR(64)      NOT NULL COMMENT 'HMAC-SHA256 ou UUID v4 hex',
-  expires_at TIMESTAMP     NOT NULL,
-  used_at    TIMESTAMP     NULL     COMMENT 'NULL = token encore valide',
-  created_at TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
+-- ────────────────────────────────────────────────────────────
+-- DIRECTOR_ADDRESSES
+-- Separee de directors pour eviter une table trop large.
+-- Relation 1-1 : UNIQUE KEY sur director_id.
+-- ────────────────────────────────────────────────────────────
+CREATE TABLE director_addresses (
+  id           INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+  director_id  INT UNSIGNED    NOT NULL,
+  street       VARCHAR(255)    NOT NULL,
+  postal_code  VARCHAR(20)     NOT NULL,
+  city         VARCHAR(100)    NOT NULL,
+  country_code CHAR(2)         NOT NULL,
+  created_at   DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at   DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
-  UNIQUE KEY uq_email_tokens_token (token),
-  INDEX      idx_email_tokens_email (email)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-  COMMENT='Tokens OTP de vérification email — expiration 15 min, usage unique';
+  UNIQUE KEY uq_director_address (director_id),
+  FOREIGN KEY (director_id) REFERENCES directors(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
 
+-- ────────────────────────────────────────────────────────────
+-- DIRECTOR_SOCIAL_LINKS
+-- 1 ligne par plateforme. UNIQUE (director_id, platform).
+-- Extensible sans ALTER TABLE si on ajoute un reseau.
+-- ────────────────────────────────────────────────────────────
+CREATE TABLE director_social_links (
+  id          INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+  director_id INT UNSIGNED    NOT NULL,
+  platform    ENUM('youtube','instagram','linkedin','facebook','twitter') NOT NULL,
+  handle      VARCHAR(255)    NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_director_platform (director_id, platform),
+  FOREIGN KEY (director_id) REFERENCES directors(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
 
--- ============================================================
---  4. FILMS — Identité · Médias · Cycle de vie  [Étape 2]
---     Stockage : Scaleway S3 (archive) + YouTube API (diffusion)
---     La déclaration IA + RGPD est dans film_ia  [Étapes 3 & 4]
--- ============================================================
+-- ────────────────────────────────────────────────────────────
+-- FILMS
+-- Dossiers de candidature avec sauvegarde auto de brouillon.
+-- Les champs des etapes 2 et 3 sont NULL en draft (step 1) :
+--   step 1 → profil director uniquement, film cree vide
+--   step 2 → titres, synopses, video, note d'intention
+--   step 3 → ia_type, outils, sous-titres
+--   step 4 → soumission finale (status = 'submitted')
+-- La validation de NOT NULL est assuree par l'API, pas le schema,
+-- car les donnees arrivent progressivement via auto-save.
+-- ────────────────────────────────────────────────────────────
 CREATE TABLE films (
-  id               INT UNSIGNED    NOT NULL AUTO_INCREMENT,
-  realisateur_id   INT UNSIGNED    NOT NULL,
-  numero_dossier   VARCHAR(20)     NOT NULL COMMENT 'Format : MAI-2026-XXXXX',
+  id                   INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+  director_id          INT UNSIGNED     NOT NULL,
 
-  -- Identité du film
-  titre_fr         VARCHAR(100)    NOT NULL,
-  titre_en         VARCHAR(100)    NOT NULL,
-  langue           VARCHAR(10)     NOT NULL DEFAULT 'fr' COMMENT 'ISO 639-1',
-  tags             VARCHAR(300)    NULL     COMMENT 'Max 5 tags libres, séparés par virgule',
-  synopsis_fr      VARCHAR(500)    NOT NULL,
-  synopsis_en      VARCHAR(500)    NOT NULL,
-  intention        TEXT            NOT NULL COMMENT 'Note créative — max 1 000 caractères',
+  -- Etape 2 — Le Film
+  title_fr             VARCHAR(100)     NULL,
+  title_en             VARCHAR(100)     NULL,
+  language_code        VARCHAR(10)      NULL,
+  synopsis_fr          VARCHAR(300)     NULL,
+  synopsis_en          VARCHAR(300)     NULL,
+  intention_note       TEXT             NULL,
+  creation_tools_desc  TEXT             NULL,
 
-  -- Médias vidéo (double stockage CDC §4)
-  video_s3_key     VARCHAR(500)    NULL COMMENT 'Clé S3 · ex: Reves_Fontaine_Lea_20260301_France.mp4',
-  video_youtube_id VARCHAR(20)     NULL COMMENT 'ID YouTube après upload API · ex: dQw4w9WgXcQ',
-  video_duree      DECIMAL(5,2)    NULL COMMENT 'Durée en secondes (ex : 59.80)',
+  -- Etape 3 — Declaration IA
+  ia_type              ENUM('full','hybrid') NULL,
+  ai_tools_image       VARCHAR(255)     NULL,
+  ai_tools_sound       VARCHAR(255)     NULL,
+  ai_tools_script      VARCHAR(255)     NULL,
+  ai_tools_post_prod   VARCHAR(255)     NULL,
 
-  -- Médias complémentaires
-  poster_path      VARCHAR(500)    NULL COMMENT 'Affiche JPG/PNG/GIF — max 2 Mo',
-  subtitle_fr_path VARCHAR(500)    NULL COMMENT 'Fichier SRT/VTT français',
-  subtitle_en_path VARCHAR(500)    NULL COMMENT 'Fichier SRT/VTT anglais',
+  -- Fichier video (stocke cote serveur / S3)
+  video_path           VARCHAR(500)     NULL,
+  video_duration_sec   DECIMAL(6,2)     NULL,
+  video_format         VARCHAR(10)      NULL,
+  video_size_mb        DECIMAL(7,2)     NULL,
 
-  -- Modération admin / modérateur (CDC §5)
-  moderation_tag     VARCHAR(100)  NULL COMMENT 'Tag preset sélectionné (ex: hors_theme)',
-  moderation_message TEXT          NULL COMMENT 'Message final envoyé au réalisateur',
-  moderation_par     INT UNSIGNED  NULL COMMENT 'Admin ou modérateur ayant statué',
-  moderation_le      TIMESTAMP     NULL,
+  -- Sous-titres (SRT / VTT)
+  subtitle_fr_path     VARCHAR(500)     NULL,
+  subtitle_en_path     VARCHAR(500)     NULL,
 
-  -- Cycle de vie
-  statut           ENUM('brouillon','soumis','verifie','assigne','selectionne','finaliste','rejete','gagnant')
-                                   NOT NULL DEFAULT 'brouillon',
-  youtube_status   ENUM('pending','approved','rejected_copyright','rejected_content')
-                                   NOT NULL DEFAULT 'pending',
-  admin_selection  TINYINT(1)      NOT NULL DEFAULT 0 COMMENT 'Étoile admin — vue Sélection',
+  -- Verification YouTube API
+  youtube_video_id     VARCHAR(20)      NULL,
+  youtube_status       ENUM('pending','approved','rejected_copyright','rejected_content')
+                                        NOT NULL DEFAULT 'pending',
+  copyright_ok         TINYINT(1)       NOT NULL DEFAULT 0,
 
-  soumis_le        TIMESTAMP       NULL,
-  created_at       TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at       TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  -- Consentements RGPD (step 4 — les 3 cases doivent etre cochees avant soumission)
+  -- consent_rights      : cession de droits de diffusion (5 ans)
+  -- consent_rgpd        : conservation des donnees personnelles (3 ans, RGPD)
+  -- consent_originality : certification d'originalite et d'usage sincere des outils IA
+  consent_rights       TINYINT(1)       NOT NULL DEFAULT 0,
+  consent_rgpd         TINYINT(1)       NOT NULL DEFAULT 0,
+  consent_originality  TINYINT(1)       NOT NULL DEFAULT 0,
+
+  -- Suivi du dossier
+  submission_number    VARCHAR(20)      NULL,
+  status               ENUM('draft','submitted','verified','withdrawn')
+                                        NOT NULL DEFAULT 'draft',
+  submission_step      TINYINT UNSIGNED NOT NULL DEFAULT 1,
+
+  created_at           DATETIME         NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at           DATETIME         NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
   PRIMARY KEY (id),
-  UNIQUE KEY  uq_films_dossier       (numero_dossier),
-  UNIQUE KEY  uq_films_youtube       (video_youtube_id),
-  CONSTRAINT  fk_films_realisateur   FOREIGN KEY (realisateur_id) REFERENCES realisateurs (id) ON DELETE RESTRICT,
-  CONSTRAINT  fk_films_moderation    FOREIGN KEY (moderation_par) REFERENCES users (id) ON DELETE SET NULL,
-  INDEX       idx_films_realisateur  (realisateur_id),
-  INDEX       idx_films_statut       (statut),
-  INDEX       idx_films_yt_status    (youtube_status)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-  COMMENT='Films soumis — identité, médias, statuts (un réalisateur peut déposer N films)';
+  UNIQUE KEY uq_submission_number (submission_number),
+  INDEX idx_films_director (director_id),
+  INDEX idx_films_status (status),
+  FOREIGN KEY (director_id) REFERENCES directors(id) ON DELETE RESTRICT
+) ENGINE=InnoDB;
 
+-- ────────────────────────────────────────────────────────────
+-- FILM_TAGS
+-- Tags libres (max 5 cote UI) associes a un film.
+-- 1 ligne par tag — normalise pour permettre la recherche par tag.
+-- ────────────────────────────────────────────────────────────
+CREATE TABLE film_tags (
+  id      INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+  film_id INT UNSIGNED    NOT NULL,
+  tag     VARCHAR(50)     NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_film_tag (film_id, tag),
+  INDEX idx_film_tags_tag (tag),
+  FOREIGN KEY (film_id) REFERENCES films(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
 
--- ============================================================
---  5. FILM_IA — Déclaration IA + consentements RGPD  [Étapes 3 & 4]
---     Relation 1-to-1 avec films · créée à la soumission finale
--- ============================================================
-CREATE TABLE film_ia (
-  film_id            INT UNSIGNED  NOT NULL COMMENT 'PK + FK — 1-to-1 avec films',
-
-  -- Déclaration d'usage IA
-  ia_classification  ENUM('full','hybrid') NOT NULL COMMENT 'full = 100% IA · hybrid = IA + humain',
-  ia_outils_image    TEXT          NOT NULL COMMENT 'Requis (ex : Runway ML, Sora)',
-  ia_outils_son      TEXT          NULL,
-  ia_outils_scenario TEXT          NULL,
-  ia_outils_postprod TEXT          NULL,
-
-  -- Consentements RGPD obligatoires (3 cases — étape 4)
-  rgpd_diffusion     TINYINT(1)    NOT NULL DEFAULT 0 COMMENT 'Cession droits diffusion 5 ans',
-  rgpd_donnees       TINYINT(1)    NOT NULL DEFAULT 0 COMMENT 'Conservation données 3 ans',
-  rgpd_originalite   TINYINT(1)    NOT NULL DEFAULT 0 COMMENT 'Certification auteur + usage IA déclaré exact',
-
-  PRIMARY KEY (film_id),
-  CONSTRAINT fk_filmia_film FOREIGN KEY (film_id) REFERENCES films (id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-  COMMENT='Déclaration IA obligatoire + consentements RGPD — 1-to-1 avec films';
-
-
--- ============================================================
---  6. FILM_COLLABORATEURS — Co-auteurs et équipe du film
---     CDC §3 : collaborateurs avec rôle et profession
--- ============================================================
-CREATE TABLE film_collaborateurs (
-  film_id    INT UNSIGNED  NOT NULL,
-  nom        VARCHAR(150)  NOT NULL,
-  profession VARCHAR(150)  NOT NULL COMMENT 'ex : Compositeur, Voix off, Motion designer',
-  role_film  VARCHAR(150)  NULL     COMMENT 'ex : Co-réalisateur, Coordinateur IA',
-
-  PRIMARY KEY (film_id, nom, profession),
-  CONSTRAINT fk_collab_film FOREIGN KEY (film_id) REFERENCES films (id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-  COMMENT='Collaborateurs déclarés par le réalisateur (équipe projet)';
-
-
--- ============================================================
---  7. MODERATION_PRESETS — Templates d'email de modération
---     Gérés par l'admin · CDC §5 : bibliothèque de tags
--- ============================================================
-CREATE TABLE moderation_presets (
-  id       SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  tag      VARCHAR(100)      NOT NULL UNIQUE COMMENT 'Identifiant machine (ex: hors_theme)',
-  titre    VARCHAR(200)      NOT NULL          COMMENT 'Libellé affiché dans l''interface',
-  template TEXT              NOT NULL          COMMENT 'Corps du message — variables : {{prenom}}, {{titre}}',
-  actif    TINYINT(1)        NOT NULL DEFAULT 1,
-
-  PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-  COMMENT='Templates email de modération — admin peut ajouter / modifier / désactiver';
-
-
--- ============================================================
---  8. PHASES — Phases d'évaluation jury + phases publiques
--- ============================================================
+-- ────────────────────────────────────────────────────────────
+-- PHASES
+-- Phase 1 : preselecton Top 50  (target_count = 50)
+-- Phase 2 : finale Top 5        (target_count = 5)
+-- is_active : une seule phase active a la fois (gere par l'API).
+-- ────────────────────────────────────────────────────────────
 CREATE TABLE phases (
-  id           TINYINT UNSIGNED  NOT NULL AUTO_INCREMENT,
-  nom          VARCHAR(100)      NOT NULL COMMENT 'ex : Présélection Top 50',
-  description  VARCHAR(500)      NULL,
-  nb_films_max SMALLINT UNSIGNED NOT NULL DEFAULT 50 COMMENT 'Nb films max sélectionnés (configurable)',
-  ouverture_le DATE              NOT NULL,
-  fermeture_le DATE              NOT NULL,
-  statut       ENUM('a_venir','en_cours','terminee') NOT NULL DEFAULT 'a_venir',
-
+  id            INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+  phase_number  TINYINT UNSIGNED NOT NULL,
+  name          VARCHAR(100)     NOT NULL,
+  target_count  TINYINT UNSIGNED NOT NULL,
+  open_date     DATE             NOT NULL,
+  close_date    DATE             NOT NULL,
+  is_active     TINYINT(1)       NOT NULL DEFAULT 0,
+  created_at    DATETIME         NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at    DATETIME         NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
-  CONSTRAINT chk_phases_dates CHECK (fermeture_le > ouverture_le)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-  COMMENT='Phases jury — Phase 1 (Top 50) · Phase 2 (Top 5 finale, configurable)';
+  UNIQUE KEY uq_phase_number (phase_number)
+) ENGINE=InnoDB;
 
-
--- ============================================================
---  9. ASSIGNATIONS — Films attribués aux jurés par phase
---     PK composite : garantit unicité sans colonne id superflue
--- ============================================================
-CREATE TABLE assignations (
-  film_id     INT UNSIGNED      NOT NULL,
-  user_id     INT UNSIGNED      NOT NULL COMMENT 'Juré assigné',
-  phase_id    TINYINT UNSIGNED  NOT NULL,
-  assigned_at TIMESTAMP         NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-  PRIMARY KEY (film_id, user_id, phase_id),
-  CONSTRAINT fk_assign_film  FOREIGN KEY (film_id)  REFERENCES films  (id) ON DELETE CASCADE,
-  CONSTRAINT fk_assign_user  FOREIGN KEY (user_id)  REFERENCES users  (id) ON DELETE CASCADE,
-  CONSTRAINT fk_assign_phase FOREIGN KEY (phase_id) REFERENCES phases (id) ON DELETE RESTRICT,
-  INDEX idx_assign_user  (user_id),
-  INDEX idx_assign_phase (phase_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-  COMMENT='Pivot film ↔ juré par phase — 1 film assigné à N jurés';
-
-
--- ============================================================
--- 10. EVALUATIONS — Votes individuels du jury
---     1 évaluation par juré · par film · par phase (UNIQUE)
---     note_privee  : visible uniquement par le juré
---     commentaire  : visible par tout le jury (si toggle actif)
--- ============================================================
-CREATE TABLE evaluations (
-  id          INT UNSIGNED      NOT NULL AUTO_INCREMENT,
-  film_id     INT UNSIGNED      NOT NULL,
-  user_id     INT UNSIGNED      NOT NULL COMMENT 'Juré évaluateur',
-  phase_id    TINYINT UNSIGNED  NOT NULL,
-  decision    ENUM('valide','refuse','arevoir','discuss')
-                                NULL     COMMENT 'NULL = pas encore évalué',
-  note_privee TEXT              NULL     COMMENT 'Note personnelle — visible uniquement par le juré',
-  commentaire TEXT              NULL     COMMENT 'Commentaire public — visible par tout le jury',
-  created_at  TIMESTAMP         NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at  TIMESTAMP         NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-
+-- ────────────────────────────────────────────────────────────
+-- FILM_ASSIGNMENTS
+-- Attribution d'un film a un jure pour une phase donnee.
+-- Index (user_id, phase_id) : "films assignes a ce jure dans cette phase"
+--   → requete principale du dashboard jury.
+-- ────────────────────────────────────────────────────────────
+CREATE TABLE film_assignments (
+  id          INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+  film_id     INT UNSIGNED    NOT NULL,
+  user_id     INT UNSIGNED    NOT NULL,
+  phase_id    INT UNSIGNED    NOT NULL,
+  assigned_at DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
-  UNIQUE KEY  uq_eval_film_user_phase (film_id, user_id, phase_id),
-  CONSTRAINT  fk_eval_film  FOREIGN KEY (film_id)  REFERENCES films  (id) ON DELETE CASCADE,
-  CONSTRAINT  fk_eval_user  FOREIGN KEY (user_id)  REFERENCES users  (id) ON DELETE CASCADE,
-  CONSTRAINT  fk_eval_phase FOREIGN KEY (phase_id) REFERENCES phases (id) ON DELETE RESTRICT,
-  INDEX       idx_eval_film  (film_id),
-  INDEX       idx_eval_user  (user_id),
-  INDEX       idx_eval_phase (phase_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-  COMMENT='Évaluations jury — 1 vote + note privée + commentaire public par film/phase';
+  UNIQUE KEY uq_assignment (film_id, user_id, phase_id),
+  INDEX idx_assignments_jury_phase (user_id, phase_id),
+  FOREIGN KEY (film_id)  REFERENCES films(id)  ON DELETE CASCADE,
+  FOREIGN KEY (user_id)  REFERENCES users(id)  ON DELETE CASCADE,
+  FOREIGN KEY (phase_id) REFERENCES phases(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
 
-
--- ============================================================
--- 11. TICKETS — Signalements jury → administration
--- ============================================================
-CREATE TABLE tickets (
-  id          INT UNSIGNED  NOT NULL AUTO_INCREMENT,
-  film_id     INT UNSIGNED  NOT NULL,
-  emis_par    INT UNSIGNED  NOT NULL COMMENT 'Juré ou modérateur',
-  motif       ENUM('copyright','contenu_inapproprie','technique','autre') NOT NULL,
-  description TEXT          NOT NULL,
-  statut      ENUM('ouvert','en_traitement','resolu') NOT NULL DEFAULT 'ouvert',
-  resolu_par  INT UNSIGNED  NULL COMMENT 'Admin ayant clos le ticket',
-  created_at  TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at  TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-
+-- ────────────────────────────────────────────────────────────
+-- JURY_EVALUATIONS
+-- Decision formelle d'un jure sur un film (1 seule par triplet).
+-- comment = note privee liee a la decision (pas publiee).
+-- Index (user_id, phase_id) : stats de participation par jure.
+-- ────────────────────────────────────────────────────────────
+CREATE TABLE jury_evaluations (
+  id         INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+  film_id    INT UNSIGNED    NOT NULL,
+  user_id    INT UNSIGNED    NOT NULL,
+  phase_id   INT UNSIGNED    NOT NULL,
+  decision   ENUM('valide','arevoir','refuse','discuter') NOT NULL,
+  reason     ENUM('rights','quality','content','tech','other') NULL,
+  -- reason est obligatoire pour les decisions 'arevoir' et 'refuse' (valide cote API).
+  -- Valeurs : rights=droits musicaux, quality=qualite, content=contenu, tech=YouTube/tech, other=autre
+  comment    TEXT            NULL,
+  created_at DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
-  CONSTRAINT fk_ticket_film   FOREIGN KEY (film_id)    REFERENCES films (id) ON DELETE CASCADE,
-  CONSTRAINT fk_ticket_emis   FOREIGN KEY (emis_par)   REFERENCES users (id) ON DELETE RESTRICT,
-  CONSTRAINT fk_ticket_resolu FOREIGN KEY (resolu_par) REFERENCES users (id) ON DELETE SET NULL,
-  INDEX idx_ticket_film   (film_id),
-  INDEX idx_ticket_emis   (emis_par),
-  INDEX idx_ticket_statut (statut)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-  COMMENT='Signalements jury → admin : copyright, contenu, technique';
+  UNIQUE KEY uq_evaluation (film_id, user_id, phase_id),
+  INDEX idx_evaluations_jury_phase (user_id, phase_id),
+  INDEX idx_evaluations_film (film_id),
+  FOREIGN KEY (film_id)  REFERENCES films(id)  ON DELETE CASCADE,
+  FOREIGN KEY (user_id)  REFERENCES users(id)  ON DELETE CASCADE,
+  FOREIGN KEY (phase_id) REFERENCES phases(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
 
+-- ────────────────────────────────────────────────────────────
+-- JURY_COMMENTS
+-- Commentaires publics (visibles par tout le jury).
+-- Distincts de jury_evaluations.comment (prive).
+-- Un jure peut publier plusieurs commentaires sur un meme film.
+-- ────────────────────────────────────────────────────────────
+CREATE TABLE jury_comments (
+  id         INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+  film_id    INT UNSIGNED    NOT NULL,
+  user_id    INT UNSIGNED    NOT NULL,
+  content    TEXT            NOT NULL,
+  created_at DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  INDEX idx_jury_comments_film (film_id),
+  FOREIGN KEY (film_id) REFERENCES films(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
 
--- ============================================================
--- 12. SPONSORS — Partenaires et sponsors du festival
--- ============================================================
+-- ────────────────────────────────────────────────────────────
+-- FILM_SELECTIONS
+-- Decision admin : film selectionne / finaliste / rejete.
+-- Une seule decision par (film, phase).
+-- Index (phase_id, status) : "Top 50 selectionnes" ou "Top 5 finalistes".
+-- ────────────────────────────────────────────────────────────
+CREATE TABLE film_selections (
+  id          INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+  film_id     INT UNSIGNED    NOT NULL,
+  phase_id    INT UNSIGNED    NOT NULL,
+  status      ENUM('selected','finalist','rejected') NOT NULL,
+  decided_by  INT UNSIGNED    NOT NULL,
+  decided_at  DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_selection (film_id, phase_id),
+  INDEX idx_selections_phase_status (phase_id, status),
+  FOREIGN KEY (film_id)    REFERENCES films(id)  ON DELETE CASCADE,
+  FOREIGN KEY (phase_id)   REFERENCES phases(id) ON DELETE CASCADE,
+  FOREIGN KEY (decided_by) REFERENCES users(id)  ON DELETE RESTRICT
+) ENGINE=InnoDB;
+
+-- ────────────────────────────────────────────────────────────
+-- MODERATION_TICKETS
+-- Signalements jury remonte a l'admin pour traitement.
+-- Index (status) : comptage rapide des tickets ouverts.
+-- ────────────────────────────────────────────────────────────
+CREATE TABLE moderation_tickets (
+  id              INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+  film_id         INT UNSIGNED    NOT NULL,
+  reported_by     INT UNSIGNED    NOT NULL,
+  type            ENUM('rights','quality','content','tech','other') NOT NULL DEFAULT 'other',
+  -- type : categorie du signalement (correspond aux chips de la modale admin-jury)
+  reason          TEXT            NOT NULL,
+  status          ENUM('open','in_progress','resolved','dismissed') NOT NULL DEFAULT 'open',
+  -- in_progress : admin a clique "Prendre en charge" mais pas encore resolu
+  resolved_by     INT UNSIGNED    NULL,
+  resolution_note TEXT            NULL,
+  created_at      DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  resolved_at     DATETIME        NULL,
+  PRIMARY KEY (id),
+  INDEX idx_tickets_status (status),
+  INDEX idx_tickets_film (film_id),
+  FOREIGN KEY (film_id)     REFERENCES films(id) ON DELETE CASCADE,
+  FOREIGN KEY (reported_by) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (resolved_by) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+-- ────────────────────────────────────────────────────────────
+-- SPONSORS
+-- tier : niveau du partenariat (visible dans la vue Awards admin).
+-- ────────────────────────────────────────────────────────────
 CREATE TABLE sponsors (
-  id        TINYINT UNSIGNED  NOT NULL AUTO_INCREMENT,
-  nom       VARCHAR(150)      NOT NULL,
-  niveau    ENUM('principal','partenaire','media','institutionnel') NOT NULL DEFAULT 'partenaire',
-  logo_path VARCHAR(255)      NULL,
-  lien_url  VARCHAR(255)      NULL,
-
+  id          INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+  name        VARCHAR(150)    NOT NULL,
+  tier        ENUM('principal','partenaire','media','institution') NOT NULL DEFAULT 'partenaire',
+  logo_url    VARCHAR(500)    NULL,
+  website_url VARCHAR(500)    NULL,
+  created_at  DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at  DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-  COMMENT='Sponsors et partenaires — affichés sur accueil + liés aux awards';
+) ENGINE=InnoDB;
 
-
--- ============================================================
--- 13. AWARDS — Prix du festival
--- ============================================================
+-- ────────────────────────────────────────────────────────────
+-- AWARDS
+-- Prix du festival. sponsor_id et winner_film_id sont NULL
+-- jusqu'a attribution (ex: "Prix Coup de Coeur Jury" sans dotation
+-- en euros → prize_amount_eur NULL, prize_label = "Trophe").
+-- ────────────────────────────────────────────────────────────
 CREATE TABLE awards (
-  id          TINYINT UNSIGNED  NOT NULL AUTO_INCREMENT,
-  nom         VARCHAR(150)      NOT NULL,
-  description VARCHAR(500)      NULL,
-  montant_eur DECIMAL(8,2)      NULL     COMMENT 'NULL = prix non monétaire (trophée)',
-  sponsor_id  TINYINT UNSIGNED  NULL,
-  film_id     INT UNSIGNED      NULL     COMMENT 'Lauréat — NULL avant délibération finale',
-
+  id               INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+  name             VARCHAR(150)    NOT NULL,
+  description      TEXT            NULL,
+  sponsor_id       INT UNSIGNED    NULL,
+  prize_amount_eur DECIMAL(10,2)   NULL,
+  prize_label      VARCHAR(100)    NULL,
+  winner_film_id   INT UNSIGNED    NULL,
+  created_at       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
-  CONSTRAINT fk_award_sponsor FOREIGN KEY (sponsor_id) REFERENCES sponsors (id) ON DELETE SET NULL,
-  CONSTRAINT fk_award_film    FOREIGN KEY (film_id)    REFERENCES films    (id) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-  COMMENT='Awards festival : Grand Prix, Meilleure Réalisation, Prix du Public…';
+  FOREIGN KEY (sponsor_id)     REFERENCES sponsors(id) ON DELETE SET NULL,
+  FOREIGN KEY (winner_film_id) REFERENCES films(id)    ON DELETE SET NULL
+) ENGINE=InnoDB;
 
-
--- ============================================================
--- 14. JURY_LISTES — Listes personnelles privées des jurés
--- ============================================================
-CREATE TABLE jury_listes (
-  id         INT UNSIGNED  NOT NULL AUTO_INCREMENT,
-  user_id    INT UNSIGNED  NOT NULL,
-  nom        VARCHAR(150)  NOT NULL,
-  created_at TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
+-- ────────────────────────────────────────────────────────────
+-- JURY_LISTS
+-- Listes privees d'annotations d'un jure (jamais visibles
+-- par les autres membres du jury ni par l'admin).
+-- ────────────────────────────────────────────────────────────
+CREATE TABLE jury_lists (
+  id         INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+  user_id    INT UNSIGNED    NOT NULL,
+  name       VARCHAR(100)    NOT NULL,
+  emoji      VARCHAR(10)     NULL,
+  notes      TEXT            NULL,
+  created_at DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
-  CONSTRAINT fk_jl_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-  INDEX      idx_jl_user (user_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-  COMMENT='Listes privées jury — visibles uniquement par leur auteur';
+  INDEX idx_jury_lists_user (user_id),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
 
+-- ────────────────────────────────────────────────────────────
+-- JURY_LIST_FILMS
+-- Table pivot jury_lists <-> films (relation N:M).
+-- PK composite : pas d'id auto-increment necessaire ici.
+-- ────────────────────────────────────────────────────────────
+CREATE TABLE jury_list_films (
+  list_id  INT UNSIGNED    NOT NULL,
+  film_id  INT UNSIGNED    NOT NULL,
+  added_at DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (list_id, film_id),
+  INDEX idx_jury_list_films_film (film_id),
+  FOREIGN KEY (list_id) REFERENCES jury_lists(id) ON DELETE CASCADE,
+  FOREIGN KEY (film_id) REFERENCES films(id)      ON DELETE CASCADE
+) ENGINE=InnoDB;
 
--- ============================================================
--- 15. JURY_LISTE_FILMS — Films dans une liste privée
--- ============================================================
-CREATE TABLE jury_liste_films (
-  liste_id    INT UNSIGNED     NOT NULL,
-  film_id     INT UNSIGNED     NOT NULL,
-  note_privee TEXT             NULL COMMENT 'Annotation personnelle sur ce film dans cette liste',
-  position    TINYINT UNSIGNED NULL COMMENT 'Ordre dans la liste',
-
-  PRIMARY KEY (liste_id, film_id),
-  CONSTRAINT fk_jlf_liste FOREIGN KEY (liste_id) REFERENCES jury_listes (id) ON DELETE CASCADE,
-  CONSTRAINT fk_jlf_film  FOREIGN KEY (film_id)  REFERENCES films       (id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-  COMMENT='Pivot : films appartenant aux listes privées des jurés';
-
-
--- ============================================================
--- 16. CHAT_MESSAGES — Messagerie interne jury
--- ============================================================
+-- ────────────────────────────────────────────────────────────
+-- CHAT_MESSAGES
+-- Messages du chat jury (canal unique, pas de rooms).
+-- Index sur created_at : tri chronologique des messages.
+-- ────────────────────────────────────────────────────────────
 CREATE TABLE chat_messages (
-  id              INT UNSIGNED  NOT NULL AUTO_INCREMENT,
-  expediteur_id   INT UNSIGNED  NOT NULL,
-  destinataire_id INT UNSIGNED  NULL     COMMENT 'NULL = broadcast groupe',
-  contenu         TEXT          NOT NULL,
-  lu_le           TIMESTAMP     NULL     COMMENT 'NULL = non lu',
-  created_at      TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
+  id         INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+  sender_id  INT UNSIGNED    NOT NULL,
+  content    TEXT            NOT NULL,
+  created_at DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
-  CONSTRAINT fk_chat_exp  FOREIGN KEY (expediteur_id)   REFERENCES users (id) ON DELETE CASCADE,
-  CONSTRAINT fk_chat_dest FOREIGN KEY (destinataire_id) REFERENCES users (id) ON DELETE CASCADE,
-  INDEX idx_chat_exp  (expediteur_id),
-  INDEX idx_chat_dest (destinataire_id),
-  INDEX idx_chat_conv (expediteur_id, destinataire_id),
-  INDEX idx_chat_date (created_at)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-  COMMENT='Messagerie interne jury et admin — broadcast si destinataire_id IS NULL';
+  INDEX idx_chat_created_at (created_at),
+  FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
 
+-- ────────────────────────────────────────────────────────────
+-- EMAIL_VERIFICATIONS
+-- OTP / tokens pour quatre usages :
+--   'depot'        → verification email avant soumission (verification-email.html)
+--   'invite'       → confirmation apres inscription via lien invite.html
+--   'register'     → confirmation apres inscription libre login-jury.html
+--   'resubmission' → lien de re-soumission envoye quand YouTube rejette un film
+--                    (lien valable 7 jours, dossier pre-rempli, film_id obligatoire)
+-- film_id : rempli uniquement pour type='resubmission'.
+-- ────────────────────────────────────────────────────────────
+CREATE TABLE email_verifications (
+  id           INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+  email        VARCHAR(255)    NOT NULL,
+  token        VARCHAR(128)    NOT NULL,
+  type         ENUM('depot','invite','register','resubmission') NOT NULL,
+  film_id      INT UNSIGNED    NULL,
+  expires_at   DATETIME        NOT NULL,
+  used_at      DATETIME        NULL,
+  resend_count TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  created_at   DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_token (token),
+  INDEX idx_email_type (email, type),
+  FOREIGN KEY (film_id) REFERENCES films(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
 
--- ============================================================
--- 17. SITE_CONFIG — CMS · Paramètres éditoriaux administrables
---     Clé-valeur typé : évite toute migration pour un paramètre
---     CDC §8 : hero vidéo, textes, phases publiques, jury_peer_visibility…
--- ============================================================
-CREATE TABLE site_config (
-  cle        VARCHAR(100)  NOT NULL COMMENT 'ex: hero_video_url, jury_peer_visibility',
-  valeur     TEXT          NULL,
-  type       ENUM('text','url','html','json','boolean','date') NOT NULL DEFAULT 'text',
-  updated_at TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+-- ────────────────────────────────────────────────────────────
+-- PASSWORD_RESET_TOKENS
+-- Via : login-jury.html > "Mot de passe oublie ?"
+-- Flow : POST /auth/forgot-password → token genere + envoye par mail
+--        POST /auth/reset-password  → token verifie → hash mis a jour
+-- Expiration recommandee : 15 a 30 minutes.
+-- ────────────────────────────────────────────────────────────
+CREATE TABLE password_reset_tokens (
+  id         INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+  user_id    INT UNSIGNED    NOT NULL,
+  token      VARCHAR(128)    NOT NULL,
+  expires_at DATETIME        NOT NULL,
+  used_at    DATETIME        NULL,
+  created_at DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_reset_token (token),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
 
-  PRIMARY KEY (cle)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-  COMMENT='CMS admin — paramètres éditoriaux et toggles de configuration';
+-- ────────────────────────────────────────────────────────────
+-- PUBLIC_VOTES
+-- Prix du Public : vote en ligne ouvert pendant le festival.
+-- Via : index.html section #palmares > "Prix du Public".
+-- voter_email_hash : SHA-256 de l'email (jamais l'email brut).
+-- voter_ip_hash    : SHA-256 de l'IP (anonymisation RGPD).
+-- UNIQUE (film_id, voter_email_hash) : un vote par email par film.
+-- phase_id : rattache le vote a la periode du festival active.
+-- ────────────────────────────────────────────────────────────
+CREATE TABLE public_votes (
+  id               INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+  film_id          INT UNSIGNED    NOT NULL,
+  phase_id         INT UNSIGNED    NOT NULL,
+  voter_email_hash VARCHAR(64)     NOT NULL,
+  voter_ip_hash    VARCHAR(64)     NULL,
+  voted_at         DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_vote_per_film (film_id, voter_email_hash),
+  INDEX idx_votes_film (film_id),
+  INDEX idx_votes_phase (phase_id),
+  FOREIGN KEY (film_id)  REFERENCES films(id)  ON DELETE CASCADE,
+  FOREIGN KEY (phase_id) REFERENCES phases(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
 
+-- ────────────────────────────────────────────────────────────
+-- SITE_SETTINGS
+-- Table cle-valeur pour tous les contenus editables du site
+-- depuis la vue "Administration site" (admin-panel.html).
+--
+-- Cles prevues :
+--   hero_video_path      → chemin S3 de la video de fond
+--   festival_name        → "marsAI 2026"
+--   hero_tagline         → accroche principale
+--   hero_subline         → sous-accroche
+--   hero_cta_text        → texte du bouton principal
+--   hero_tag_1 .. _4     → 4 tags affiches sous le hero
+--   contact_email        → email public du festival
+--   contact_instagram    → compte Instagram
+--   contact_website      → URL du site
+--   festival_description → description courte (section About)
+-- ────────────────────────────────────────────────────────────
+CREATE TABLE site_settings (
+  id          INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+  setting_key VARCHAR(100)    NOT NULL,
+  value       TEXT            NULL,
+  updated_by  INT UNSIGNED    NULL,
+  updated_at  DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_setting_key (setting_key),
+  FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB;
 
--- ============================================================
---  DONNÉES INITIALES
--- ============================================================
+-- ────────────────────────────────────────────────────────────
+-- CALENDAR_EVENTS
+-- Dates cles affichees publiquement sur le site.
+-- Gestion depuis la carte "Calendrier" de la vue site admin.
+-- is_visible : toggle on/off visible dans la maquette.
+-- sort_order : ordre d'affichage.
+-- ────────────────────────────────────────────────────────────
+CREATE TABLE calendar_events (
+  id          INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+  name        VARCHAR(150)     NOT NULL,
+  description VARCHAR(255)     NULL,
+  event_date  DATE             NOT NULL,
+  is_visible  TINYINT(1)       NOT NULL DEFAULT 1,
+  sort_order  TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  updated_at  DATETIME         NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB;
 
--- Configuration site + toggles privacy jury (CDC §6)
-INSERT INTO site_config (cle, type, valeur) VALUES
-  ('festival_annee',          'text',    '2026'),
-  ('festival_theme',          'text',    'Imaginez des futurs souhaitables'),
-  ('festival_lieu',           'text',    'Friche Belle de Mai, Marseille'),
-  ('depot_ouvert',            'boolean', '1'),
-  ('depot_date_debut',        'date',    '2026-04-01'),
-  ('depot_date_fin',          'date',    '2026-09-30'),
-  ('jury_peer_visibility',    'boolean', '0'),  -- CDC §6 : désactivé par défaut
-  ('admin_comment_access',    'boolean', '0'),  -- CDC §6 : désactivé par défaut
-  ('phase1_active',           'boolean', '0'),
-  ('phase2_active',           'boolean', '0'),
-  ('phase3_active',           'boolean', '0'); -- Palmarès
+-- ────────────────────────────────────────────────────────────
+-- PUBLIC_JURY_MEMBERS
+-- Membres du jury affiches sur la PAGE D'ACCUEIL publique.
+-- Distincts des users (backoffice) : un membre public peut
+-- etre purement editorial (sans acces au backoffice).
+-- user_id    : lien optionnel vers users si le membre a aussi
+--              un acces jury backoffice.
+-- is_featured : 1 = carte vedette (Presidence du jury),
+--               contrainte applicative : un seul a la fois.
+-- sort_order  : ordre de la liste, modifiable par l'admin.
+-- ────────────────────────────────────────────────────────────
+CREATE TABLE public_jury_members (
+  id          INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+  user_id     INT UNSIGNED     NULL,
+  name        VARCHAR(150)     NOT NULL,
+  role_label  VARCHAR(100)     NOT NULL,
+  photo_url   VARCHAR(500)     NULL,
+  is_featured TINYINT(1)       NOT NULL DEFAULT 0,
+  is_visible  TINYINT(1)       NOT NULL DEFAULT 1,
+  sort_order  TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  created_at  DATETIME         NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at  DATETIME         NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB;
 
--- Phases d'évaluation jury
-INSERT INTO phases (nom, description, nb_films_max, ouverture_le, fermeture_le, statut) VALUES
-  ('Présélection Top 50',
-   'Chaque juré évalue les films assignés. Sélection des 50 meilleurs.',
-   50, '2026-12-12', '2026-12-19', 'a_venir'),
-  ('Finale',
-   'Délibération collégiale sur les finalistes issus de la Phase 1.',
-   5,  '2026-12-22', '2026-12-28', 'a_venir');
-
--- Awards
-INSERT INTO awards (nom, description, montant_eur) VALUES
-  ('Grand Prix marsAI',          'Meilleur film de la compétition officielle',          5000.00),
-  ('Prix Meilleure Réalisation', 'Excellence dans la direction artistique',             2000.00),
-  ('Prix du Public',             'Film le plus apprécié via vote en ligne',             1000.00),
-  ('Prix Coup de Cœur Jury',    'Mention spéciale décernée librement par le jury',       NULL);
-
--- Templates modération (CDC §5 — bibliothèque presets)
-INSERT INTO moderation_presets (tag, titre, template) VALUES
-  ('hors_theme',
-   'Film hors thème',
-   'Bonjour {{prenom}},\n\nAprès examen de votre film "{{titre}}", le jury considère qu''il ne s''inscrit pas suffisamment dans le thème "Imaginez des futurs souhaitables".\n\nCordialement,\nL''équipe marsAI'),
-  ('duree_non_conforme',
-   'Durée non conforme',
-   'Bonjour {{prenom}},\n\nLa durée de votre film "{{titre}}" ne respecte pas les 60 secondes réglementaires (+/-2s). Nous ne pouvons pas le retenir en l''état.\n\nCordialement,\nL''équipe marsAI'),
-  ('sous_titres_insuffisants',
-   'Sous-titres insuffisants',
-   'Bonjour {{prenom}},\n\nLes sous-titres de votre film "{{titre}}" sont absents ou non conformes. Les sous-titres FR sont obligatoires.\n\nCordialement,\nL''équipe marsAI'),
-  ('qualite_insuffisante',
-   'Qualité insuffisante',
-   'Bonjour {{prenom}},\n\nAprès visionnage, le jury estime que la qualité technique ou artistique de "{{titre}}" ne remplit pas les critères de sélection.\n\nCordialement,\nL''équipe marsAI'),
-  ('contenu_inapproprie',
-   'Contenu inapproprié',
-   'Bonjour {{prenom}},\n\nVotre film "{{titre}}" contient des éléments qui ne respectent pas le règlement du festival.\n\nCordialement,\nL''équipe marsAI');
-
--- Compte administrateur par défaut
--- IMPORTANT : remplacer password_hash avant déploiement
-INSERT INTO users (nom, email, password_hash, role) VALUES
-  ('Admin marsAI', 'admin@marsai.fr',
-   '$2b$12$PLACEHOLDER_HASH_A_REMPLACER_AVANT_PROD',
-   'admin');
+-- ────────────────────────────────────────────────────────────
+-- EMAIL_LOGS
+-- Historique des emails manuels envoyes par l'admin aux realisateurs.
+-- Via : admin-panel.html > modale "Email au realisateur" (depuis un ticket).
+-- Egalement utilise pour les emails automatiques (rejet YouTube, etc.).
+-- sent_by NULL → email envoye automatiquement par le systeme (pas un humain).
+-- ────────────────────────────────────────────────────────────
+CREATE TABLE email_logs (
+  id          INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+  director_id INT UNSIGNED    NULL,
+  film_id     INT UNSIGNED    NULL,
+  ticket_id   INT UNSIGNED    NULL,
+  sent_by     INT UNSIGNED    NULL,
+  to_email    VARCHAR(255)    NOT NULL,
+  subject     VARCHAR(300)    NOT NULL,
+  body        TEXT            NOT NULL,
+  sent_at     DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  INDEX idx_email_logs_director (director_id),
+  INDEX idx_email_logs_film (film_id),
+  INDEX idx_email_logs_ticket (ticket_id),
+  FOREIGN KEY (director_id) REFERENCES directors(id)           ON DELETE SET NULL,
+  FOREIGN KEY (film_id)     REFERENCES films(id)               ON DELETE SET NULL,
+  FOREIGN KEY (ticket_id)   REFERENCES moderation_tickets(id)  ON DELETE SET NULL,
+  FOREIGN KEY (sent_by)     REFERENCES users(id)               ON DELETE SET NULL
+) ENGINE=InnoDB;
