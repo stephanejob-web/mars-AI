@@ -1,0 +1,101 @@
+Title,Description
+#1(form) Structure composant formulaire multi-etapes,Creer le composant principal FormulaireDepot avec gestion de l etape courante (1 a 5) via useState et logique de navigation entre etapes
+#2(form) Composant Stepper sidebar 4 etapes,Creer le sidebar gauche avec les 4 etapes numerotees (Profil realisateur Le film Declaration IA Confirmation) et les etats actif complete a-venir
+#3(form) Icone etape active dans le stepper,Chaque etape du stepper affiche une icone differente selon son etat : cercle numerote en cours coche complete verrou a venir
+#4(form) Panneau Regles essentielles sidebar,Afficher le bloc regles essentielles avec les items : Duree 60 secondes Formats MP4 MOV Taille 200Mo max Fichiers par realisateur Duree soumission
+#5(form) Page intro formulaire - hero texte,Creer la page d accueil du formulaire avec le titre Votre minute change tout et les 3 cartes avantages (Film 60s Outils IA Gratuit international)
+#6(form) Navbar formulaire simplifiee,Navbar minimaliste avec logo marsAI et lien Retour au site uniquement sans les liens de navigation principaux
+#7(form) Layout 2 colonnes formulaire,CSS layout principal du formulaire : colonne gauche sidebar fixe colonne droite contenu scrollable avec fond sombre glassmorphism
+#8(form) Responsive mobile formulaire,Adapter le layout en une seule colonne sur mobile sidebar passe en bandeau horizontal en haut de l ecran
+#9(form) Composant FieldLabel avec badge requis,Composant reutilisable FieldLabel qui affiche le label du champ et un badge rouge REQUIS ou badge gris OPTIONNEL selon la prop required
+#10(form) Composant ProgressBar etapes numerotees,Barre de progression en en-tete affichant les 4 cercles numerotes relies par une ligne avec l etape courante en surbrillance
+#11(form) Etape 1 - champ Prenom requis,Input texte Prenom avec validation required affichage erreur si vide au submit message Prenom obligatoire
+#12(form) Etape 1 - champ Nom requis,Input texte Nom avec validation required affichage erreur si vide au submit message Nom obligatoire
+#13(form) Etape 1 - champ Date de naissance requis,Input date Date de naissance avec datepicker validation age minimum 18 ans message d erreur si mineur
+#14(form) Etape 1 - champ Metier actuel requis,Input texte Metier actuel avec placeholder ex Realisateur independant validation required
+#15(form) Etape 1 - champ Email de contact requis,Input email Email de contact avec validation format email et required message Email invalide si format incorrect
+#16(form) Etape 1 - champ Telephone optionnel,Input tel Telephone avec placeholder +33 6 00 00 00 00 pas de validation required juste format optionnel
+#17(form) Etape 1 - champ Mobile requis,Input tel Mobile avec validation required et format international placeholder +33 6 00 00 00 00
+#18(form) Etape 1 - section Adresse Postale titre,Afficher le titre de section Adresse Postale avec separateur visuel avant les champs adresse
+#19(form) Etape 1 - champ Rue et Numero requis,Input texte Rue / Numero avec validation required placeholder ex 12 rue de la Paix
+#20(form) Etape 1 - champ Code Postal requis,Input texte Code Postal avec validation required et pattern numerique 5 chiffres pour la France
+#21(form) Etape 1 - champ Ville requis,Input texte Ville avec validation required placeholder ex Paris
+#22(form) Etape 1 - champ Pays dropdown requis,Select dropdown Pays avec liste complete de pays validation required valeur par defaut France
+#23(form) Etape 1 - groupe checkboxes Reference reseau,Groupe de checkboxes Comment avez-vous connu marsAI options : Ami Instagram LinkedIn Facebook Presse Ecole Autre
+#24(form) Etape 1 - dropdown Comment connu marsAI,Dropdown selecteur principal Comment avez-vous connu marsAI en complement des checkboxes avec option Selectionner
+#25(form) Etape 1 - checkbox Newsletter marsAI,Checkbox Newsletter marsAI avec texte Recevoir les actualites du festival les annonces de resultats et les informations sur les prochaines editions
+#26(form) Etape 1 - validation globale et bouton suivant,Valider tous les champs required de l etape 1 avant d activer le bouton Etape suivante Le Film desactiver le bouton si formulaire invalide
+#27(form) Etape 1 - bouton Etape suivante Le Film,Bouton CTA Etape suivante -> Le Film en bas de l etape 1 avec fleche style primaire marsAI declenche validation puis passage etape 2
+#28(form) Persistance donnees entre etapes localStorage,Sauvegarder automatiquement les donnees de chaque etape dans localStorage pour ne pas perdre le formulaire si l utilisateur recharge la page
+#29(form) Restauration formulaire depuis localStorage,Au chargement du formulaire verifier si des donnees existent dans localStorage et les restaurer dans les champs correspondants
+#30(form) Etape 2 - champ Titre original requis,Input texte Titre original du film avec validation required placeholder ex Les Lumieres de Mars
+#31(form) Etape 2 - champ Titre traduit ou anglais requis,Input texte Titre traduit ou anglais avec validation required placeholder ex The Lights of Mars
+#32(form) Etape 2 - dropdown Langue parlee du film requis,Select dropdown Langue parlee du film avec liste de langues validation required valeur par defaut Selectionner
+#33(form) Etape 2 - multi-select Tags thematiques requis,Composant multi-select pour Tags thematiques categories du film validation minimum 1 tag selectionne message d erreur si aucun tag
+#34(form) Etape 2 - textarea Synopsis francais requis,Textarea Synopsis en francais avec compteur de caracteres validation required minimum 100 caracteres maximum 1000 caracteres
+#35(form) Etape 2 - textarea Synopsis anglais requis,Textarea Synopsis en anglais avec compteur de caracteres validation required minimum 100 caracteres maximum 1000 caracteres
+#36(form) Etape 2 - zone drag and drop upload video,Zone drag and drop Glisser deposer votre film avec icone nuage zone clic pour ouvrir le gestionnaire de fichiers style pointille
+#37(form) Etape 2 - affichage formats video acceptes,Afficher sous la zone upload les formats acceptes : MOV MP4 avec les contraintes taille et duree 100-200Mo 60s max
+#38(form) Etape 2 - validation format fichier video,Verifier que le fichier uploade est bien MP4 ou MOV afficher erreur Format non accepte si autre extension
+#39(form) Etape 2 - validation taille fichier video,Verifier que le fichier est entre 100Mo et 200Mo afficher erreur si trop petit ou trop grand avec la taille actuelle
+#40(form) Etape 2 - validation duree video 60 secondes,Verifier via l API browser que la duree de la video ne depasse pas 60 secondes afficher erreur Duree maximale 60 secondes
+#41(form) Etape 2 - barre de progression upload video,Afficher une barre de progression pendant l upload de la video avec pourcentage et animation fluide
+#42(form) Etape 2 - apercu miniature apres upload,Apres upload reussi afficher une miniature de la video avec le nom du fichier et la taille et une croix pour supprimer
+#43(form) Etape 2 - textarea Note d intention requis,Textarea Note d intention avec compteur de caracteres validation required placeholder Racontez votre film depuis l idee jusqu a la realisation
+#44(form) Etape 2 - textarea Outils et methodes creation requis,Textarea Outils utilises et methodes de creation avec validation required placeholder listez les outils IA utilises
+#45(form) Etape 2 - champ Code de restriction age,Champ ou select Code de restriction pour indiquer si le film contient des contenus reserves aux adultes options Tous publics 12+ 16+ 18+
+#46(form) Etape 2 - validation globale et bouton suivant,Valider tous les champs required etape 2 dont la presence du fichier video avant d activer le bouton Etape suivante Fiche IA
+#47(form) Etape 2 - bouton retour etape 1,Bouton Retour en bas gauche de l etape 2 permettant de revenir a l etape 1 sans perdre les donnees deja saisies
+#48(form) Etape 2 - bouton Etape suivante Fiche IA,Bouton CTA Etape suivante -> Fiche IA en bas de l etape 2 declenche validation puis passage etape 3
+#49(form) Etape 3 - titre Declaration d usage de l IA,Afficher le titre de la page Etape 3 : Declaration d usage de l IA avec sous-titre Type de production suite et sous-titres
+#50(form) Etape 3 - radio card Fabrication integrale,Card radio option Fabrication integrale avec description Film entierement genere par IA sans elements filmes humains selection visuelle
+#51(form) Etape 3 - radio card Production hybride,Card radio option Production hybride avec description Film qui melange elements humains (tournage dessin voix) et outils IA selection visuelle
+#52(form) Etape 3 - bouton Infos IA / Changer IA,Bouton contextuel Infos IA qui ouvre un tooltip ou une modale expliquant les criteres de classification IA du festival
+#53(form) Etape 3 - section outils IA Image du texte,Champs dynamiques pour lister les outils IA utilises pour la categorie Image du texte (ex Midjourney Stable Diffusion) avec bouton Ajouter
+#54(form) Etape 3 - section outils IA Son et musique,Champs dynamiques pour lister les outils IA Son et musique (ex Suno Udio ElevenLabs) avec bouton Ajouter champ
+#55(form) Etape 3 - section outils IA Scenario et ecriture,Champs dynamiques outils IA Scenario et ecriture (ex ChatGPT Claude Gemini) avec bouton Ajouter champ
+#56(form) Etape 3 - section outils IA Post-production,Champs dynamiques outils IA Post-production (ex Runway Pika CapCut) avec bouton Ajouter champ
+#57(form) Etape 3 - ajout dynamique lignes outils IA,Bouton + Ajouter un outil commun a toutes les sections IA permettant d ajouter autant de lignes que necessaire pour chaque categorie
+#58(form) Etape 3 - alerte sous-titres non incrustés,Afficher un bloc alerte orange Ne pas incruster les sous-titres dans la video ils doivent etre fournis en fichiers separes
+#59(form) Etape 3 - upload sous-titres Francais requis,Bouton Ajouter pour uploader le fichier de sous-titres Francais validation format SRT ou VTT uniquement affichage nom fichier apres upload
+#60(form) Etape 3 - upload sous-titres Anglais requis,Bouton Ajouter pour uploader le fichier de sous-titres Anglais validation format SRT ou VTT uniquement affichage nom fichier apres upload
+#61(form) Etape 3 - affichage fichier sous-titre uploade,Apres upload d un sous-titre afficher le nom du fichier avec une icone de succes et une croix pour supprimer et re-uploader
+#62(form) Etape 3 - validation globale etape 3,Valider que le type de production est selectionne et qu au moins un outil IA est renseigne et que les deux fichiers sous-titres sont uploades
+#63(form) Etape 3 - bouton retour etape 2,Bouton Retour en bas gauche etape 3 pour revenir a l etape 2 sans perdre les donnees saisies
+#64(form) Etape 3 - bouton Etape suivante Confirmation,Bouton CTA Etape suivante -> Confirmation en bas etape 3 apres validation complete
+#65(form) Etape 4 - titre Confirmation et Droits,Afficher le titre Etape 4 Confirmation et Droits avec sous-titre Verifiez votre dossier acceptez les conditions et soumettez
+#66(form) Etape 4 - recapitulatif infos realisateur,Afficher le bloc recapitulatif avec Realisateur nom prenom Date de naissance Email Ville et Pays issus de l etape 1
+#67(form) Etape 4 - recapitulatif infos film,Afficher dans le recapitulatif Titre du film Titre VO Duree estimee Type de production calcule depuis etape 3
+#68(form) Etape 4 - recapitulatif outils IA,Afficher la liste des outils IA declares en etape 3 par categorie dans le bloc recapitulatif
+#69(form) Etape 4 - recapitulatif sous-titres,Afficher le statut des sous-titres FR et EN dans le recapitulatif avec nom de fichier ou mention Aucun si absent
+#70(form) Etape 4 - checkbox Cession droits diffusion,Checkbox obligatoire Cession de droits de diffusion avec texte legal complet acceptation diffusion sur la plateforme marsAI festival
+#71(form) Etape 4 - checkbox Conformite RGPD,Checkbox obligatoire Conformite RGPD avec texte legal et lien vers la politique de confidentialite du festival
+#72(form) Etape 4 - checkbox Originalite de l oeuvre,Checkbox obligatoire Originalite de l oeuvre avec texte legal certifiant que le film est une creation originale de l auteur
+#73(form) Etape 4 - validation 3 checkboxes avant soumission,Desactiver le bouton Soumettre mon film tant que les 3 checkboxes legales ne sont pas toutes cochees afficher message d information
+#74(form) Etape 4 - bouton Soumettre mon film,Bouton CTA principal Soumettre mon film avec icone camera active uniquement quand les 3 checkboxes sont cochees style gradient aurora
+#75(form) Etape 4 - loader pendant soumission,Afficher un spinner ou loader pendant l envoi du formulaire au backend avec message Envoi en cours desactiver le bouton
+#76(form) Etape 4 - bouton retour etape 3,Bouton Retour en bas gauche etape 4 pour revenir a l etape 3 sans perdre les donnees
+#77(form) Etape 5 - page code de verification,Creer la page code de verification affichee apres soumission reussie avec layout 2 colonnes (promo gauche formulaire droit)
+#78(form) Etape 5 - sidebar etapes post-soumission,Sidebar montrant les 3 etapes : Soumission (coche vert) Verification (actif) Confirmation (a venir)
+#79(form) Etape 5 - affichage email masque,Afficher l email de l utilisateur partiellement masque (ex m***e@example.com) pour confirmer a quelle adresse le code a ete envoye
+#80(form) Etape 5 - input 6 cases code verification,6 inputs individuels d un chiffre chacun avec focus automatique sur la case suivante apres saisie et retour arriere sur la case precedente
+#81(form) Etape 5 - bouton Valider le code,Bouton Valider qui soumet le code 6 chiffres a l API de verification style bouton primaire pleine largeur
+#82(form) Etape 5 - gestion erreur code invalide,Afficher message d erreur Code incorrect en rouge et vider les 6 inputs si le code entre ne correspond pas au code envoye
+#83(form) Etape 5 - timer compte a rebours renvoi code,Afficher un compte a rebours (ex 1 minute 30) pendant lequel le bouton Renvoyer le code est desactive
+#84(form) Etape 5 - bouton Renvoyer le code,Bouton Renvoyer le code actif uniquement apres expiration du timer appelle l API resend-code et relance le timer
+#85(form) Etape 5 - redirection confirmation apres succes,Apres validation du code correct rediriger vers la page de confirmation finale avec message de succes et recapitulatif
+#86(form) API POST profil - route etape 1,Route Express POST /api/formulaire/profil qui valide et sauvegarde temporairement les donnees du profil realisateur en session ou DB
+#87(form) API POST film - route etape 2,Route Express POST /api/formulaire/film qui valide et sauvegarde les metadonnees du film (titres langue tags synopsis note outils)
+#88(form) API POST ia - route etape 3,Route Express POST /api/formulaire/ia qui valide et sauvegarde la declaration IA type de production liste d outils par categorie
+#89(form) API POST soumettre - soumission finale,Route Express POST /api/formulaire/soumettre qui assemble toutes les donnees cree l entree en DB et envoie l email avec code 6 chiffres
+#90(form) API POST verify - verification code email,Route Express POST /api/formulaire/verify qui compare le code saisi avec le code genere en DB marque la candidature comme verifiee si correct
+#91(form) API POST resend - renvoi code verification,Route Express POST /api/formulaire/resend qui regenere un nouveau code 6 chiffres l enregistre en DB et renvoie l email de verification
+#92(form) Multer middleware upload video,Configurer Multer pour accepter les fichiers MP4 et MOV avec limite 200Mo stocker dans /uploads/videos/ avec nom unique horodate
+#93(form) Multer middleware upload sous-titres,Configurer Multer pour accepter les fichiers SRT et VTT avec limite 1Mo stocker dans /uploads/subtitles/ avec nom unique
+#94(form) Table MySQL candidatures,Creer la table MySQL candidatures avec colonnes : id realisateur_id film_id statut code_verification date_soumission date_verification
+#95(form) Table MySQL films_depot,Creer la table MySQL films_depot avec colonnes : id titre titre_vo langue tags synopsis_fr synopsis_en video_path note_intention outils type_production
+#96(form) Email confirmation avec code 6 chiffres,Template email HTML envoye apres soumission contenant le code 6 chiffres le titre du film et les instructions de validation via Nodemailer
+#97(form) Email confirmation apres verification reussie,Template email HTML de confirmation finale envoye apres validation du code avec recapitulatif du dossier et mention Candidature enregistree
+#98(form) Composant Toast notifications formulaire,Systeme de toast notifications pour les erreurs et succes du formulaire : upload reussi erreur validation soumission reussie
+#99(form) i18n labels formulaire FR et EN,Ajouter les cles de traduction react-i18next pour tous les labels du formulaire dans fr.json et en.json
+#100(form) Animations transitions entre etapes,Ajouter des animations CSS ou Framer Motion pour les transitions entre les etapes (slide ou fade) afin de rendre la navigation fluide
