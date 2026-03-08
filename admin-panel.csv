@@ -1,0 +1,138 @@
+Title,Description
+#1(admin) Sidebar structure composant,Creer le composant Sidebar avec fond sombre position fixe gauche largeur 220px et sections GESTION / CONCOURS / SUIVI / FESTIVAL / SITE / COMPTE
+#2(admin) Sidebar logo marsAI en haut,Afficher le logo marsAI et le label PANNEAU D'ADMINISTRATION en haut de la sidebar
+#3(admin) Sidebar profil admin connecte,Afficher avatar initiales AD + nom Admin marsAI + badge role ADMINISTRATEUR sous le logo
+#4(admin) Sidebar lien Utilisateurs avec badge,Creer le lien Utilisateurs avec icone et badge numerique affichant le nombre de membres actifs
+#5(admin) Sidebar lien Assignation films avec badge,Creer le lien Assignation films avec badge affichant le total de films (500)
+#6(admin) Sidebar lien Phases et Dates,Creer le lien Phases et Dates avec icone calendrier dans section CONCOURS
+#7(admin) Sidebar lien Selection et Votes avec doubles badges,Creer le lien Selection et Votes avec deux badges colores cote a cote (10 et 5)
+#8(admin) Sidebar lien Awards et Sponsors,Creer le lien Awards et Sponsors avec icone trophee dans section FESTIVAL
+#9(admin) Sidebar lien Administration site,Creer le lien Administration site avec icone globe dans section SITE
+#10(admin) Sidebar lien Deconnexion,Creer le lien Deconnexion avec icone cadenas en rouge dans section COMPTE
+#11(admin) Sidebar bouton toggle collapse,Ajouter le bouton fleche laterale pour replier ou ouvrir la sidebar sur le bord droit
+#12(admin) Sidebar lien actif surbrillance,Appliquer le style fond bleu sur le lien actif dans la sidebar
+#13(admin) Header page titre et sous-titre,Creer le header de chaque page admin avec le titre principal a gauche et le sous-titre descriptif en gris
+#14(admin) Header badge role Admin,Afficher un badge avec icone bouclier et texte Admin en haut a droite du header
+#15(admin) Page Utilisateurs stats 4 cartes,Creer la rangee de 4 stat cards : Jurys / Moderateurs / Comptes desactives / Comptes crees avec valeur et label
+#16(admin) Stat card couleur accent Jurys,Appliquer la couleur cyan-vert pour la valeur de la stat card Jurys membres actifs
+#17(admin) Stat card couleur accent Moderateurs,Appliquer la couleur cyan pour la valeur de la stat card Moderateurs comptes actifs
+#18(admin) Stat card couleur rouge Comptes desactives,Appliquer la couleur rouge pour la valeur de la stat card Comptes desactives acces revoque
+#19(admin) Stat card couleur blanche Comptes crees,Afficher la valeur en blanc pour la stat card Comptes crees invitations envoyees
+#20(admin) Section participation des jures titre et legende,Creer le titre Participation des jures avec la legende de couleurs superieure a 80 / 50 / inferieure a 50 pourcent
+#21(admin) Cards participation jures avec avatar circulaire,Creer une card par jure avec avatar en cercle et barre de progression circulaire coloree selon seuil
+#22(admin) Card jure nom titre et pourcentage,Afficher sous l'avatar le nom complet + titre du jure + pourcentage en grand + ratio films evalues sur total
+#23(admin) Section titre Comptes jury et moderateurs,Afficher le titre de section et le sous-titre explicatif sur le droit de creation reserve a l'admin
+#24(admin) Bouton Inviter un membre,Creer le bouton Inviter un membre avec fond vert en haut a droite de la section comptes
+#25(admin) Barre recherche utilisateurs,Creer le champ de recherche avec placeholder par nom email ou role
+#26(admin) Table header colonnes utilisateurs,Creer les en-tetes de colonnes : UTILISATEUR / ROLE / FILMS ASSIGNES / ACCES / STATUT
+#27(admin) Ligne table avatar nom et email,Afficher dans chaque ligne l'avatar miniature + nom + email du membre
+#28(admin) Dropdown role Jury ou Moderateur,Creer le select avec les options Jury et Moderateur par ligne dans la table utilisateurs
+#29(admin) Badge films assignes par ligne,Afficher le nombre de films assignes avec un bouton de modification par membre
+#30(admin) Code acces avec boutons copier et QR,Afficher le code acces masque partiel avec bouton copier et bouton QR code par membre
+#31(admin) Toggle statut Actif ou Inactif,Creer le toggle vert/gris pour activer ou desactiver un compte par ligne
+#32(admin) Modal Inviter un membre overlay,Creer la modal centree avec fond sombre semi-transparent en arriere-plan
+#33(admin) Modal header titre et bouton fermer,Afficher le titre Inviter un membre et le bouton X de fermeture en haut droite de la modal
+#34(admin) Modal champ email adresse,Creer le champ input email avec placeholder jury.test@marsai.fr
+#35(admin) Modal selecteur role Jury,Creer le bouton de selection role Jury avec icone balance et bordure active cyan quand selectionne
+#36(admin) Modal selecteur role Moderateur,Creer le bouton de selection role Moderateur avec icone bouclier style non actif
+#37(admin) Modal bloc info invitation securisee,Afficher le bloc informatif expliquant qu'un lien d'invitation securise sera envoye et que le membre choisit son mode de connexion
+#38(admin) Modal bouton Annuler,Creer le bouton Annuler avec fond sombre et texte blanc dans la modal invitation
+#39(admin) Modal bouton Envoyer l'invitation,Creer le bouton Envoyer l'invitation principal avec fleche en fond vert dans la modal
+#40(admin) Page Assignation films header et banniere,Creer le header Films soumis et la banniere Repartir equitablement avec info 6 jures / 83 films par jure et bouton fleche
+#41(admin) Assignation barre recherche films,Creer le champ recherche avec placeholder par titre realisateur ou pays
+#42(admin) Assignation onglets filtres avec compteurs,Creer les onglets Tous / Non assignes / Assignes avec les compteurs entre parentheses
+#43(admin) Assignation compteur total films,Afficher la ligne 500 films / 0 assigne / 500 en attente sous les onglets
+#44(admin) Card film numero et drapeau pays,Afficher le numero sequentiel en grand (#001) en superposition sur la card et le drapeau du pays en haut a droite
+#45(admin) Card film bouton play video,Afficher une icone play centree sur la miniature video de chaque card film
+#46(admin) Card film titre realisateur et pays,Afficher sous la miniature le titre du film en gras + prenom nom realisateur + drapeau + pays
+#47(admin) Card film avatars jures assignes,Afficher les avatars miniatures superposes des jures assignes au film en bas de la card
+#48(admin) Card film compteur commentaires,Afficher l'icone bulle avec le nombre de commentaires en bas de la card
+#49(admin) Grille films 5 colonnes responsive,Mettre en page les cards films en grille 5 colonnes avec gouttiere uniforme
+#50(admin) Page Phases et Dates header,Creer le header Phases et Dates avec sous-titre Definissez les dates des sessions jury
+#51(admin) Badge Aucune phase active,Afficher le badge etat Aucune phase active en haut a droite de la page phases
+#52(admin) Timeline phases horizontale avec connecteur,Creer la ligne de progression horizontale avec les cercles numerotes Phase 1 et Phase 2 relies par un trait
+#53(admin) Card Phase 01 Preselection Top 50,Creer la card Phase 1 avec le numero 01 en grand en fond + titre Preselection Top 50 + description
+#54(admin) Datepicker ouverture Phase 1,Creer le champ date ouverture Phase 1 avec icone calendrier et valeur 12/12/2026
+#55(admin) Datepicker cloture Phase 1,Creer le champ date cloture Phase 1 avec icone calendrier et valeur 19/12/2026
+#56(admin) Compteur films selectionnes Phase 1,Afficher le compteur 0 sur 50 films selectionnes sous les dates de Phase 1
+#57(admin) Message manque films Phase 1,Afficher le message Il manque 50 films quand le quota n'est pas atteint en Phase 1
+#58(admin) Lien action Objectif 50 films,Afficher le lien cliquable Objectif 50 films pour la selection officielle sous le compteur Phase 1
+#59(admin) Lien action Selectionnez 50 films,Afficher le lien Selectionnez 50 films supplementaires dans Selection et Votes
+#60(admin) Bouton Confirmer Phase 1 desactive,Creer le bouton Confirmer la Phase 1 avec cadenas en etat desactive tant que 50 films non atteints
+#61(admin) Card Phase 02 Finale Top 5,Creer la card Phase 2 avec titre Finale Top 5 + description deliberation finale sur les 5 finalistes
+#62(admin) Datepicker ouverture et cloture Phase 2,Creer les champs date ouverture 22/12/2026 et cloture 28/12/2026 pour la Phase 2
+#63(admin) Compteur finalistes Phase 2,Afficher le compteur 0 sur 5 finalistes designes sous les dates Phase 2
+#64(admin) Message Phase 2 verrouille,Afficher le message Disponible apres la selection des 50 films avec icone cadenas en Phase 2
+#65(admin) Texte explicatif bas de page phases,Afficher le paragraphe recapitulatif Phase 1 Top 50 puis Phase 2 Top 5 avec logique de deverrouillage automatique
+#66(admin) Page Selection et Votes header,Creer le header Selection et Votes avec sous-titre et bouton Exporter CSV en haut a droite
+#67(admin) Synthese stat card Unanimes,Creer la stat card Unanimes en vert avec nombre et label validation directe
+#68(admin) Synthese stat card Partages,Creer la stat card Partages en orange avec nombre et label necessitent attention
+#69(admin) Synthese stat card Rejetes,Creer la stat card Rejetes en rouge avec nombre et label majorite refuse
+#70(admin) Synthese stat card En attente,Creer la stat card En attente en gris avec nombre et label pas encore evalues
+#71(admin) Synthese stat card Signalements,Creer la stat card Signalements en rouge avec nombre et label tickets ouverts
+#72(admin) Compteur Selection en cours,Afficher le bandeau Selection en cours avec le compteur 0 sur 50 et le total selectionnes a droite
+#73(admin) Barre filtres onglets votes,Creer les onglets filtres Tous / Unanimes / Partages / Rejetes / En attente / Signalements / Top 50 / Top 5 Finale
+#74(admin) Boutons tri Score Titre Commentaires,Creer les boutons de tri Score avec fleche bas / Titre A-Z / Commentaires
+#75(admin) Table header colonnes votes,Creer les en-tetes Film / Repartition votes / Consensus / Jures / compteur commentaires / Decision Admin
+#76(admin) Ligne film numero titre realisateur pays,Afficher par ligne le numero (#002) + titre film en gras + realisateur + drapeau + pays
+#77(admin) Barre repartition votes couleurs,Afficher la barre horizontale avec segments couleurs representant votes pour / neutre / contre avec compteurs
+#78(admin) Badge consensus Unanime,Creer le badge Unanime avec fond vert et icone validation
+#79(admin) Badge consensus Partage,Creer le badge Partage avec fond orange et icone attention
+#80(admin) Badge consensus Rejete,Creer le badge Rejete avec fond rouge et icone croix
+#81(admin) Badge consensus En attente,Creer le badge En attente avec fond gris et icone sablier
+#82(admin) Avatars jures ayant vote par film,Afficher les avatars superposes des jures qui ont vote sur chaque ligne film
+#83(admin) Groupe actions admin par film,Creer le groupe de 3 boutons par ligne : Selectionner / Voir le film / Email realisateur
+#84(admin) Modal preview film player,Creer la modal de preview film avec titre realisateur pays + player video avec thumbnail + bouton plein ecran + bouton fermer
+#85(admin) Page Awards et Sponsors header,Creer le header Awards et Sponsors avec sous-titre et bouton Ajouter un award
+#86(admin) Table Awards header colonnes,Creer les en-tetes AWARD / DESCRIPTION / SPONSOR ASSOCIE / DOTE / LAUREAT / ACTIONS
+#87(admin) Ligne award Grand Prix marsAI,Afficher la ligne Grand Prix marsAI avec icone medaille or + description + badge sponsor Google + montant 5000 euros
+#88(admin) Ligne award Prix Meilleure Realisation,Afficher la ligne Prix Meilleure Realisation avec icone argent + montant 2000 euros + Non sponsorise
+#89(admin) Ligne award Prix du Public,Afficher la ligne Prix du Public avec icone etoile + montant 1000 euros + Partenaire a definir
+#90(admin) Ligne award Prix Coup de Coeur Jury,Afficher la ligne Prix Coup de Coeur Jury avec icone mention + valeur Trophee + Non sponsorise
+#91(admin) Colonne Laureat a definir,Afficher le placeholder A definir en gris dans la colonne Laureat pour tous les awards
+#92(admin) Bouton Editer par ligne award,Creer le bouton Editer sur chaque ligne de la table awards
+#93(admin) Section Sponsors et Partenaires header,Creer le titre de section Sponsors et Partenaires avec bouton Ajouter un sponsor
+#94(admin) Table sponsors header colonnes,Creer les en-tetes SPONSOR / NIVEAU / AWARDS SPONSORISES / LOGO / LIEN / ACTIONS
+#95(admin) Ligne sponsor Google Principal,Afficher la ligne Google avec badge Principal en jaune + lien Grand Prix marsAI + logo + lien google.com
+#96(admin) Ligne sponsor Partenaire B,Afficher la ligne Partenaire B avec badge Partenaire gris + A associer en gris
+#97(admin) Badge niveau sponsor couleurs,Creer les badges de niveau : Principal en jaune / Partenaire en gris / Institutionnel en bleu
+#98(admin) Note info bas de page Awards,Afficher le texte informatif sur l'affichage visuel des awards et logos editables sur la page d'accueil
+#99(admin) Page Administration site header,Creer le header Administration du site avec badge Site en ligne + lien marsai.fr + bouton Previsualiser le site
+#100(admin) Section Video Hero label et badge fichier,Afficher le label Video Hero + le badge fichier actuel (MarsAI_Hero.mp4 + Actuelle) + bouton Plein ecran
+#101(admin) Preview video hero plein largeur,Afficher la video hero en preview plein largeur dans la section Administration site
+#102(admin) Bloc info format video,Afficher les specs FORMAT MP4 H.264 / RESOLUTION 1920x1080 / TAILLE MAX 200 Mo / FALLBACK .mov accepte
+#103(admin) Zone drag and drop upload video,Creer la zone de depot de fichier avec texte Glisser un fichier MP4 ou MOV ici
+#104(admin) Bouton Enregistrer la video,Creer le bouton Enregistrer la video avec fleche en fond vert sous la zone upload
+#105(admin) Section Contenus du Hero icone et titre,Creer la section Contenus du Hero avec icone hamburger et sous-titre Titre accroche tags et CTA
+#106(admin) Champ Nom du festival,Creer le champ input Nom du festival avec valeur marsAI 2026
+#107(admin) Champ Accroche principale,Creer le champ input Accroche principale avec la phrase de presentation du festival
+#108(admin) Champ Sous-accroche hero,Creer le champ input Sous-accroche hero avec le texte secondaire
+#109(admin) Groupe Tags 4 max,Creer le groupe de 4 champs input Tags avec label Tags (4 max) et exemples 60s chrono / 120+ pays / 100% gratuit / Prix Marseille
+#110(admin) Champ Texte bouton principal,Creer le champ input Texte bouton principal avec valeur Soumettre un film
+#111(admin) Bouton Enregistrer les contenus,Creer le bouton Enregistrer les contenus avec fleche en fond vert
+#112(admin) Section Calendrier icone et titre,Creer la section Calendrier avec icone calendrier et sous-titre Dates cles affichees publiquement
+#113(admin) Ligne calendrier Ouverture des candidatures,Creer la ligne avec label + sous-titre + datepicker + toggle actif
+#114(admin) Ligne calendrier Cloture des candidatures,Creer la ligne Cloture des candidatures avec datepicker et toggle
+#115(admin) Ligne calendrier Phase 1 Jury Top 50,Creer la ligne Phase 1 Jury Top 50 avec datepicker et toggle
+#116(admin) Ligne calendrier Phase 2 Jury Top 5,Creer la ligne Phase 2 Jury Top 5 avec datepicker et toggle
+#117(admin) Ligne calendrier Ceremonie de cloture,Creer la ligne Ceremonie de cloture Remise des prix Marseille avec datepicker et toggle
+#118(admin) Bouton Enregistrer le calendrier,Creer le bouton Enregistrer le calendrier avec fleche en fond vert
+#119(admin) Liste membres jury scrollable,Creer la liste scrollable des membres du jury dans la section Administration site
+#120(admin) Item membre avatar et champs editables,Creer chaque item avec avatar photo carre + champ nom editable + champ titre editable
+#121(admin) Item membre toggle actif et bouton supprimer,Ajouter le toggle actif/inactif et l'icone poubelle sur chaque item membre jury
+#122(admin) Badge etoile President du jury,Afficher l'icone etoile jaune sur l'item du ou de la president(e) du jury (Marie Lefebvre)
+#123(admin) Bouton Ajouter un membre jury,Creer le bouton Ajouter un membre en bas de la liste membres jury
+#124(admin) Section Partenaires et Sponsors dans site admin,Creer la section Partenaires et Sponsors avec icone etoile + sous-titre Logos et liens page d'accueil
+#125(admin) Texte 3 niveaux partenaires,Afficher le texte explicatif 3 niveaux Principal / Partenaire / Institutionnel avec aide logo cliquable
+#126(admin) Item partenaire logo cliquable,Creer le bouton Logo carre cliquable pour uploader le logo de chaque partenaire
+#127(admin) Item partenaire champ nom et dropdown niveau,Creer le champ nom partenaire + le select dropdown niveau (Principal / Partenaire / Institutionnel)
+#128(admin) Item partenaire champ URL,Creer le champ URL avec placeholder https://site-du-sponsor.fr par partenaire
+#129(admin) Item partenaire toggle et bouton supprimer,Ajouter le toggle actif/inactif et l'icone poubelle par item partenaire
+#130(admin) Bouton Ajouter un partenaire,Creer le bouton Ajouter un partenaire en bas de la liste partenaires
+#131(admin) Bouton Enregistrer les sponsors,Creer le bouton Enregistrer les sponsors en fond vert primaire en bas de section
+#132(admin) Section Informations et Contact,Creer la section avec icone info + titre Informations et Contact + sous-titre Description email reseaux sociaux
+#133(admin) Champ Description courte textarea,Creer le textarea Description courte avec le texte de presentation du festival
+#134(admin) Champ Email de contact,Creer le champ Email de contact avec valeur contact@marsai.fr
+#135(admin) Champ Instagram,Creer le champ Instagram avec valeur @marsai.festival
+#136(admin) Champ Site web,Creer le champ Site web avec valeur https://marsai.fr
+#137(admin) Bouton Enregistrer les informations,Creer le bouton Enregistrer les informations en fond vert pleine largeur

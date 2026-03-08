@@ -1,0 +1,101 @@
+Title,Description
+#1(jury) Sidebar structure interface jury,Creer le composant Sidebar jury avec fond sombre position fixe gauche et sections EVALUATION / SELECTION / COMPTE
+#2(jury) Sidebar logo marsAI et label interface,Afficher le logo marsAI et le label INTERFACE JURY avec le nom du festival marsAI 2026 en haut
+#3(jury) Sidebar profil jure connecte,Afficher l'avatar initiales + nom du jure + role (ex: Presidente du Jury) sous le logo
+#4(jury) Sidebar lien Films assignes avec badge,Creer le lien Films assignes avec badge affichant le nombre de films restant a evaluer
+#5(jury) Sidebar lien Evalues avec badge,Creer le lien Evalues avec badge affichant le nombre de films deja evalues
+#6(jury) Sidebar lien A discuter avec badge,Creer le lien A discuter avec badge affichant le nombre de films marques a discuter
+#7(jury) Sidebar lien Deliberation avec badge,Creer le lien Deliberation dans la section SELECTION avec badge ratio votes utilises (4/5)
+#8(jury) Sidebar lien Se deconnecter,Creer le lien Se deconnecter avec icone cadenas en rouge dans la section COMPTE
+#9(jury) Sidebar lien actif surbrillance,Appliquer le style fond colore sur le lien actif dans la sidebar jury
+#10(jury) Header onglets A evaluer Evalues Tous,Creer les 3 onglets de navigation en haut avec badges numeriques : A evaluer / Evalues / Tous
+#11(jury) Header badge YouTube acces video,Afficher le badge YouTube en haut a droite de la zone player si la video est hebergee sur YouTube
+#12(jury) Liste films colonne gauche,Creer la colonne scrollable gauche avec la liste des films assignes au jure
+#13(jury) Item film thumbnail titre realisateur pays,Creer chaque item film avec thumbnail miniature + titre tronque + prenom nom realisateur + pays
+#14(jury) Badge film statut VALIDE,Afficher le badge VALIDE en vert sur les items de films evalues positivement
+#15(jury) Badge film statut A REVOIR,Afficher le badge A REVOIR en orange sur les items films marques pour revision
+#16(jury) Badge film statut UNDEFINED,Afficher le badge UNDEFINED en gris sur les items films non encore evalues
+#17(jury) Item film selectionne surbrillance,Appliquer le style fond bleu sur l'item film actuellement ouvert dans le player
+#18(jury) Player video central plein largeur,Creer le player video principal en zone centrale avec fond noir plein ecran partiel
+#19(jury) Player controles lecture play pause,Afficher les controles du player : bouton play/pause central et barre de controles en bas
+#20(jury) Player barre progression et temps,Afficher la barre de progression video avec le temps ecoule et la duree totale (00:25 / 1:00)
+#21(jury) Player boutons volume et plein ecran,Ajouter les boutons volume et plein ecran dans la barre de controles du player
+#22(jury) Player boutons sous-titres CC et FR,Afficher les boutons de selection de langue sous-titres CC et FR dans les controles player
+#23(jury) Player sous-titres texte sur video,Afficher les sous-titres en texte blanc centre en bas de la zone video pendant la lecture
+#24(jury) Player label titre film sous le player,Afficher le titre du film en cours de lecture sous la barre de controles du player
+#25(jury) Info copyright sous le player,Afficher le texte Copyright OK et la source (YouTube API) sous la barre de progression
+#26(jury) Bouton vote Valider,Creer le bouton Valider avec icone check et fond vert dans la barre de vote en bas de page
+#27(jury) Bouton vote A revoir,Creer le bouton A revoir avec icone fleche et fond jaune/orange dans la barre de vote
+#28(jury) Bouton vote Refuser,Creer le bouton Refuser avec icone croix et fond rouge dans la barre de vote
+#29(jury) Bouton vote A discuter,Creer le bouton A discuter avec icone bulle et fond violet dans la barre de vote
+#30(jury) Champ commentaire personnel jure,Creer le champ MON COMMENTAIRE avec le texte saisi par le jure visible sous les boutons de vote
+#31(jury) Label visible par tout le jury,Afficher le label VISIBLE PAR TOUT LE JURY en gris sous le champ commentaire
+#32(jury) Barre progression personnelle en bas,Afficher la progression personnelle du jure en bas de page : 3 sur 10 films evalues
+#33(jury) Chat jury widget toggle,Creer le widget Chat jury en bas gauche avec icone bulle + badge nombre de messages non lus
+#34(jury) Chat jury liste avatars membres,Afficher les avatars miniatures de tous les membres du jury dans l'en-tete du chat avec leurs initiales
+#35(jury) Chat jury bulles messages,Afficher les messages sous forme de bulles avec avatar + nom + heure a gauche et messages propres a droite
+#36(jury) Chat jury champ de saisie et envoi,Creer le champ de saisie texte et le bouton d'envoi en bas du widget chat
+#37(jury) Detail film section Avis des autres jures,Creer la section Avis des autres jures avec le label VISIBLE PAR TOUT LE COMITE
+#38(jury) Avis jure avec avatar badge vote et commentaire,Afficher pour chaque jure son avatar + nom + badge de vote (J'aime / A discuter / Pas encore evalue) + commentaire
+#39(jury) Badge vote J'aime style,Creer le badge J'aime avec icone coeur et couleur rose/rouge sur les avis des jures
+#40(jury) Badge vote A discuter style,Creer le badge A discuter avec icone bulle et couleur violet sur les avis des jures
+#41(jury) Badge Pas encore evalue style,Creer le badge Pas encore evalue avec icone sablier et couleur gris sur les avis des jures
+#42(jury) Detail film titre realisateur pays annee,Afficher le titre du film en grand + prenom nom realisateur + pays + annee sous les avis
+#43(jury) Detail film tags outils IA,Afficher les tags IMAGE IA et les noms des outils utilises (Runway ML / Sora / MusicGen) en pastilles
+#44(jury) Detail film specs techniques,Afficher les specs DUREE / FORMAT / SOUS-TITRES / COPYRIGHT en 4 colonnes sous les tags
+#45(jury) Spec duree film,Afficher la duree du film en format 00:59.8 dans la colonne DUREE
+#46(jury) Spec format video,Afficher le format MP4 1080p dans la colonne FORMAT
+#47(jury) Spec sous-titres avec validation,Afficher le code langue FR avec icone check dans la colonne SOUS-TITRES
+#48(jury) Spec copyright verifie,Afficher le label Verifie avec icone check dans la colonne COPYRIGHT
+#49(jury) Section Fiche IA details obligatoires,Creer la section FICHE IA avec le label DETAILS OBLIGATOIRES et les 3 sous-sections
+#50(jury) Fiche IA sous-section SCENARIO,Afficher les outils IA utilises pour le scenario (ex: ChatGPT-4o / Claude) sous le label SCENARIO
+#51(jury) Fiche IA sous-section IMAGE VIDEO,Afficher les outils IA utilises pour les images/video (ex: Runway ML Gen-3 / Sora) sous le label IMAGE / VIDEO
+#52(jury) Fiche IA sous-section POST-PRODUCTION,Afficher les outils IA utilises en post-prod (ex: MusicGen / ElevenLabs / Firefly) sous le label POST-PRODUCTION
+#53(jury) Section Note de demarche creative,Creer la section NOTE DE DEMARCHE CREATIVE avec le texte libre du realisateur en italic
+#54(jury) Section Decisions du jury liste,Creer la section DECISIONS DU JURY avec la liste de tous les jures + leur badge de vote + leur commentaire
+#55(jury) Ligne decision jure avec badge vote,Afficher par jure son avatar + nom + titre + badge de vote (VALIDE / A REVOIR / EN ATTENTE) + commentaire
+#56(jury) Badge decision VALIDE sur ligne jure,Creer le badge VALIDE en vert sur les lignes jures dans la section Decisions du jury
+#57(jury) Badge decision A REVOIR sur ligne jure,Creer le badge A REVOIR en orange sur les lignes jures dans la section Decisions du jury
+#58(jury) Badge decision EN ATTENTE sur ligne jure,Creer le badge EN ATTENTE en gris sur les jures n'ayant pas encore vote dans Decisions du jury
+#59(jury) Section Commentaires du jury liste,Creer la section COMMENTAIRES DU JURY avec les commentaires de chaque jure + badge + indication Moi
+#60(jury) Modal Demande de revision overlay,Creer la modal Demande de revision avec fond sombre semi-transparent et icone fleche retour
+#61(jury) Modal revision header titre,Afficher le titre Demande de revision dans l'en-tete de la modal
+#62(jury) Modal revision label film concerne,Afficher la pastille avec le nom du film concerne dans la modal revision
+#63(jury) Modal revision section Raison checkboxes,Creer la section RAISON avec les checkboxes : Droits musicaux / Qualite / Contenu / YouTube / Autre
+#64(jury) Modal revision textarea Votre message,Creer le champ VOTRE MESSAGE avec textarea et placeholder dans la modal revision
+#65(jury) Modal revision bouton Annuler,Creer le bouton Annuler avec fond sombre dans la modal revision
+#66(jury) Modal revision bouton Marquer a revoir,Creer le bouton Marquer a revoir avec fleche et fond jaune dans la modal revision
+#67(jury) Modal Notification de refus overlay,Creer la modal Notification de refus avec fond sombre et bouton fermer X
+#68(jury) Modal refus header titre et info,Afficher le titre Notification de refus + le texte explicatif sur l'envoi du message au realisateur
+#69(jury) Modal refus label film concerne,Afficher la pastille avec le nom du film dans la modal refus
+#70(jury) Modal refus checkboxes raison,Creer les memes checkboxes Raison que la modal revision dans la modal refus
+#71(jury) Modal refus label MESSAGE AU REALISATEUR,Afficher le label MESSAGE AU REALISATEUR au-dessus du textarea
+#72(jury) Modal refus textarea message personnalise,Creer le textarea avec le message prefill Madame Monsieur + texte sur la decision du jury
+#73(jury) Modal refus bouton Annuler,Creer le bouton Annuler dans la modal refus
+#74(jury) Modal refus bouton Confirmer le refus,Creer le bouton Confirmer le refus avec icone croix et fond rouge dans la modal refus
+#75(jury) Vue A discuter liste films avec compteurs,Creer la vue A discuter avec la liste des films marques et le compteur de jures ayant commente
+#76(jury) Vue A discuter player video integre,Afficher le player video dans la vue A discuter avec les memes controles que la vue principale
+#77(jury) Section Note du realisateur,Afficher la section NOTE DU REALISATEUR avec le texte long en italique dans la vue A discuter
+#78(jury) Section Outils IA utilises badges,Creer la section OUTILS IA UTILISES avec les lignes Scenario / Image / Post-prod / Global et leurs badges outils
+#79(jury) Section Votes et commentaires jury dans A discuter,Afficher la liste des jures avec leur badge de vote et commentaire dans la vue A discuter
+#80(jury) Barre Decision de groupe,Creer la barre DECISION DE GROUPE en bas avec les 3 boutons Valider / A revoir / Refuser et les compteurs de votes
+#81(jury) Bouton Valider dans decision de groupe,Afficher le bouton Valider avec le compteur de votes pour dans la barre decision de groupe
+#82(jury) Bouton A revoir dans decision de groupe,Afficher le bouton A revoir avec le compteur dans la barre decision de groupe
+#83(jury) Bouton Refuser dans decision de groupe,Afficher le bouton Refuser avec le compteur dans la barre decision de groupe
+#84(jury) Page Deliberation header et sous-titre,Creer le header Deliberation - Top 5 Finalistes + sous-titre Phase 2 + description
+#85(jury) Page Deliberation bouton Exporter palmares CSV,Afficher le bouton Exporter palmares CSV en haut a droite de la page Deliberation
+#86(jury) Profil jure connecte avec indicateur,Afficher le profil du jure connecte avec un point vert indicateur de connexion en temps reel
+#87(jury) Barre progression votes utilises,Creer la barre de progression votes utilises (ex: 4 sur 5) avec couleur jaune et message votes restants
+#88(jury) Section Participation du jury avatars et ratios,Afficher la liste des membres du jury avec leur avatar + nom tronque + ratio votes utilises (ex: 4/5)
+#89(jury) Titre section films Top 50 admin,Afficher le titre 10 FILMS - TOP 50 SELECTIONNE PAR L'ADMIN au-dessus de la liste de deliberation
+#90(jury) Item film deliberation avec rang et titre,Creer chaque item film avec le numero de rang en grand + titre + realisateur + pays
+#91(jury) Badge FINALISTE sur item film deliberation,Afficher le badge FINALISTE en vert sur les films ayant atteint le seuil de votes pour etre finaliste
+#92(jury) Barre de votes horizontale par film,Afficher la barre de progression horizontale representant le cumul des votes sur chaque film
+#93(jury) Compteur votes sur film et total possible,Afficher le ratio votes recus sur votes possibles (ex: 4/5) a droite de la barre de votes
+#94(jury) Avatars jures ayant vote sur le film,Afficher les avatars superposes des jures qui ont vote sur chaque film dans la liste deliberation
+#95(jury) Bouton Voter sur film non vote,Afficher le bouton Voter avec icone etoile sur les films que le jure n'a pas encore votes
+#96(jury) Bouton Retirer sur film vote,Afficher le bouton Retirer sur les films sur lesquels le jure a deja vote
+#97(jury) Bouton Vote decisif en evidence,Afficher le bouton Vote decisif avec style special (fond dore / badge) sur les films en ballottage necessitant un vote supplementaire
+#98(jury) Classement LIVE colonne droite,Creer la colonne CLASSEMENT LIVE a droite avec la liste ordonnee des films par nombre de votes en temps reel
+#99(jury) Item classement live rang titre et etoile,Afficher par item dans le classement live : le rang numerique + le titre du film + icone etoile si finaliste + compteur votes
+#100(jury) Classement live separateur hors selection,Afficher le separateur hors selection entre les films qui passent et ceux qui ne passent pas dans le classement live
