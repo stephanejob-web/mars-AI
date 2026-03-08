@@ -1,0 +1,131 @@
+Title,Description
+#1(home) Navbar - composant Navbar structure de base,Creer le composant Navbar avec nav-inner position fixed fond transparent qui devient opaque au scroll
+#2(home) Navbar - logo marsAI avec lien vers home,Integrer le logo texte mars + span AI en gradient cyan lien vers la section home
+#3(home) Navbar - liens de navigation desktop,Creer les 7 liens nav : Le Concours Programme Films Le Jury Les Prix Contact Espace Admin avec attribut data-i18n
+#4(home) Navbar - bouton CTA Soumettre un film,Bouton jaune pill Soumettre un film avec lien vers /formulaire style distinct des liens nav
+#5(home) Navbar - composant LangSwitcher FR/EN,Deux boutons FR et EN separes par un slash classe active sur la langue courante appel i18n.changeLanguage()
+#6(home) Navbar - lien Espace Admin avec style distinct,Lien Espace Admin avec couleur solar et style differencie des autres liens nav redirige vers /login
+#7(home) Navbar - burger button mobile 3 spans animes,Bouton hamburger mobile avec 3 spans qui s'animent en croix a l'ouverture visible uniquement en mobile
+#8(home) Navbar - panneau menu mobile NavPanel,Panneau overlay mobile avec tous les liens lien Espace Jury aurora lien Espace Admin solar CTA Soumettre un film
+#9(home) Hero - video background autoplay muted loop,Balise video en position absolue autoplay muted loop playsinline avec poster image de fallback couvre toute la section hero
+#10(home) Hero - bloc partenaires UNE CO-CREATION,Ligne avec label Une co-creation logo La Plateforme image webp separateur texte Mobile Film Festival
+#11(home) Hero - badge festival pill,Badge pill vert aurora : FESTIVAL INTERNATIONAL - PREMIERE EDITION - MARSEILLE 2026 avec point anime a gauche
+#12(home) Hero - titre H1 marsAI avec gradient AI,H1 avec texte mars en blanc et span AI en gradient aurora/cyan grande taille typographique display
+#13(home) Hero - description Le premier festival mondial,Paragraphe en gras : Le premier festival mondial du cinema genere par intelligence artificielle avec cle i18n hero-desc
+#14(home) Hero - 4 tags de caracteristiques,4 pills tags : 60s chrono 120+ pays 100% gratuit Prix Marseille chaque valeur en gras fond semi-transparent
+#15(home) Hero - accroche double ligne,Texte accroche : Voici ce qu'une IA peut creer en blanc et Imaginez ce que vous allez faire en couleur aurora
+#16(home) Hero - bouton primaire Soumettre un film,Bouton jaune/solar arrondi avec fleche et point lumineux anime lien vers /formulaire cle i18n hero-cta-primary
+#17(home) Hero - bouton Demo avec effet laser,Bouton outline sombre Demo avec effet laser/glow sur le bord ouvre la video de demo dans un nouvel onglet
+#18(home) Hero - texte decoratif MARSEILLE colonne droite,Texte MARSEILLE en tres grande taille transparent/outline en colonne droite du hero aria-hidden
+#19(home) Hero - label countdown CLOTURE DES DEPOTS 30 SEPT 2026,Texte label au-dessus du countdown cle i18n countdown-label
+#20(home) Hero - CountdownTimer unite Jours,Unite Jours du countdown : nombre en grand + label Jours en dessous calcule via useEffect/setInterval jusqu'au 30/09/2026
+#21(home) Hero - CountdownTimer unite Heures,Unite Heures du countdown avec separateur avant et apres mise a jour chaque seconde
+#22(home) Hero - CountdownTimer unite Minutes,Unite Minutes du countdown avec separateur format 2 chiffres via padStart
+#23(home) Hero - CountdownTimer unite Secondes,Unite Secondes du countdown clearInterval au demontage du composant via cleanup useEffect
+#24(home) Concept - label LE CONCEPT avec tiret decoratif,Label section en petites majuscules LE CONCEPT avec tiret aurora a droite cle i18n concept-label
+#25(home) Concept - titre H2 Une contrainte absolue une liberte totale,H2 en deux lignes avec saut de ligne cle i18n concept-title
+#26(home) Concept - paragraphe description du concours,Texte description avec La Plateforme et Mobile Film Festival en gras blanc cle i18n concept-desc
+#27(home) Concept - image femme robot IA decoration droite,Image femme robot IA positionnee en haut a droite loading lazy format webp avec fallback png aria-hidden
+#28(home) Concept - card 1 min (1 Minute 1 Film),ConceptCard avec grand chiffre 1 en aurora titre 1 Minute 1 Film description 60 secondes pile MP4 ou MOV 200 a 300 Mo Ratio 16:9
+#29(home) Concept - card IA (L'humain au coeur de l'IA),ConceptCard avec grand chiffre IA en lavande titre L'humain au coeur de l'IA description outils IA hybride
+#30(home) Concept - card 50 (Films en competition),ConceptCard avec grand chiffre 50 en solar titre Films en competition description 50 oeuvres 120+ pays
+#31(home) Concept - card 30.09 (Cloture des depots),ConceptCard avec grand chiffre 30.09 en coral titre Cloture des depots description date limite 30 septembre 2026
+#32(home) Concept - composant ConceptCard reutilisable,Composant ConceptCard avec props num numColor titleKey descKey utilise 4 fois dans la grille concept
+#33(home) Manifeste - image de fond avec overlay,Image background haute resolution webp en position absolue + div overlay semi-transparent pour lisibilite du texte
+#34(home) Manifeste - carousel gauche CarouselViewport,Colonne gauche avec viewport de cards video qui defilent verticalement scanner canvas anime + scanner beam
+#35(home) Manifeste - ligne texte 1 avec animation fade,Ligne manifeste : 1895. Le cinema nait. Une camera une pellicule. Classe m-fade transition-delay 0s cle i18n manifeste-line1
+#36(home) Manifeste - ligne texte 2 avec animation fade,Ligne manifeste : Pendant 130 ans filmer exigeait du materiel. Transition-delay 0.15s cle i18n manifeste-line2
+#37(home) Manifeste - separateur horizontal anime,Ligne separatrice manifeste-sep entre les deux blocs de texte apparait en fade transition-delay 0.35s
+#38(home) Manifeste - ligne texte 3 highlight aurora,Ligne : L'IA generative a tout change. Mot IA generative mis en valeur couleur aurora cle i18n manifeste-line3
+#39(home) Manifeste - ligne texte 4 highlight solar,Ligne : Aujourd'hui votre imagination est la seule limite. Mot votre imagination mis en valeur couleur solar
+#40(home) Manifeste - sous-texte avec question en gras,Paragraphe : Les outils existent + La question est qu'avez-vous a raconter en 60 secondes en gras blanc cle i18n manifeste-sub
+#41(home) Manifeste - chips outils IA,Ligne de chips : Sora Runway Kling Pika Stable Video ComfyUI + tous les autres style pill fond semi-transparent
+#42(home) Manifeste - animation reveal au scroll IntersectionObserver,Declencher les classes m-fade visible sur les elements quand ils entrent dans le viewport via IntersectionObserver dans useEffect
+#43(home) About - label L'EVENEMENT MARSEILLE 2026,Label section en petites majuscules cle i18n about-label
+#44(home) About - titre H2 Vivez la naissance d'un nouveau cinema,H2 avec saut de ligne cle i18n about-title
+#45(home) About - description 3 jours aux Friches Belle de Mai,Paragraphe description de l'evenement 3 jours cle i18n about-desc
+#46(home) About - ligne programme Vendredi dot aurora,Ligne programme : dot aurora + Ven. + Seance inaugurale et cocktail de bienvenue cles i18n prog-day1 prog-desc1
+#47(home) About - ligne programme Samedi dot lavande,Ligne programme : dot lavande + Sam. + Projections Village IA Conferences et tables rondes cles i18n prog-day2 prog-desc2
+#48(home) About - ligne programme Dimanche dot solar,Ligne programme : dot solar + Dim. + Deliberations Ceremonie des Prix Mars.AI Night cles i18n prog-day3 prog-desc3
+#49(home) About - stats mini 50 films 120+ pays Gratuit,3 stat-chip-mini : 50 films 120+ pays Gratuit acces public cles i18n stat-films stat-pays stat-gratuit stat-acces
+#50(home) About - photo du lieu Friches Belle de Mai,Photo de La Plateforme Friches Belle de Mai en colonne droite loading lazy format webp
+#51(home) About - overlay venue sur la photo,Carte superposee sur la photo : nom La Plateforme adresse Friches Belle de Mai Marseille 13003 coordonnees GPS bouton Itineraire Google Maps
+#52(home) HowTo - label DEPOT DE FILM,Label section en petites majuscules cle i18n how-label
+#53(home) HowTo - titre H2 Comment ca marche,Titre centre H2 cle i18n how-title
+#54(home) HowTo - description Un tunnel guide en 4 etapes,Sous-titre centre max-width 520px cle i18n how-desc
+#55(home) HowTo - card etape 1 Profil realisateur,HowCard : icone profil numero 01 titre Profil realisateur description tag Sans inscription Acces direct cles i18n how1
+#56(home) HowTo - card etape 2 Le Film,HowCard : icone cinema numero 02 titre Le Film description verification 60s automatique tag Titre Synopsis Video cles i18n how2
+#57(home) HowTo - card etape 3 Fiche IA,HowCard : icone robot numero 03 titre Fiche IA description outils IA utilises tag Outils Sous-titres FR/EN cles i18n how3
+#58(home) HowTo - card etape 4 Confirmation,HowCard : icone check numero 04 titre Confirmation description RGPD + numero dossier instantane tag RGPD Dossier MAI-2026 cles i18n how4
+#59(home) HowTo - composant HowCard reutilisable,Composant HowCard avec props icon color num titleKey descKey tagKey utilise 4 fois animation reveal au scroll
+#60(home) HowTo - CTA bouton Montrez votre vision du futur,Bouton CTA centre jaune/solar avec fleche lien vers /formulaire cle i18n how-cta-btn
+#61(home) HowTo - note sous le CTA,Texte grise sous le bouton : Participation gratuite - Ouvert a 120+ pays - Cloture le 30 sept. 2026 cle i18n how-cta-note
+#62(home) Films - section pellicule de cinema style film strip,Conteneur style pellicule cinema : sprockets noirs a gauche et droite fond sombre titre 50 FILMS IMAGINEZ DES FUTURS SOUHAITABLES
+#63(home) Films - grille de cards films,Grille de cards films avec thumbnail image titre du film nom realisateur pays donnees mockees en attendant l'API
+#64(home) Films - bouton Tous les films,Bouton centre sous la grille pour voir tous les films lien vers la page galerie
+#65(home) Awards - badge LE GALA MARSEILLE 2026,Badge pill en haut de la section awards style aurora ou solar
+#66(home) Awards - titre La nuit ou le cinema bascule dans l'ere IA,H2 avec mise en valeur l'ere IA en gradient cle i18n awards-title
+#67(home) Awards - bloc Grand Prix trophee,Card Grand Prix avec icone trophee dore libelle sous-texte Remise du trophee lors de la ceremonie style mis en avant
+#68(home) Awards - bloc Prix du Jury,Card Prix du Jury avec medaille et libelle style secondaire
+#69(home) Awards - bloc Prix du Public,Card Prix du Public avec icone et libelle
+#70(home) Awards - bloc Prix Coup de coeur,Card Prix Coup de coeur avec icone et libelle 3eme prix secondaire
+#71(home) Awards - titre Ils soutiennent marsAI,Sous-titre section sponsors cle i18n sponsors-title
+#72(home) Awards - logo sponsor TechVision AI,Logo partenaire TechVision AI dans la grille sponsors loading lazy alt text
+#73(home) Awards - logo sponsor Studio Lumiere,Logo partenaire Studio Lumiere dans la grille sponsors loading lazy
+#74(home) Awards - logo sponsor CineLab,Logo partenaire CineLab dans la grille sponsors loading lazy
+#75(home) Awards - logo sponsor DigitalCreators Hub,Logo partenaire DigitalCreators Hub dans la grille sponsors loading lazy
+#76(home) Awards - logo sponsor Region PACA,Logo institutionnel Region PACA dans la grille sponsors loading lazy
+#77(home) Awards - logo sponsor Ville de Marseille,Logo institutionnel Ville de Marseille dans la grille sponsors loading lazy
+#78(home) Awards - logo sponsor Ministere de la Culture,Logo institutionnel Ministere de la Culture dans la grille sponsors loading lazy
+#79(home) Jury - label JURY INTERNATIONAL MARSAI 2026,Label section en petites majuscules cle i18n jury-label
+#80(home) Jury - titre H2 Le Jury,H2 centre cle i18n jury-title
+#81(home) Jury - description de la section,Paragraphe Des createurs artistes et personnalites du cinema venus du monde entier pour evaluer les oeuvres cle i18n jury-desc
+#82(home) Jury - card Marie Lefebvre Presidente du Jury,JuryCard : photo badge PRESIDENTE DU JURY aurora nom Marie Lefebvre role Realisatrice bio courte
+#83(home) Jury - card Pierre Dubois Membre du Jury,JuryCard : photo badge MEMBRE DU JURY nom Pierre Dubois role Realisateur artistique bio courte
+#84(home) Jury - card Kenji Ito Membre du Jury,JuryCard : photo badge MEMBRE DU JURY nom Kenji Ito role Artiste numerique bio courte
+#85(home) Jury - card Sofia Eriksson Membre du Jury,JuryCard : photo badge MEMBRE DU JURY nom Sofia Eriksson bio courte
+#86(home) Jury - card Amare Toure Membre du Jury,JuryCard : photo badge MEMBRE DU JURY nom Amare Toure bio courte
+#87(home) Jury - card Carlos Ruiz Membre du Jury,JuryCard : photo badge MEMBRE DU JURY nom Carlos Ruiz bio courte
+#88(home) Jury - composant JuryCard reutilisable,Composant JuryCard avec props photo badge badgeColor nom role bio grille 3 colonnes desktop 2 tablette 1 mobile
+#89(home) Footer - colonne gauche CO-ORGANISE PAR,Label CO-ORGANISE PAR logo La Plateforme avec lien texte Mobile Film Festival logo marsAI description tagline Imaginez des futurs souhaitables
+#90(home) Footer - colonne FESTIVAL liens internes,Colonne avec titre FESTIVAL et liens : Le Concept Programme Jury La Plateforme Presse
+#91(home) Footer - colonne FILMS liens internes,Colonne avec titre FILMS et liens : Galerie Palmares Soumettre Reglement
+#92(home) Footer - colonne CONTACT liens externes,Colonne avec titre CONTACT et liens : contact@marsai.fr mailto Instagram LinkedIn Mentions legales
+#93(home) Footer - barre de copyright,Ligne basse : copyright 2026 marsAI co-creation La Plateforme x Mobile Film Festival + tagline Imaginez des futurs souhaitables Premiere Edition
+#94(home) Footer - ligne decorative aurora en bas,Barre de 2px en gradient aurora tout en bas du footer effet glow
+#95(home) Traduction fr.json - cles Navbar,Ajouter dans fr.json : nav-concours nav-programme nav-films nav-jury nav-palmares nav-contact nav-admin nav-submit nav-panel-jury nav-panel-submit
+#96(home) Traduction en.json - cles Navbar,Ajouter dans en.json toutes les cles nav avec traductions anglaises
+#97(home) Traduction fr.json - cles Hero,Ajouter : hero-partners-label hero-badge hero-desc hero-tag-1 a 4 hero-accroche hero-cta-primary hero-demo countdown-label countdown-days countdown-hours countdown-minutes countdown-seconds
+#98(home) Traduction en.json - cles Hero,Ajouter dans en.json toutes les cles hero avec traductions anglaises
+#99(home) Traduction fr.json - cles Concept,Ajouter : concept-label concept-title concept-desc concept-card1 a 4 title et desc
+#100(home) Traduction en.json - cles Concept,Ajouter dans en.json toutes les cles concept avec traductions anglaises
+#101(home) Traduction fr.json - cles Manifeste,Ajouter : manifeste-line1 manifeste-line2 manifeste-line3 manifeste-line4 manifeste-sub
+#102(home) Traduction en.json - cles Manifeste,Ajouter dans en.json toutes les cles manifeste avec traductions anglaises
+#103(home) Traduction fr.json - cles About Evenement,Ajouter : about-label about-title about-desc prog-day1 a 3 prog-desc1 a 3 stat-films stat-pays stat-gratuit stat-acces venue-btn
+#104(home) Traduction en.json - cles About Evenement,Ajouter dans en.json toutes les cles about avec traductions anglaises
+#105(home) Traduction fr.json - cles HowTo,Ajouter : how-label how-title how-desc how1 a 4 title desc tag how-cta-btn how-cta-note
+#106(home) Traduction en.json - cles HowTo,Ajouter dans en.json toutes les cles how avec traductions anglaises
+#107(home) Traduction fr.json - cles Awards,Ajouter : awards-label awards-title awards-desc awards-grand-prix awards-jury awards-public awards-coup-coeur sponsors-title
+#108(home) Traduction en.json - cles Awards,Ajouter dans en.json toutes les cles awards avec traductions anglaises
+#109(home) Traduction fr.json - cles Jury,Ajouter : jury-label jury-title jury-desc jury-badge-president jury-badge-membre et bios des 6 membres
+#110(home) Traduction en.json - cles Jury,Ajouter dans en.json toutes les cles jury avec traductions anglaises
+#111(home) Traduction fr.json - cles Footer,Ajouter : footer-tagline footer-festival footer-films footer-contact footer-copyright footer-mentions
+#112(home) Traduction en.json - cles Footer,Ajouter dans en.json toutes les cles footer avec traductions anglaises
+#113(home) Integrer useTranslation dans Navbar,Remplacer les textes hardcodes de la Navbar par les appels t() avec les cles i18n correspondantes
+#114(home) Integrer useTranslation dans HeroSection,Remplacer tous les textes hardcodes du Hero par les appels t() avec les cles i18n correspondantes
+#115(home) Integrer useTranslation dans ConceptSection,Remplacer tous les textes du Concept et des 4 ConceptCards par les appels t()
+#116(home) Integrer useTranslation dans ManifesteSection,Remplacer les lignes manifeste et sous-texte par les appels t()
+#117(home) Integrer useTranslation dans AboutSection,Remplacer tous les textes About programme stats venue par les appels t()
+#118(home) Integrer useTranslation dans HowSection,Remplacer tous les textes HowTo et HowCards par les appels t()
+#119(home) Integrer useTranslation dans JurySection,Remplacer les textes de la section jury et des JuryCards par les appels t()
+#120(home) Integrer useTranslation dans Footer,Remplacer tous les textes du footer par les appels t()
+#121(home) Hook useReveal IntersectionObserver global,Hook useReveal avec IntersectionObserver qui ajoute la classe visible aux elements avec data-delay utilise sur toutes les sections
+#122(home) Composant Divider entre sections,Composant ligne separatrice reutilisable utilise entre chaque grande section de la Home
+#123(home) Responsive - Navbar mobile breakpoint 768px,Masquer les liens nav desktop afficher le burger + switcher de langue mobile en dessous de 768px
+#124(home) Responsive - Hero mobile colonne unique,Passer le hero de 2 colonnes a 1 sur mobile centrer les elements adapter la taille du H1 et du countdown
+#125(home) Responsive - grille Concept cards mobile,Passer la grille des 4 ConceptCards de 4 colonnes desktop a 2 sur tablette et 1 sur mobile
+#126(home) Responsive - section About colonne unique mobile,Passer les 2 colonnes texte + photo en colonne unique sur mobile
+#127(home) Responsive - grille HowCards tablette et mobile,Adapter la grille des 4 HowCards pour tablette 2x2 et mobile 1 colonne
+#128(home) Responsive - grille Jury tablette et mobile,Passer la grille des 6 JuryCards de 3 colonnes a 2 sur tablette et 1 sur mobile
+#129(home) Responsive - Footer colonne unique mobile,Passer les 4 colonnes du footer en colonne unique empilee sur mobile
+#130(home) Assembler la page HomePage complete,Assembler tous les composants dans l'ordre : Navbar Hero Concept Manifeste About HowTo Films Awards Jury Footer et verifier la coherence visuelle
