@@ -3691,7 +3691,7 @@ footer {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-  #hero-video { display: none !important; }
+  #hero-video { animation: none !important; }
   .aurora-bg, .aurora-bg::before, .aurora-bg::after { display: none; }
 }
 

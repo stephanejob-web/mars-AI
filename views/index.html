@@ -41,6 +41,17 @@
   <video id="hero-video" autoplay muted loop playsinline preload="metadata" poster="../assets/hero-poster.jpg" aria-hidden="true">
     <source src="../assets/hero-marsai.mp4" type="video/mp4">
   </video>
+  <script>
+    (function(){
+      var v = document.getElementById('hero-video');
+      if (!v) return;
+      // Pause la vidéo si prefers-reduced-motion est activé (le poster reste visible)
+      var mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+      function handleMotion(e) { if (e.matches) { v.pause(); } else { v.play().catch(function(){}); } }
+      handleMotion(mq);
+      mq.addEventListener('change', handleMotion);
+    })();
+  </script>
 
   <!-- ============================================================
        NAVIGATION PRINCIPALE
