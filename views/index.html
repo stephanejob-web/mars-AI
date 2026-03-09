@@ -45,11 +45,14 @@
     (function(){
       var v = document.getElementById('hero-video');
       if (!v) return;
-      // Pause la vidéo si prefers-reduced-motion est activé (le poster reste visible)
+      // Si prefers-reduced-motion activé : pause après chargement, le poster reste visible
       var mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-      function handleMotion(e) { if (e.matches) { v.pause(); } else { v.play().catch(function(){}); } }
-      handleMotion(mq);
-      mq.addEventListener('change', handleMotion);
+      if (mq.matches) {
+        v.addEventListener('canplay', function(){ v.pause(); }, { once: true });
+      }
+      mq.addEventListener('change', function(e){
+        if (e.matches) { v.pause(); } else { v.play().catch(function(){}); }
+      });
     })();
   </script>
 
