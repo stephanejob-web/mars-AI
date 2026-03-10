@@ -288,3 +288,94 @@ Sessions précédentes documentées : correction performances GPU, suppression U
 - `views/index.html` — ajout lien `mobile.css`
 - `js/manifeste-carousel.js` — mode horizontal mobile (translateX, drag tactile)
 - `SESSION.md` — mise à jour session 14
+
+---
+
+## Session 15 — Harmonisation des sections + transitions fluides
+**Date** : 6 mars 2026
+
+### 1. Harmonisation des paddings entre sections
+- `.section-inner` global unifié à `padding: 80px 0` (avant : `100px 0`)
+- Suppression des overrides incohérents :
+  - `.how-section .section-inner` : `40px 0 70px` → hérité (80px 0)
+  - `.gallery-section .section-inner` : `40px 0 24px` → `40px 0` (réduit volontairement)
+  - `.gala-inner` : `40px 40px 24px` → `80px 40px`
+  - `.jury-section .section-inner` : `10px 0 20px !important` → `40px 0 60px`
+  - `.manifeste-section` : `80px 60px 60px` → `80px 60px` (symétrique)
+  - `.films-cinema-section` : `25px 0 30px` → `80px 60px`
+- Paddings responsive gala rendus symétriques (`60px 24px`, `50px 18px`)
+
+### 2. Transitions fluides entre sections (mask-image)
+- `z-index: 1` sur toutes les sections non-hero pour couvrir la vidéo de fond (`position: fixed`)
+- `mask-image` avec fondu haut/bas (80px) sur les sections standard
+- Exceptions par section :
+  - `.concept` : pas de mask (enchaîne directement après le hero)
+  - `.gallery-section` : fondu haut uniquement (bas net pour le carousel cinéma)
+  - `.films-cinema-section` : fondu bas uniquement (haut net collé à la galerie)
+- Sections chevauchement de -40px (`margin-top: -40px` + `padding-top: 40px`)
+- Dividers originaux (lignes 1px) masqués (`display: none`), remplacés par les mask-image
+- Ajout d'un divider entre gala et jury (manquant)
+
+### 3. Transition Hero → Concept améliorée
+- `hero::after` agrandi : 220px → 350px, dégradé progressif jusqu'à `#141A42` opaque (80-100%)
+- `bottom: -1px` pour éviter tout pixel gap
+- Couleurs du dégradé alignées sur `rgba(20,26,66)` = `#141A42` (couleur du concept)
+- Ligne verte `concept::before` (animation `line-reveal`) supprimée
+
+### 4. Image robot (femme-robot) — fondu haut ajouté
+- `mask-image` modifié : ajout `transparent → #000 20%` en haut pour éviter la coupure nette
+- Centre du radial-gradient décalé de `35%` → `40%` vertical
+
+### Fichiers modifiés
+- `css/index.css` — harmonisation paddings, mask-image, hero::after, concept::before, robot mask
+- `views/index.html` — dividers `aria-hidden="true"`, ajout divider gala→jury
+- `SESSION.md` — mise à jour session 15
+
+---
+
+## Session 16 — Restructuration code + nettoyage visuel
+**Date** : 10 mars 2026
+
+### 1. Transition Hero → Concept — simplification dégradé
+- `hero::after` réduit : 350px → 220px, `bottom: -1px` → `bottom: 0`
+- Dégradé simplifié à 4 étapes (avant 6) avec couleurs `rgba(13,18,50)` plus douces
+- Ligne verte `concept::before` réactivée (`display: none` retiré) — animation `line-reveal` restaurée
+
+### 2. Suppression des mask-image de transition entre sections
+- Retrait complet des `mask-image` ajoutés en session 15 sur les sections
+- Suppression des `margin-top: -40px` / `padding-top: 40px` de chevauchement
+- Suppression du `z-index: 1` sur les sections non-hero
+- Dividers réactivés : styles restaurés (hauteur 1px, dégradé aurora/lavande) avec classe `.visible` pour animation `scaleX`
+
+### 3. Section Événement — overflow corrigé
+- `.about` : `overflow: visible` → `overflow: hidden`
+- `.about-bg` : `top/bottom: -60px` → `top/bottom: 0` (plus de débordement)
+
+### 4. Carousel cinéma — caméra mise à jour + boule lumière masquée
+- Image caméra remplacée : `camera-cinema.png` → `camera-2.png` (nouveau visuel)
+- Boule de lumière `.cinema-beam` : styles supprimés, remplacés par `display: none`
+
+### 5. Section Galerie — padding restauré
+- `.gallery-section .section-inner` : `padding: 40px 0` → `padding: 40px 0 24px` (bas réduit)
+
+### 6. Section Gala — paddings nettoyés
+- `.gala` : retrait du `padding: 0` explicite
+- `.gala-inner` : `padding: 80px 40px` → `padding: 80px 0` (latéral supprimé)
+- Responsive `.gala-inner` : `60px 24px` → `60px 0`, `50px 18px` → `50px 0`
+
+### 7. Section Jury — padding restructuré
+- `.jury-section .section-inner` padding déplacé vers `.jury-section` directement (`padding: 80px 0`)
+
+### 8. Assets — remplacement et nettoyage
+- **Supprimés** : `bande-pellicule-sans.jpg`, `femme-robot2.webp`
+- **Ajoutés** : `camera-2.jpg`, `camera-2.png` (nouvelle caméra cinéma), `scene.jpg`, `Gemini_Generated_Image_pji5cwpji5cwpji5.png`
+
+### 9. Confirmation dépôt — formatage mineur
+- `views/confirmation-depot.html` : ajout ligne vide avant le bloc `step-row` (lisibilité)
+
+### Fichiers modifiés
+- `css/index.css` — simplification hero, retrait mask-image, dividers réactivés, overflow événement, beam masqué (~82 lignes modifiées)
+- `views/index.html` — caméra `camera-2.png` (2 occurrences)
+- `views/confirmation-depot.html` — formatage mineur
+- `assets/` — 2 fichiers supprimés, 4 fichiers ajoutés
+- `SESSION.md` — mise à jour session 16

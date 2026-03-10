@@ -4,7 +4,8 @@
       "mcp__ide__getDiagnostics",
       "WebFetch(domain:fr.pinterest.com)",
       "Bash(curl:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "WebFetch(domain:cayenneblackedition.com)"
     ]
   }
 }
